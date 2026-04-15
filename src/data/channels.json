@@ -1,0 +1,38 @@
+[
+  {
+    "id": "bein-1",
+    "name": "beIN Sports 1",
+    "category": "Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/BeIN_Sports_logo.svg/2560px-BeIN_Sports_logo.svg.png",
+    "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+    "status": "online",
+    "now_playing": "Premier League: Man City vs Arsenal"
+  },
+  {
+    "id": "bein-2",
+    "name": "beIN Sports 2",
+    "category": "Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/BeIN_Sports_logo.svg/2560px-BeIN_Sports_logo.svg.png",
+    "url": "https://test-streams.mux.dev/pts_hls/master.m3u8",
+    "status": "online",
+    "now_playing": "La Liga: Real Madrid vs Barcelona"
+  },
+  {
+    "id": "spotv-1",
+    "name": "SPOTV 1",
+    "category": "Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/SPOTV_logo.svg/1200px-SPOTV_logo.svg.png",
+    "url": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd",
+    "status": "online",
+    "now_playing": "MotoGP: Grand Prix of Americas"
+  },
+  {
+    "id": "nasa-tv",
+    "name": "NASA TV (Public)",
+    "category": "International",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/1200px-NASA_logo.svg.png",
+    "url": "https://ntvall-ch.akamaized.net/hls/live/2017927/NASA-NTV-all-CH/master.m3u8",
+    "status": "online",
+    "now_playing": "Live from ISS"
+  }
+]
