@@ -16,10 +16,10 @@ const SOURCES = [
 ];
 
 // Reliable Public CORS Proxy Helper
-export const getProxiedUrl = (url: string) => {
+export const getProxiedUrl = (url: string, force = false) => {
   // Common IPTV sources that definitely need CORS bypass
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net'];
-  const needsProxy = restrictedDomains.some(domain => url.includes(domain));
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'm3u8'];
+  const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
   
   if (needsProxy) {
     return `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;

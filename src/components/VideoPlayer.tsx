@@ -108,15 +108,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         
         // Handle CORS Error 1002 with Auto Proxy Fallback
         if (e.code === 1002 || e.code === 1001) {
-          const proxiedUrl = getProxiedUrl(cleanUrl);
-          if (proxiedUrl !== cleanUrl) {
-            console.log('Attempting CORS Proxy Fallback...');
-            try {
-              await player.load(proxiedUrl);
-              return;
-            } catch (proxyError) {
-              console.error('Proxy Fallback Failed:', proxyError);
-            }
+          const proxiedUrl = getProxiedUrl(cleanUrl, true); // Force proxy on error
+          console.log('Attempting CORS Proxy Fallback for:', cleanUrl);
+          try {
+            await player.load(proxiedUrl);
+            return;
+          } catch (proxyError) {
+            console.error('Proxy Fallback Failed:', proxyError);
           }
         }
 
