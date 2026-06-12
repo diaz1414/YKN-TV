@@ -66,6 +66,7 @@ async function handleRequest(url, req, res) {
       const proto = req.headers['x-forwarded-proto'] || 'http';
       const host = req.headers.host;
       const proxyPrefix = `${proto}://${host}/api/proxy/`;
+      const finalUrl = response.request?.res?.responseUrl || url;
 
       const lines = body.split('\n');
       const rewrittenLines = lines.map(line => {
@@ -74,13 +75,13 @@ async function handleRequest(url, req, res) {
 
         if (trimmed.startsWith('#')) {
           return line.replace(/URI="([^"]+)"/g, (_, p1) => {
-            const resolved = new URL(p1, url).toString();
+            const resolved = new URL(p1, finalUrl).toString();
             const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
             return `URI="${proxyPrefix}${cleanResolved}"`;
           });
         }
 
-        const resolved = new URL(trimmed, url).toString();
+        const resolved = new URL(trimmed, finalUrl).toString();
         const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
         return `${proxyPrefix}${cleanResolved}`;
       });

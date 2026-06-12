@@ -87,6 +87,7 @@ async function handleRequest(url: string, host: string, req: any, res: any) {
       const body = response.data;
       const proto = req.connection.encrypted ? 'https' : 'http';
       const proxyPrefix = `${proto}://${host}/api/proxy/`;
+      const finalUrl = response.request?.res?.responseUrl || url;
 
       const lines = body.split('\n');
       const rewrittenLines = lines.map((line: string) => {
@@ -95,13 +96,13 @@ async function handleRequest(url: string, host: string, req: any, res: any) {
 
         if (trimmed.startsWith('#')) {
           return line.replace(/URI="([^"]+)"/g, (_, p1) => {
-            const resolved = new URL(p1, url).toString();
+            const resolved = new URL(p1, finalUrl).toString();
             const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
             return `URI="${proxyPrefix}${cleanResolved}"`;
           });
         }
 
-        const resolved = new URL(trimmed, url).toString();
+        const resolved = new URL(trimmed, finalUrl).toString();
         const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
         return `${proxyPrefix}${cleanResolved}`;
       });
