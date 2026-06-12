@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
-import { Server, Shield, Play, Info, AlertTriangle, Monitor, Globe, RefreshCcw } from 'lucide-react';
+import { 
+  Server, Shield, Play, Pause, Info, AlertTriangle, Monitor, Globe, 
+  RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings 
+} from 'lucide-react';
 import { getProxiedUrl } from '../services/streamService';
 
 interface ServerOption {
@@ -18,14 +21,33 @@ interface VideoPlayerProps {
   servers: ServerOption[];
 }
 
+interface QualityOption {
+  index: number | 'auto';
+  label: string;
+}
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+  
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Custom Controls State
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isLive, setIsLive] = useState(true);
+  const [showControls, setShowControls] = useState(true);
+  const [levels, setLevels] = useState<QualityOption[]>([]);
+  const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
 
   // Helper to parse Clearkey DRM from the pipe symbol
   const parseDrmInfo = (url: string) => {
@@ -74,11 +96,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     });
 
+    // Fullscreen Event sync
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
     return () => {
       destroyPlayers();
       if (playerRef.current) {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
       }
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
@@ -90,6 +119,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const isHls = cleanUrl.includes('.m3u8') || cleanUrl.includes('m3u8');
       
       setError(null);
+      setLevels([]);
+      setCurrentLevel('auto');
       await destroyPlayers();
 
       try {
@@ -113,6 +144,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           hls.attachMedia(videoRef.current);
 
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            const qualityLevels: QualityOption[] = hls.levels.map((level, idx) => ({
+              index: idx,
+              label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}k`
+            }));
+            setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
+
             if (isPlaying) {
               videoRef.current?.play().catch(err => {
                 console.warn('Autoplay prevented:', err);
@@ -171,6 +208,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           await player.load(cleanUrl);
           console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+
+          // Get variant tracks for quality settings
+          const tracks = player.getVariantTracks();
+          const uniqueHeights = Array.from(new Set(tracks.map(t => t.height).filter(Boolean)));
+          uniqueHeights.sort((a, b) => (b ?? 0) - (a ?? 0));
+          const qualityLevels: QualityOption[] = uniqueHeights.map(height => ({
+            index: height as number,
+            label: `${height}p`
+          }));
+          setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
         } else {
           setError('No compatible streaming engine found.');
         }
@@ -199,17 +246,133 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     loadStream();
   }, [currentServer]);
 
-  const togglePlay = () => {
+  // Autohide Controls effect
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const handleMouseMove = () => {
+      setShowControls(true);
+      clearTimeout(timeoutId);
+      if (isPlaying) {
+        timeoutId = setTimeout(() => {
+          setShowControls(false);
+          setShowQualityMenu(false);
+        }, 3000);
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('mousemove', handleMouseMove);
+      }
+      clearTimeout(timeoutId);
+    };
+  }, [isPlaying]);
+
+  const togglePlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play().catch(e => {
-          console.error("Playback failed:", e);
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
+          console.error("Playback failed:", err);
           setError("Playback failed. Please try another server.");
         });
       }
-      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value);
+    setVolume(val);
+    if (videoRef.current) {
+      videoRef.current.volume = val;
+      const muteState = val === 0;
+      videoRef.current.muted = muteState;
+      setIsMuted(muteState);
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      const nextMute = !isMuted;
+      setIsMuted(nextMute);
+      videoRef.current.muted = nextMute;
+      if (!nextMute && volume === 0) {
+        setVolume(0.5);
+        videoRef.current.volume = 0.5;
+      }
+    }
+  };
+
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(err => {
+        console.error('Fullscreen failed:', err);
+      });
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
+  const formatTime = (secs: number) => {
+    if (isNaN(secs) || !isFinite(secs)) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime);
+      const dur = videoRef.current.duration;
+      if (dur === Infinity || isNaN(dur) || dur <= 0) {
+        setIsLive(true);
+      } else {
+        setIsLive(false);
+        setDuration(dur);
+      }
+    }
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!videoRef.current || isLive) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    videoRef.current.currentTime = pos * duration;
+  };
+
+  const handleLevelChange = (levelIdx: number | 'auto') => {
+    setCurrentLevel(levelIdx);
+    setShowQualityMenu(false);
+    
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
+    } else if (playerRef.current) {
+      if (levelIdx === 'auto') {
+        playerRef.current.configure({ abr: { enabled: true } });
+      } else {
+        playerRef.current.configure({ abr: { enabled: false } });
+        const tracks = playerRef.current.getVariantTracks();
+        const selectedHeight = levelIdx as number;
+        const matchTrack = tracks.find(t => t.height === selectedHeight);
+        if (matchTrack) {
+          playerRef.current.selectVariantTrack(matchTrack, true);
+        }
+      }
     }
   };
 
@@ -217,15 +380,137 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   return (
     <div className="space-y-6">
-      <div className="relative aspect-video rounded-[2rem] overflow-hidden bg-black ring-1 ring-white/10 group shadow-2xl">
+      <div 
+        ref={containerRef}
+        className="relative aspect-video rounded-[2rem] overflow-hidden bg-black ring-1 ring-white/10 group shadow-2xl flex items-center justify-center"
+      >
         <video
           ref={videoRef}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain cursor-pointer"
           poster="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=2000"
           playsInline
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
+          onTimeUpdate={handleTimeUpdate}
+          onClick={() => togglePlay()}
         />
+
+        {/* Custom Controls Overlay */}
+        {isPlaying && (
+          <div 
+            className={`absolute inset-0 bg-gradient-to-t from-dark/95 via-transparent to-transparent flex flex-col justify-end p-6 transition-all duration-500 z-30 ${
+              showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            {/* Progress Bar for VOD */}
+            {!isLive && (
+              <div 
+                onClick={handleSeek}
+                className="w-full h-1.5 bg-white/10 rounded-full mb-4 cursor-pointer relative group/progress transition-all hover:h-2"
+              >
+                <div 
+                  className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(0,255,136,0.6)]"
+                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                >
+                  <div className="w-3.5 h-3.5 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(0,255,136,0.8)]" />
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Row Control Panel */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                {/* Play/Pause Button */}
+                <button 
+                  onClick={() => togglePlay()}
+                  className="w-10 h-10 bg-primary hover:bg-primary/90 text-dark rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-lg cursor-pointer"
+                >
+                  {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
+                </button>
+
+                {/* Volume Section */}
+                <div className="flex items-center gap-2 group/volume relative">
+                  <button 
+                    onClick={toggleMute}
+                    className="p-2 text-white/80 hover:text-white transition-colors cursor-pointer"
+                  >
+                    {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                  </button>
+                  <input 
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={isMuted ? 0 : volume}
+                    onChange={handleVolumeChange}
+                    className="w-0 group-hover/volume:w-20 transition-all duration-300 origin-left accent-primary h-1 bg-white/20 rounded-lg cursor-pointer"
+                  />
+                </div>
+
+                {/* Time Display or Live Badge */}
+                {isLive ? (
+                  <div className="flex items-center gap-2 py-1 px-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse select-none">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                    LIVE
+                  </div>
+                ) : (
+                  <div className="text-xs font-mono font-bold text-white/60 select-none">
+                    {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                {/* Technical Info Button */}
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
+                  className="p-2.5 text-white/60 hover:text-white transition-all hover:bg-white/5 rounded-xl border border-white/5 cursor-pointer"
+                  title="Technical Details"
+                >
+                  <Info size={16} />
+                </button>
+
+                {/* Quality / Resolution Selector */}
+                {levels.length > 1 && (
+                  <div className="relative">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-xl text-xs font-bold text-white/80 hover:text-white transition-all cursor-pointer"
+                    >
+                      <Settings size={14} className={showQualityMenu ? 'rotate-45' : ''} />
+                      {currentLevel === 'auto' ? 'Auto' : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                    </button>
+                    {showQualityMenu && (
+                      <div className="absolute bottom-12 right-0 bg-surface/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 w-32 shadow-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                        {levels.map((level) => (
+                          <button
+                            key={level.index}
+                            onClick={() => handleLevelChange(level.index)}
+                            className={`w-full py-2 px-3 text-left rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                              currentLevel === level.index 
+                                ? 'bg-primary text-dark font-black' 
+                                : 'text-white/60 hover:text-white hover:bg-white/5'
+                            }`}
+                          >
+                            {level.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Fullscreen Button */}
+                <button 
+                  onClick={toggleFullscreen}
+                  className="p-2.5 text-white/80 hover:text-white transition-colors cursor-pointer"
+                >
+                  {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         {error && (
           <div className="absolute inset-0 bg-dark/80 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center">
@@ -234,7 +519,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             <p className="text-white/60 mb-6 max-w-sm">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-primary text-dark font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform"
+              className="px-6 py-2 bg-primary text-dark font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
             >
               <RefreshCcw size={18} />
               Retry Connection
@@ -243,16 +528,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
 
         {showInfo && (
-          <div className="absolute inset-0 bg-dark/90 backdrop-blur-md p-8 z-20 flex flex-col animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-dark/90 backdrop-blur-md p-8 z-40 flex flex-col animate-in fade-in duration-300">
             <div className="flex justify-between items-center mb-6 text-white">
               <h4 className="text-xl font-bold flex items-center gap-2">
                 <Info size={20} className="text-primary" />
                 Stream Compliance Info
               </h4>
-              <button onClick={() => setShowInfo(false)} className="text-white/40 hover:text-white transition-colors">Close</button>
+              <button onClick={() => setShowInfo(false)} className="text-white/40 hover:text-white transition-colors cursor-pointer">Close</button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-white overflow-y-auto">
               <div className="space-y-4">
                 <InfoItem icon={<Monitor size={16} />} label="Stream Engine" value="Shaka Player (DRM Compliant)" />
                 <InfoItem icon={<Shield size={16} />} label="Type" value={currentServer.type.toUpperCase()} />
@@ -274,14 +559,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
 
         {!isPlaying && !showInfo && !error && (
-          <div className="absolute inset-0 bg-dark/60 backdrop-blur-sm flex flex-col items-center justify-center gap-6">
+          <div className="absolute inset-0 bg-dark/60 backdrop-blur-sm flex flex-col items-center justify-center gap-6 z-20">
             <div 
               className="w-20 h-20 bg-primary rounded-full flex items-center justify-center text-dark hover:scale-110 transition-transform cursor-pointer shadow-[0_0_30px_rgba(0,255,136,0.4)]" 
-              onClick={togglePlay}
+              onClick={() => togglePlay()}
             >
               <Play fill="currentColor" size={32} className="ml-1" />
             </div>
-            <div className="text-center">
+            <div className="text-center select-none">
               <h4 className="text-xl font-bold mb-1">Click to Start Stream</h4>
               <div className="flex items-center gap-2 justify-center text-white/40 text-sm">
                 <span className="px-2 py-0.5 bg-white/5 rounded-md border border-white/5">{currentServer.type.toUpperCase()}</span>
@@ -307,7 +592,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setCurrentServer(server);
                 setIsPlaying(false);
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all relative overflow-hidden group ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all relative overflow-hidden group cursor-pointer ${
                 currentServer.url === server.url 
                   ? 'bg-primary text-dark' 
                   : 'bg-white/5 hover:bg-white/10 text-white/60'
@@ -322,12 +607,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         <div className="flex items-center gap-3 ml-auto text-white">
           <button 
             onClick={() => setShowInfo(!showInfo)}
-            className="p-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-xl transition-all flex items-center gap-2 text-xs font-bold border border-white/5"
+            className="p-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-xl transition-all flex items-center gap-2 text-xs font-bold border border-white/5 cursor-pointer"
           >
             <Info size={16} />
             <span className="hidden sm:inline">Technical Details</span>
           </button>
-          <div className="flex items-center gap-2 py-2 px-3 bg-primary/10 border border-primary/20 rounded-xl">
+          <div className="flex items-center gap-2 py-2 px-3 bg-primary/10 border border-primary/20 rounded-xl select-none">
             <Shield size={16} className="text-primary animate-pulse" />
             <span className="text-[10px] font-bold text-primary uppercase tracking-wider">DRM Active</span>
           </div>
