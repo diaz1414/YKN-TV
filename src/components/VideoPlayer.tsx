@@ -382,7 +382,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     <div className="space-y-6">
       <div 
         ref={containerRef}
-        className="relative aspect-video rounded-[2rem] overflow-hidden bg-black ring-1 ring-white/10 group shadow-2xl flex items-center justify-center"
+        className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${
+          isFullscreen 
+            ? 'w-screen h-screen rounded-none ring-0 border-none' 
+            : 'aspect-video rounded-[2rem] ring-1 ring-white/10'
+        }`}
       >
         <video
           ref={videoRef}
