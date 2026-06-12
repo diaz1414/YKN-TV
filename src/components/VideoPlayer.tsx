@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
+import Hls from 'hls.js';
 import { Server, Shield, Play, Info, AlertTriangle, Monitor, Globe, RefreshCcw } from 'lucide-react';
 import { getProxiedUrl } from '../services/streamService';
 
@@ -20,6 +21,7 @@ interface VideoPlayerProps {
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
+  const hlsRef = useRef<Hls | null>(null);
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -44,24 +46,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return { cleanUrl, keys: Object.keys(keys).length > 0 ? keys : null };
   };
 
+  const destroyPlayers = async () => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+    if (playerRef.current) {
+      try {
+        await playerRef.current.detach();
+      } catch (e) {
+        console.warn('Shaka Player detach error:', e);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!videoRef.current) return;
 
     shaka.polyfill.installAll();
-    if (!shaka.Player.isBrowserSupported()) {
-      setError('Browser not supported for professional streaming.');
-      return;
-    }
-
     const player = new shaka.Player();
     playerRef.current = player;
 
     player.addEventListener('error', (event: any) => {
       console.error('Shaka Player Error:', event.detail);
-      setError(`Stream Error: ${event.detail.code}`);
+      if (!hlsRef.current) {
+        setError(`Stream Error: ${event.detail.code}`);
+      }
     });
 
     return () => {
+      destroyPlayers();
       if (playerRef.current) {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
       }
@@ -70,57 +84,114 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   useEffect(() => {
     const loadStream = async () => {
-      if (!playerRef.current || !currentServer || !videoRef.current) return;
+      if (!currentServer || !videoRef.current) return;
 
-      const player = playerRef.current;
       const { cleanUrl, keys } = parseDrmInfo(currentServer.url);
+      const isHls = cleanUrl.includes('.m3u8') || cleanUrl.includes('m3u8');
       
       setError(null);
-      
+      await destroyPlayers();
+
       try {
-        // Fix Error 7002: Ensure element is attached before loading
-        await player.attach(videoRef.current);
-        
-        // Configure Headers
-        player.getNetworkingEngine()?.clearAllRequestFilters();
-        player.getNetworkingEngine()?.registerRequestFilter((_type, request) => {
-          if (currentServer.header?.['user-agent']) {
-            request.headers['User-Agent'] = currentServer.header['user-agent'];
-          }
-          if (currentServer.header?.referer) {
-            request.headers['Referer'] = currentServer.header.referer;
-          }
-        });
-
-        // Configure DRM if applicable
-        if (currentServer.type === 'drm' && keys) {
-          player.configure({
-            drm: { clearKeys: keys }
+        if (isHls && Hls.isSupported()) {
+          console.log('Using Hls.js to play HLS stream:', cleanUrl);
+          const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: true,
+            xhrSetup: (xhr, _url) => {
+              if (currentServer.header?.['user-agent']) {
+                xhr.setRequestHeader('User-Agent', currentServer.header['user-agent']);
+              }
+              if (currentServer.header?.referer) {
+                xhr.setRequestHeader('Referer', currentServer.header.referer);
+              }
+            }
           });
-        } else {
-          player.configure({ drm: { clearKeys: {} } });
-        }
+          hlsRef.current = hls;
 
-        await player.load(cleanUrl);
-        console.log('Stream loaded successfully:', currentServer.name);
+          hls.loadSource(cleanUrl);
+          hls.attachMedia(videoRef.current);
+
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            if (isPlaying) {
+              videoRef.current?.play().catch(err => {
+                console.warn('Autoplay prevented:', err);
+              });
+            }
+          });
+
+          let triedProxy = false;
+          hls.on(Hls.Events.ERROR, async (_event, data) => {
+            if (data.fatal) {
+              console.error('Fatal Hls.js Error:', data);
+              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                if (!triedProxy) {
+                  triedProxy = true;
+                  const proxied = getProxiedUrl(cleanUrl, true);
+                  console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
+                  hls.loadSource(proxied);
+                  hls.startLoad();
+                } else {
+                  setError('Failed to load stream. (Network Error via Proxy)');
+                }
+              } else {
+                setError(`Playback Error: ${data.details}`);
+              }
+            }
+          });
+
+        } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+          console.log('Using native Safari HLS playback:', cleanUrl);
+          videoRef.current.src = cleanUrl;
+          if (isPlaying) {
+            videoRef.current.play().catch(e => console.warn(e));
+          }
+        } else if (playerRef.current) {
+          console.log('Using Shaka Player:', cleanUrl);
+          const player = playerRef.current;
+          await player.attach(videoRef.current);
+          
+          player.getNetworkingEngine()?.clearAllRequestFilters();
+          player.getNetworkingEngine()?.registerRequestFilter((_type, request) => {
+            if (currentServer.header?.['user-agent']) {
+              request.headers['User-Agent'] = currentServer.header['user-agent'];
+            }
+            if (currentServer.header?.referer) {
+              request.headers['Referer'] = currentServer.header.referer;
+            }
+          });
+
+          if (currentServer.type === 'drm' && keys) {
+            player.configure({
+              drm: { clearKeys: keys }
+            });
+          } else {
+            player.configure({ drm: { clearKeys: {} } });
+          }
+
+          await player.load(cleanUrl);
+          console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+        } else {
+          setError('No compatible streaming engine found.');
+        }
       } catch (e: any) {
-        console.error('Shaka Load/Attach Error:', e);
+        console.error('Player Load/Attach Error:', e);
         
-        // Handle CORS Error 1002 with Auto Proxy Fallback
         if (e.code === 1002 || e.code === 1001) {
-          const proxiedUrl = getProxiedUrl(cleanUrl, true); // Force proxy on error
-          console.log('Attempting CORS Proxy Fallback for:', cleanUrl);
+          const proxiedUrl = getProxiedUrl(cleanUrl, true);
+          console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
           try {
-            await player.load(proxiedUrl);
+            if (playerRef.current) {
+              await playerRef.current.load(proxiedUrl);
+            }
             return;
           } catch (proxyError) {
             console.error('Proxy Fallback Failed:', proxyError);
           }
         }
 
-        // Ignore "Load interrupted" errors which happen during rapid switching
         if (e.code !== 7000) {
-          setError(`Failed to load stream. (Internal Code: ${e.code})`);
+          setError(`Failed to load stream. (Internal Code: ${e.code || 'UNKNOWN'})`);
         }
       }
     };

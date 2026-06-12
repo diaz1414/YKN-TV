@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Play, Calendar, Star, Settings, LogOut, Trophy, Globe, Zap } from 'lucide-react';
+import { Home, Play, Star, Settings, LogOut, Trophy, Globe, Zap } from 'lucide-react';
 
 const Sidebar = () => {
   return (
@@ -13,22 +13,22 @@ const Sidebar = () => {
 
       <nav className="flex-1 px-4 space-y-8">
         <div>
-          <p className="px-4 text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Menu</p>
+          <p className="px-4 text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Categories</p>
           <div className="space-y-1">
-            <SidebarLink icon={<Home size={20} />} label="Discover" active />
-            <SidebarLink icon={<Play size={20} />} label="Live Now" />
-            <SidebarLink icon={<Calendar size={20} />} label="Schedules" />
+            <SidebarLink icon={<Home size={20} />} label="Live Events" active />
+            <SidebarLink icon={<Zap size={20} />} label="beIN Sports" />
+            <SidebarLink icon={<Trophy size={20} />} label="SSC Sports" />
             <SidebarLink icon={<Star size={20} />} label="Favorites" />
           </div>
         </div>
 
         <div>
-          <p className="px-4 text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Leagues</p>
+          <p className="px-4 text-xs font-semibold text-white/30 uppercase tracking-wider mb-4">Top Leagues</p>
           <div className="space-y-1">
             <SidebarLink icon={<Trophy size={20} />} label="Premier League" />
             <SidebarLink icon={<Globe size={20} />} label="La Liga" />
-            <SidebarLink icon={<Zap size={20} />} label="Bundesliga" />
-            <SidebarLink icon={<Star size={20} />} label="Champions League" />
+            <SidebarLink icon={<Zap size={20} />} label="Champions League" />
+            <SidebarLink icon={<Star size={20} />} label="World Cup" />
           </div>
         </div>
       </nav>

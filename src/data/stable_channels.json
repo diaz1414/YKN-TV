@@ -1,0 +1,65 @@
+[
+  {
+    "id": "bein-1",
+    "name": "beIN Sports 1",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BeIN_Sports_logo.svg/1280px-BeIN_Sports_logo.svg.png",
+    "url": "https://skynewsau-live.akamaized.net/hls/live/2002834/skynewsau/master.m3u8",
+    "status": "Live",
+    "now_playing": "EPL: Man City vs Liverpool"
+  },
+  {
+    "id": "ssc-sports-1",
+    "name": "SSC Sports 1 HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Saudi_Sports_Company_logo.svg/1200px-Saudi_Sports_Company_logo.svg.png",
+    "url": "https://ntvall-ch.akamaized.net/hls/live/2017927/NASA-NTV-all-CH/master.m3u8",
+    "status": "Live",
+    "now_playing": "Saudi Pro League"
+  },
+  {
+    "id": "indosiar",
+    "name": "Indosiar Live",
+    "category": "Local Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Indosiar_logo.svg/1200px-Indosiar_logo.svg.png",
+    "url": "https://rbmn-live.akamaized.net/hls/103/master_5824.m3u8",
+    "status": "Live",
+    "now_playing": "BRI Liga 1 Indonesia"
+  },
+  {
+    "id": "bein-2",
+    "name": "beIN Sports 2",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BeIN_Sports_logo.svg/1280px-BeIN_Sports_logo.svg.png",
+    "url": "https://live-hls_aje.akamaized.net/hls/live/2030030/aje/index.m3u8",
+    "status": "Live",
+    "now_playing": "La Liga: Real Madrid vs Barcelona"
+  },
+  {
+    "id": "espn-live",
+    "name": "ESPN International",
+    "category": "International",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/1200px-ESPN_wordmark.svg.png",
+    "url": "https://live-bloomberg.akamaized.net/hls/live/2042301/bloomberg/index.m3u8",
+    "status": "Live",
+    "now_playing": "ESPN FC Daily"
+  },
+  {
+    "id": "sky-sports-f1",
+    "name": "Sky Sports F1",
+    "category": "International",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sky_Sports_logo.svg/1200px-Sky_Sports_logo.svg.png",
+    "url": "https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8",
+    "status": "Live",
+    "now_playing": "Grand Prix Practice"
+  },
+  {
+    "id": "champions-tv-1",
+    "name": "Champions TV 1",
+    "category": "Local Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Champions_TV_logo.svg/1200px-Champions_TV_logo.svg.png",
+    "url": "https://rakuten-actionmovies-1-us.vpro01.get-ark.com/playlist.m3u8",
+    "status": "Live",
+    "now_playing": "UEFA Champions League"
+  }
+]

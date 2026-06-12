@@ -41,3 +41,7 @@
 .animate-pulse-live {
   animation: pulse-live 2s infinite;
 }
+
+.italic-shadow {
+  text-shadow: 2px 2px 0px #00FF88, 4px 4px 0px rgba(0, 0, 0, 0.4);
+}

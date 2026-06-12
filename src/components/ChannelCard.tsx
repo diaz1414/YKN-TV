@@ -8,13 +8,13 @@ interface ChannelCardProps {
 
 const ChannelCard = ({ channel, onClick }: ChannelCardProps) => {
   return (
-    <div 
+    <div
       onClick={onClick}
       className="group bg-surface hover:bg-surface-hover border border-white/5 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/40 relative overflow-hidden"
     >
       {/* Accent Glow */}
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500" />
-      
+
       <div className="flex flex-col gap-6 relative z-10">
         <div className="flex justify-between items-start">
           <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center p-3 group-hover:scale-105 transition-transform">
