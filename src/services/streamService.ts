@@ -43,7 +43,8 @@ export const getProxiedUrl = (url: string, force = false) => {
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
   
   if (needsProxy) {
-    return `/api/proxy?url=${encodeURIComponent(url)}`;
+    const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
+    return `/api/proxy/${cleanUrl}`;
   }
   return url;
 };

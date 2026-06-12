@@ -12,13 +12,29 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { url } = req.query;
-  if (!url) {
+  // Parse path-based target URL
+  // req.url is like: /api/proxy/https/stitcher.pluto.tv/foo?token=123
+  const match = (req.url || '').match(/^\/api\/proxy\/(https?)\/(.+)$/);
+  if (!match) {
+    // Fallback to query parameter check just in case
+    const queryUrl = req.query.url;
+    if (queryUrl) {
+      await handleRequest(queryUrl, req, res);
+      return;
+    }
     res.statusCode = 400;
-    res.end('Missing url parameter');
+    res.end('Invalid proxy request format. Use /api/proxy/https/domain/path?query');
     return;
   }
 
+  const protocol = match[1];
+  const rest = match[2];
+  const targetUrlStr = `${protocol}://${rest}`;
+
+  await handleRequest(targetUrlStr, req, res);
+}
+
+async function handleRequest(url, req, res) {
   try {
     const targetUrl = new URL(url);
     const headers = {
@@ -49,7 +65,7 @@ export default async function handler(req, res) {
       const body = response.data;
       const proto = req.headers['x-forwarded-proto'] || 'http';
       const host = req.headers.host;
-      const proxyPrefix = `${proto}://${host}/api/proxy?url=`;
+      const proxyPrefix = `${proto}://${host}/api/proxy/`;
 
       const lines = body.split('\n');
       const rewrittenLines = lines.map(line => {
@@ -59,12 +75,14 @@ export default async function handler(req, res) {
         if (trimmed.startsWith('#')) {
           return line.replace(/URI="([^"]+)"/g, (_, p1) => {
             const resolved = new URL(p1, url).toString();
-            return `URI="${proxyPrefix}${encodeURIComponent(resolved)}"`;
+            const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
+            return `URI="${proxyPrefix}${cleanResolved}"`;
           });
         }
 
         const resolved = new URL(trimmed, url).toString();
-        return `${proxyPrefix}${encodeURIComponent(resolved)}`;
+        const cleanResolved = resolved.replace(/^(https?):\/\//, '$1/');
+        return `${proxyPrefix}${cleanResolved}`;
       });
 
       res.setHeader('Content-Type', response.headers['content-type'] || 'application/vnd.apple.mpegurl');
