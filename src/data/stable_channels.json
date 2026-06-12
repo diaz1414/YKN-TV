@@ -1,64 +1,136 @@
 [
   {
     "id": "bein-1",
-    "name": "beIN Sports 1",
+    "name": "beIN Sports XTRA",
     "category": "Premium Sports",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BeIN_Sports_logo.svg/1280px-BeIN_Sports_logo.svg.png",
-    "url": "https://skynewsau-live.akamaized.net/hls/live/2002834/skynewsau/master.m3u8",
+    "url": "https://bein-xtra-bein.amagi.tv/playlist.m3u8",
     "status": "Live",
-    "now_playing": "EPL: Man City vs Liverpool"
-  },
-  {
-    "id": "ssc-sports-1",
-    "name": "SSC Sports 1 HD",
-    "category": "Premium Sports",
-    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Saudi_Sports_Company_logo.svg/1200px-Saudi_Sports_Company_logo.svg.png",
-    "url": "https://ntvall-ch.akamaized.net/hls/live/2017927/NASA-NTV-all-CH/master.m3u8",
-    "status": "Live",
-    "now_playing": "Saudi Pro League"
-  },
-  {
-    "id": "indosiar",
-    "name": "Indosiar Live",
-    "category": "Local Sports",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Indosiar_logo.svg/1200px-Indosiar_logo.svg.png",
-    "url": "https://rbmn-live.akamaized.net/hls/103/master_5824.m3u8",
-    "status": "Live",
-    "now_playing": "BRI Liga 1 Indonesia"
+    "now_playing": "Football Live – beIN Sports"
   },
   {
     "id": "bein-2",
-    "name": "beIN Sports 2",
+    "name": "beIN Sports XTRA ES",
     "category": "Premium Sports",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BeIN_Sports_logo.svg/1280px-BeIN_Sports_logo.svg.png",
-    "url": "https://live-hls_aje.akamaized.net/hls/live/2030030/aje/index.m3u8",
+    "url": "https://dc1644a9jazgj.cloudfront.net/beIN_Sports_Xtra_Espanol.m3u8",
     "status": "Live",
-    "now_playing": "La Liga: Real Madrid vs Barcelona"
+    "now_playing": "La Liga – En Español"
+  },
+  {
+    "id": "alkass-1",
+    "name": "Alkass One HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Alkass_channel_logo.png/220px-Alkass_channel_logo.png",
+    "url": "https://liveeu-gcp.alkassdigital.net/alkass1-p/main.m3u8",
+    "status": "Live",
+    "now_playing": "Qatar League – Live"
+  },
+  {
+    "id": "alkass-2",
+    "name": "Alkass Two HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Alkass_channel_logo.png/220px-Alkass_channel_logo.png",
+    "url": "https://liveeu-gcp.alkassdigital.net/alkass2-p/main.m3u8",
+    "status": "Live",
+    "now_playing": "Champions League"
+  },
+  {
+    "id": "alkass-3",
+    "name": "Alkass Three HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Alkass_channel_logo.png/220px-Alkass_channel_logo.png",
+    "url": "https://liveeu-gcp.alkassdigital.net/alkass3-p/main.m3u8",
+    "status": "Live",
+    "now_playing": "Europa League"
+  },
+  {
+    "id": "alkass-4",
+    "name": "Alkass Four HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Alkass_channel_logo.png/220px-Alkass_channel_logo.png",
+    "url": "https://liveeu-gcp.alkassdigital.net/alkass4-p/main.m3u8",
+    "status": "Live",
+    "now_playing": "Premier League"
+  },
+  {
+    "id": "alkass-6",
+    "name": "Alkass Six HD",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Alkass_channel_logo.png/220px-Alkass_channel_logo.png",
+    "url": "https://liveeu-gcp.alkassdigital.net/alkass6-p/main.m3u8",
+    "status": "Live",
+    "now_playing": "La Liga – Live"
+  },
+  {
+    "id": "ssc-sports-1",
+    "name": "Bahrain Sports 1",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Saudi_Sports_Company_logo.svg/1200px-Saudi_Sports_Company_logo.svg.png",
+    "url": "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8",
+    "status": "Live",
+    "now_playing": "Gulf Football League"
+  },
+  {
+    "id": "dd-sports",
+    "name": "DD Sports India",
+    "category": "Premium Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Doordarshan_National_logo.svg/1200px-Doordarshan_National_logo.svg.png",
+    "url": "https://d3qs3d2rkhfqrt.cloudfront.net/out/v1/b17adfe543354fdd8d189b110617cddd/index.m3u8",
+    "status": "Live",
+    "now_playing": "ISL – Indian Super League"
+  },
+  {
+    "id": "al-jazeera-arabic",
+    "name": "Al Jazeera Arabic",
+    "category": "News & Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Aljazeera_Arabic.svg/1200px-Aljazeera_Arabic.svg.png",
+    "url": "https://live-hls-web-aja.getaj.net/AJA/index.m3u8",
+    "status": "Live",
+    "now_playing": "Al Jazeera Arabic Live"
+  },
+  {
+    "id": "france24-en",
+    "name": "France 24 English",
+    "category": "News & Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/France24_logo.png/1200px-France24_logo.png",
+    "url": "https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8",
+    "status": "Live",
+    "now_playing": "France 24 International"
+  },
+  {
+    "id": "dw-deutsch",
+    "name": "DW Deutsch TV",
+    "category": "International",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Deutsche_Welle_symbol_2012.svg/1200px-Deutsche_Welle_symbol_2012.svg.png",
+    "url": "https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8",
+    "status": "Live",
+    "now_playing": "DW Sports News"
+  },
+  {
+    "id": "indosiar",
+    "name": "Indosiar (Playlist)",
+    "category": "Local Sports",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Indosiar_logo.svg/1200px-Indosiar_logo.svg.png",
+    "url": "https://iptv-org.github.io/iptv/countries/id.m3u",
+    "status": "Live",
+    "now_playing": "BRI Liga 1 Indonesia"
   },
   {
     "id": "espn-live",
     "name": "ESPN International",
     "category": "International",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/1200px-ESPN_wordmark.svg.png",
-    "url": "https://live-bloomberg.akamaized.net/hls/live/2042301/bloomberg/index.m3u8",
+    "url": "https://iptv-org.github.io/iptv/categories/sports.m3u",
     "status": "Live",
-    "now_playing": "ESPN FC Daily"
-  },
-  {
-    "id": "sky-sports-f1",
-    "name": "Sky Sports F1",
-    "category": "International",
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sky_Sports_logo.svg/1200px-Sky_Sports_logo.svg.png",
-    "url": "https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8",
-    "status": "Live",
-    "now_playing": "Grand Prix Practice"
+    "now_playing": "ESPN FC Live"
   },
   {
     "id": "champions-tv-1",
     "name": "Champions TV 1",
     "category": "Local Sports",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Champions_TV_logo.svg/1200px-Champions_TV_logo.svg.png",
-    "url": "https://rakuten-actionmovies-1-us.vpro01.get-ark.com/playlist.m3u8",
+    "url": "https://africa24.vedge.infomaniak.com/livecast/ik:africa24sport/manifest.m3u8",
     "status": "Live",
     "now_playing": "UEFA Champions League"
   }

@@ -39,7 +39,7 @@ const CACHE_KEY = 'ykn_channels_cache';
 
 // Reliable CORS Proxy Helper
 export const getProxiedUrl = (url: string, force = false) => {
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru'];
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net'];
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
   
   if (needsProxy) {

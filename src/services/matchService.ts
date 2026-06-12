@@ -66,7 +66,7 @@ const getMockMatches = (): Match[] => [
     date: getTodayDateString(),
     status: 'live',
     score: '2 - 1',
-    channelId: 'bein-1'
+    channelId: 'alkass-4'
   },
   {
     id: 'mock-2',
@@ -85,7 +85,7 @@ const getMockMatches = (): Match[] => [
     time: '21:00',
     date: getTodayDateString(),
     status: 'upcoming',
-    channelId: 'bein-2'
+    channelId: 'alkass-6'
   },
   {
     id: 'mock-3',
@@ -123,8 +123,7 @@ const getMockMatches = (): Match[] => [
     },
     time: '15:30',
     date: getTodayDateString(),
-    status: 'finished',
-    score: '3 - 2',
+    status: 'upcoming',
     channelId: 'indosiar'
   }
 ];
@@ -139,20 +138,30 @@ export const getTodayMatches = async (): Promise<Match[]> => {
     const data = await response.json();
     
     if (data.events && data.events.length > 0) {
-      const channelRotation = ['bein-1', 'bein-2', 'ssc-sports-1', 'indosiar'];
+      const channelRotation = ['alkass-4', 'alkass-1', 'bein-1', 'bein-2', 'ssc-sports-1', 'alkass-3', 'alkass-6', 'indosiar'];
       
       const parsedMatches: Match[] = data.events.map((event: any, idx: number) => {
         let channelId = channelRotation[idx % channelRotation.length];
         const leagueName = (event.strLeague || '').toLowerCase();
         
         if (leagueName.includes('premier league')) {
-          channelId = 'bein-1';
+          channelId = 'alkass-4'; // Alkass Four HD
+        } else if (leagueName.includes('champions league') || leagueName.includes('ucl')) {
+          channelId = 'alkass-1'; // Alkass One
+        } else if (leagueName.includes('europa league')) {
+          channelId = 'alkass-3'; // Alkass Three
         } else if (leagueName.includes('la liga') || leagueName.includes('laliga')) {
-          channelId = 'bein-2';
-        } else if (leagueName.includes('saudi') || leagueName.includes('pro league')) {
-          channelId = 'ssc-sports-1';
+          channelId = 'alkass-6'; // Alkass Six
+        } else if (leagueName.includes('serie a') || leagueName.includes('italy')) {
+          channelId = 'bein-1'; // beIN Sports XTRA
+        } else if (leagueName.includes('bundesliga') || leagueName.includes('germany')) {
+          channelId = 'bein-2'; // beIN Sports XTRA ES
+        } else if (leagueName.includes('saudi') || leagueName.includes('gulf') || leagueName.includes('qatar')) {
+          channelId = 'ssc-sports-1'; // Bahrain Sports
         } else if (leagueName.includes('indonesia') || leagueName.includes('liga 1')) {
           channelId = 'indosiar';
+        } else if (leagueName.includes('india') || leagueName.includes('isl')) {
+          channelId = 'dd-sports';
         }
 
         const timeStr = event.strTime || '12:00:00';

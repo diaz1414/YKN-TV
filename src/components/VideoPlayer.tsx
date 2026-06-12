@@ -116,7 +116,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       if (!currentServer || !videoRef.current) return;
 
       const { cleanUrl, keys } = parseDrmInfo(currentServer.url);
-      const isHls = cleanUrl.includes('.m3u8') || cleanUrl.includes('m3u8');
+      
+      // Auto-proxy restricted domains immediately (don't wait for error)
+      const autoProxiedUrl = getProxiedUrl(cleanUrl);
+      const streamUrl = autoProxiedUrl;
+      
+      const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
       
       setError(null);
       setLevels([]);
@@ -125,7 +130,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       try {
         if (isHls && Hls.isSupported()) {
-          console.log('Using Hls.js to play HLS stream:', cleanUrl);
+          console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
             lowLatencyMode: true,
@@ -140,7 +145,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           });
           hlsRef.current = hls;
 
-          hls.loadSource(cleanUrl);
+          hls.loadSource(streamUrl);
           hls.attachMedia(videoRef.current);
 
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -167,7 +172,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                   const proxied = getProxiedUrl(cleanUrl, true);
                   console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
                   hls.loadSource(proxied);
-                  hls.startLoad();
+                  hls.startLoad(); // Already using proxy if streamUrl != cleanUrl
                 } else {
                   setError('Failed to load stream. (Network Error via Proxy)');
                 }
@@ -178,13 +183,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           });
 
         } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-          console.log('Using native Safari HLS playback:', cleanUrl);
-          videoRef.current.src = cleanUrl;
+          console.log('Using native Safari HLS playback:', streamUrl);
+          videoRef.current.src = streamUrl;
           if (isPlaying) {
             videoRef.current.play().catch(e => console.warn(e));
           }
         } else if (playerRef.current) {
-          console.log('Using Shaka Player:', cleanUrl);
+          console.log('Using Shaka Player:', streamUrl);
           const player = playerRef.current;
           await player.attach(videoRef.current);
           
@@ -206,7 +211,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          await player.load(cleanUrl);
+          await player.load(streamUrl);
           console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
 
           // Get variant tracks for quality settings
