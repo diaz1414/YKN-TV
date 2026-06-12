@@ -71,7 +71,8 @@ const dynamicCorsProxyPlugin = () => ({
             if (!trimmed) return line;
 
             if (trimmed.startsWith('#')) {
-              return line.replace(/URI="([^"]+)"/g, (match, p1) => {
+              // Rename match to _ to prevent unused variable warnings
+              return line.replace(/URI="([^"]+)"/g, (_, p1) => {
                 const resolved = new URL(p1, url).toString();
                 return `URI="${proxyPrefix}${encodeURIComponent(resolved)}"`;
               });
