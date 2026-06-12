@@ -1,6 +1,6 @@
-const axios = require('axios');
+import axios from 'axios';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -57,7 +57,6 @@ module.exports = async (req, res) => {
         if (!trimmed) return line;
 
         if (trimmed.startsWith('#')) {
-          // Rename unused match parameter to _ to prevent warnings
           return line.replace(/URI="([^"]+)"/g, (_, p1) => {
             const resolved = new URL(p1, url).toString();
             return `URI="${proxyPrefix}${encodeURIComponent(resolved)}"`;
@@ -106,4 +105,4 @@ module.exports = async (req, res) => {
     res.statusCode = 500;
     res.end(`Proxy error: ${err.message}`);
   }
-};
+}
