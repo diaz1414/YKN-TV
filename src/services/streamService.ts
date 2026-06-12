@@ -39,12 +39,13 @@ const CACHE_KEY = 'ykn_channels_cache';
 
 // Reliable CORS Proxy Helper
 export const getProxiedUrl = (url: string, force = false) => {
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'm3u8'];
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru'];
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
   
   if (needsProxy) {
+    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || '/api/proxy';
     const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
-    return `/api/proxy/${cleanUrl}`;
+    return `${proxyBase}/${cleanUrl}`;
   }
   return url;
 };
