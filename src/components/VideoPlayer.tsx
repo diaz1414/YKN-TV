@@ -120,7 +120,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             console.warn('Orientation lock failed:', err);
           });
         }
-        // CSS fallback for iOS Safari (no API support)
+        // CSS fallback for iOS Safari (no API support )
         document.body.classList.add('ykn-fullscreen-active');
       } else {
         const orientation = screen.orientation as any;
