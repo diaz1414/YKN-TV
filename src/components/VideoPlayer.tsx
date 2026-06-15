@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
-  Server, Shield, Play, Pause, Info, AlertTriangle, Globe,
-  RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, Trophy
+  Server, Shield, Play, Pause, AlertTriangle,
+  RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, PictureInPicture2
 } from 'lucide-react';
 import { getProxiedUrl, type StreamServer } from '../services/streamService';
 
@@ -24,7 +24,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   // Custom Controls State
@@ -555,14 +555,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             </div>
 
             <div className="flex items-center gap-1.5 sm:gap-2.5">
-              {/* Compliance / Spec details popup */}
-              <button
-                onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
-                className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer"
-                title="Spesifikasi Siaran"
-              >
-                <Info size={14} />
-              </button>
+              {/* Picture-in-Picture toggle */}
+              {document.pictureInPictureEnabled && (
+                <button
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (!videoRef.current) return;
+                    try {
+                      if (document.pictureInPictureElement) {
+                        await document.exitPictureInPicture();
+                      } else {
+                        await videoRef.current.requestPictureInPicture();
+                      }
+                    } catch (err) {
+                      console.warn('PiP failed:', err);
+                    }
+                  }}
+                  className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer"
+                  title="Picture-in-Picture"
+                >
+                  <PictureInPicture2 size={14} />
+                </button>
+              )}
 
               {/* Video Resolution list */}
               {levels.length > 1 && (
@@ -620,68 +634,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           </div>
         )}
 
-        {/* About YKN TV info view overlay */}
-        {showInfo && (
-          <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md p-6 md:p-8 z-40 flex flex-col justify-between animate-in fade-in duration-200 select-none rounded-2xl sm:rounded-[1.5rem]">
-            <div>
-              <div className="flex justify-between items-center mb-5 text-white">
-                <h4 className="text-base font-black font-display uppercase tracking-wider flex items-center gap-2">
-                  <Trophy size={16} className="text-primary fill-primary/10" />
-                  Tentang YKN TV
-                </h4>
-                <button onClick={() => setShowInfo(false)} className="text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-wider border border-white/5 px-2.5 py-1.5 bg-white/5 rounded-xl cursor-pointer">Tutup</button>
-              </div>
 
-              <div className="space-y-4 text-xs">
-                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                  <p className="font-bold text-zinc-200 leading-relaxed">
-                    <span className="text-primary font-black">YKN TV</span> adalah platform streaming digital premium yang dirancang khusus untuk menyajikan siaran langsung turnamen sepak bola kelas dunia dan berbagai saluran hiburan berkualitas tinggi secara stabil dan tanpa gangguan.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Ultra HD Stream</h5>
-                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Kualitas video jernih hingga 1080p dengan kompresi data efisien.</p>
-                  </div>
-                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Low Latency</h5>
-                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Latensi minimum untuk meminimalkan keterlambatan tayangan dari live event.</p>
-                  </div>
-                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Multi-Route Backup</h5>
-                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Cadangan server alternatif untuk menjamin kelancaran siaran Anda.</p>
-                  </div>
-                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Secure Protocol</h5>
-                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Protokol keamanan mutakhir untuk melindungi kestabilan siaran.</p>
-                  </div>
-                </div>
-
-                {/* INTEGRASI COMPONENT INFOITEM (MEMPERBAIKI ERROR TS) */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <InfoItem
-                    icon={<Server size={10} />}
-                    label="Nama Server"
-                    value={currentServer.name}
-                  />
-                  <InfoItem
-                    icon={<Globe size={10} />}
-                    label="Tipe Protokol"
-                    value={currentServer.type.toUpperCase() || 'DIRECT'}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3.5 bg-primary/10 border border-primary/20 rounded-xl flex items-start gap-2.5 mt-4">
-              <Shield className="text-primary shrink-0 mt-0.5" size={14} />
-              <p className="text-[9px] text-zinc-400 leading-relaxed font-bold">
-                Layanan ini dioptimalkan sepenuhnya untuk seluruh peramban modern di desktop maupun perangkat mobile. Selamat menikmati pertandingan!
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Buffering Overlay */}
         {isBuffering && !error && (
@@ -692,7 +645,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
 
         {/* Solid Play button display before start */}
-        {!hasStarted && !showInfo && !error && (
+        {!hasStarted && !error && (
           <div className="absolute inset-0 bg-[#090909] flex flex-col items-center justify-center gap-6 z-20 select-none">
             <div
               className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black hover:scale-105 transition-all cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]"
@@ -769,17 +722,5 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     </div>
   );
 };
-
-const InfoItem = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-  <div className="space-y-1">
-    <div className="flex items-center gap-2 text-zinc-500 text-[9px] font-black uppercase tracking-wider">
-      {icon}
-      {label}
-    </div>
-    <div className="bg-white/5 p-3 rounded-xl border border-white/5 font-mono text-[10px] break-all leading-relaxed text-zinc-300 font-bold shrink-0">
-      {value}
-    </div>
-  </div>
-);
 
 export default VideoPlayer;
