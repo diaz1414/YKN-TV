@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Trophy, Tv, Home, Award, Calendar, Menu, X } from 'lucide-react';
+import { Search, Tv, Home, Award, Calendar, Menu, X } from 'lucide-react';
 import { getTodayMatches, type Match } from '../services/matchService';
+import yknwcLogo from '../assets/yknwc-logo.png';
 
 
 interface MainLayoutProps {
@@ -136,9 +137,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             onClick={() => navigate('/')}
             className="flex items-center gap-2.5 cursor-pointer select-none group"
           >
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-dark shadow-lg shadow-primary/10 group-hover:scale-105 transition-transform duration-300">
-              <Trophy size={16} className="md:w-5 md:h-5 text-black fill-black" />
-            </div>
+            <img
+              src={yknwcLogo}
+              alt="YKN TV Logo"
+              className="w-9 h-9 md:w-11 md:h-11 object-contain rounded-xl shadow-lg shadow-primary/10 group-hover:scale-105 transition-transform duration-300"
+            />
             <div>
               <span className="text-lg md:text-2xl font-black tracking-tighter uppercase font-display italic">
                 YKN <span className="text-primary">TV</span>
