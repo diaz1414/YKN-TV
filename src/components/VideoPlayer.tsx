@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
-  Server, Shield, Play, Pause, Info, AlertTriangle, Monitor, Globe,
+  Server, Shield, Play, Pause, Info, AlertTriangle, Globe,
   RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, Trophy
 } from 'lucide-react';
 import { getProxiedUrl, type StreamServer } from '../services/streamService';
@@ -434,8 +434,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       <div
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${isFullscreen
-            ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]'
-            : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
+          ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]'
+          : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
           } ${showControls ? '' : 'cursor-none'}`}
       >
         <video
@@ -512,8 +512,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 <button
                   onClick={seekToLiveEdge}
                   className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer ${isAtLiveEdge
-                      ? 'bg-red-500/10 border border-red-500/20 text-red-500 shadow-[0_0_8px_rgba(239,68,68,0.15)] animate-pulse'
-                      : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-500 hover:border-red-500/30'
+                    ? 'bg-red-500/10 border border-red-500/20 text-red-500 shadow-[0_0_8px_rgba(239,68,68,0.15)] animate-pulse'
+                    : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-500 hover:border-red-500/30'
                     }`}
                   title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
                 >
@@ -554,8 +554,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                           key={level.index}
                           onClick={() => handleLevelChange(level.index)}
                           className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${currentLevel === level.index
-                              ? 'bg-primary text-dark font-black shadow-md'
-                              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-primary text-dark font-black shadow-md'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
                             }`}
                         >
                           {level.label}
@@ -630,10 +630,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     <p className="text-[10px] text-zinc-400 font-bold leading-normal">Protokol keamanan mutakhir untuk melindungi kestabilan siaran.</p>
                   </div>
                 </div>
+
+                {/* INTEGRASI COMPONENT INFOITEM (MEMPERBAIKI ERROR TS) */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <InfoItem
+                    icon={<Server size={10} />}
+                    label="Nama Server"
+                    value={currentServer.name}
+                  />
+                  <InfoItem
+                    icon={<Globe size={10} />}
+                    label="Tipe Protokol"
+                    value={currentServer.type.toUpperCase() || 'DIRECT'}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="p-3.5 bg-primary/10 border border-primary/20 rounded-xl flex items-start gap-2.5">
+            <div className="p-3.5 bg-primary/10 border border-primary/20 rounded-xl flex items-start gap-2.5 mt-4">
               <Shield className="text-primary shrink-0 mt-0.5" size={14} />
               <p className="text-[9px] text-zinc-400 leading-relaxed font-bold">
                 Layanan ini dioptimalkan sepenuhnya untuk seluruh peramban modern di desktop maupun perangkat mobile. Selamat menikmati pertandingan!
@@ -713,8 +727,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setIsAtLiveEdge(true);
               }}
               className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer ${currentServer.url === server.url
-                  ? 'bg-primary text-dark shadow-md'
-                  : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
+                ? 'bg-primary text-dark shadow-md'
+                : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
                 }`}
             >
               <span className="relative z-10">{server.name}</span>
