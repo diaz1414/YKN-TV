@@ -112,17 +112,32 @@ const getWcScore = (player1: string, game: any) => {
 
 export const getTodayMatches = async (): Promise<Match[]> => {
   try {
-    const [eventsRes, gamesRes] = await Promise.all([
-      fetch('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat')
-        .then(r => r.json())
-        .catch(() => localEvents),
-      fetch('https://worldcup26.ir/get/games')
-        .then(r => r.json())
-        .catch(() => null)
-    ]);
+    let eventsData: any[] = [];
+    try {
+      const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
+      const res = await fetch(`${BOT_API_URL}/api/sports/events`);
+      eventsData = await res.json();
+    } catch (botErr) {
+      console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat');
+        eventsData = await res.json();
+      } catch (githubErr) {
+        console.warn('Failed to fetch events from GitHub, falling back to local JSON data...', githubErr);
+        eventsData = localEvents;
+      }
+    }
 
-    const eventsData = eventsRes || [];
-    const wcGames = (gamesRes && gamesRes.games) ? gamesRes.games : [];
+    let wcGames: any[] = [];
+    try {
+      const res = await fetch('https://worldcup26.ir/get/games');
+      const json = await res.json();
+      if (json && json.games) {
+        wcGames = json.games;
+      }
+    } catch (wcErr) {
+      console.warn('Failed to fetch World Cup games scores', wcErr);
+    }
 
     if (eventsData.length > 0) {
       const parsedMatches: Match[] = eventsData.map((event: any) => {

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Trophy, Tv, Home, Award, Calendar } from 'lucide-react';
+import { getTodayMatches, type Match } from '../services/matchService';
+
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -9,18 +11,83 @@ interface MainLayoutProps {
   searchValue?: string;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ 
-  children, 
-  searchPlaceholder = "Cari saluran...", 
+const MainLayout: React.FC<MainLayoutProps> = ({
+  children,
+  searchPlaceholder = "Cari saluran...",
   onSearchChange,
-  searchValue = "" 
+  searchValue = ""
 }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const activeTab = searchParams.get('tab') || 'home';
   const isWatchPage = location.pathname.startsWith('/watch/');
+
+  const [activeMatch, setActiveMatch] = useState<Match | null>(null);
+
+  useEffect(() => {
+    const fetchLiveMatch = async () => {
+      try {
+        const matches = await getTodayMatches();
+        if (matches && matches.length > 0) {
+          // Priority 1: Match that is currently live
+          const live = matches.find(m => m.status === 'live');
+          if (live) {
+            setActiveMatch(live);
+            return;
+          }
+          // Priority 2: Upcoming match
+          const upcoming = matches.find(m => m.status === 'upcoming');
+          if (upcoming) {
+            setActiveMatch(upcoming);
+            return;
+          }
+          // Priority 3: First match
+          setActiveMatch(matches[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching live match for badge:', err);
+      }
+    };
+
+    fetchLiveMatch();
+    const interval = setInterval(fetchLiveMatch, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getTeamAbbreviation = (name: string): string => {
+    if (!name) return 'TBD';
+    if (name.length <= 4) return name.toUpperCase();
+    const mapping: Record<string, string> = {
+      'spain': 'ESP',
+      'cabo verde': 'CPV',
+      'cape verde': 'CPV',
+      'brazil': 'BRA',
+      'morocco': 'MAR',
+      'argentina': 'ARG',
+      'germany': 'GER',
+      'france': 'FRA',
+      'england': 'ENG',
+      'portugal': 'POR',
+      'italy': 'ITA',
+      'netherlands': 'NED',
+      'belgium': 'BEL',
+      'croatia': 'CRO',
+      'uruguay': 'URU',
+      'senegal': 'SEN',
+      'colombia': 'COL',
+      'mexico': 'MEX',
+      'usa': 'USA',
+      'canada': 'CAN',
+      'japan': 'JPN',
+      'korea': 'KOR',
+      'saudi arabia': 'KSA',
+    };
+    const lower = name.toLowerCase().trim();
+    if (mapping[lower]) return mapping[lower];
+    return name.substring(0, 3).toUpperCase();
+  };
 
   const handleTabChange = (tab: string) => {
     if (tab === 'home') {
@@ -32,26 +99,26 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
   const getActiveTabClass = (tab: string) => {
     const isActive = activeTab === tab && !isWatchPage;
-    return isActive 
-      ? 'text-primary font-black scale-105 border-b-2 border-primary pb-1' 
+    return isActive
+      ? 'text-primary font-black scale-105 border-b-2 border-primary pb-1'
       : 'text-zinc-400 hover:text-white transition-all font-semibold';
   };
 
   const getMobileTabClass = (tab: string) => {
     const isActive = activeTab === tab && !isWatchPage;
-    return isActive 
-      ? 'text-primary scale-110 font-bold' 
+    return isActive
+      ? 'text-primary scale-110 font-bold'
       : 'text-zinc-500 hover:text-zinc-300';
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent text-white flex flex-col font-sans">
       {/* Top Header Navbar - Glassmorphism */}
       <header className="h-16 md:h-20 glass border-b border-white/5 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#020202]/80 backdrop-blur-xl z-50">
         <div className="flex items-center gap-6 md:gap-8">
           {/* Logo YKN TV */}
-          <div 
-            onClick={() => navigate('/')} 
+          <div
+            onClick={() => navigate('/')}
             className="flex items-center gap-2.5 cursor-pointer select-none group"
           >
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-dark shadow-lg shadow-primary/10 group-hover:scale-105 transition-transform duration-300">
@@ -61,7 +128,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               <span className="text-lg md:text-2xl font-black tracking-tighter uppercase font-display italic">
                 YKN <span className="text-primary">TV</span>
               </span>
-              <span className="hidden sm:inline-block ml-2 text-[9px] bg-netflix-red text-white font-black px-1.5 py-0.5 rounded tracking-widest uppercase">
+              <span className="hidden sm:inline-block ml-2 text-[9px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                 WC 2026
               </span>
             </div>
@@ -69,21 +136,21 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <button 
+            <button
               onClick={() => handleTabChange('home')}
               className={`${getActiveTabClass('home')} cursor-pointer flex items-center gap-1.5`}
             >
               <Calendar size={14} />
               Jadwal
             </button>
-            <button 
+            <button
               onClick={() => handleTabChange('channels')}
               className={`${getActiveTabClass('channels')} cursor-pointer flex items-center gap-1.5`}
             >
               <Tv size={14} />
               Saluran TV
             </button>
-            <button 
+            <button
               onClick={() => handleTabChange('standings')}
               className={`${getActiveTabClass('standings')} cursor-pointer flex items-center gap-1.5`}
             >
@@ -99,9 +166,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {onSearchChange && (
             <div className="hidden md:flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-64 focus-within:border-primary/40 focus-within:bg-white/[0.05] transition-all">
               <Search size={16} className="text-zinc-500" />
-              <input 
-                type="text" 
-                placeholder={searchPlaceholder} 
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-600"
@@ -109,16 +176,58 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             </div>
           )}
 
-          {/* Profile Badge */}
-          <div className="flex items-center gap-2.5 pl-4 md:border-l border-white/10 group cursor-pointer select-none">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-white group-hover:text-primary transition-colors">Diaz Ngoding</p>
-              <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Premium Fan</p>
+          {/*Live Streaming Info Match Badge */}
+          {activeMatch && (
+            <div
+              onClick={() => {
+                if (activeMatch.channelId || activeMatch.id) {
+                  navigate(`/watch/${activeMatch.channelId || activeMatch.id}`);
+                }
+              }}
+              className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300"
+            >
+              {/* Indikator Live Berkedip / Upcoming status */}
+              <div className="relative flex h-2 w-2">
+                {activeMatch.status === 'live' ? (
+                  <>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </>
+                ) : activeMatch.status === 'finished' ? (
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
+                ) : (
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                )}
+              </div>
+
+              {/* Info Match yang lagi hot */}
+              <div className="text-right block">
+                <p className="text-[8px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                  {activeMatch.status === 'live'
+                    ? 'Sedang Berlangsung'
+                    : activeMatch.status === 'finished'
+                    ? 'Selesai'
+                    : 'Akan Datang'}
+                </p>
+                <p className="text-[10px] sm:text-xs font-black text-white group-hover:text-amber-400 transition-colors">
+                  {getTeamAbbreviation(activeMatch.homeTeam.name)}{' '}
+                  <span className="text-amber-400">
+                    {activeMatch.status === 'live' || activeMatch.status === 'finished'
+                      ? activeMatch.score || 'vs'
+                      : 'vs'}
+                  </span>{' '}
+                  {getTeamAbbreviation(activeMatch.awayTeam.name)}
+                </p>
+              </div>
+
+              {/* Tombol Tonton Langsung */}
+              <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-dark shadow-lg group-hover:scale-105 transition-transform duration-300">
+                <svg className="w-4 h-4 fill-black translate-x-[1px]" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
             </div>
-            <div className="w-8 h-8 md:w-9 md:h-9 bg-gradient-to-tr from-primary to-emerald-500 rounded-xl flex items-center justify-center font-black text-dark text-xs md:text-sm shadow-md group-hover:scale-105 transition-transform duration-300">
-              DN
-            </div>
-          </div>
+          )}
         </div>
       </header>
 
@@ -129,7 +238,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
       {/* Mobile Sticky Bottom Navigation Bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#020202]/95 border-t border-white/5 backdrop-blur-xl z-50 flex items-center justify-around px-2 select-none shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
-        <button 
+        <button
           onClick={() => handleTabChange('home')}
           className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('home')}`}
         >
@@ -137,7 +246,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <span className="text-[9px] font-black uppercase tracking-wider">Jadwal</span>
         </button>
 
-        <button 
+        <button
           onClick={() => handleTabChange('channels')}
           className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('channels')}`}
         >
@@ -145,7 +254,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <span className="text-[9px] font-black uppercase tracking-wider">Saluran</span>
         </button>
 
-        <button 
+        <button
           onClick={() => handleTabChange('standings')}
           className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('standings')}`}
         >

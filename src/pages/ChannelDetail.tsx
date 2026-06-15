@@ -74,7 +74,7 @@ const ChannelDetail = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 pb-10">
+      <div className="max-w-[1440px] mx-auto w-full space-y-6 md:space-y-8 pb-10 px-2 sm:px-4">
         
         {/* Header Breadcrumbs & Controls */}
         <div className="flex items-center justify-between">

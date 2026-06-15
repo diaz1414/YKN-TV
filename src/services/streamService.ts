@@ -133,31 +133,31 @@ export const getLiveSportsData = async (): Promise<{
   let liveData: ChannelEvent[] = [];
 
   try {
-    // 1. Primary Source: Fetch from external Github configurations
+    // 1. Primary Source: Fetch from the bot's API endpoints
+    const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
     const [eventsRes, sportsRes, liveRes] = await Promise.all([
-      axios.get<MatchEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat'),
-      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat'),
-      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat')
+      axios.get<MatchEvent[]>(`${BOT_API_URL}/api/sports/events`),
+      axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/tv`),
+      axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/hiburan`)
     ]);
     eventsData = eventsRes.data;
     sportsData = sportsRes.data;
     liveData = liveRes.data;
-  } catch (githubErr) {
-    console.warn('Failed to fetch from Github source, trying Bot API fallback...', githubErr);
+  } catch (botErr) {
+    console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
     
-    // 2. First Fallback (Backup): Fetch from the bot's API endpoints
-    const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
+    // 2. First Fallback (Backup): Fetch from external GitHub configurations
     try {
       const [eventsRes, sportsRes, liveRes] = await Promise.all([
-        axios.get<MatchEvent[]>(`${BOT_API_URL}/api/sports/events`),
-        axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/tv`),
-        axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/hiburan`)
+        axios.get<MatchEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat'),
+        axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat'),
+        axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat')
       ]);
       eventsData = eventsRes.data;
       sportsData = sportsRes.data;
       liveData = liveRes.data;
-    } catch (botErr) {
-      console.warn('Failed to fetch from Bot API, falling back to local JSON data...', botErr);
+    } catch (githubErr) {
+      console.warn('Failed to fetch from GitHub source, falling back to local JSON data...', githubErr);
       
       // 3. Second Fallback (Final Backup): Use local imported JSON files
       eventsData = backupEvents as MatchEvent[];

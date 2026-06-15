@@ -15,10 +15,10 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 ${
+      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-lg ${
         isLive 
-          ? 'bg-primary/5 border-primary/25 shadow-lg shadow-primary/5' 
-          : 'bg-[#080808]/40 border-white/5 hover:border-white/10'
+          ? 'bg-primary/[0.12] border-primary/45 shadow-lg shadow-primary/5' 
+          : 'bg-zinc-950/90 border-white/10 hover:border-white/20'
       }`}
     >
       {/* Accent Glow for Live */}

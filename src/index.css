@@ -3,7 +3,8 @@
 @theme {
   --color-primary: #D4AF37;
   --color-gold: #D4AF37;
-  --color-emerald: #059669;
+  --color-emerald: #10B981;
+  --color-brand-purple: #4f46e5;
   --color-netflix-red: #E50914;
   --color-dark: #020202;
   --color-surface: #080808;
@@ -16,32 +17,79 @@
 @layer base {
   body {
     @apply bg-[#020202] text-white font-sans antialiased selection:bg-primary selection:text-dark;
+    background-image: 
+      linear-gradient(to bottom, rgba(2, 2, 2, 0.55) 0%, rgba(2, 2, 2, 0.75) 100%),
+      url('./assets/banner2.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/[0.02] backdrop-blur-xl border border-white/5;
+    @apply bg-black/40 backdrop-blur-xl border border-white/5;
   }
   
   .glass-card {
-    @apply bg-white/[0.02] backdrop-blur-md border border-white/5 shadow-2xl;
+    background-color: rgba(8, 8, 8, 0.88) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+    transition: border-color 0.3s;
+  }
+
+  .glass-card:hover::before {
+    border-color: rgba(255, 255, 255, 0.15);
   }
   
   .glass-card-hover {
-    @apply hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300;
+    transition: all 0.3s;
+  }
+  .glass-card-hover:hover {
+    background-color: rgba(18, 18, 18, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
   }
 
   .glow-gold {
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.08);
   }
 
   .glow-emerald {
-    box-shadow: 0 0 20px rgba(5, 150, 105, 0.15);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.08);
   }
 
-  .glow-red {
-    box-shadow: 0 0 20px rgba(229, 9, 20, 0.15);
+  .glow-purple {
+    box-shadow: 0 0 30px rgba(79, 70, 229, 0.08);
+  }
+  
+  .text-gradient-gold {
+    background: linear-gradient(to right, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.15em;
+    filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
+  }
+
+  .text-gradient-emerald {
+    background: linear-gradient(to right, #34D399 0%, #10B981 50%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-right: 0.1em;
   }
   
   .scrollbar-hide::-webkit-scrollbar {
@@ -62,19 +110,55 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.15);
   }
+
+  /* Looping flag marquee animation */
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 45s linear infinite;
+  }
+  
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }
 
 /* Custom Animations */
 @keyframes pulse-live {
-  0% { transform: scale(0.95); opacity: 0.6; }
+  0% { transform: scale(0.95); opacity: 0.7; }
   50% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.6; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-pulse-live {
-  animation: pulse-live 2s infinite;
+  animation: pulse-live 2.2s infinite ease-in-out;
 }
 
 .italic-shadow {
-  text-shadow: 2px 2px 0px #D4AF37, 4px 4px 0px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 0px #D4AF37, 4px 4px 8px rgba(0, 0, 0, 0.8);
+}
+
+.glow-card-wc {
+  position: relative;
+}
+.glow-card-wc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.4), rgba(16, 185, 129, 0.2), rgba(212, 175, 55, 0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }

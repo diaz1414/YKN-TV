@@ -10,7 +10,7 @@ const ChannelCard = ({ stream, onClick }: ChannelCardProps) => {
   return (
     <div
       onClick={onClick}
-      className="group bg-[#080808]/40 hover:bg-[#121212]/50 border border-white/5 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden"
+      className="group bg-zinc-950/90 backdrop-blur-lg hover:bg-zinc-900/95 border border-white/10 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden shadow-xl"
     >
       {/* Gold Accent Glow */}
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500" />

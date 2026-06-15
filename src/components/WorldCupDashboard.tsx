@@ -676,7 +676,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
 
       {/* Left Column: Group Standings */}
       <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-        <div className="bg-white/[0.02] border border-white/5 p-5 md:p-8 rounded-3xl backdrop-blur-md shadow-xl">
+        <div className="bg-zinc-950/90 border border-white/10 p-5 md:p-8 rounded-3xl backdrop-blur-xl shadow-xl">
           <div className="flex flex-col gap-6 mb-6">
             <div className="flex items-center justify-between">
               <div>
@@ -827,7 +827,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
 
       {/* Right Column: Recent Results & Match Scores */}
       <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-        <div className="bg-white/[0.02] border border-white/5 p-5 md:p-8 rounded-3xl backdrop-blur-md shadow-xl flex flex-col h-full">
+        <div className="bg-zinc-950/90 border border-white/10 p-5 md:p-8 rounded-3xl backdrop-blur-xl shadow-xl flex flex-col h-full">
           <div className="mb-6">
             <h3 className="text-lg md:text-xl font-black font-display uppercase tracking-wider text-white flex items-center gap-2 select-none">
               <Clock className="text-primary w-5 h-5" />

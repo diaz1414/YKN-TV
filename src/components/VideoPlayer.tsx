@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
-import { 
-  Server, Shield, Play, Pause, Info, AlertTriangle, Monitor, Globe, 
-  RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings 
+import {
+  Server, Shield, Play, Pause, Info, AlertTriangle, Monitor, Globe,
+  RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, Trophy
 } from 'lucide-react';
 import { getProxiedUrl, type StreamServer } from '../services/streamService';
 
@@ -21,7 +21,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
-  
+
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -38,12 +38,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [levels, setLevels] = useState<QualityOption[]>([]);
   const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
   const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
 
   // Sync current server if servers list changes
   useEffect(() => {
     if (servers.length > 0) {
       setCurrentServer(servers[0]);
       setIsPlaying(false);
+      setHasStarted(false);
+      setIsBuffering(false);
+      setIsAtLiveEdge(true);
     }
   }, [servers]);
 
@@ -52,7 +58,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     if (server.keyId && server.key) {
       return { [server.keyId.trim()]: server.key.trim() };
     }
-    
+
     // Fallback: Check for key parameters appended with '|' inside the URL
     const [, drmString] = server.url.split('|');
     if (!drmString) return null;
@@ -123,12 +129,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       const rawUrl = cleanStreamUrl(currentServer.url);
       const keys = getDrmKeys(currentServer);
-      
+
       const autoProxiedUrl = getProxiedUrl(rawUrl);
       const streamUrl = autoProxiedUrl;
-      
+
       const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
-      
+
       setError(null);
       setLevels([]);
       setCurrentLevel('auto');
@@ -190,7 +196,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using Shaka Player:', streamUrl);
           const player = playerRef.current;
           await player.attach(videoRef.current);
-          
+
           player.getNetworkingEngine()?.clearAllRequestFilters();
 
           if (keys) {
@@ -229,7 +235,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       } catch (e: any) {
         console.error('Player Load/Attach Error:', e);
-        
+
         if (e.code === 1002 || e.code === 1001) {
           const proxiedUrl = getProxiedUrl(rawUrl, true);
           console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
@@ -340,12 +346,51 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const seekToLiveEdge = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current || !isLive) return;
+
+    try {
+      if (playerRef.current) {
+        const seekRange = playerRef.current.seekRange();
+        videoRef.current.currentTime = seekRange.end - 1;
+      } else {
+        const seekable = videoRef.current.seekable;
+        if (seekable && seekable.length > 0) {
+          videoRef.current.currentTime = seekable.end(seekable.length - 1) - 1;
+        } else if (videoRef.current.duration && isFinite(videoRef.current.duration)) {
+          videoRef.current.currentTime = videoRef.current.duration - 1;
+        }
+      }
+      setIsAtLiveEdge(true);
+    } catch (err) {
+      console.warn('Seek to live edge failed:', err);
+    }
+  };
+
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
+      const cur = videoRef.current.currentTime;
+      setCurrentTime(cur);
       const dur = videoRef.current.duration;
       if (dur === Infinity || isNaN(dur) || dur <= 0) {
         setIsLive(true);
+        // Calculate delay
+        let liveEnd = 0;
+        if (playerRef.current) {
+          liveEnd = playerRef.current.seekRange().end;
+        } else {
+          const seekable = videoRef.current.seekable;
+          if (seekable && seekable.length > 0) {
+            liveEnd = seekable.end(seekable.length - 1);
+          }
+        }
+        if (liveEnd > 0) {
+          const delay = liveEnd - cur;
+          setIsAtLiveEdge(delay <= 10); // Synced if delay is 10 seconds or less
+        } else {
+          setIsAtLiveEdge(true);
+        }
       } else {
         setIsLive(false);
         setDuration(dur);
@@ -364,7 +409,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const handleLevelChange = (levelIdx: number | 'auto') => {
     setCurrentLevel(levelIdx);
     setShowQualityMenu(false);
-    
+
     if (hlsRef.current) {
       hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
     } else if (playerRef.current) {
@@ -386,119 +431,132 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   return (
     <div className="space-y-6">
-      <div 
+      <div
         ref={containerRef}
-        className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${
-          isFullscreen 
-            ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]' 
+        className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${isFullscreen
+            ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]'
             : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
-        } ${showControls ? '' : 'cursor-none'}`}
+          } ${showControls ? '' : 'cursor-none'}`}
       >
         <video
           ref={videoRef}
-          className="w-full h-full object-contain cursor-pointer"
+          className={`w-full h-full object-contain ${showControls ? 'cursor-pointer' : 'cursor-none'}`}
           playsInline
-          onPlay={() => setIsPlaying(true)}
+          onPlay={() => {
+            setIsPlaying(true);
+            setHasStarted(true);
+            setIsBuffering(false);
+          }}
           onPause={() => setIsPlaying(false)}
+          onWaiting={() => setIsBuffering(true)}
+          onPlaying={() => setIsBuffering(false)}
+          onSeeking={() => setIsBuffering(true)}
+          onSeeked={() => setIsBuffering(false)}
+          onLoadStart={() => setIsBuffering(true)}
+          onLoadedData={() => setIsBuffering(false)}
           onTimeUpdate={handleTimeUpdate}
-          onClick={() => togglePlay()}
         />
 
         {/* Custom Controls Panel */}
-        <div 
-          className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-4 md:p-6 transition-all duration-500 z-30 ${
-            showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
+        <div
+          className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/85 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
         >
           {/* Timeline Seek bar for VOD */}
           {!isLive && (
-            <div 
+            <div
               onClick={handleSeek}
-              className="w-full h-1.5 bg-white/10 rounded-full mb-4 cursor-pointer relative group/progress transition-all hover:h-2"
+              className="w-full h-1 bg-white/10 rounded-full mb-2.5 cursor-pointer relative group/progress transition-all hover:h-1.5"
             >
-              <div 
+              <div
                 className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(212,175,55,0.6)]"
                 style={{ width: `${(currentTime / duration) * 100}%` }}
               >
-                <div className="w-3 h-3 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+                <div className="w-2.5 h-2.5 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
               </div>
             </div>
           )}
 
           {/* Control Actions row */}
-          <div className="flex items-center justify-between gap-4 select-none">
-            <div className="flex items-center gap-3 md:gap-4">
+          <div className="flex items-center justify-between gap-2 select-none">
+            <div className="flex items-center gap-2 sm:gap-3.5">
               {/* Play / Pause */}
-              <button 
+              <button
                 onClick={() => togglePlay()}
-                className="w-9 h-9 md:w-10 md:h-10 bg-primary hover:bg-primary/90 text-dark rounded-full flex items-center justify-center transition-all hover:scale-105 shadow-md cursor-pointer"
+                className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0"
               >
-                {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
+                {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
               </button>
 
               {/* Volume Controller */}
               <div className="flex items-center gap-1 group/volume relative">
-                <button 
+                <button
                   onClick={toggleMute}
-                  className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                  className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0"
                 >
-                  {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                  {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
                 </button>
-                <input 
+                <input
                   type="range"
                   min="0"
                   max="1"
                   step="0.05"
                   value={isMuted ? 0 : volume}
                   onChange={handleVolumeChange}
-                  className="w-0 group-hover/volume:w-16 md:group-hover/volume:w-20 transition-all duration-300 origin-left accent-primary h-1 bg-white/20 rounded-lg cursor-pointer"
+                  className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
                 />
               </div>
 
-              {/* Live Status indicator */}
+              {/* Live Status indicator / Catch up button */}
               {isLive ? (
-                <div className="flex items-center gap-1.5 py-1 px-3 bg-netflix-red/10 border border-netflix-red/20 text-netflix-red rounded-full text-[9px] font-black uppercase tracking-wider select-none">
-                  <span className="w-1.5 h-1.5 bg-netflix-red rounded-full animate-pulse-live" />
-                  LIVE
-                </div>
+                <button
+                  onClick={seekToLiveEdge}
+                  className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer ${isAtLiveEdge
+                      ? 'bg-red-500/10 border border-red-500/20 text-red-500 shadow-[0_0_8px_rgba(239,68,68,0.15)] animate-pulse'
+                      : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-500 hover:border-red-500/30'
+                    }`}
+                  title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
+                >
+                  <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-500' : 'bg-zinc-500'}`} />
+                  {isAtLiveEdge ? 'LIVE' : 'LIVE (SYNC)'}
+                </button>
               ) : (
-                <div className="text-xs font-mono font-bold text-zinc-400 select-none">
+                <div className="text-[10px] sm:text-[11px] font-mono font-bold text-zinc-400 select-none">
                   {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
                 </div>
               )}
             </div>
 
-            <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
               {/* Compliance / Spec details popup */}
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
-                className="p-2 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-xl border border-white/5 cursor-pointer"
+                className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer"
                 title="Spesifikasi Siaran"
               >
-                <Info size={16} />
+                <Info size={14} />
               </button>
 
               {/* Video Resolution list */}
               {levels.length > 1 && (
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-xl text-xs font-black text-zinc-300 hover:text-white transition-all cursor-pointer"
+                    className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer"
                   >
-                    <Settings size={12} className={showQualityMenu ? 'rotate-45' : ''} />
+                    <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
                     {currentLevel === 'auto' ? 'Auto' : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
                   </button>
                   {showQualityMenu && (
-                    <div className="absolute bottom-12 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 w-28 shadow-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+                    <div className="absolute bottom-9 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-xl p-1 w-20 sm:w-24 shadow-2xl flex flex-col gap-0.5 z-50">
                       {levels.map((level) => (
                         <button
                           key={level.index}
                           onClick={() => handleLevelChange(level.index)}
-                          className={`w-full py-1.5 px-2.5 text-left rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                            currentLevel === level.index 
-                              ? 'bg-primary text-dark font-black shadow-md' 
+                          className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${currentLevel === level.index
+                              ? 'bg-primary text-dark font-black shadow-md'
                               : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                          }`}
+                            }`}
                         >
                           {level.label}
                         </button>
@@ -509,23 +567,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               )}
 
               {/* Fullscreen view toggle */}
-              <button 
+              <button
                 onClick={toggleFullscreen}
-                className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none"
               >
-                {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               </button>
             </div>
           </div>
         </div>
-        
+
         {/* Error State display screen */}
         {error && (
           <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center select-none animate-in fade-in duration-300">
             <AlertTriangle className="text-netflix-red mb-4 shadow-lg" size={44} />
             <h4 className="text-lg font-black uppercase font-display mb-1.5">Gangguan Koneksi Siaran</h4>
             <p className="text-zinc-500 text-xs font-bold mb-6 max-w-xs leading-relaxed">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-6 py-3 bg-primary text-dark font-black rounded-xl flex items-center gap-2 hover:scale-102 transition-transform cursor-pointer text-xs uppercase tracking-wider shadow"
             >
@@ -535,43 +593,72 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           </div>
         )}
 
-        {/* Technical compliance info view overlay */}
+        {/* About YKN TV info view overlay */}
         {showInfo && (
-          <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md p-6 md:p-8 z-40 flex flex-col animate-in fade-in duration-200 select-none">
-            <div className="flex justify-between items-center mb-6 text-white">
-              <h4 className="text-lg font-black font-display uppercase tracking-wider flex items-center gap-2">
-                <Info size={18} className="text-primary" />
-                Spesifikasi Siaran Video
-              </h4>
-              <button onClick={() => setShowInfo(false)} className="text-zinc-500 hover:text-white text-xs font-black uppercase tracking-wider border border-white/5 px-2.5 py-1.5 bg-white/5 rounded-xl cursor-pointer">Tutup</button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs overflow-y-auto custom-scrollbar flex-1 pb-4">
-              <div className="space-y-4">
-                <InfoItem icon={<Monitor size={14} />} label="Enjin Pemutar Video" value="Shaka Player & Hls.js (DRM Decrypted)" />
-                <InfoItem icon={<Globe size={14} />} label="URL Sumber M3U8" value={cleanStreamUrl(currentServer.url)} />
+          <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md p-6 md:p-8 z-40 flex flex-col justify-between animate-in fade-in duration-200 select-none rounded-2xl sm:rounded-[1.5rem]">
+            <div>
+              <div className="flex justify-between items-center mb-5 text-white">
+                <h4 className="text-base font-black font-display uppercase tracking-wider flex items-center gap-2">
+                  <Trophy size={16} className="text-primary fill-primary/10" />
+                  Tentang YKN TV
+                </h4>
+                <button onClick={() => setShowInfo(false)} className="text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-wider border border-white/5 px-2.5 py-1.5 bg-white/5 rounded-xl cursor-pointer">Tutup</button>
               </div>
-              <div className="space-y-4">
-                <InfoItem icon={<Shield size={14} />} label="Lisensi Pengaman (DRM)" value={currentServer.keyId && currentServer.key ? `Clearkey Keypair (${currentServer.keyId.substring(0, 8)}...:${currentServer.key.substring(0, 8)}...)` : 'Tidak Aktif (Direct HLS Stream)'} />
-                <InfoItem icon={<Server size={14} />} label="Server Aktif" value={currentServer.name} />
+
+              <div className="space-y-4 text-xs">
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="font-bold text-zinc-200 leading-relaxed">
+                    <span className="text-primary font-black">YKN TV</span> adalah platform streaming digital premium yang dirancang khusus untuk menyajikan siaran langsung turnamen sepak bola kelas dunia dan berbagai saluran hiburan berkualitas tinggi secara stabil dan tanpa gangguan.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Ultra HD Stream</h5>
+                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Kualitas video jernih hingga 1080p dengan kompresi data efisien.</p>
+                  </div>
+                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Low Latency</h5>
+                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Latensi minimum untuk meminimalkan keterlambatan tayangan dari live event.</p>
+                  </div>
+                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Multi-Route Backup</h5>
+                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Cadangan server alternatif untuk menjamin kelancaran siaran Anda.</p>
+                  </div>
+                  <div className="bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                    <h5 className="font-black text-[10px] uppercase text-primary tracking-wider mb-1">Secure Protocol</h5>
+                    <p className="text-[10px] text-zinc-400 font-bold leading-normal">Protokol keamanan mutakhir untuk melindungi kestabilan siaran.</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="mt-auto p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-start gap-3">
-              <Shield className="text-primary shrink-0" size={16} />
-              <p className="text-[10px] text-zinc-400 leading-relaxed font-bold">
-                Pemutar video terintegrasi ini secara otomatis mendekripsi proteksi DRM Clearkey serta mengamankan parameter referer sesuai spesifikasi siaran langsung resmi.
+            <div className="p-3.5 bg-primary/10 border border-primary/20 rounded-xl flex items-start gap-2.5">
+              <Shield className="text-primary shrink-0 mt-0.5" size={14} />
+              <p className="text-[9px] text-zinc-400 leading-relaxed font-bold">
+                Layanan ini dioptimalkan sepenuhnya untuk seluruh peramban modern di desktop maupun perangkat mobile. Selamat menikmati pertandingan!
               </p>
             </div>
           </div>
         )}
 
-        {/* Static Play button display before start */}
-        {!isPlaying && !showInfo && !error && (
-          <div className="absolute inset-0 bg-[#020202]/70 backdrop-blur-sm flex flex-col items-center justify-center gap-6 z-20 select-none">
-            <div 
-              className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-dark hover:scale-105 transition-transform cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]" 
-              onClick={() => togglePlay()}
+        {/* Buffering Overlay */}
+        {isBuffering && !error && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">Memuat Aliran...</p>
+          </div>
+        )}
+
+        {/* Solid Play button display before start */}
+        {!hasStarted && !showInfo && !error && (
+          <div className="absolute inset-0 bg-[#090909] flex flex-col items-center justify-center gap-6 z-20 select-none">
+            <div
+              className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black hover:scale-105 transition-all cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]"
+              onClick={(e) => {
+                setHasStarted(true);
+                togglePlay(e);
+              }}
             >
               <Play fill="currentColor" size={24} className="ml-1" />
             </div>
@@ -585,6 +672,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             </div>
           </div>
         )}
+
+        {/* Dim overlay when paused to block other interactions and allow click-to-play */}
+        {hasStarted && !isPlaying && !error && !isBuffering && (
+          <div
+            className="absolute inset-0 bg-black/40 z-10 cursor-pointer"
+            onClick={togglePlay}
+          />
+        )}
+
+        {/* Center Play/Pause button when cursor moves (or when paused) */}
+        {hasStarted && showControls && !error && !isBuffering && (
+          <div className="absolute inset-0 flex items-center justify-center z-25 select-none pointer-events-none">
+            <button
+              onClick={togglePlay}
+              className="text-white hover:text-primary transition-all duration-300 scale-100 hover:scale-110 active:scale-90 pointer-events-auto filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]"
+            >
+              {isPlaying ? <Pause size={48} fill="currentColor" /> : <Play size={48} fill="currentColor" className="ml-1.5" />}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Server options grid switcher bar */}
@@ -593,7 +700,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           <Server size={16} className="text-primary" />
           <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
         </div>
-        
+
         <div className="flex flex-wrap gap-2 flex-1">
           {servers.map((server, idx) => (
             <button
@@ -601,12 +708,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               onClick={() => {
                 setCurrentServer(server);
                 setIsPlaying(false);
+                setHasStarted(false);
+                setIsBuffering(false);
+                setIsAtLiveEdge(true);
               }}
-              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer ${
-                currentServer.url === server.url 
-                  ? 'bg-primary text-dark shadow-md' 
+              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer ${currentServer.url === server.url
+                  ? 'bg-primary text-dark shadow-md'
                   : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
-              }`}
+                }`}
             >
               <span className="relative z-10">{server.name}</span>
               {(server.keyId || server.url.includes('|')) && (
