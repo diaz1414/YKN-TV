@@ -16,14 +16,22 @@
 
 @layer base {
   body {
-    @apply bg-[#020202] text-white font-sans antialiased selection:bg-primary selection:text-dark;
+    @apply text-white font-sans antialiased selection:bg-primary selection:text-dark;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -10;
     background-image: 
       linear-gradient(to bottom, rgba(2, 2, 2, 0.55) 0%, rgba(2, 2, 2, 0.75) 100%),
       url('./assets/banner2.png');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
     background-repeat: no-repeat;
+    pointer-events: none;
   }
 }
 
@@ -33,10 +41,10 @@
   }
   
   .glass-card {
-    background-color: rgba(8, 8, 8, 0.88) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background-color: rgba(8, 8, 8, 0.96) !important;
+    backdrop-filter: blur(40px) !important;
+    -webkit-backdrop-filter: blur(40px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     position: relative;
   }

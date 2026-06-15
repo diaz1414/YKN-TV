@@ -72,7 +72,7 @@ const WorldCupCountdown = () => {
   }
 
   return (
-    <div className="bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group select-none">
+    <div className="bg-zinc-950/96 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group select-none">
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500" />
       <div className="space-y-1 text-center md:text-left shrink-0">
         <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">Road to MetLife Stadium</span>
