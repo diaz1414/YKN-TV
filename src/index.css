@@ -117,7 +117,9 @@
   .text-gradient-gold {
     background: linear-gradient(to right, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+    color: transparent;
     display: inline-block;
     padding-right: 0.15em;
     filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.2));
@@ -126,7 +128,9 @@
   .text-gradient-emerald {
     background: linear-gradient(to right, #34D399 0%, #10B981 50%, #059669 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+    color: transparent;
     display: inline-block;
     padding-right: 0.1em;
   }
