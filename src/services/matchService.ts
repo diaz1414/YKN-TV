@@ -110,37 +110,146 @@ const getWcScore = (player1: string, game: any) => {
   }
 };
 
-export const getTodayMatches = async (): Promise<Match[]> => {
+let cachedMatches: Match[] | null = null;
+let cacheTime = 0;
+const CACHE_EXPIRY = 30000; // 30 seconds cache
+
+const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs = 3500) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    let eventsData: any[] = [];
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+};
+
+export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> => {
+  const now = Date.now();
+  if (!forceRefresh && cachedMatches && (now - cacheTime < CACHE_EXPIRY)) {
+    return cachedMatches;
+  }
+
+  const fetchAndProcess = async (): Promise<Match[]> => {
     try {
-      const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
-      const res = await fetch(`${BOT_API_URL}/api/sports/events`);
-      eventsData = await res.json();
-    } catch (botErr) {
-      console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
-      try {
-        const res = await fetch('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat');
-        eventsData = await res.json();
-      } catch (githubErr) {
-        console.warn('Failed to fetch events from GitHub, falling back to local JSON data...', githubErr);
+      let eventsData: any[] = [];
+      let wcGames: any[] = [];
+
+      // Parallel fetching of bot events and wc games
+      const [eventsResult, wcGamesResult] = await Promise.allSettled([
+        (async () => {
+          try {
+            const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
+            const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
+            return await res.json();
+          } catch (botErr) {
+            console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
+            try {
+              const res = await fetchWithTimeout('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat', {}, 3000);
+              return await res.json();
+            } catch (githubErr) {
+              console.warn('Failed to fetch events from GitHub, falling back to local JSON data...', githubErr);
+              return localEvents;
+            }
+          }
+        })(),
+        (async () => {
+          try {
+            const res = await fetchWithTimeout('https://worldcup26.ir/get/games', {}, 3000);
+            const json = await res.json();
+            return json?.games || [];
+          } catch (wcErr) {
+            console.warn('Failed to fetch World Cup games scores', wcErr);
+            return [];
+          }
+        })()
+      ]);
+
+      if (eventsResult.status === 'fulfilled') {
+        eventsData = eventsResult.value;
+      } else {
         eventsData = localEvents;
       }
-    }
 
-    let wcGames: any[] = [];
-    try {
-      const res = await fetch('https://worldcup26.ir/get/games');
-      const json = await res.json();
-      if (json && json.games) {
-        wcGames = json.games;
+      if (wcGamesResult.status === 'fulfilled') {
+        wcGames = wcGamesResult.value;
       }
-    } catch (wcErr) {
-      console.warn('Failed to fetch World Cup games scores', wcErr);
+
+      if (eventsData.length > 0) {
+        const parsedMatches: Match[] = eventsData.map((event: any) => {
+          const homeTeamName = event.player_1 || 'TBD';
+          const awayTeamName = event.player_2 || 'TBD';
+
+          const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
+          const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
+
+          const start = parseJadwal(event.jadwal_event);
+          const stop = parseJadwal(event.jadwal_stop);
+          const nowTime = new Date();
+
+          let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
+          if (nowTime > stop) {
+            status = 'finished';
+          } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
+            status = 'live';
+          }
+
+          const matchedGame = findWcGame(homeTeamName, awayTeamName, wcGames);
+          const score = (status !== 'upcoming') ? (getWcScore(homeTeamName, matchedGame) || '0 - 0') : undefined;
+
+          const timeStr = formatMatchTime(start);
+
+          return {
+            id: event.id_event,
+            homeTeam: {
+              name: homeTeamName,
+              logo: homeTeamFlag
+            },
+            awayTeam: {
+              name: awayTeamName,
+              logo: awayTeamFlag
+            },
+            league: {
+              name: event.nama_event || 'FIFA World Cup',
+              logo: '/favicon.svg'
+            },
+            time: timeStr,
+            date: event.jadwal_event,
+            status: status,
+            score: score,
+            channelId: event.id_event
+          };
+        });
+
+        // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
+        const sorted = [...parsedMatches].sort((a, b) => {
+          if (a.status === b.status) {
+            const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+            const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+            return dateA - dateB;
+          }
+          if (a.status === 'live') return -1;
+          if (b.status === 'live') return 1;
+          if (a.status === 'upcoming' && b.status === 'finished') return -1;
+          if (a.status === 'finished' && b.status === 'upcoming') return 1;
+          return 0;
+        });
+
+        return sorted;
+      }
+    } catch (error) {
+      console.error('Failed to resolve matches schedule:', error);
     }
 
-    if (eventsData.length > 0) {
-      const parsedMatches: Match[] = eventsData.map((event: any) => {
+    // Fallback to local events if everything fails
+    try {
+      const parsedMatches: Match[] = (localEvents as any[]).map((event: any) => {
         const homeTeamName = event.player_1 || 'TBD';
         const awayTeamName = event.player_2 || 'TBD';
 
@@ -149,17 +258,14 @@ export const getTodayMatches = async (): Promise<Match[]> => {
 
         const start = parseJadwal(event.jadwal_event);
         const stop = parseJadwal(event.jadwal_stop);
-        const now = new Date();
+        const nowTime = new Date();
 
         let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-        if (now > stop) {
+        if (nowTime > stop) {
           status = 'finished';
-        } else if (now >= new Date(start.getTime() - 30 * 60 * 1000)) {
+        } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
           status = 'live';
         }
-
-        const matchedGame = findWcGame(homeTeamName, awayTeamName, wcGames);
-        const score = (status !== 'upcoming') ? (getWcScore(homeTeamName, matchedGame) || '0 - 0') : undefined;
 
         const timeStr = formatMatchTime(start);
 
@@ -172,7 +278,7 @@ export const getTodayMatches = async (): Promise<Match[]> => {
           awayTeam: {
             name: awayTeamName,
             logo: awayTeamFlag
-          },
+            },
           league: {
             name: event.nama_event || 'FIFA World Cup',
             logo: '/favicon.svg'
@@ -180,77 +286,19 @@ export const getTodayMatches = async (): Promise<Match[]> => {
           time: timeStr,
           date: event.jadwal_event,
           status: status,
-          score: score,
           channelId: event.id_event
         };
       });
 
-      // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
-      const sorted = [...parsedMatches].sort((a, b) => {
-        if (a.status === b.status) {
-          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
-          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
-          return dateA - dateB;
-        }
-        if (a.status === 'live') return -1;
-        if (b.status === 'live') return 1;
-        if (a.status === 'upcoming' && b.status === 'finished') return -1;
-        if (a.status === 'finished' && b.status === 'upcoming') return 1;
-        return 0;
-      });
-
-      return sorted;
+      return parsedMatches;
+    } catch (err) {
+      console.error('Failed fallback mapping', err);
+      return [];
     }
-  } catch (error) {
-    console.error('Failed to resolve matches schedule:', error);
-  }
+  };
 
-  // Fallback to local events if everything fails
-  try {
-    const parsedMatches: Match[] = (localEvents as any[]).map((event: any) => {
-      const homeTeamName = event.player_1 || 'TBD';
-      const awayTeamName = event.player_2 || 'TBD';
-
-      const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
-      const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
-
-      const start = parseJadwal(event.jadwal_event);
-      const stop = parseJadwal(event.jadwal_stop);
-      const now = new Date();
-
-      let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-      if (now > stop) {
-        status = 'finished';
-      } else if (now >= new Date(start.getTime() - 30 * 60 * 1000)) {
-        status = 'live';
-      }
-
-      const timeStr = formatMatchTime(start);
-
-      return {
-        id: event.id_event,
-        homeTeam: {
-          name: homeTeamName,
-          logo: homeTeamFlag
-        },
-        awayTeam: {
-          name: awayTeamName,
-          logo: awayTeamFlag
-        },
-        league: {
-          name: event.nama_event || 'FIFA World Cup',
-          logo: '/favicon.svg'
-        },
-        time: timeStr,
-        date: event.jadwal_event,
-        status: status,
-        channelId: event.id_event
-      };
-    });
-
-    return parsedMatches;
-  } catch (err) {
-    console.error('Failed fallback mapping', err);
-    return [];
-  }
+  const result = await fetchAndProcess();
+  cachedMatches = result;
+  cacheTime = Date.now();
+  return result;
 };
