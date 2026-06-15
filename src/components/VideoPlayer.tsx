@@ -484,9 +484,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onTimeUpdate={handleTimeUpdate}
         />
 
+        {/* YKN TV Watermark Logo - top right, follows control visibility */}
+        <div
+          className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-30 pointer-events-none select-none transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
+            }`}
+        >
+          <div className="flex items-baseline gap-[3px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <span
+              className="text-white font-black tracking-tight leading-none"
+              style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", letterSpacing: '-0.5px' }}
+            >
+              YKN
+            </span>
+            <span
+              className="font-black leading-none"
+              style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", color: '#D4AF37', letterSpacing: '-0.5px' }}
+            >
+              TV
+            </span>
+          </div>
+        </div>
+
         {/* Custom Controls Panel */}
         <div
-          className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/85 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+          className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/60 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
             }`}
         >
           {/* Timeline Seek bar for VOD */}
@@ -539,12 +560,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 <button
                   onClick={seekToLiveEdge}
                   className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer ${isAtLiveEdge
-                    ? 'bg-red-500/10 border border-red-500/20 text-red-500 shadow-[0_0_8px_rgba(239,68,68,0.15)] animate-pulse'
-                    : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-500 hover:border-red-500/30'
+                    ? 'bg-red-500/20 border border-red-400/50 text-red-400 shadow-[0_0_10px_rgba(248,113,113,0.35)] animate-pulse'
+                    : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-400 hover:border-red-400/40'
                     }`}
                   title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
                 >
-                  <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-500' : 'bg-zinc-500'}`} />
+                  <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-400' : 'bg-zinc-500'}`} />
                   {isAtLiveEdge ? 'LIVE' : 'LIVE (SYNC)'}
                 </button>
               ) : (
