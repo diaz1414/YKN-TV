@@ -362,7 +362,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                   href="https://yknmovies.diaww.my.id/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-primary hover:underline font-black transition-colors"
+                  className="text-red-600 hover:text-red-500 hover:underline font-black transition-colors"
                 >
                   YKN MOVIES
                 </a>
