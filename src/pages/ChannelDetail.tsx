@@ -434,7 +434,7 @@ const ChannelDetail = () => {
                       return (
                         <div
                           key={ch.id}
-                          onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
+                          onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
                           className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isLive
                               ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
                               : isSoon

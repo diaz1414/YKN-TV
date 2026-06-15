@@ -283,7 +283,15 @@ export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | 
   let found = allStreams.find(s => s.id === idOrSlug);
   if (found) return found;
 
-  // 2. Slugified name match
+  // 2. Extract ID from the end of the slug (e.g. spain-vs-cabo-verde-1234 -> ID is 1234)
+  const lastDashIndex = idOrSlug.lastIndexOf('-');
+  if (lastDashIndex !== -1) {
+    const potentialId = idOrSlug.substring(lastDashIndex + 1);
+    found = allStreams.find(s => s.id === potentialId);
+    if (found) return found;
+  }
+
+  // 3. Slugified name match
   const targetSlug = idOrSlug.toLowerCase().trim();
   found = allStreams.find(s => slugify(s.name) === targetSlug);
   if (found) return found;

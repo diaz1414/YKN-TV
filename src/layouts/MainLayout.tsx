@@ -200,7 +200,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             <div
               onClick={() => {
                 const slugName = `${activeMatch.homeTeam.name} vs ${activeMatch.awayTeam.name}`;
-                navigate(`/watch/${slugify(slugName)}`);
+                navigate(`/watch/${slugify(slugName)}-${activeMatch.id}`);
               }}
               className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300"
             >

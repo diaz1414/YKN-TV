@@ -22,7 +22,7 @@ const MatchSchedule = () => {
 
   const handleMatchClick = (match: Match) => {
     const slugName = `${match.homeTeam.name} vs ${match.awayTeam.name}`;
-    navigate(`/watch/${slugify(slugName)}`);
+    navigate(`/watch/${slugify(slugName)}-${match.id}`);
   };
 
   return (
