@@ -356,7 +356,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
               <span className="text-white font-black tracking-wide">YKN TV</span>
               <span className="hidden sm:inline text-zinc-700">|</span>
-              <span className="text-zinc-500">© {new Date().getFullYear()} All Rights Reserved</span>
+              <span className="text-zinc-500">
+                © {new Date().getFullYear()} All Rights Reserved - Powered by{' '}
+                <a 
+                  href="https://yknmovies.diaww.my.id/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-primary hover:underline font-black transition-colors"
+                >
+                  YKN MOVIES
+                </a>
+              </span>
             </div>
 
             <div className="flex items-center gap-6">
