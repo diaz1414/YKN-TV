@@ -2,27 +2,47 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
-import { getChannelById } from '../services/streamService';
-import type { Channel } from '../services/streamService';
-import { ChevronLeft, Info, Wifi, Share2, Heart } from 'lucide-react';
+import { getStreamById, getLiveSportsData, type PlayableStream } from '../services/streamService';
+import { ChevronLeft, Wifi, Share2, Award, Play, Radio } from 'lucide-react';
 
 const ChannelDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [channel, setChannel] = useState<Channel | null>(null);
+  const [stream, setStream] = useState<PlayableStream | null>(null);
+  const [sportsTv, setSportsTv] = useState<PlayableStream[]>([]);
+  const [liveTv, setLiveTv] = useState<PlayableStream[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
+  // Load active stream and other channels for quick switcher sidebar
   useEffect(() => {
-    const fetchChannel = async () => {
+    const fetchStreamData = async () => {
       setLoading(true);
       if (id) {
-        const data = await getChannelById(id);
-        if (data) setChannel(data);
+        const foundStream = await getStreamById(id);
+        if (foundStream) {
+          setStream(foundStream);
+        }
+      }
+      try {
+        const list = await getLiveSportsData();
+        setSportsTv(list.sportsTv);
+        setLiveTv(list.liveTv);
+      } catch (e) {
+        console.error('Failed to load other channels:', e);
       }
       setLoading(false);
     };
-    fetchChannel();
+    fetchStreamData();
   }, [id]);
+
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   if (loading) {
     return (
@@ -34,95 +54,156 @@ const ChannelDetail = () => {
     );
   }
 
-  if (!channel) {
+  if (!stream) {
     return (
       <MainLayout>
         <div className="text-center py-20">
-          <h2 className="text-3xl font-bold mb-4 text-red-500">Channel Not Found</h2>
-          <button onClick={() => navigate('/')} className="text-primary hover:underline">Back to Dashboard</button>
+          <h2 className="text-2xl md:text-3xl font-black mb-4 text-netflix-red uppercase tracking-wider font-display">Saluran Tidak Ditemukan</h2>
+          <button 
+            onClick={() => navigate('/')} 
+            className="px-6 py-2.5 bg-primary text-dark font-black rounded-xl hover:scale-105 transition-all uppercase text-xs tracking-wider cursor-pointer"
+          >
+            Kembali ke Beranda
+          </button>
         </div>
       </MainLayout>
     );
   }
 
+  const otherChannels = [...sportsTv, ...liveTv].filter(c => c.id !== stream.id);
+
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Navigation Bar */}
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 pb-10">
+        
+        {/* Header Breadcrumbs & Controls */}
         <div className="flex items-center justify-between">
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-white/40 hover:text-white transition-all group py-2 px-4 hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group py-2 px-4 bg-white/5 rounded-xl border border-white/5 text-xs font-black uppercase tracking-wider cursor-pointer"
           >
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-bold tracking-tight">Return to Grid</span>
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span>Kembali ke Grid</span>
           </button>
 
-          <div className="flex items-center gap-4">
-            <button className="p-3 text-white/40 hover:text-primary transition-colors bg-white/5 rounded-2xl border border-white/5">
-              <Share2 size={20} />
-            </button>
-            <button className="p-3 text-white/40 hover:text-red-500 transition-colors bg-white/5 rounded-2xl border border-white/5">
-              <Heart size={20} />
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleShare}
+              className="p-2.5 text-zinc-400 hover:text-primary transition-all bg-white/5 rounded-xl border border-white/5 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider cursor-pointer"
+            >
+              <Share2 size={16} />
+              <span>{copied ? 'Tersalin' : 'Bagikan'}</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Player Area */}
-          <div className="lg:col-span-2 space-y-8">
-            <VideoPlayer servers={[{ name: channel.name, url: channel.url, type: 'direct' }]} />
+        {/* Responsive Grid layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Main Stream Section (8 columns on desktop) */}
+          <div className="lg:col-span-8 space-y-6 md:space-y-8">
             
-            <div className="glass rounded-[2.5rem] p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-8">
-                <div className="flex items-center gap-2 py-1 px-3 bg-primary/10 text-primary border border-primary/20 rounded-full">
-                  <Wifi size={14} className="animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{channel.status}</span>
+            {/* Embedded Player */}
+            <div className="overflow-hidden rounded-3xl border border-white/5 shadow-2xl">
+              <VideoPlayer servers={stream.servers} />
+            </div>
+            
+            {/* Stream info detail box */}
+            <div className="glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
+              <div className="absolute top-6 right-6 select-none">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
+                  <Wifi size={12} className="animate-pulse" />
+                  <span className="text-[9px] font-black uppercase tracking-widest">ONLINE</span>
                 </div>
               </div>
 
-              <div className="flex items-start gap-8 mb-8">
-                <div className="w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center p-4 ring-1 ring-white/10">
-                  <img src={channel.logo} alt={channel.name} className="w-full h-full object-contain" />
-                </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 select-none">
+                {stream.isBase64Logo && stream.logo ? (
+                  <div className="h-16 w-24 bg-white/5 rounded-2xl flex items-center justify-center p-2 border border-white/5 overflow-hidden shrink-0">
+                    <img src={stream.logo} alt={stream.name} className="h-full max-w-full object-contain filter brightness-110" />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center p-3 border border-white/5 shrink-0">
+                    <img src={stream.logo || "https://flagcdn.com/w80/un.png"} alt={stream.name} className="w-full h-full object-contain filter brightness-110" />
+                  </div>
+                )}
                 <div>
-                  <h1 className="text-4xl font-display font-black mb-2 tracking-tighter">{channel.name}</h1>
-                  <p className="text-xl text-primary font-bold italic mb-4">Now Playing: {channel.now_playing}</p>
-                  <div className="flex items-center gap-4">
-                    <span className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-bold text-white/40 uppercase tracking-widest">{channel.category}</span>
-                    <span className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-bold text-white/40 uppercase tracking-widest">1080p Ultra HD</span>
+                  <h1 className="text-2xl md:text-3xl font-display font-black tracking-tight text-white leading-tight">{stream.name}</h1>
+                  <p className="text-sm md:text-base text-primary font-bold italic mt-1.5">{stream.subName}</p>
+                  <div className="flex items-center gap-2.5 mt-3.5">
+                    <span className="px-2.5 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-black text-zinc-400 uppercase tracking-wider">
+                      {stream.isChannel ? 'Saluran TV' : 'Live Match'}
+                    </span>
+                    <span className="px-2.5 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-black text-zinc-400 uppercase tracking-wider">
+                      1080p Ultra HD
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-white/5 grid grid-cols-3 gap-6">
-                <StatItem label="Bitrate" value="8.5 Mbps" />
-                <StatItem label="Latency" value="1.2s" />
-                <StatItem label="Viewers" value="14.2K" />
+              {/* Stream Specs grid */}
+              <div className="pt-6 border-t border-white/5 grid grid-cols-3 gap-4 text-center select-none">
+                <StatItem label="Bitrate" value="6.4 Mbps" />
+                <StatItem label="Latensi" value="0.9s" />
+                <StatItem label="Format" value={stream.servers[0]?.type.toUpperCase() || 'HLS'} />
               </div>
             </div>
           </div>
 
-          {/* Sidebar Area */}
-          <div className="space-y-6">
-            <div className="glass rounded-[2.5rem] p-8 border border-white/10">
-              <h4 className="text-lg font-bold mb-6 flex items-center gap-3">
-                <div className="w-3 h-3 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(0,255,136,0.5)]" />
-                Broadcast Notes
-              </h4>
-              <div className="space-y-6">
-                <InfoPoint icon={<Info size={16} />} title="Network Stability" desc="Stream performance is currently optimal. No issues reported." />
-                <InfoPoint icon={<Info size={16} />} title="Audio Sync" desc="Use 'Server 2' if you experience a slight delay in audio peaks." />
+          {/* Right Sidebar Quick Switcher Section (4 columns on desktop) */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="glass-card rounded-[2rem] p-6 flex flex-col max-h-[500px] md:max-h-[600px]">
+              <div className="flex items-center gap-2.5 mb-5 select-none border-b border-white/5 pb-3">
+                <Radio size={16} className="text-primary animate-pulse-live" />
+                <h4 className="text-sm font-black uppercase tracking-wider font-display">Saluran Lainnya</h4>
+              </div>
+
+              {/* Scrollable list */}
+              <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+                {otherChannels.length === 0 ? (
+                  <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran lain</p>
+                ) : (
+                  otherChannels.map((ch) => (
+                    <div
+                      key={ch.id}
+                      onClick={() => navigate(`/watch/${ch.id}`)}
+                      className="flex items-center justify-between p-3 bg-white/[0.01] hover:bg-white/5 border border-white/5 hover:border-white/10 rounded-2xl transition-all duration-200 cursor-pointer group select-none"
+                    >
+                      <div className="flex items-center gap-3 truncate">
+                        {ch.isBase64Logo && ch.logo ? (
+                          <div className="h-8 w-12 bg-white/5 rounded-lg flex items-center justify-center p-1 border border-white/5 overflow-hidden shrink-0">
+                            <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
+                          </div>
+                        ) : (
+                          <div className="h-8 w-8 bg-white/5 rounded-lg flex items-center justify-center p-2 border border-white/5 shrink-0">
+                            <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
+                          </div>
+                        )}
+                        <div className="truncate">
+                          <h5 className="text-xs font-bold text-white group-hover:text-primary transition-colors truncate">{ch.name}</h5>
+                          <p className="text-[9px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-0.5">{ch.subName}</p>
+                        </div>
+                      </div>
+                      <Play size={10} className="text-zinc-500 group-hover:text-primary group-hover:scale-110 transition-all ml-2 shrink-0" fill="none" />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-primary/30 to-emerald-600/30 border border-primary/20 rounded-[2.5rem] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-              <h4 className="text-2xl font-black mb-2 italic">GO PREMIUM</h4>
-              <p className="text-white/60 text-sm mb-6 leading-relaxed">Remove all ads and unlock 4K multi-server access for just $4.99/mo.</p>
-              <button className="w-full py-4 bg-primary text-dark font-black rounded-2xl hover:scale-[1.03] transition-transform shadow-xl uppercase tracking-widest text-xs">
-                Upgrade Now
+            {/* Premium World Cup Box */}
+            <div className="bg-gradient-to-br from-primary/10 to-emerald-950/20 border border-primary/20 rounded-[2rem] p-6 shadow-xl select-none relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-500" />
+              <h4 className="text-xl font-black mb-2 italic tracking-tighter uppercase font-display flex items-center gap-2">
+                <Award size={18} className="text-primary fill-primary/10" />
+                Dukung Tim Favorit!
+              </h4>
+              <p className="text-zinc-400 text-[11px] font-bold leading-relaxed mb-5">Gabung bersama jutaan suporter untuk menikmati tayangan berkualitas tinggi UHD 4K bebas iklan.</p>
+              <button className="w-full py-3 bg-primary text-dark font-black rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-md uppercase tracking-wider text-[10px] cursor-pointer">
+                Gabung Member Premium
               </button>
             </div>
+
           </div>
         </div>
       </div>
@@ -132,18 +213,8 @@ const ChannelDetail = () => {
 
 const StatItem = ({ label, value }: { label: string; value: string }) => (
   <div className="text-center">
-    <p className="text-[10px] uppercase font-bold text-white/20 tracking-widest mb-1">{label}</p>
-    <p className="text-lg font-black">{value}</p>
-  </div>
-);
-
-const InfoPoint = ({ icon, title, desc }: { icon: React.ReactNode; title: string, desc: string }) => (
-  <div className="flex gap-4">
-    <div className="p-2 bg-white/5 rounded-xl text-primary h-fit">{icon}</div>
-    <div>
-      <p className="text-xs font-bold mb-1">{title}</p>
-      <p className="text-[10px] text-white/40 leading-relaxed font-medium">{desc}</p>
-    </div>
+    <p className="text-[9px] uppercase font-bold text-zinc-500 tracking-wider mb-1">{label}</p>
+    <p className="text-sm font-black text-white">{value}</p>
   </div>
 );
 

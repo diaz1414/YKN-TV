@@ -5,20 +5,10 @@ import {
   Server, Shield, Play, Pause, Info, AlertTriangle, Monitor, Globe, 
   RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings 
 } from 'lucide-react';
-import { getProxiedUrl } from '../services/streamService';
-
-interface ServerOption {
-  name: string;
-  url: string;
-  type: 'direct' | 'drm' | 'referer';
-  header?: {
-    'user-agent'?: string;
-    referer?: string;
-  };
-}
+import { getProxiedUrl, type StreamServer } from '../services/streamService';
 
 interface VideoPlayerProps {
-  servers: ServerOption[];
+  servers: StreamServer[];
 }
 
 interface QualityOption {
@@ -49,10 +39,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
   const [showQualityMenu, setShowQualityMenu] = useState(false);
 
-  // Helper to parse Clearkey DRM from the pipe symbol
-  const parseDrmInfo = (url: string) => {
-    const [cleanUrl, drmString] = url.split('|');
-    if (!drmString) return { cleanUrl, keys: null };
+  // Sync current server if servers list changes
+  useEffect(() => {
+    if (servers.length > 0) {
+      setCurrentServer(servers[0]);
+      setIsPlaying(false);
+    }
+  }, [servers]);
+
+  // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
+  const getDrmKeys = (server: StreamServer) => {
+    if (server.keyId && server.key) {
+      return { [server.keyId.trim()]: server.key.trim() };
+    }
+    
+    // Fallback: Check for key parameters appended with '|' inside the URL
+    const [, drmString] = server.url.split('|');
+    if (!drmString) return null;
 
     const keys: Record<string, string> = {};
     const pairs = drmString.split('&');
@@ -65,7 +68,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     });
 
-    return { cleanUrl, keys: Object.keys(keys).length > 0 ? keys : null };
+    return Object.keys(keys).length > 0 ? keys : null;
+  };
+
+  const cleanStreamUrl = (url: string): string => {
+    return url.split('|')[0].trim();
   };
 
   const destroyPlayers = async () => {
@@ -96,7 +103,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     });
 
-    // Fullscreen Event sync
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
@@ -115,10 +121,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
 
-      const { cleanUrl, keys } = parseDrmInfo(currentServer.url);
+      const rawUrl = cleanStreamUrl(currentServer.url);
+      const keys = getDrmKeys(currentServer);
       
-      // Auto-proxy restricted domains immediately (don't wait for error)
-      const autoProxiedUrl = getProxiedUrl(cleanUrl);
+      const autoProxiedUrl = getProxiedUrl(rawUrl);
       const streamUrl = autoProxiedUrl;
       
       const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
@@ -129,19 +135,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       await destroyPlayers();
 
       try {
-        if (isHls && Hls.isSupported()) {
+        if (isHls && Hls.isSupported() && !keys) {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: true,
-            xhrSetup: (xhr, _url) => {
-              if (currentServer.header?.['user-agent']) {
-                xhr.setRequestHeader('User-Agent', currentServer.header['user-agent']);
-              }
-              if (currentServer.header?.referer) {
-                xhr.setRequestHeader('Referer', currentServer.header.referer);
-              }
-            }
+            lowLatencyMode: true
           });
           hlsRef.current = hls;
 
@@ -155,11 +153,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             }));
             setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
 
-            if (isPlaying) {
-              videoRef.current?.play().catch(err => {
-                console.warn('Autoplay prevented:', err);
-              });
-            }
+            videoRef.current?.play().then(() => {
+              setIsPlaying(true);
+            }).catch(err => {
+              console.warn('Autoplay prevented:', err);
+            });
           });
 
           let triedProxy = false;
@@ -169,12 +167,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
                 if (!triedProxy) {
                   triedProxy = true;
-                  const proxied = getProxiedUrl(cleanUrl, true);
+                  const proxied = getProxiedUrl(rawUrl, true);
                   console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
                   hls.loadSource(proxied);
-                  hls.startLoad(); // Already using proxy if streamUrl != cleanUrl
+                  hls.startLoad();
                 } else {
-                  setError('Failed to load stream. (Network Error via Proxy)');
+                  setError('Gagal memuat siaran video (Error Jaringan).');
                 }
               } else {
                 setError(`Playback Error: ${data.details}`);
@@ -182,28 +180,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             }
           });
 
-        } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+        } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl') && !keys) {
           console.log('Using native Safari HLS playback:', streamUrl);
           videoRef.current.src = streamUrl;
-          if (isPlaying) {
-            videoRef.current.play().catch(e => console.warn(e));
-          }
+          videoRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch(e => console.warn(e));
         } else if (playerRef.current) {
           console.log('Using Shaka Player:', streamUrl);
           const player = playerRef.current;
           await player.attach(videoRef.current);
           
           player.getNetworkingEngine()?.clearAllRequestFilters();
-          player.getNetworkingEngine()?.registerRequestFilter((_type, request) => {
-            if (currentServer.header?.['user-agent']) {
-              request.headers['User-Agent'] = currentServer.header['user-agent'];
-            }
-            if (currentServer.header?.referer) {
-              request.headers['Referer'] = currentServer.header.referer;
-            }
-          });
 
-          if (currentServer.type === 'drm' && keys) {
+          if (keys) {
             player.configure({
               drm: { clearKeys: keys }
             });
@@ -211,10 +201,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
+          // Buffer targets to optimize live startup
+          player.configure({
+            streaming: {
+              rebufferingGoal: 1.5,
+              bufferingGoal: 10
+            }
+          });
+
           await player.load(streamUrl);
           console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
 
-          // Get variant tracks for quality settings
+          videoRef.current?.play().then(() => {
+            setIsPlaying(true);
+          }).catch(err => console.warn(err));
+
           const tracks = player.getVariantTracks();
           const uniqueHeights = Array.from(new Set(tracks.map(t => t.height).filter(Boolean)));
           uniqueHeights.sort((a, b) => (b ?? 0) - (a ?? 0));
@@ -224,13 +225,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }));
           setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
         } else {
-          setError('No compatible streaming engine found.');
+          setError('Format siaran tidak didukung di peramban ini.');
         }
       } catch (e: any) {
         console.error('Player Load/Attach Error:', e);
         
         if (e.code === 1002 || e.code === 1001) {
-          const proxiedUrl = getProxiedUrl(cleanUrl, true);
+          const proxiedUrl = getProxiedUrl(rawUrl, true);
           console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
           try {
             if (playerRef.current) {
@@ -243,7 +244,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
 
         if (e.code !== 7000) {
-          setError(`Failed to load stream. (Internal Code: ${e.code || 'UNKNOWN'})`);
+          setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
         }
       }
     };
@@ -251,7 +252,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     loadStream();
   }, [currentServer]);
 
-  // Autohide Controls effect
+  // Autohide Controls
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
     const handleMouseMove = () => {
@@ -288,7 +289,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           setIsPlaying(true);
         }).catch(err => {
           console.error("Playback failed:", err);
-          setError("Playback failed. Please try another server.");
+          setError("Gagal memutar siaran. Silakan coba server alternatif.");
         });
       }
     }
@@ -389,14 +390,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${
           isFullscreen 
-            ? 'w-screen h-screen rounded-none ring-0 border-none' 
-            : 'aspect-video rounded-[2rem] ring-1 ring-white/10'
-        }`}
+            ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]' 
+            : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
+        } ${showControls ? '' : 'cursor-none'}`}
       >
         <video
           ref={videoRef}
           className="w-full h-full object-contain cursor-pointer"
-          poster="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=2000"
           playsInline
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
@@ -404,181 +404,181 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onClick={() => togglePlay()}
         />
 
-        {/* Custom Controls Overlay */}
-        {isPlaying && (
-          <div 
-            className={`absolute inset-0 bg-gradient-to-t from-dark/95 via-transparent to-transparent flex flex-col justify-end p-6 transition-all duration-500 z-30 ${
-              showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          >
-            {/* Progress Bar for VOD */}
-            {!isLive && (
+        {/* Custom Controls Panel */}
+        <div 
+          className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-4 md:p-6 transition-all duration-500 z-30 ${
+            showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {/* Timeline Seek bar for VOD */}
+          {!isLive && (
+            <div 
+              onClick={handleSeek}
+              className="w-full h-1.5 bg-white/10 rounded-full mb-4 cursor-pointer relative group/progress transition-all hover:h-2"
+            >
               <div 
-                onClick={handleSeek}
-                className="w-full h-1.5 bg-white/10 rounded-full mb-4 cursor-pointer relative group/progress transition-all hover:h-2"
+                className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(212,175,55,0.6)]"
+                style={{ width: `${(currentTime / duration) * 100}%` }}
               >
-                <div 
-                  className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(0,255,136,0.6)]"
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
-                >
-                  <div className="w-3.5 h-3.5 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(0,255,136,0.8)]" />
-                </div>
-              </div>
-            )}
-
-            {/* Bottom Row Control Panel */}
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                {/* Play/Pause Button */}
-                <button 
-                  onClick={() => togglePlay()}
-                  className="w-10 h-10 bg-primary hover:bg-primary/90 text-dark rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-lg cursor-pointer"
-                >
-                  {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
-                </button>
-
-                {/* Volume Section */}
-                <div className="flex items-center gap-2 group/volume relative">
-                  <button 
-                    onClick={toggleMute}
-                    className="p-2 text-white/80 hover:text-white transition-colors cursor-pointer"
-                  >
-                    {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                  </button>
-                  <input 
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={isMuted ? 0 : volume}
-                    onChange={handleVolumeChange}
-                    className="w-0 group-hover/volume:w-20 transition-all duration-300 origin-left accent-primary h-1 bg-white/20 rounded-lg cursor-pointer"
-                  />
-                </div>
-
-                {/* Time Display or Live Badge */}
-                {isLive ? (
-                  <div className="flex items-center gap-2 py-1 px-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse select-none">
-                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
-                    LIVE
-                  </div>
-                ) : (
-                  <div className="text-xs font-mono font-bold text-white/60 select-none">
-                    {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* Technical Info Button */}
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
-                  className="p-2.5 text-white/60 hover:text-white transition-all hover:bg-white/5 rounded-xl border border-white/5 cursor-pointer"
-                  title="Technical Details"
-                >
-                  <Info size={16} />
-                </button>
-
-                {/* Quality / Resolution Selector */}
-                {levels.length > 1 && (
-                  <div className="relative">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-xl text-xs font-bold text-white/80 hover:text-white transition-all cursor-pointer"
-                    >
-                      <Settings size={14} className={showQualityMenu ? 'rotate-45' : ''} />
-                      {currentLevel === 'auto' ? 'Auto' : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
-                    </button>
-                    {showQualityMenu && (
-                      <div className="absolute bottom-12 right-0 bg-surface/95 backdrop-blur-md border border-white/10 rounded-2xl p-2 w-32 shadow-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                        {levels.map((level) => (
-                          <button
-                            key={level.index}
-                            onClick={() => handleLevelChange(level.index)}
-                            className={`w-full py-2 px-3 text-left rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                              currentLevel === level.index 
-                                ? 'bg-primary text-dark font-black' 
-                                : 'text-white/60 hover:text-white hover:bg-white/5'
-                            }`}
-                          >
-                            {level.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Fullscreen Button */}
-                <button 
-                  onClick={toggleFullscreen}
-                  className="p-2.5 text-white/80 hover:text-white transition-colors cursor-pointer"
-                >
-                  {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                </button>
+                <div className="w-3 h-3 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
               </div>
             </div>
+          )}
+
+          {/* Control Actions row */}
+          <div className="flex items-center justify-between gap-4 select-none">
+            <div className="flex items-center gap-3 md:gap-4">
+              {/* Play / Pause */}
+              <button 
+                onClick={() => togglePlay()}
+                className="w-9 h-9 md:w-10 md:h-10 bg-primary hover:bg-primary/90 text-dark rounded-full flex items-center justify-center transition-all hover:scale-105 shadow-md cursor-pointer"
+              >
+                {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
+              </button>
+
+              {/* Volume Controller */}
+              <div className="flex items-center gap-1 group/volume relative">
+                <button 
+                  onClick={toggleMute}
+                  className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                </button>
+                <input 
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  className="w-0 group-hover/volume:w-16 md:group-hover/volume:w-20 transition-all duration-300 origin-left accent-primary h-1 bg-white/20 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              {/* Live Status indicator */}
+              {isLive ? (
+                <div className="flex items-center gap-1.5 py-1 px-3 bg-netflix-red/10 border border-netflix-red/20 text-netflix-red rounded-full text-[9px] font-black uppercase tracking-wider select-none">
+                  <span className="w-1.5 h-1.5 bg-netflix-red rounded-full animate-pulse-live" />
+                  LIVE
+                </div>
+              ) : (
+                <div className="text-xs font-mono font-bold text-zinc-400 select-none">
+                  {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Compliance / Spec details popup */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); setShowInfo(!showInfo); }}
+                className="p-2 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-xl border border-white/5 cursor-pointer"
+                title="Spesifikasi Siaran"
+              >
+                <Info size={16} />
+              </button>
+
+              {/* Video Resolution list */}
+              {levels.length > 1 && (
+                <div className="relative">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-xl text-xs font-black text-zinc-300 hover:text-white transition-all cursor-pointer"
+                  >
+                    <Settings size={12} className={showQualityMenu ? 'rotate-45' : ''} />
+                    {currentLevel === 'auto' ? 'Auto' : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                  </button>
+                  {showQualityMenu && (
+                    <div className="absolute bottom-12 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 w-28 shadow-2xl flex flex-col gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+                      {levels.map((level) => (
+                        <button
+                          key={level.index}
+                          onClick={() => handleLevelChange(level.index)}
+                          className={`w-full py-1.5 px-2.5 text-left rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                            currentLevel === level.index 
+                              ? 'bg-primary text-dark font-black shadow-md' 
+                              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          {level.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Fullscreen view toggle */}
+              <button 
+                onClick={toggleFullscreen}
+                className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              >
+                {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+            </div>
           </div>
-        )}
+        </div>
         
+        {/* Error State display screen */}
         {error && (
-          <div className="absolute inset-0 bg-dark/80 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center">
-            <AlertTriangle className="text-red-500 mb-4" size={48} />
-            <h4 className="text-xl font-bold mb-2">Streaming Error</h4>
-            <p className="text-white/60 mb-6 max-w-sm">{error}</p>
+          <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center select-none animate-in fade-in duration-300">
+            <AlertTriangle className="text-netflix-red mb-4 shadow-lg" size={44} />
+            <h4 className="text-lg font-black uppercase font-display mb-1.5">Gangguan Koneksi Siaran</h4>
+            <p className="text-zinc-500 text-xs font-bold mb-6 max-w-xs leading-relaxed">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-primary text-dark font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer"
+              className="px-6 py-3 bg-primary text-dark font-black rounded-xl flex items-center gap-2 hover:scale-102 transition-transform cursor-pointer text-xs uppercase tracking-wider shadow"
             >
-              <RefreshCcw size={18} />
-              Retry Connection
+              <RefreshCcw size={14} />
+              Segarkan Koneksi
             </button>
           </div>
         )}
 
+        {/* Technical compliance info view overlay */}
         {showInfo && (
-          <div className="absolute inset-0 bg-dark/90 backdrop-blur-md p-8 z-40 flex flex-col animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md p-6 md:p-8 z-40 flex flex-col animate-in fade-in duration-200 select-none">
             <div className="flex justify-between items-center mb-6 text-white">
-              <h4 className="text-xl font-bold flex items-center gap-2">
-                <Info size={20} className="text-primary" />
-                Stream Compliance Info
+              <h4 className="text-lg font-black font-display uppercase tracking-wider flex items-center gap-2">
+                <Info size={18} className="text-primary" />
+                Spesifikasi Siaran Video
               </h4>
-              <button onClick={() => setShowInfo(false)} className="text-white/40 hover:text-white transition-colors cursor-pointer">Close</button>
+              <button onClick={() => setShowInfo(false)} className="text-zinc-500 hover:text-white text-xs font-black uppercase tracking-wider border border-white/5 px-2.5 py-1.5 bg-white/5 rounded-xl cursor-pointer">Tutup</button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-white overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs overflow-y-auto custom-scrollbar flex-1 pb-4">
               <div className="space-y-4">
-                <InfoItem icon={<Monitor size={16} />} label="Stream Engine" value="Shaka Player (DRM Compliant)" />
-                <InfoItem icon={<Shield size={16} />} label="Type" value={currentServer.type.toUpperCase()} />
-                <InfoItem icon={<Globe size={16} />} label="Source URL" value={currentServer.url.split('|')[0]} />
+                <InfoItem icon={<Monitor size={14} />} label="Enjin Pemutar Video" value="Shaka Player & Hls.js (DRM Decrypted)" />
+                <InfoItem icon={<Globe size={14} />} label="URL Sumber M3U8" value={cleanStreamUrl(currentServer.url)} />
               </div>
               <div className="space-y-4">
-                <InfoItem icon={<Globe size={16} />} label="User Agent" value={currentServer.header?.['user-agent'] || 'Browser Default'} />
-                <InfoItem icon={<Globe size={16} />} label="Referer" value={currentServer.header?.referer || 'None'} />
+                <InfoItem icon={<Shield size={14} />} label="Lisensi Pengaman (DRM)" value={currentServer.keyId && currentServer.key ? `Clearkey Keypair (${currentServer.keyId.substring(0, 8)}...:${currentServer.key.substring(0, 8)}...)` : 'Tidak Aktif (Direct HLS Stream)'} />
+                <InfoItem icon={<Server size={14} />} label="Server Aktif" value={currentServer.name} />
               </div>
             </div>
 
             <div className="mt-auto p-4 bg-primary/10 border border-primary/20 rounded-2xl flex items-start gap-3">
-              <Shield className="text-primary shrink-0" size={18} />
-              <p className="text-[10px] text-white/60 leading-relaxed font-medium">
-                This player is configured to handle DRM-protected content and custom headers as defined in the Football Live Streaming API documentation.
+              <Shield className="text-primary shrink-0" size={16} />
+              <p className="text-[10px] text-zinc-400 leading-relaxed font-bold">
+                Pemutar video terintegrasi ini secara otomatis mendekripsi proteksi DRM Clearkey serta mengamankan parameter referer sesuai spesifikasi siaran langsung resmi.
               </p>
             </div>
           </div>
         )}
 
+        {/* Static Play button display before start */}
         {!isPlaying && !showInfo && !error && (
-          <div className="absolute inset-0 bg-dark/60 backdrop-blur-sm flex flex-col items-center justify-center gap-6 z-20">
+          <div className="absolute inset-0 bg-[#020202]/70 backdrop-blur-sm flex flex-col items-center justify-center gap-6 z-20 select-none">
             <div 
-              className="w-20 h-20 bg-primary rounded-full flex items-center justify-center text-dark hover:scale-110 transition-transform cursor-pointer shadow-[0_0_30px_rgba(0,255,136,0.4)]" 
+              className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-dark hover:scale-105 transition-transform cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]" 
               onClick={() => togglePlay()}
             >
-              <Play fill="currentColor" size={32} className="ml-1" />
+              <Play fill="currentColor" size={24} className="ml-1" />
             </div>
-            <div className="text-center select-none">
-              <h4 className="text-xl font-bold mb-1">Click to Start Stream</h4>
-              <div className="flex items-center gap-2 justify-center text-white/40 text-sm">
-                <span className="px-2 py-0.5 bg-white/5 rounded-md border border-white/5">{currentServer.type.toUpperCase()}</span>
+            <div className="text-center">
+              <h4 className="text-base font-black uppercase font-display tracking-wider mb-1 text-white">Mulai Siaran Langsung</h4>
+              <div className="flex items-center gap-2 justify-center text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
+                <span className="px-2 py-0.5 bg-white/5 rounded border border-white/5">{currentServer.type.toUpperCase() || 'DIRECT'}</span>
                 <span>•</span>
                 <span>{currentServer.name}</span>
               </div>
@@ -587,10 +587,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:items-center gap-4 p-4 glass rounded-2xl">
-        <div className="flex items-center gap-2 pr-4 lg:border-r border-white/10">
-          <Server size={18} className="text-primary" />
-          <span className="text-sm font-bold whitespace-nowrap">Servers</span>
+      {/* Server options grid switcher bar */}
+      <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
+        <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
+          <Server size={16} className="text-primary" />
+          <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
         </div>
         
         <div className="flex flex-wrap gap-2 flex-1">
@@ -601,30 +602,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setCurrentServer(server);
                 setIsPlaying(false);
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all relative overflow-hidden group cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer ${
                 currentServer.url === server.url 
-                  ? 'bg-primary text-dark' 
-                  : 'bg-white/5 hover:bg-white/10 text-white/60'
+                  ? 'bg-primary text-dark shadow-md' 
+                  : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
               }`}
             >
               <span className="relative z-10">{server.name}</span>
-              {server.type === 'drm' && <Shield size={10} className="absolute top-1 right-1 opacity-50" />}
+              {(server.keyId || server.url.includes('|')) && (
+                <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
+              )}
             </button>
           ))}
-        </div>
-        
-        <div className="flex items-center gap-3 ml-auto text-white">
-          <button 
-            onClick={() => setShowInfo(!showInfo)}
-            className="p-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-xl transition-all flex items-center gap-2 text-xs font-bold border border-white/5 cursor-pointer"
-          >
-            <Info size={16} />
-            <span className="hidden sm:inline">Technical Details</span>
-          </button>
-          <div className="flex items-center gap-2 py-2 px-3 bg-primary/10 border border-primary/20 rounded-xl select-none">
-            <Shield size={16} className="text-primary animate-pulse" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-wider">DRM Active</span>
-          </div>
         </div>
       </div>
     </div>
@@ -633,11 +622,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
 const InfoItem = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
   <div className="space-y-1">
-    <div className="flex items-center gap-2 text-white/30 text-[10px] font-bold uppercase tracking-wider">
+    <div className="flex items-center gap-2 text-zinc-500 text-[9px] font-black uppercase tracking-wider">
       {icon}
       {label}
     </div>
-    <div className="bg-white/5 p-3 rounded-xl border border-white/5 font-mono text-[11px] break-all leading-relaxed text-white/80 shrink-0">
+    <div className="bg-white/5 p-3 rounded-xl border border-white/5 font-mono text-[10px] break-all leading-relaxed text-zinc-300 font-bold shrink-0">
       {value}
     </div>
   </div>

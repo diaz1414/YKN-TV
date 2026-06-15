@@ -1,41 +1,102 @@
 import stableChannels from '../data/stable_channels.json';
+import backupEvents from '../data/tv-events.json';
+import backupSports from '../data/tv-sports.json';
+import backupLive from '../data/tv-hiburan.json';
+import axios from 'axios';
 
-export interface Channel {
-  id: string;
-  name: string;
-  category: string;
-  logo: string;
-  url: string;
-  status: 'online' | 'offline';
-  now_playing: string;
-}
-
-export interface PlaylistPreset {
-  id: string;
+export interface StreamServer {
   name: string;
   url: string;
-  type: 'category' | 'country';
+  type: string;
+  keyId?: string;
+  key?: string;
 }
 
-export const PLAYLIST_PRESETS: PlaylistPreset[] = [
-  // Categories
-  { id: 'freetv', name: 'Free TV', url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8', type: 'category' },
-  { id: 'sports', name: 'Sports', url: 'https://iptv-org.github.io/iptv/categories/sports.m3u', type: 'category' },
-  { id: 'news', name: 'News', url: 'https://iptv-org.github.io/iptv/categories/news.m3u', type: 'category' },
-  { id: 'movies', name: 'Movies', url: 'https://iptv-org.github.io/iptv/categories/movies.m3u', type: 'category' },
-  { id: 'music', name: 'Music', url: 'https://iptv-org.github.io/iptv/categories/music.m3u', type: 'category' },
-  { id: 'documentary', name: 'Documentaries', url: 'https://iptv-org.github.io/iptv/categories/documentary.m3u', type: 'category' },
-  { id: 'kids', name: 'Kids', url: 'https://iptv-org.github.io/iptv/categories/kids.m3u', type: 'category' },
-  // Countries
-  { id: 'id', name: 'Indonesia', url: 'https://iptv-org.github.io/iptv/countries/id.m3u', type: 'country' },
-  { id: 'us', name: 'United States', url: 'https://iptv-org.github.io/iptv/countries/us.m3u', type: 'country' },
-  { id: 'uk', name: 'United Kingdom', url: 'https://iptv-org.github.io/iptv/countries/uk.m3u', type: 'country' },
-  { id: 'sg', name: 'Singapore', url: 'https://iptv-org.github.io/iptv/countries/sg.m3u', type: 'country' },
-  { id: 'my', name: 'Malaysia', url: 'https://iptv-org.github.io/iptv/countries/my.m3u', type: 'country' },
-  { id: 'sa', name: 'Saudi Arabia', url: 'https://iptv-org.github.io/iptv/countries/sa.m3u', type: 'country' },
-];
+export interface PlayableStream {
+  id: string;
+  name: string;
+  subName?: string;
+  logo?: string;
+  isBase64Logo?: boolean;
+  servers: StreamServer[];
+  isChannel?: boolean;
+  player1?: string;
+  player2?: string;
+  jadwal_event?: string;
+  jadwal_stop?: string;
+  deskripsi?: string;
+  deskripsi_en?: string;
+}
 
-const CACHE_KEY = 'ykn_channels_cache';
+interface MatchEvent {
+  id_event: string;
+  nama_event: string;
+  player_1: string;
+  player_2: string;
+  logo_1?: string;
+  logo_2?: string;
+  jadwal_event?: string;
+  jadwal_stop?: string;
+  url_iptv: string;
+  url_license?: string;
+  jenis: string;
+  deskripsi?: string;
+  deskripsi_en?: string;
+}
+
+interface ChannelEvent {
+  id_iptv: string;
+  nama_channel: string;
+  url_iptv: string;
+  url_license?: string;
+  jenis: string;
+  gbr_base64?: string;
+  tagline?: string;
+  premium?: string;
+  aktif?: string;
+}
+
+const XOR_KEY = '90_NiwmsdfhgjQw';
+
+export const decryptLicense = (ciphertext: string): string => {
+  try {
+    const binary = atob(ciphertext);
+    let result = '';
+    for (let i = 0; i < binary.length; i++) {
+      result += String.fromCharCode(binary.charCodeAt(i) ^ XOR_KEY.charCodeAt(i % XOR_KEY.length));
+    }
+    return result;
+  } catch (e) {
+    console.error('Decryption failed', e);
+    return '';
+  }
+};
+
+export const buildServers = (urlIptv: string, urlLicense: string | undefined, jenis: string): StreamServer[] => {
+  const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
+  const servers: StreamServer[] = [];
+
+  servers.push({
+    name: 'Server 1',
+    url: urlIptv,
+    type: jenis
+  });
+
+  if (decryptedLicense) {
+    if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
+      const [keyId, key] = decryptedLicense.split(':');
+      servers[0].keyId = keyId;
+      servers[0].key = key;
+    } else if (decryptedLicense.startsWith('http')) {
+      servers.push({
+        name: 'Server 2 (Alt)',
+        url: decryptedLicense,
+        type: 'hls'
+      });
+    }
+  }
+  return servers;
+};
 
 // Reliable CORS Proxy Helper
 export const getProxiedUrl = (url: string, force = false) => {
@@ -43,159 +104,176 @@ export const getProxiedUrl = (url: string, force = false) => {
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
   
   if (needsProxy) {
-    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || '/api/proxy';
+    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'http://147.135.252.68:20114/api/proxy';
     const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
     return `${proxyBase}/${cleanUrl}`;
   }
   return url;
 };
 
-// Custom parser for M3U playlists
-export const parseM3U = (text: string): Channel[] => {
-  const lines = text.split('\n');
-  const channels: Channel[] = [];
-  let currentChannel: Partial<Channel> = {};
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
-
-    if (line.startsWith('#EXTINF:')) {
-      currentChannel = {};
-      
-      const commaIdx = line.lastIndexOf(',');
-      if (commaIdx !== -1) {
-        currentChannel.name = line.substring(commaIdx + 1).trim();
-      }
-
-      const idMatch = line.match(/tvg-id="([^"]*)"/);
-      if (idMatch && idMatch[1]) {
-        currentChannel.id = idMatch[1];
-      }
-
-      const logoMatch = line.match(/tvg-logo="([^"]*)"/);
-      if (logoMatch && logoMatch[1]) {
-        currentChannel.logo = logoMatch[1];
-      }
-
-      const groupMatch = line.match(/group-title="([^"]*)"/);
-      if (groupMatch && groupMatch[1]) {
-        currentChannel.category = groupMatch[1];
-      }
-    } else if (!line.startsWith('#')) {
-      if (currentChannel.name) {
-        const logo = currentChannel.logo || `https://images.unsplash.com/photo-1540747737956-37872f04760a?w=150&auto=format&fit=crop&q=60`;
-        const id = currentChannel.id || encodeURIComponent(currentChannel.name);
-        const category = currentChannel.category || 'General';
-        
-        channels.push({
-          id,
-          name: currentChannel.name,
-          category,
-          logo,
-          url: line,
-          status: 'online',
-          now_playing: `${category} Live Broadcast`
-        });
-      }
-      currentChannel = {};
-    }
-  }
-
-  return channels;
+// Clean HTML tags and redundant text from match descriptions
+export const cleanDescription = (desc?: string): string => {
+  if (!desc) return '';
+  return desc
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/Siaran langsung pertandingan.*?\./gi, '')
+    .replace(/Live broadcast of the match.*?\./gi, '')
+    .replace(/di YKN TV/gi, '')
+    .trim();
 };
 
-export const saveChannelsToCache = (channels: Channel[]) => {
-  try {
-    const existingCache = localStorage.getItem(CACHE_KEY);
-    let cachedMap: Record<string, Channel> = {};
-    if (existingCache) {
-      cachedMap = JSON.parse(existingCache);
-    }
-    channels.forEach(ch => {
-      cachedMap[ch.id] = ch;
-    });
-    localStorage.setItem(CACHE_KEY, JSON.stringify(cachedMap));
-  } catch (e) {
-    console.error('Failed to save channels to cache:', e);
-  }
-};
+// Get channels / events from dynamic Raw configurations
+export const getLiveSportsData = async (): Promise<{
+  matches: PlayableStream[];
+  sportsTv: PlayableStream[];
+  liveTv: PlayableStream[];
+}> => {
+  let eventsData: MatchEvent[] = [];
+  let sportsData: ChannelEvent[] = [];
+  let liveData: ChannelEvent[] = [];
 
-export const getCachedChannelById = (id: string): Channel | undefined => {
   try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      const cachedMap: Record<string, Channel> = JSON.parse(cached);
-      return cachedMap[id];
-    }
-  } catch (e) {
-    console.error('Failed to get cached channel:', e);
-  }
-  return undefined;
-};
-
-// Fetch channels from dynamic playlist URL
-export const fetchPlaylist = async (url: string): Promise<Channel[]> => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const text = await response.text();
-    const parsed = parseM3U(text);
-    saveChannelsToCache(parsed);
-    return parsed;
-  } catch (err) {
-    console.warn(`Direct fetch failed for ${url}, trying with CORS proxy...`, err);
+    // 1. Primary Source: Fetch from external Github configurations
+    const [eventsRes, sportsRes, liveRes] = await Promise.all([
+      axios.get<MatchEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat'),
+      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat'),
+      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat')
+    ]);
+    eventsData = eventsRes.data;
+    sportsData = sportsRes.data;
+    liveData = liveRes.data;
+  } catch (githubErr) {
+    console.warn('Failed to fetch from Github source, trying Bot API fallback...', githubErr);
+    
+    // 2. First Fallback (Backup): Fetch from the bot's API endpoints
+    const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
     try {
-      const proxyUrl = getProxiedUrl(url, true);
-      const response = await fetch(proxyUrl);
-      if (!response.ok) throw new Error(`HTTP error via proxy! status: ${response.status}`);
-      const text = await response.text();
-      const parsed = parseM3U(text);
-      saveChannelsToCache(parsed);
-      return parsed;
-    } catch (proxyErr) {
-      console.error(`Failed to fetch playlist ${url} with proxy:`, proxyErr);
-      return [];
+      const [eventsRes, sportsRes, liveRes] = await Promise.all([
+        axios.get<MatchEvent[]>(`${BOT_API_URL}/api/sports/events`),
+        axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/tv`),
+        axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/hiburan`)
+      ]);
+      eventsData = eventsRes.data;
+      sportsData = sportsRes.data;
+      liveData = liveRes.data;
+    } catch (botErr) {
+      console.warn('Failed to fetch from Bot API, falling back to local JSON data...', botErr);
+      
+      // 3. Second Fallback (Final Backup): Use local imported JSON files
+      eventsData = backupEvents as MatchEvent[];
+      sportsData = backupSports as ChannelEvent[];
+      liveData = backupLive as ChannelEvent[];
     }
   }
-};
 
-// Get channels using the category (which is treated as a playlist URL key) or return stable channels as default
-export const getChannels = async (playlistUrl?: string): Promise<Channel[]> => {
-  if (playlistUrl) {
-    return await fetchPlaylist(playlistUrl);
+  // If we couldn't load anything (both APIs and backups empty), use stable channels
+  if (eventsData.length === 0 && sportsData.length === 0 && liveData.length === 0) {
+    console.warn('All configurations empty or failed, using stable channels only...');
+    const channels = stableChannels as any[];
+    const mappedSports: PlayableStream[] = [];
+    const mappedLive: PlayableStream[] = [];
+
+    channels.forEach(ch => {
+      const stream: PlayableStream = {
+        id: ch.id,
+        name: ch.name,
+        subName: ch.now_playing,
+        logo: ch.logo,
+        isBase64Logo: false,
+        servers: [{ name: 'Server 1', url: ch.url, type: 'hls' }],
+        isChannel: true
+      };
+      if (ch.category.toLowerCase().includes('sports')) {
+        mappedSports.push(stream);
+      } else {
+        mappedLive.push(stream);
+      }
+    });
+
+    return {
+      matches: [],
+      sportsTv: mappedSports,
+      liveTv: mappedLive
+    };
   }
-  
-  // Return stable channels by default if no playlist URL is specified
-  const channels = stableChannels as Channel[];
-  saveChannelsToCache(channels);
-  return channels;
-};
 
-export const getChannelById = async (id: string): Promise<Channel | undefined> => {
-  const stable = (stableChannels as Channel[]).find(c => c.id === id);
-  if (stable) return stable;
+  // Process Matches (Deduplicated)
+  const seenEvents = new Set<string>();
+  const mappedEvents: PlayableStream[] = [];
+  for (const item of eventsData) {
+    const key = item.id_event || `${item.player_1} vs ${item.player_2}`;
+    if (seenEvents.has(key)) continue;
+    seenEvents.add(key);
+    mappedEvents.push({
+      id: item.id_event,
+      name: `${item.player_1} vs ${item.player_2}`,
+      subName: item.nama_event,
+      logo: item.logo_1,
+      isBase64Logo: false,
+      servers: buildServers(item.url_iptv, item.url_license, item.jenis),
+      isChannel: false,
+      player1: item.player_1,
+      player2: item.player_2,
+      jadwal_event: item.jadwal_event,
+      jadwal_stop: item.jadwal_stop,
+      deskripsi: cleanDescription(item.deskripsi),
+      deskripsi_en: cleanDescription(item.deskripsi_en)
+    });
+  }
 
-  const cached = getCachedChannelById(id);
-  if (cached) return cached;
+  // Process Sports TV
+  const seenSports = new Set<string>();
+  const mappedSports: PlayableStream[] = [];
+  for (const item of sportsData) {
+    const key = item.id_iptv || item.nama_channel;
+    if (seenSports.has(key)) continue;
+    seenSports.add(key);
+    mappedSports.push({
+      id: item.id_iptv,
+      name: item.nama_channel,
+      subName: item.tagline || 'Saluran Sports Premium',
+      logo: item.gbr_base64,
+      isBase64Logo: !!item.gbr_base64,
+      servers: buildServers(item.url_iptv, item.url_license, item.jenis),
+      isChannel: true
+    });
+  }
 
-  // Background lookup by loading Sports playlist
-  const sports = await fetchPlaylist(PLAYLIST_PRESETS[1].url);
-  const found = sports.find(c => c.id === id);
-  if (found) return found;
+  // Process Live TV
+  const seenLive = new Set<string>();
+  const mappedLive: PlayableStream[] = [];
+  for (const item of liveData) {
+    const key = item.id_iptv || item.nama_channel;
+    if (seenLive.has(key)) continue;
+    seenLive.add(key);
+    mappedLive.push({
+      id: item.id_iptv,
+      name: item.nama_channel,
+      subName: item.tagline || 'Saluran Hiburan & Lokal',
+      logo: item.gbr_base64,
+      isBase64Logo: !!item.gbr_base64,
+      servers: buildServers(item.url_iptv, item.url_license, item.jenis),
+      isChannel: true
+    });
+  }
+
+  return {
+    matches: mappedEvents,
+    sportsTv: mappedSports,
+    liveTv: mappedLive
+  };
+};;
+
+export const getStreamById = async (id: string): Promise<PlayableStream | undefined> => {
+  const data = await getLiveSportsData();
+  const match = data.matches.find(m => m.id === id);
+  if (match) return match;
+
+  const sport = data.sportsTv.find(s => s.id === id);
+  if (sport) return sport;
+
+  const live = data.liveTv.find(l => l.id === id);
+  if (live) return live;
 
   return undefined;
-};
-
-// Search & Filter Logic
-export const searchAndFilterChannels = (
-  channels: Channel[], 
-  query: string, 
-  category: string
-): Channel[] => {
-  return channels.filter(channel => {
-    const matchesQuery = channel.name.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = category === 'All' || channel.category.toLowerCase() === category.toLowerCase();
-    return matchesQuery && matchesCategory;
-  });
 };

@@ -1,3 +1,4 @@
+import localEvents from '../data/tv-events.json';
 
 export interface Match {
   id: string;
@@ -20,188 +21,221 @@ export interface Match {
   date?: string;
 }
 
-const getMatchStatus = (dateStr: string, timeStr: string): 'live' | 'upcoming' | 'finished' => {
-  try {
-    const matchDate = new Date(`${dateStr}T${timeStr}`);
-    const now = new Date();
-    const diffMs = now.getTime() - matchDate.getTime();
-    const diffHours = diffMs / (1000 * 60 * 60);
 
-    if (diffHours < 0) {
-      return 'upcoming';
-    } else if (diffHours >= 0 && diffHours < 2) {
-      return 'live';
-    } else {
-      return 'finished';
-    }
-  } catch {
-    return 'upcoming';
+
+// Synonym maps to help flag resolution
+const countryIsoCodes: Record<string, string> = {
+  'brazil': 'br', 'morocco': 'ma', 'haiti': 'ht', 'scotland': 'gb-sct', 'australia': 'au',
+  'turkiye': 'tr', 'germany': 'de', 'curacao': 'cw', 'netherlands': 'nl', 'japan': 'jp',
+  'cote d`ivoire': 'ci', 'cote d\'ivoire': 'ci', 'ecuador': 'ec', 'sweden': 'se',
+  'tunisia': 'tn', 'spain': 'es', 'cabo verde': 'cv', 'belgium': 'be', 'egypt': 'eg',
+  'saudi arabia': 'sa', 'uruguay': 'uy', 'ir iran': 'ir', 'new zealand': 'nz',
+  'france': 'fr', 'senegal': 'sn', 'iraq': 'iq', 'norway': 'no', 'argentina': 'ar',
+  'algeria': 'dz', 'austria': 'at', 'jordan': 'jo', 'portugal': 'pt', 'dr congo': 'cd',
+  'england': 'gb-eng', 'croatia': 'hr', 'ghana': 'gh', 'panama': 'pa', 'uzbekistan': 'uz',
+  'colombia': 'co', 'usa': 'us', 'mexico': 'mx', 'canada': 'ca', 'italy': 'it', 'korea': 'kr'
+};
+
+const getFlagByName = (name: string): string => {
+  const code = countryIsoCodes[name.toLowerCase().trim()];
+  if (code) {
+    return `https://flagcdn.com/w80/${code}.png`;
+  }
+  return 'https://flagcdn.com/w80/un.png';
+};
+
+const parseJadwal = (dateStr?: string): Date => {
+  if (!dateStr) return new Date();
+  let clean = dateStr.trim();
+  if (clean.includes(' ')) {
+    clean = clean.replace(' ', 'T');
+  }
+  const tzMatch = clean.match(/([+-]\d{2})$/);
+  if (tzMatch) {
+    clean += ':00';
+  }
+  return new Date(clean);
+};
+
+const formatMatchTime = (date: Date): string => {
+  if (isNaN(date.getTime())) return '';
+  const now = new Date();
+  const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+  const timeStr = date.toLocaleTimeString('id-ID', optionsTime);
+
+  // Check if it's the same calendar day
+  if (date.toDateString() === now.toDateString()) {
+    return timeStr;
+  } else {
+    const optionsDate: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
+    const dateStr = date.toLocaleDateString('id-ID', optionsDate);
+    return `${dateStr} - ${timeStr}`;
   }
 };
 
-const getTodayDateString = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+const normalizeTeamName = (name: string): string => {
+  let lower = name.toLowerCase().trim();
+  if (lower.includes('ivoire') || lower.includes('ivory')) return 'ivorycoast';
+  if (lower.includes('curacao') || lower.includes('curaçao')) return 'curacao';
+  if (lower.includes('cabo verde') || lower.includes('cape verde')) return 'capeverde';
+  if (lower.includes('iran')) return 'iran';
+  if (lower.includes('dr congo') || lower.includes('democratic republic of the congo')) return 'congo';
+  return lower.replace(/[^a-z0-9]/g, '').trim();
 };
 
-const getMockMatches = (): Match[] => [
-  {
-    id: 'mock-1',
-    homeTeam: {
-      name: 'Manchester City',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/vwpvry1467468683.png'
-    },
-    awayTeam: {
-      name: 'Liverpool',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/65db8i1673891480.png'
-    },
-    league: {
-      name: 'Premier League',
-      logo: 'https://www.thesportsdb.com/images/media/league/badge/7v97n21548171123.png'
-    },
-    time: '19:45',
-    date: getTodayDateString(),
-    status: 'live',
-    score: '2 - 1',
-    channelId: 'alkass-4'
-  },
-  {
-    id: 'mock-2',
-    homeTeam: {
-      name: 'Real Madrid',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/qg29qy1683477169.png'
-    },
-    awayTeam: {
-      name: 'Barcelona',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/08vfol1673892780.png'
-    },
-    league: {
-      name: 'La Liga',
-      logo: 'https://www.thesportsdb.com/images/media/league/badge/096v7q1548171171.png'
-    },
-    time: '21:00',
-    date: getTodayDateString(),
-    status: 'upcoming',
-    channelId: 'alkass-6'
-  },
-  {
-    id: 'mock-3',
-    homeTeam: {
-      name: 'Al Nassr',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/px87181673896590.png'
-    },
-    awayTeam: {
-      name: 'Al Hilal',
-      logo: 'https://www.thesportsdb.com/images/media/team/badge/xvytrw1473523455.png'
-    },
-    league: {
-      name: 'Saudi Pro League',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Saudi_Pro_League_Logo.svg/1200px-Saudi_Pro_League_Logo.svg.png'
-    },
-    time: '20:30',
-    date: getTodayDateString(),
-    status: 'live',
-    score: '0 - 0',
-    channelId: 'ssc-sports-1'
-  },
-  {
-    id: 'mock-4',
-    homeTeam: {
-      name: 'Persib Bandung',
-      logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/Persib_Bandung_crest.svg/1200px-Persib_Bandung_crest.svg.png'
-    },
-    awayTeam: {
-      name: 'Persija Jakarta',
-      logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Persija_Jakarta_logo.svg/1200px-Persija_Jakarta_logo.svg.png'
-    },
-    league: {
-      name: 'Liga 1 Indonesia',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b2/Liga_1_Indonesia_Logo.png'
-    },
-    time: '15:30',
-    date: getTodayDateString(),
-    status: 'upcoming',
-    channelId: 'indosiar'
+const findWcGame = (player1: string, player2: string, wcGames: any[]) => {
+  if (!player1 || !player2) return null;
+  const p1 = normalizeTeamName(player1);
+  const p2 = normalizeTeamName(player2);
+
+  return wcGames.find(g => {
+    const home = normalizeTeamName(g.home_team_name_en || g.home_team_label || '');
+    const away = normalizeTeamName(g.away_team_name_en || g.away_team_label || '');
+    return (home === p1 && away === p2) || (home === p2 && away === p1);
+  });
+};
+
+const getWcScore = (player1: string, game: any) => {
+  if (!game) return null;
+  const p1 = normalizeTeamName(player1);
+  const home = normalizeTeamName(game.home_team_name_en || game.home_team_label || '');
+  
+  const homeScore = game.home_score;
+  const awayScore = game.away_score;
+  
+  if (home === p1) {
+    return `${homeScore} - ${awayScore}`;
+  } else {
+    return `${awayScore} - ${homeScore}`;
   }
-];
+};
 
 export const getTodayMatches = async (): Promise<Match[]> => {
-  const dateStr = getTodayDateString();
-  const url = `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${dateStr}&s=Soccer`;
-
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const data = await response.json();
-    
-    if (data.events && data.events.length > 0) {
-      const channelRotation = ['alkass-4', 'alkass-1', 'bein-1', 'bein-2', 'ssc-sports-1', 'alkass-3', 'alkass-6', 'indosiar'];
-      
-      const parsedMatches: Match[] = data.events.map((event: any, idx: number) => {
-        let channelId = channelRotation[idx % channelRotation.length];
-        const leagueName = (event.strLeague || '').toLowerCase();
-        
-        if (leagueName.includes('premier league')) {
-          channelId = 'alkass-4'; // Alkass Four HD
-        } else if (leagueName.includes('champions league') || leagueName.includes('ucl')) {
-          channelId = 'alkass-1'; // Alkass One
-        } else if (leagueName.includes('europa league')) {
-          channelId = 'alkass-3'; // Alkass Three
-        } else if (leagueName.includes('la liga') || leagueName.includes('laliga')) {
-          channelId = 'alkass-6'; // Alkass Six
-        } else if (leagueName.includes('serie a') || leagueName.includes('italy')) {
-          channelId = 'bein-1'; // beIN Sports XTRA
-        } else if (leagueName.includes('bundesliga') || leagueName.includes('germany')) {
-          channelId = 'bein-2'; // beIN Sports XTRA ES
-        } else if (leagueName.includes('saudi') || leagueName.includes('gulf') || leagueName.includes('qatar')) {
-          channelId = 'ssc-sports-1'; // Bahrain Sports
-        } else if (leagueName.includes('indonesia') || leagueName.includes('liga 1')) {
-          channelId = 'indosiar';
-        } else if (leagueName.includes('india') || leagueName.includes('isl')) {
-          channelId = 'dd-sports';
+    const [eventsRes, gamesRes] = await Promise.all([
+      fetch('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat')
+        .then(r => r.json())
+        .catch(() => localEvents),
+      fetch('https://worldcup26.ir/get/games')
+        .then(r => r.json())
+        .catch(() => null)
+    ]);
+
+    const eventsData = eventsRes || [];
+    const wcGames = (gamesRes && gamesRes.games) ? gamesRes.games : [];
+
+    if (eventsData.length > 0) {
+      const parsedMatches: Match[] = eventsData.map((event: any) => {
+        const homeTeamName = event.player_1 || 'TBD';
+        const awayTeamName = event.player_2 || 'TBD';
+
+        const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
+        const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
+
+        const start = parseJadwal(event.jadwal_event);
+        const stop = parseJadwal(event.jadwal_stop);
+        const now = new Date();
+
+        let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
+        if (now > stop) {
+          status = 'finished';
+        } else if (now >= new Date(start.getTime() - 20 * 60 * 1000)) {
+          status = 'live';
         }
 
-        const timeStr = event.strTime || '12:00:00';
-        const dateStrVal = event.dateEvent || dateStr;
-        const status = getMatchStatus(dateStrVal, timeStr);
+        const matchedGame = findWcGame(homeTeamName, awayTeamName, wcGames);
+        const score = (status !== 'upcoming') ? (getWcScore(homeTeamName, matchedGame) || '0 - 0') : undefined;
 
-        const homeScore = event.intHomeScore;
-        const awayScore = event.intAwayScore;
-        const score = (homeScore !== null && awayScore !== null) ? `${homeScore} - ${awayScore}` : undefined;
+        const timeStr = formatMatchTime(start);
 
         return {
-          id: event.idEvent,
+          id: event.id_event,
           homeTeam: {
-            name: event.strHomeTeam,
-            logo: event.strHomeTeamBadge || 'https://www.thesportsdb.com/images/media/team/badge/placeholder.png'
+            name: homeTeamName,
+            logo: homeTeamFlag
           },
           awayTeam: {
-            name: event.strAwayTeam,
-            logo: event.strAwayTeamBadge || 'https://www.thesportsdb.com/images/media/team/badge/placeholder.png'
+            name: awayTeamName,
+            logo: awayTeamFlag
           },
           league: {
-            name: event.strLeague,
-            logo: event.strLeagueBadge || 'https://www.thesportsdb.com/images/media/league/badge/placeholder.png'
+            name: event.nama_event || 'FIFA World Cup',
+            logo: '/favicon.svg'
           },
-          time: timeStr.substring(0, 5),
-          date: dateStrVal,
+          time: timeStr,
+          date: event.jadwal_event,
           status: status,
           score: score,
-          channelId: channelId
+          channelId: event.id_event
         };
       });
 
-      const activeMatches = parsedMatches.filter(m => m.status === 'live' || m.status === 'upcoming');
-      if (activeMatches.length > 0) {
-        return activeMatches.sort((a, b) => (a.time || '').localeCompare(b.time || '')).slice(0, 10);
-      }
+      // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
+      const sorted = [...parsedMatches].sort((a, b) => {
+        if (a.status === b.status) {
+          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+          return dateA - dateB;
+        }
+        if (a.status === 'live') return -1;
+        if (b.status === 'live') return 1;
+        if (a.status === 'upcoming' && b.status === 'finished') return -1;
+        if (a.status === 'finished' && b.status === 'upcoming') return 1;
+        return 0;
+      });
+
+      return sorted;
     }
   } catch (error) {
-    console.error('Failed to fetch real-time matches from TheSportsDB:', error);
+    console.error('Failed to resolve matches schedule:', error);
   }
 
-  return getMockMatches().filter(m => m.status === 'live' || m.status === 'upcoming');
+  // Fallback to local events if everything fails
+  try {
+    const parsedMatches: Match[] = (localEvents as any[]).map((event: any) => {
+      const homeTeamName = event.player_1 || 'TBD';
+      const awayTeamName = event.player_2 || 'TBD';
+
+      const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
+      const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
+
+      const start = parseJadwal(event.jadwal_event);
+      const stop = parseJadwal(event.jadwal_stop);
+      const now = new Date();
+
+      let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
+      if (now > stop) {
+        status = 'finished';
+      } else if (now >= new Date(start.getTime() - 20 * 60 * 1000)) {
+        status = 'live';
+      }
+
+      const timeStr = formatMatchTime(start);
+
+      return {
+        id: event.id_event,
+        homeTeam: {
+          name: homeTeamName,
+          logo: homeTeamFlag
+        },
+        awayTeam: {
+          name: awayTeamName,
+          logo: awayTeamFlag
+        },
+        league: {
+          name: event.nama_event || 'FIFA World Cup',
+          logo: '/favicon.svg'
+        },
+        time: timeStr,
+        date: event.jadwal_event,
+        status: status,
+        channelId: event.id_event
+      };
+    });
+
+    return parsedMatches;
+  } catch (err) {
+    console.error('Failed fallback mapping', err);
+    return [];
+  }
 };
