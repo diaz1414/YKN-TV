@@ -8,6 +8,7 @@ import { getLiveSportsData, slugify, type PlayableStream } from '../services/str
 import { Zap, Tv, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner.png';
+import { supabase } from '../services/supabase';
 
 // World Cup 2026 Participating Countries & Flags for Marquee
 const COUNTRIES_MARQUEE = [
@@ -114,6 +115,37 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSubTab, setActiveSubTab] = useState<'sports' | 'general'>('sports');
+  const [viewerCounts, setViewerCounts] = useState<Record<string, number>>({});
+
+  // Real-time tracking of viewers using Supabase Presence
+  useEffect(() => {
+    const channel = supabase.channel('global-live-sports-presence');
+
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const presenceState = channel.presenceState();
+        const counts: Record<string, number> = {};
+        
+        Object.values(presenceState).forEach((presences: any) => {
+          presences.forEach((p: any) => {
+            if (p.watching) {
+              counts[p.watching] = (counts[p.watching] || 0) + 1;
+            }
+          });
+        });
+        
+        setViewerCounts(counts);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ watching: 'home', joined_at: new Date().toISOString() });
+        }
+      });
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
 
   // Load stream data on mount
   useEffect(() => {
@@ -210,7 +242,7 @@ const Home = () => {
               <WorldCupCountdown />
 
               {/* Match Schedule grid */}
-              <MatchSchedule />
+              <MatchSchedule viewerCounts={viewerCounts} />
             </motion.div>
           )}
 

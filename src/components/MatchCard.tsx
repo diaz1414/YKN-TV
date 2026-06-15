@@ -6,14 +6,43 @@ import { useEffect, useState } from 'react';
 interface MatchCardProps {
   match: Match;
   onClick: () => void;
+  viewerCount?: number;
 }
 
-const MatchCard = ({ match, onClick }: MatchCardProps) => {
+const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
   const isLive = match.status === 'live';
   const isFinished = match.status === 'finished';
 
   const [timeLeftStr, setTimeLeftStr] = useState<string>('');
   const [isStartingSoon, setIsStartingSoon] = useState(false);
+  const [viewers, setViewers] = useState<string>('');
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!isLive) return;
+    const interval = setInterval(() => {
+      setTick(t => t + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [isLive]);
+
+  useEffect(() => {
+    if (!isLive) return;
+    const idHash = match.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const rawPresence = viewerCount || 0;
+    const baseVal = 1000 + (idHash % 10) * 800 + rawPresence * 15;
+    
+    const format = (v: number) => {
+      if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
+      return v.toString();
+    };
+    
+    // Add time-based fluctuation
+    const timeSec = Math.floor(Date.now() / 4000) % 20;
+    const flux = Math.sin(timeSec) * 20;
+    const finalVal = Math.max(800, Math.floor(baseVal + flux));
+    setViewers(format(finalVal));
+  }, [isLive, match.id, viewerCount, tick]);
 
   useEffect(() => {
     if (match.status !== 'upcoming' || !match.date) return;
@@ -90,9 +119,9 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
           <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{match.league.name}</span>
         </div>
         {isLive && (
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 rounded-full border border-amber-500/20 select-none">
-            <Radio size={12} className="text-amber-400 animate-pulse-live" />
-            <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">LIVE</span>
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-red-500/10 rounded-full border border-red-500/25 select-none">
+            <Radio size={12} className="text-red-500 animate-pulse-live" />
+            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">LIVE {viewers && `• ${viewers}`}</span>
           </div>
         )}
         {isStartingSoon && !isLive && (

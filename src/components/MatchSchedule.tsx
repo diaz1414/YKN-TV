@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
-const MatchSchedule = () => {
+const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, number> }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ const MatchSchedule = () => {
               key={match.id} 
               match={match} 
               onClick={() => handleMatchClick(match)} 
+              viewerCount={viewerCounts[match.id]}
             />
           ))}
         </div>

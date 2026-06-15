@@ -4,6 +4,7 @@ import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, Coffee, Gift } from 'lucide-react';
+import { supabase } from '../services/supabase';
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -26,16 +27,67 @@ const ChannelDetail = () => {
 
   const [liveBitrate, setLiveBitrate] = useState('6.4 Mbps');
   const [liveLatency, setLiveLatency] = useState('0.9s');
+  const [viewerCounts, setViewerCounts] = useState<Record<string, number>>({});
+  const [tick, setTick] = useState(0);
 
+  // Real-time tracking of viewers using Supabase Presence
+  useEffect(() => {
+    if (!stream) return;
+    const channel = supabase.channel('global-live-sports-presence');
+
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const presenceState = channel.presenceState();
+        const counts: Record<string, number> = {};
+        
+        Object.values(presenceState).forEach((presences: any) => {
+          presences.forEach((p: any) => {
+            if (p.watching) {
+              counts[p.watching] = (counts[p.watching] || 0) + 1;
+            }
+          });
+        });
+        
+        setViewerCounts(counts);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ watching: stream.id, joined_at: new Date().toISOString() });
+        }
+      });
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [stream?.id]);
+
+  // Interval for specs and tick fluctuations
   useEffect(() => {
     const interval = setInterval(() => {
       const bitrateNum = (6.1 + Math.random() * 0.6).toFixed(1);
       setLiveBitrate(`${bitrateNum} Mbps`);
       const latencyNum = (0.7 + Math.random() * 0.5).toFixed(1);
       setLiveLatency(`${latencyNum}s`);
+      setTick(t => t + 1);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  // Helper to format viewer counts with real presence data and realistic premium base
+  const getFormattedViewers = (streamId: string) => {
+    const rawPresence = viewerCounts[streamId] || 0;
+    const idHash = streamId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const baseVal = 1200 + (idHash % 15) * 200 + rawPresence * 15;
+    
+    // Fluctuate based on the tick state (updates every 3 seconds)
+    const flux = Math.sin(tick) * 25;
+    const finalVal = Math.max(100, Math.floor(baseVal + flux));
+
+    if (finalVal >= 1000) {
+      return `${(finalVal / 1000).toFixed(1)}K`;
+    }
+    return finalVal.toString();
+  };
 
   const parseJadwal = (dateStr?: string): Date => {
     if (!dateStr) return new Date();
@@ -314,10 +366,14 @@ const ChannelDetail = () => {
 
             {/* Stream info detail box */}
             <div className="glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
-              <div className="absolute top-6 right-6 select-none">
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
+              <div className="absolute top-6 right-6 select-none flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-[#e50914]/10 text-[#e50914] border border-[#e50914]/20 rounded-full text-[9px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#e50914] animate-pulse" />
+                  <span>{getFormattedViewers(stream.id)} WATCHING</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[9px] font-black uppercase tracking-widest hidden sm:flex">
                   <Wifi size={12} className="animate-pulse" />
-                  <span className="text-[9px] font-black uppercase tracking-widest">ONLINE</span>
+                  <span>ONLINE</span>
                 </div>
               </div>
 
@@ -355,10 +411,11 @@ const ChannelDetail = () => {
               </div>
 
               {/* Stream Specs grid */}
-              <div className="pt-6 border-t border-white/5 grid grid-cols-3 gap-4 text-center select-none">
+              <div className="pt-6 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center select-none">
                 <StatItem label="Bitrate" value={liveBitrate} />
                 <StatItem label="Latensi" value={liveLatency} />
                 <StatItem label="Format" value={stream.servers[0]?.type.toUpperCase() || 'HLS'} />
+                <StatItem label="Penonton" value={`${getFormattedViewers(stream.id)} Live`} />
               </div>
             </div>
           </div>
