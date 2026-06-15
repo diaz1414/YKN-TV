@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getTodayMatches, type Match } from '../services/matchService';
 import MatchCard from './MatchCard';
 import { useNavigate } from 'react-router-dom';
-import { Trophy } from 'lucide-react';
+import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
 const MatchSchedule = () => {
@@ -40,10 +40,9 @@ const MatchSchedule = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-44 bg-white/5 rounded-[2rem] animate-pulse border border-white/5" />
-          ))}
+        <div className="flex flex-col items-center justify-center py-20 gap-4 bg-zinc-950/40 border border-white/5 rounded-[2rem] animate-pulse">
+          <Loader2 className="text-primary animate-spin" size={36} />
+          <p className="text-zinc-500 font-black uppercase tracking-[0.15em] text-[10px]">Memuat Jadwal Pertandingan...</p>
         </div>
       ) : matches.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
