@@ -28,7 +28,6 @@ const ChannelDetail = () => {
   const [liveBitrate, setLiveBitrate] = useState('6.4 Mbps');
   const [liveLatency, setLiveLatency] = useState('0.9s');
   const [viewerCounts, setViewerCounts] = useState<Record<string, number>>({});
-  const [tick, setTick] = useState(0);
 
   // Real-time tracking of viewers using Supabase Presence
   useEffect(() => {
@@ -61,32 +60,27 @@ const ChannelDetail = () => {
     };
   }, [stream?.id]);
 
-  // Interval for specs and tick fluctuations
+  // Interval for specs fluctuations
   useEffect(() => {
     const interval = setInterval(() => {
       const bitrateNum = (6.1 + Math.random() * 0.6).toFixed(1);
       setLiveBitrate(`${bitrateNum} Mbps`);
       const latencyNum = (0.7 + Math.random() * 0.5).toFixed(1);
       setLiveLatency(`${latencyNum}s`);
-      setTick(t => t + 1);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  // Helper to format viewer counts with real presence data and realistic premium base
   const getFormattedViewers = (streamId: string) => {
     const rawPresence = viewerCounts[streamId] || 0;
-    const idHash = streamId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const baseVal = 1200 + (idHash % 15) * 200 + rawPresence * 15;
-    
-    // Fluctuate based on the tick state (updates every 3 seconds)
-    const flux = Math.sin(tick) * 25;
-    const finalVal = Math.max(100, Math.floor(baseVal + flux));
-
-    if (finalVal >= 1000) {
-      return `${(finalVal / 1000).toFixed(1)}K`;
+    const count = Math.max(1, rawPresence);
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
     }
-    return finalVal.toString();
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
   };
 
   const parseJadwal = (dateStr?: string): Date => {

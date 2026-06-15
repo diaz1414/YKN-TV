@@ -15,34 +15,18 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
 
   const [timeLeftStr, setTimeLeftStr] = useState<string>('');
   const [isStartingSoon, setIsStartingSoon] = useState(false);
-  const [viewers, setViewers] = useState<string>('');
-  const [tick, setTick] = useState(0);
+  const [viewers, setViewers] = useState<string>('0');
 
   useEffect(() => {
     if (!isLive) return;
-    const interval = setInterval(() => {
-      setTick(t => t + 1);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isLive]);
-
-  useEffect(() => {
-    if (!isLive) return;
-    const idHash = match.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const rawPresence = viewerCount || 0;
-    const baseVal = 1000 + (idHash % 10) * 800 + rawPresence * 15;
-    
     const format = (v: number) => {
+      if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
       if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
       return v.toString();
     };
-    
-    // Add time-based fluctuation
-    const timeSec = Math.floor(Date.now() / 4000) % 20;
-    const flux = Math.sin(timeSec) * 20;
-    const finalVal = Math.max(800, Math.floor(baseVal + flux));
-    setViewers(format(finalVal));
-  }, [isLive, match.id, viewerCount, tick]);
+    setViewers(format(rawPresence));
+  }, [isLive, viewerCount]);
 
   useEffect(() => {
     if (match.status !== 'upcoming' || !match.date) return;
