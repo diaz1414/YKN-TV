@@ -17,6 +17,7 @@ export interface Match {
   time: string;
   status: 'live' | 'upcoming' | 'finished';
   score?: string;
+  liveMinute?: string;
   channelId?: string;
   date?: string;
 }
@@ -112,7 +113,7 @@ const getWcScore = (player1: string, game: any) => {
 
 let cachedMatches: Match[] | null = null;
 let cacheTime = 0;
-const CACHE_EXPIRY = 30000; // 30 seconds cache
+const CACHE_EXPIRY = 20000; // 20 seconds cache for faster live score updates
 
 const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs = 3500) => {
   const controller = new AbortController();
@@ -130,6 +131,56 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutM
   }
 };
 
+// ESPN live score lookup map: "normalizedHome|normalizedAway" -> { homeScore, awayScore, clock, state }
+interface EspnScore {
+  homeScore: string;
+  awayScore: string;
+  clock: string;
+  state: string; // "pre" | "in" | "post"
+  homeName: string;
+  awayName: string;
+}
+
+const buildEspnScoreMap = (espnEvents: any[]): Map<string, EspnScore> => {
+  const map = new Map<string, EspnScore>();
+  for (const event of espnEvents) {
+    const comp = event.competitions?.[0];
+    if (!comp) continue;
+    const competitors = comp.competitors || [];
+    const homeComp = competitors.find((c: any) => c.homeAway === 'home');
+    const awayComp = competitors.find((c: any) => c.homeAway === 'away');
+    if (!homeComp || !awayComp) continue;
+
+    const homeName = normalizeTeamName(homeComp.team?.displayName || '');
+    const awayName = normalizeTeamName(awayComp.team?.displayName || '');
+    const state = comp.status?.type?.state || 'pre';
+    const clock = comp.status?.displayClock || '';
+
+    const score: EspnScore = {
+      homeScore: homeComp.score || '0',
+      awayScore: awayComp.score || '0',
+      clock,
+      state,
+      homeName,
+      awayName,
+    };
+    // Index both directions so we can find regardless of home/away order
+    map.set(`${homeName}|${awayName}`, score);
+    map.set(`${awayName}|${homeName}`, score);
+  }
+  return map;
+};
+
+const getEspnScore = (
+  player1: string,
+  player2: string,
+  espnMap: Map<string, EspnScore>
+): EspnScore | null => {
+  const p1 = normalizeTeamName(player1);
+  const p2 = normalizeTeamName(player2);
+  return espnMap.get(`${p1}|${p2}`) || espnMap.get(`${p2}|${p1}`) || null;
+};
+
 export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> => {
   const now = Date.now();
   if (!forceRefresh && cachedMatches && (now - cacheTime < CACHE_EXPIRY)) {
@@ -140,9 +191,10 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
     try {
       let eventsData: any[] = [];
       let wcGames: any[] = [];
+      let espnMap = new Map<string, EspnScore>();
 
-      // Parallel fetching of bot events and wc games
-      const [eventsResult, wcGamesResult] = await Promise.allSettled([
+      // Parallel fetching: bot events + worldcup26 (fallback scores) + ESPN (live scores)
+      const [eventsResult, wcGamesResult, espnResult] = await Promise.allSettled([
         (async () => {
           try {
             const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
@@ -168,7 +220,21 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
             console.warn('Failed to fetch World Cup games scores', wcErr);
             return [];
           }
-        })()
+        })(),
+        (async () => {
+          try {
+            // ESPN public live scoreboard — real-time scores
+            const res = await fetchWithTimeout(
+              'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',
+              {}, 4000
+            );
+            const json = await res.json();
+            return json?.events || [];
+          } catch (espnErr) {
+            console.warn('Failed to fetch ESPN live scores', espnErr);
+            return [];
+          }
+        })(),
       ]);
 
       if (eventsResult.status === 'fulfilled') {
@@ -179,6 +245,12 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
       if (wcGamesResult.status === 'fulfilled') {
         wcGames = wcGamesResult.value;
+      }
+
+      // Build ESPN score map from fetched ESPN events
+      if (espnResult.status === 'fulfilled' && espnResult.value.length > 0) {
+        espnMap = buildEspnScoreMap(espnResult.value);
+        console.log('[ESPN] Score map built with', espnMap.size / 2, 'matches');
       }
 
       if (eventsData.length > 0) {
@@ -201,7 +273,41 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           }
 
           const matchedGame = findWcGame(homeTeamName, awayTeamName, wcGames);
-          const score = (status !== 'upcoming') ? (getWcScore(homeTeamName, matchedGame) || '0 - 0') : undefined;
+
+          // Show score for both live and finished matches
+          // Priority: ESPN (real-time) > worldcup26.ir (fallback)
+          let score: string | undefined = undefined;
+          let liveMinute: string | undefined = undefined;
+
+          if (status === 'live' || status === 'finished') {
+            // 1) Try ESPN score first (real-time, updated every few seconds)
+            const espnScore = getEspnScore(homeTeamName, awayTeamName, espnMap);
+            if (espnScore) {
+              // Determine which team is home in our event vs ESPN's home/away
+              const p1Norm = normalizeTeamName(homeTeamName);
+              const espnHomeNorm = espnScore.homeName;
+              if (p1Norm === espnHomeNorm) {
+                score = `${espnScore.homeScore} - ${espnScore.awayScore}`;
+              } else {
+                // Our player_1 is ESPN's away team, flip the score
+                score = `${espnScore.awayScore} - ${espnScore.homeScore}`;
+              }
+              // ESPN clock as live minute
+              if (espnScore.state === 'in' && espnScore.clock) {
+                liveMinute = espnScore.clock;
+              }
+              console.log(`[ESPN] ${homeTeamName} vs ${awayTeamName}: ${score} (${espnScore.state})`);
+            } else {
+              // 2) Fallback to worldcup26.ir
+              const wcScore = getWcScore(homeTeamName, matchedGame);
+              score = wcScore || '0 - 0';
+              if (matchedGame && matchedGame.time_elapsed &&
+                  matchedGame.time_elapsed !== 'notstarted' &&
+                  matchedGame.time_elapsed !== 'finished') {
+                liveMinute = matchedGame.time_elapsed;
+              }
+            }
+          }
 
           const timeStr = formatMatchTime(start);
 
@@ -223,6 +329,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
             date: event.jadwal_event,
             status: status,
             score: score,
+            liveMinute: liveMinute,
             channelId: event.id_event
           };
         });

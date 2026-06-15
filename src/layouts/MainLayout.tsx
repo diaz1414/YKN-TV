@@ -35,7 +35,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   useEffect(() => {
     const fetchLiveMatch = async () => {
       try {
-        const matches = await getTodayMatches();
+        const matches = await getTodayMatches(true); // force refresh for real-time scores
         if (matches && matches.length > 0) {
           // Priority 1: Match that is currently live
           const live = matches.find(m => m.status === 'live');
@@ -58,7 +58,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     };
 
     fetchLiveMatch();
-    const interval = setInterval(fetchLiveMatch, 30000);
+    const interval = setInterval(fetchLiveMatch, 20000); // poll every 20s for live score updates
     return () => clearInterval(interval);
   }, []);
 
@@ -286,6 +286,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                       : 'vs'}
                   </span>{' '}
                   {getTeamAbbreviation(activeMatch.awayTeam.name)}
+                  {activeMatch.status === 'live' && activeMatch.liveMinute && (
+                    <span className="ml-1 text-red-400 text-[8px] font-black">{activeMatch.liveMinute}</span>
+                  )}
                 </p>
               </div>
 
