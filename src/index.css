@@ -15,6 +15,36 @@
 }
 
 @layer base {
+  /* Global custom scrollbar */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.2) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.18);
+    border-radius: 9999px;
+    transition: background 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   body {
     @apply text-white font-sans antialiased selection:bg-primary selection:text-dark;
     position: relative;
@@ -105,9 +135,17 @@
     display: none;
   }
 
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -115,12 +153,13 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(212, 175, 55, 0.15);
     border-radius: 9999px;
+    transition: background 0.3s ease;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(212, 175, 55, 0.45);
   }
 
   .animate-marquee {
