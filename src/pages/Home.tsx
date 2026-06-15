@@ -227,7 +227,7 @@ const Home = () => {
       searchValue={searchTerm}
     >
       {/* Powered by YKN MOVIES banner above flags */}
-      <div className="w-full flex items-center justify-center gap-2 py-1.5 bg-zinc-950/60 border-b border-white/[0.03] select-none">
+      <div className="-mx-4 md:-mx-8 flex items-center justify-center gap-2 py-1.5 bg-zinc-950/60 border-b border-white/[0.03] select-none">
         <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Powered by</span>
         <a
           href="https://yknmovies.diaww.my.id/"
@@ -240,7 +240,7 @@ const Home = () => {
       </div>
 
       {/* Dynamic Flag Marquee for World Cup Festive Vibe - All 48 WC2026 Nations */}
-      <div className="w-full bg-[#080808]/40 border-b border-white/5 py-2.5 overflow-hidden select-none mb-6 relative shadow-lg">
+      <div className="-mx-4 md:-mx-8 bg-[#080808]/40 border-b border-white/5 py-2.5 overflow-hidden select-none mb-6 relative shadow-lg">
         <div className="animate-marquee gap-6 items-center flex">
           {MARQUEE_FLAGS.map((flag, idx) => (
             <div key={idx} className="flex items-center gap-1.5 px-2 shrink-0">
