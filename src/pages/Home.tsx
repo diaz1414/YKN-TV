@@ -10,23 +10,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner.png';
 import { supabase } from '../services/supabase';
 
-// World Cup 2026 Participating Countries & Flags for Marquee (All 48 teams)
+// World Cup 2026 Participating Countries & Flags for Marquee (All 48 qualified teams)
 const COUNTRIES_MARQUEE = [
-  // Group A - Host
+  // Hosts
   { code: 'us', name: 'USA' },
   { code: 'mx', name: 'Mexico' },
   { code: 'ca', name: 'Canada' },
-  // South America
-  { code: 'br', name: 'Brazil' },
+  // CONMEBOL (South America)
   { code: 'ar', name: 'Argentina' },
+  { code: 'br', name: 'Brazil' },
   { code: 'co', name: 'Colombia' },
-  { code: 'uy', name: 'Uruguay' },
   { code: 'ec', name: 'Ecuador' },
-  { code: 've', name: 'Venezuela' },
   { code: 'py', name: 'Paraguay' },
-  { code: 'bo', name: 'Bolivia' },
-  { code: 'pe', name: 'Peru' },
-  // Europe
+  { code: 'uy', name: 'Uruguay' },
+  // UEFA (Europe)
   { code: 'es', name: 'Spain' },
   { code: 'fr', name: 'France' },
   { code: 'de', name: 'Germany' },
@@ -35,33 +32,26 @@ const COUNTRIES_MARQUEE = [
   { code: 'nl', name: 'Netherlands' },
   { code: 'be', name: 'Belgium' },
   { code: 'hr', name: 'Croatia' },
-  { code: 'it', name: 'Italy' },
   { code: 'at', name: 'Austria' },
   { code: 'ch', name: 'Switzerland' },
-  { code: 'dk', name: 'Denmark' },
   { code: 'gb-sct', name: 'Scotland' },
-  { code: 'hu', name: 'Hungary' },
-  { code: 'sk', name: 'Slovakia' },
-  { code: 'tr', name: 'Turkey' },
-  { code: 'al', name: 'Albania' },
-  { code: 'rs', name: 'Serbia' },
-  { code: 'ua', name: 'Ukraine' },
-  { code: 'ro', name: 'Romania' },
+  { code: 'tr', name: 'Türkiye' },
   { code: 'cz', name: 'Czechia' },
-  { code: 'gr', name: 'Greece' },
-  // Africa
+  { code: 'ba', name: 'Bosnia and Herzegovina' },
+  { code: 'no', name: 'Norway' },
+  { code: 'se', name: 'Sweden' },
+  // CAF (Africa)
   { code: 'ma', name: 'Morocco' },
   { code: 'sn', name: 'Senegal' },
-  { code: 'ng', name: 'Nigeria' },
+  { code: 'dz', name: 'Algeria' },
   { code: 'eg', name: 'Egypt' },
   { code: 'tn', name: 'Tunisia' },
-  { code: 'dz', name: 'Algeria' },
   { code: 'gh', name: 'Ghana' },
-  { code: 'cm', name: 'Cameroon' },
-  { code: 'ci', name: "Côte d'Ivoire" },
   { code: 'za', name: 'South Africa' },
-  { code: 'ml', name: 'Mali' },
-  // Asia
+  { code: 'ci', name: "Côte d'Ivoire" },
+  { code: 'cv', name: 'Cabo Verde' },
+  { code: 'cd', name: 'DR Congo' },
+  // AFC (Asia)
   { code: 'jp', name: 'Japan' },
   { code: 'kr', name: 'South Korea' },
   { code: 'sa', name: 'Saudi Arabia' },
@@ -70,16 +60,12 @@ const COUNTRIES_MARQUEE = [
   { code: 'jo', name: 'Jordan' },
   { code: 'uz', name: 'Uzbekistan' },
   { code: 'qa', name: 'Qatar' },
-  { code: 'cn', name: 'China' },
-  { code: 'id', name: 'Indonesia' },
-  // CONCACAF
+  { code: 'iq', name: 'Iraq' },
+  // CONCACAF (North/Central America)
+  { code: 'cw', name: 'Curaçao' },
+  { code: 'ht', name: 'Haiti' },
   { code: 'pa', name: 'Panama' },
-  { code: 'cr', name: 'Costa Rica' },
-  { code: 'hn', name: 'Honduras' },
-  { code: 'jm', name: 'Jamaica' },
-  { code: 'cu', name: 'Cuba' },
-  { code: 'gt', name: 'Guatemala' },
-  // Oceania / Others
+  // OFC (Oceania)
   { code: 'nz', name: 'New Zealand' },
 ];
 

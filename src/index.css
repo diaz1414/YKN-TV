@@ -119,11 +119,10 @@
     background: rgba(255, 255, 255, 0.15);
   }
 
-  /* Looping flag marquee animation */
   .animate-marquee {
     display: flex;
     width: max-content;
-    animation: marquee-scroll 45s linear infinite;
+    animation: marquee-scroll 120s linear infinite;
   }
   
   .animate-marquee:hover {
