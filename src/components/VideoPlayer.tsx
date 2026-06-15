@@ -110,7 +110,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     });
 
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const isFs = !!document.fullscreenElement;
+      setIsFullscreen(isFs);
+      if (isFs) {
+        // Try native API (Android Chrome)
+        const orientation = screen.orientation as any;
+        if (orientation && typeof orientation.lock === 'function') {
+          orientation.lock('landscape').catch((err: any) => {
+            console.warn('Orientation lock failed:', err);
+          });
+        }
+        // CSS fallback for iOS Safari (no API support)
+        document.body.classList.add('ykn-fullscreen-active');
+      } else {
+        const orientation = screen.orientation as any;
+        if (orientation && typeof orientation.unlock === 'function') {
+          try {
+            orientation.unlock();
+          } catch (e) {
+            console.warn('Orientation unlock failed:', e);
+          }
+        }
+        document.body.classList.remove('ykn-fullscreen-active');
+      }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 

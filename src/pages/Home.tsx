@@ -10,31 +10,80 @@ import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner.png';
 import { supabase } from '../services/supabase';
 
-// World Cup 2026 Participating Countries & Flags for Marquee
+// World Cup 2026 Participating Countries & Flags for Marquee (All 48 teams)
 const COUNTRIES_MARQUEE = [
+  // Group A - Host
   { code: 'us', name: 'USA' },
   { code: 'mx', name: 'Mexico' },
   { code: 'ca', name: 'Canada' },
+  // South America
   { code: 'br', name: 'Brazil' },
   { code: 'ar', name: 'Argentina' },
-  { code: 'fr', name: 'France' },
+  { code: 'co', name: 'Colombia' },
+  { code: 'uy', name: 'Uruguay' },
+  { code: 'ec', name: 'Ecuador' },
+  { code: 've', name: 'Venezuela' },
+  { code: 'py', name: 'Paraguay' },
+  { code: 'bo', name: 'Bolivia' },
+  { code: 'pe', name: 'Peru' },
+  // Europe
   { code: 'es', name: 'Spain' },
+  { code: 'fr', name: 'France' },
+  { code: 'de', name: 'Germany' },
   { code: 'pt', name: 'Portugal' },
   { code: 'gb-eng', name: 'England' },
-  { code: 'de', name: 'Germany' },
-  { code: 'it', name: 'Italy' },
   { code: 'nl', name: 'Netherlands' },
-  { code: 'ma', name: 'Morocco' },
-  { code: 'jp', name: 'Japan' },
-  { code: 'hr', name: 'Croatia' },
   { code: 'be', name: 'Belgium' },
-  { code: 'uy', name: 'Uruguay' },
+  { code: 'hr', name: 'Croatia' },
+  { code: 'it', name: 'Italy' },
+  { code: 'at', name: 'Austria' },
+  { code: 'ch', name: 'Switzerland' },
+  { code: 'dk', name: 'Denmark' },
+  { code: 'gb-sct', name: 'Scotland' },
+  { code: 'hu', name: 'Hungary' },
+  { code: 'sk', name: 'Slovakia' },
+  { code: 'tr', name: 'Turkey' },
+  { code: 'al', name: 'Albania' },
+  { code: 'rs', name: 'Serbia' },
+  { code: 'ua', name: 'Ukraine' },
+  { code: 'ro', name: 'Romania' },
+  { code: 'cz', name: 'Czechia' },
+  { code: 'gr', name: 'Greece' },
+  // Africa
+  { code: 'ma', name: 'Morocco' },
   { code: 'sn', name: 'Senegal' },
-  { code: 'co', name: 'Colombia' },
-  { code: 'sa', name: 'Saudi Arabia' }
+  { code: 'ng', name: 'Nigeria' },
+  { code: 'eg', name: 'Egypt' },
+  { code: 'tn', name: 'Tunisia' },
+  { code: 'dz', name: 'Algeria' },
+  { code: 'gh', name: 'Ghana' },
+  { code: 'cm', name: 'Cameroon' },
+  { code: 'ci', name: "Côte d'Ivoire" },
+  { code: 'za', name: 'South Africa' },
+  { code: 'ml', name: 'Mali' },
+  // Asia
+  { code: 'jp', name: 'Japan' },
+  { code: 'kr', name: 'South Korea' },
+  { code: 'sa', name: 'Saudi Arabia' },
+  { code: 'ir', name: 'Iran' },
+  { code: 'au', name: 'Australia' },
+  { code: 'jo', name: 'Jordan' },
+  { code: 'uz', name: 'Uzbekistan' },
+  { code: 'qa', name: 'Qatar' },
+  { code: 'cn', name: 'China' },
+  { code: 'id', name: 'Indonesia' },
+  // CONCACAF
+  { code: 'pa', name: 'Panama' },
+  { code: 'cr', name: 'Costa Rica' },
+  { code: 'hn', name: 'Honduras' },
+  { code: 'jm', name: 'Jamaica' },
+  { code: 'cu', name: 'Cuba' },
+  { code: 'gt', name: 'Guatemala' },
+  // Oceania / Others
+  { code: 'nz', name: 'New Zealand' },
 ];
 
-const MARQUEE_FLAGS = [...COUNTRIES_MARQUEE, ...COUNTRIES_MARQUEE, ...COUNTRIES_MARQUEE];
+const MARQUEE_FLAGS = [...COUNTRIES_MARQUEE, ...COUNTRIES_MARQUEE];
 
 // Countdown to the FIFA World Cup 2026 Grand Final (July 19, 2026)
 const WorldCupCountdown = () => {
@@ -109,6 +158,11 @@ const Home = () => {
 
   // Detect active tab from query parameters
   const activeTab = searchParams.get('tab') || 'home';
+
+  // Smooth scroll to top when active tab changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
 
   const [sportsTv, setSportsTv] = useState<PlayableStream[]>([]);
   const [liveTv, setLiveTv] = useState<PlayableStream[]>([]);
@@ -186,15 +240,29 @@ const Home = () => {
       onSearchChange={activeTab === 'channels' ? setSearchTerm : undefined}
       searchValue={searchTerm}
     >
-      {/* Dynamic Flag Marquee for World Cup Festive Vibe */}
-      <div className="w-full bg-[#080808]/40 border-y border-white/5 py-2.5 overflow-hidden select-none mb-6 rounded-2xl relative shadow-lg">
-        <div className="animate-marquee gap-8 items-center flex">
+      {/* Powered by YKN MOVIES banner above flags */}
+      <div className="w-full flex items-center justify-center gap-2 py-1.5 bg-zinc-950/60 border-b border-white/[0.03] select-none">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Powered by</span>
+        <a
+          href="https://yknmovies.diaww.my.id/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[9px] font-black uppercase tracking-widest text-red-600 hover:text-red-400 transition-colors hover:underline"
+        >
+          YKN MOVIES
+        </a>
+      </div>
+
+      {/* Dynamic Flag Marquee for World Cup Festive Vibe - All 48 WC2026 Nations */}
+      <div className="w-full bg-[#080808]/40 border-b border-white/5 py-2.5 overflow-hidden select-none mb-6 relative shadow-lg">
+        <div className="animate-marquee gap-6 items-center flex">
           {MARQUEE_FLAGS.map((flag, idx) => (
-            <div key={idx} className="flex items-center gap-2 px-2 shrink-0">
+            <div key={idx} className="flex items-center gap-1.5 px-2 shrink-0">
               <img
-                src={`https://flagcdn.com/w40/${flag.code === 'gb-eng' ? 'gb-eng' : flag.code}.png`}
+                src={`https://flagcdn.com/w40/${flag.code}.png`}
                 alt={flag.name}
                 className="h-3 sm:h-4 object-contain rounded-sm shadow-sm"
+                loading="lazy"
               />
               <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{flag.name}</span>
             </div>

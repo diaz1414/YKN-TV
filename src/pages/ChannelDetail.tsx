@@ -20,6 +20,11 @@ const ChannelDetail = () => {
   const [activeTab, setActiveTab] = useState<'channels' | 'matches'>('matches');
 
   useEffect(() => {
+    // Scroll to top when entering a new channel/match detail page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [id]);
+
+  useEffect(() => {
     if (stream) {
       setActiveTab(stream.isChannel ? 'channels' : 'matches');
     }
