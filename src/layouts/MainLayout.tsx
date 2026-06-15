@@ -5,6 +5,8 @@ import { getTodayMatches, type Match } from '../services/matchService';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import { slugify } from '../services/streamService';
 
+// Set true to show mobile burger menu, false to hide it
+const SHOW_BURGER_MENU = false;
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -173,12 +175,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       <header className="h-16 md:h-20 glass border-b border-white/5 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#020202]/80 backdrop-blur-xl z-50">
         <div className="flex items-center gap-3 md:gap-8">
           {/* Tombol Burger - Muncul hanya di layar mobile (md:hidden) */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 bg-white/5 border border-white/5 rounded-xl text-zinc-400 hover:text-white transition-colors cursor-pointer"
-          >
-            {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          {SHOW_BURGER_MENU && (
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 bg-white/5 border border-white/5 rounded-xl text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            >
+              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          )}
 
           {/* Logo YKN TV */}
           <div
@@ -297,52 +301,54 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       </header>
 
       {/* Dropdown Menu Tirai untuk Layar Mobile (md:hidden) */}
-      <div
-        className={`fixed inset-x-0 top-16 bg-[#020202]/95 backdrop-blur-2xl border-b border-white/5 z-40 md:hidden flex flex-col p-4 gap-2.5 transition-all duration-300 transform origin-top ${isMenuOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
-          }`}
-      >
-        {/* Kolom Pencarian khusus di Mobile (Hanya muncul jika prop onSearchChange dikirim) */}
-        {onSearchChange && (
-          <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-full mb-1">
-            <Search size={16} className="text-zinc-500" />
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-600"
-            />
-          </div>
-        )}
-
-        {/* List Menu Link Navigasi Mobile */}
-        <button
-          onClick={() => handleTabChange('home')}
-          className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'home' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
+      {SHOW_BURGER_MENU && (
+        <div
+          className={`fixed inset-x-0 top-16 bg-[#020202]/95 backdrop-blur-2xl border-b border-white/5 z-40 md:hidden flex flex-col p-4 gap-2.5 transition-all duration-300 transform origin-top ${isMenuOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
             }`}
         >
-          <Calendar size={14} />
-          Jadwal Pertandingan
-        </button>
+          {/* Kolom Pencarian khusus di Mobile (Hanya muncul jika prop onSearchChange dikirim) */}
+          {onSearchChange && (
+            <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-full mb-1">
+              <Search size={16} className="text-zinc-500" />
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchValue}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-600"
+              />
+            </div>
+          )}
 
-        <button
-          onClick={() => handleTabChange('channels')}
-          className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'channels' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
-            }`}
-        >
-          <Tv size={14} />
-          Saluran TV Langsung
-        </button>
+          {/* List Menu Link Navigasi Mobile */}
+          <button
+            onClick={() => handleTabChange('home')}
+            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'home' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
+              }`}
+          >
+            <Calendar size={14} />
+            Jadwal Pertandingan
+          </button>
 
-        <button
-          onClick={() => handleTabChange('standings')}
-          className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'standings' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
-            }`}
-        >
-          <Award size={14} />
-          Klasemen Grup
-        </button>
-      </div>
+          <button
+            onClick={() => handleTabChange('channels')}
+            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'channels' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
+              }`}
+          >
+            <Tv size={14} />
+            Saluran TV Langsung
+          </button>
+
+          <button
+            onClick={() => handleTabChange('standings')}
+            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'standings' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
+              }`}
+          >
+            <Award size={14} />
+            Klasemen Grup
+          </button>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1 pb-24 md:pb-12 p-4 md:p-8 flex flex-col justify-between min-h-[calc(100vh-80px)]">
