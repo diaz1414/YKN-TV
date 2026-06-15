@@ -65,6 +65,53 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     setIsMenuOpen(false);
   }, [location.pathname, searchParams]);
 
+  // Protect Developer Tools in Production
+  useEffect(() => {
+    // Only protect in production mode
+    if (!import.meta.env.PROD) return;
+
+    // 1. Disable Right Click
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContextMenu);
+
+    // 2. Disable Keyboard Shortcuts (F12, Inspect, View Source)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Disable F12
+      if (e.key === 'F12') {
+        e.preventDefault();
+        return;
+      }
+      
+      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+        e.preventDefault();
+        return;
+      }
+
+      // Disable Ctrl+U
+      if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+        e.preventDefault();
+        return;
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    // 3. Disable Console Output in Production
+    const dummyFunc = () => {};
+    window.console.log = dummyFunc;
+    window.console.warn = dummyFunc;
+    window.console.error = dummyFunc;
+    window.console.info = dummyFunc;
+    window.console.debug = dummyFunc;
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const getTeamAbbreviation = (name: string): string => {
     if (!name) return 'TBD';
     if (name.length <= 4) return name.toUpperCase();
