@@ -109,6 +109,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     });
 
+    player.addEventListener('buffering', (event: any) => {
+      setIsBuffering(event.buffering);
+    });
+
     const handleFullscreenChange = () => {
       const isFs = !!document.fullscreenElement;
       setIsFullscreen(isFs);
@@ -158,6 +162,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
       setError(null);
+      setIsBuffering(true);
       setLevels([]);
       setCurrentLevel('auto');
       await destroyPlayers();
