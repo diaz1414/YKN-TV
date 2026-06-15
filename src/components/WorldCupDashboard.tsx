@@ -213,7 +213,7 @@ const parseScorers = (scorersStr: string | null): string[] => {
       .replace(/\\"/g, '"')
       .replace(/”/g, '"')
       .replace(/“/g, '"');
-    
+
     const parts = cleaned.split(/","|", "|",/);
     return parts.map(p => p.replace(/^['"]|['"]$/g, '').trim()).filter(Boolean);
   } catch (e) {
@@ -230,7 +230,7 @@ const getTimelineFromScorers = (
   currentMinuteStr: string
 ): string[] => {
   const events: { min: number; text: string }[] = [];
-  
+
   let currentMinuteNum = 90;
   if (status === 'LIVE') {
     currentMinuteNum = parseInt(currentMinuteStr.replace(/[^0-9]/g, '')) || 45;
@@ -242,18 +242,18 @@ const getTimelineFromScorers = (
       const name = match[1].trim();
       const minBase = parseInt(match[2]);
       const suffix = match[3] || '';
-      
+
       const extraMatch = suffix.match(/\+(\d+)/);
       const extraTime = extraMatch ? `+${extraMatch[1]}` : '';
       const displayMin = `${minBase}'${extraTime ? `${extraTime}'` : ''}`;
-      
+
       const isOG = suffix.toUpperCase().includes('(OG)');
       const displayName = `${name}${isOG ? ' (OG)' : ''}`;
 
       if (status !== 'LIVE' || minBase <= currentMinuteNum) {
-        events.push({ 
-          min: minBase, 
-          text: `${displayMin} ⚽ GOAL! ${homeTeam} scored by ${displayName}` 
+        events.push({
+          min: minBase,
+          text: `${displayMin} ⚽ GOAL! ${homeTeam} scored by ${displayName}`
         });
       }
     } else {
@@ -267,18 +267,18 @@ const getTimelineFromScorers = (
       const name = match[1].trim();
       const minBase = parseInt(match[2]);
       const suffix = match[3] || '';
-      
+
       const extraMatch = suffix.match(/\+(\d+)/);
       const extraTime = extraMatch ? `+${extraMatch[1]}` : '';
       const displayMin = `${minBase}'${extraTime ? `${extraTime}'` : ''}`;
-      
+
       const isOG = suffix.toUpperCase().includes('(OG)');
       const displayName = `${name}${isOG ? ' (OG)' : ''}`;
 
       if (status !== 'LIVE' || minBase <= currentMinuteNum) {
-        events.push({ 
-          min: minBase, 
-          text: `${displayMin} ⚽ GOAL! ${awayTeam} scored by ${displayName}` 
+        events.push({
+          min: minBase,
+          text: `${displayMin} ⚽ GOAL! ${awayTeam} scored by ${displayName}`
         });
       }
     } else {
@@ -304,13 +304,13 @@ const getTimelineFromScorers = (
   if (!addedHalfTime && (status !== 'LIVE' || currentMinuteNum >= 45)) {
     timeline.push("45' ⏱️ Half Time.");
   }
-  
+
   if (status === 'FT') {
     timeline.push("90' 🏁 Full Time! The referee blows the final whistle.");
   } else if (status === 'LIVE') {
     timeline.push(`${currentMinuteNum}' ⏱️ Match is currently live and intense!`);
   }
-  
+
   return timeline;
 };
 
@@ -323,7 +323,7 @@ const parseMatchDate = (dateStr: string, stadiumId?: string): number => {
     const [datePart, timePart] = dateStr.split(' ');
     const [m, d, y] = datePart.split('/');
     const [h, min] = timePart.split(':');
-    
+
     let offset = '-05:00'; // Default Central
     if (stadiumId) {
       const sId = String(stadiumId).trim();
@@ -333,7 +333,7 @@ const parseMatchDate = (dateStr: string, stadiumId?: string): number => {
         offset = '-07:00'; // Western (PDT)
       }
     }
-    
+
     const isoString = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T${h.padStart(2, '0')}:${min.padStart(2, '0')}:00${offset}`;
     const dateObj = new Date(isoString);
     return isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
@@ -348,7 +348,7 @@ const formatMatchDateToLocal = (dateStr: string, stadiumId: string, lang: string
     const [datePart, timePart] = dateStr.split(' ');
     const [m, d, y] = datePart.split('/');
     const [h, min] = timePart.split(':');
-    
+
     let offset = '-05:00'; // Default Central (CDT)
     const sId = String(stadiumId).trim();
     if (['7', '8', '9', '10', '11', '12'].includes(sId)) {
@@ -356,13 +356,13 @@ const formatMatchDateToLocal = (dateStr: string, stadiumId: string, lang: string
     } else if (['13', '14', '15', '16'].includes(sId)) {
       offset = '-07:00'; // Western (PDT)
     }
-    
+
     const isoString = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T${h.padStart(2, '0')}:${min.padStart(2, '0')}:00${offset}`;
     const dateObj = new Date(isoString);
     if (isNaN(dateObj.getTime())) return dateStr;
 
     const localeCode = lang.startsWith('id') ? 'id-ID' : 'en-US';
-    
+
     const formatted = dateObj.toLocaleDateString(localeCode, {
       day: 'numeric',
       month: 'short',
@@ -512,7 +512,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
         const mappedMatches: MatchScore[] = gamesRes.games.map((g: APIGame) => {
           const homeScorers = parseScorers(g.home_scorers);
           const awayScorers = parseScorers(g.away_scorers);
-          
+
           return {
             homeTeam: g.home_team_name_en || g.home_team_label || 'TBD',
             awayTeam: g.away_team_name_en || g.away_team_label || 'TBD',
@@ -706,20 +706,19 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                 </span>
                 <ChevronDown
                   size={16}
-                  className={`text-zinc-400 transition-transform duration-300 ${
-                    showGroupDropdown ? 'rotate-180 text-white' : ''
-                  }`}
+                  className={`text-zinc-400 transition-transform duration-300 ${showGroupDropdown ? 'rotate-180 text-white' : ''
+                    }`}
                 />
               </button>
 
               <AnimatePresence>
                 {showGroupDropdown && (
                   <motion.div
-                     initial={{ opacity: 0, y: -8 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -8 }}
-                     transition={{ duration: 0.15 }}
-                     className="absolute top-12 left-0 z-30 w-full bg-[#080808] border border-white/10 rounded-xl p-1.5 flex flex-col gap-1 backdrop-blur-md shadow-2xl max-h-60 overflow-y-auto no-scrollbar"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-12 left-0 z-30 w-full bg-[#080808] border border-white/10 rounded-xl p-1.5 flex flex-col gap-1 backdrop-blur-md shadow-2xl max-h-60 overflow-y-auto no-scrollbar"
                   >
                     {['Group A', 'Group B', 'Group C', 'Group D', 'Group E', 'Group F', 'Group G', 'Group H', 'Group I', 'Group J', 'Group K', 'Group L'].map(groupName => {
                       const isActive = selectedGroup === groupName;
@@ -730,11 +729,10 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                             setSelectedGroup(groupName);
                             setShowGroupDropdown(false);
                           }}
-                          className={`text-left px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                            isActive
+                          className={`text-left px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${isActive
                               ? 'bg-primary text-dark font-black shadow-md'
                               : 'text-zinc-400 hover:bg-white/5 hover:text-white'
-                          }`}
+                            }`}
                         >
                           {lang === 'id'
                             ? groupName.replace('Group', 'Grup')
@@ -768,18 +766,16 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                   const teamInfo = Object.values(teamsMap).find(t => t.name_en === team.name);
                   const flag = teamInfo ? teamInfo.flag : `https://flagcdn.com/w40/un.png`;
                   const isPlayingLive = matches.some(m => m.status === 'LIVE' && (m.homeTeam === team.name || m.awayTeam === team.name));
-                  
+
                   return (
                     <tr
                       key={team.name}
-                      className={`hover:bg-white/[0.02] transition-all duration-300 group/row text-xs md:text-sm font-black ${
-                        isPlayingLive ? 'text-amber-400 bg-amber-500/[0.02]' : 'text-white/95'
-                      }`}
+                      className={`hover:bg-white/[0.02] transition-all duration-300 group/row text-xs md:text-sm font-black ${isPlayingLive ? 'text-amber-400 bg-amber-500/[0.02]' : 'text-white/95'
+                        }`}
                     >
                       <td className="py-4 text-center">
-                        <span className={`inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-black ${
-                          idx < 2 ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-zinc-800/30 text-zinc-400 border border-zinc-700/10'
-                        }`}>
+                        <span className={`inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-black ${idx < 2 ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-zinc-800/30 text-zinc-400 border border-zinc-700/10'
+                          }`}>
                           {idx + 1}
                         </span>
                       </td>
@@ -851,9 +847,8 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                 <div
                   key={idx}
                   onClick={() => setSelectedMatch(match)}
-                  className={`bg-white/[0.01] hover:bg-white/5 border border-white/5 hover:border-white/10 p-3.5 rounded-2xl transition-all duration-300 cursor-pointer ${
-                    isLive ? 'border-primary/20 shadow-md shadow-primary/5' : ''
-                  }`}
+                  className={`bg-white/[0.01] hover:bg-white/5 border border-white/5 hover:border-white/10 p-3.5 rounded-2xl transition-all duration-300 cursor-pointer ${isLive ? 'border-primary/20 shadow-md shadow-primary/5' : ''
+                    }`}
                 >
                   <div className="flex items-center justify-between text-[8px] md:text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2 select-none">
                     <span>{match.group}</span>
@@ -942,7 +937,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                   <span className="text-[9px] md:text-xs font-black text-zinc-500 uppercase tracking-widest select-none">
                     {selectedMatch.group} • {formatMatchDateToLocal(selectedMatch.date, selectedMatch.stadiumId, lang)}
                   </span>
-                  
+
                   <div className="flex items-center justify-center gap-4 md:gap-8 mt-4 select-none">
                     <div className="flex flex-col items-center gap-2 w-1/3 text-center">
                       <img
@@ -965,7 +960,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                           <span className="text-2xl md:text-4xl font-black">{selectedMatch.awayScore}</span>
                         </div>
                       )}
-                      
+
                       {selectedMatch.status === 'LIVE' ? (
                         <span className="mt-2.5 px-3 py-1 bg-amber-500/20 border border-amber-500/30 text-amber-400 text-[9px] font-black rounded-full uppercase tracking-wider animate-pulse select-none flex items-center gap-1.5">
                           <span className="w-1 h-1 rounded-full bg-amber-400 animate-ping" />
@@ -1002,21 +997,19 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                 <div className="flex bg-white/[0.02] border-b border-white/5 shrink-0 select-none">
                   <button
                     onClick={() => setModalTab('timeline')}
-                    className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
-                      modalTab === 'timeline'
+                    className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${modalTab === 'timeline'
                         ? 'border-primary text-white bg-white/[0.02]'
                         : 'border-transparent text-zinc-500 hover:text-white'
-                    }`}
+                      }`}
                   >
                     {t('timeline', lang)}
                   </button>
                   <button
                     onClick={() => setModalTab('stats')}
-                    className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
-                      modalTab === 'stats'
+                    className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${modalTab === 'stats'
                         ? 'border-primary text-white bg-white/[0.02]'
                         : 'border-transparent text-zinc-500 hover:text-white'
-                    }`}
+                      }`}
                   >
                     {t('stats', lang)}
                   </button>
@@ -1133,7 +1126,7 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                     </div>
                   )
                 )}
-                
+
                 {stadium && (
                   <div className="mt-6 p-4 bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] sm:text-xs text-zinc-400 select-none">
                     <h5 className="font-black text-white uppercase tracking-wider mb-1">🏟️ {stadium.name_en}</h5>
@@ -1168,7 +1161,7 @@ const getMatchStats = (match: MatchScore, liveMinute?: number) => {
   let awayShots = Math.round(3 + 6 * progress + match.awayScore);
   let homeFouls = Math.round(4 + 8 * progress);
   let awayFouls = Math.round(5 + 10 * progress);
-  
+
   if (match.homeTeam === 'Morocco' && match.awayTeam === 'Haiti') {
     homePossession = Math.round(56 + Math.sin((liveMinute || 82) * 0.1) * 3);
     homeShots = Math.round(6 + 12 * progress + match.homeScore);
@@ -1184,9 +1177,9 @@ const getMatchStats = (match: MatchScore, liveMinute?: number) => {
     homeFouls = 11;
     awayFouls = 12;
   }
-  
+
   const awayPossession = 100 - homePossession;
-  
+
   return {
     possession: [homePossession, awayPossession],
     shots: [homeShots, awayShots],
