@@ -730,8 +730,8 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                             setShowGroupDropdown(false);
                           }}
                           className={`text-left px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${isActive
-                              ? 'bg-primary text-dark font-black shadow-md'
-                              : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+                            ? 'bg-primary text-dark font-black shadow-md'
+                            : 'text-zinc-400 hover:bg-white/5 hover:text-white'
                             }`}
                         >
                           {lang === 'id'
@@ -998,8 +998,8 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                   <button
                     onClick={() => setModalTab('timeline')}
                     className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${modalTab === 'timeline'
-                        ? 'border-primary text-white bg-white/[0.02]'
-                        : 'border-transparent text-zinc-500 hover:text-white'
+                      ? 'border-primary text-white bg-white/[0.02]'
+                      : 'border-transparent text-zinc-500 hover:text-white'
                       }`}
                   >
                     {t('timeline', lang)}
@@ -1007,8 +1007,8 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
                   <button
                     onClick={() => setModalTab('stats')}
                     className={`flex-1 py-3 font-black text-xs md:text-sm uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${modalTab === 'stats'
-                        ? 'border-primary text-white bg-white/[0.02]'
-                        : 'border-transparent text-zinc-500 hover:text-white'
+                      ? 'border-primary text-white bg-white/[0.02]'
+                      : 'border-transparent text-zinc-500 hover:text-white'
                       }`}
                   >
                     {t('stats', lang)}
