@@ -17,6 +17,7 @@ export interface PlayableStream {
   name: string;
   subName?: string;
   logo?: string;
+  logo2?: string;
   isBase64Logo?: boolean;
   servers: StreamServer[];
   isChannel?: boolean;
@@ -209,6 +210,7 @@ export const getLiveSportsData = async (): Promise<{
       name: `${item.player_1} vs ${item.player_2}`,
       subName: item.nama_event,
       logo: item.logo_1,
+      logo2: item.logo_2,
       isBase64Logo: false,
       servers: buildServers(item.url_iptv, item.url_license, item.jenis),
       isChannel: false,
@@ -264,16 +266,37 @@ export const getLiveSportsData = async (): Promise<{
   };
 };;
 
-export const getStreamById = async (id: string): Promise<PlayableStream | undefined> => {
+export const slugify = (text: string): string => {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
+export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | undefined> => {
   const data = await getLiveSportsData();
-  const match = data.matches.find(m => m.id === id);
-  if (match) return match;
+  const allStreams = [...data.matches, ...data.sportsTv, ...data.liveTv];
+  
+  // 1. Direct ID match
+  let found = allStreams.find(s => s.id === idOrSlug);
+  if (found) return found;
 
-  const sport = data.sportsTv.find(s => s.id === id);
-  if (sport) return sport;
+  // 2. Slugified name match
+  const targetSlug = idOrSlug.toLowerCase().trim();
+  found = allStreams.find(s => slugify(s.name) === targetSlug);
+  if (found) return found;
 
-  const live = data.liveTv.find(l => l.id === id);
-  if (live) return live;
+  // 3. Fallback: match by custom generated matchup slug
+  found = allStreams.find(s => {
+    if (!s.isChannel && s.player1 && s.player2) {
+      const matchSlug = slugify(`${s.player1} vs ${s.player2}`);
+      return matchSlug === targetSlug;
+    }
+    return false;
+  });
+  if (found) return found;
 
   return undefined;
 };

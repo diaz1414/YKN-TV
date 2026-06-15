@@ -4,7 +4,7 @@ import MainLayout from '../layouts/MainLayout';
 import ChannelCard from '../components/ChannelCard';
 import MatchSchedule from '../components/MatchSchedule';
 import WorldCupDashboard from '../components/WorldCupDashboard';
-import { getLiveSportsData, type PlayableStream } from '../services/streamService';
+import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { Zap, Tv, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner.png';
@@ -133,7 +133,12 @@ const Home = () => {
   }, []);
 
   const handleChannelClick = (id: string) => {
-    navigate(`/watch/${id}`);
+    const ch = [...sportsTv, ...liveTv].find(c => c.id === id);
+    if (ch) {
+      navigate(`/watch/${slugify(ch.name)}`);
+    } else {
+      navigate(`/watch/${id}`);
+    }
   };
 
   // Filter channels based on search and selected sub tab

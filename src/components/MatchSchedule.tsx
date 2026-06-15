@@ -3,6 +3,7 @@ import { getTodayMatches, type Match } from '../services/matchService';
 import MatchCard from './MatchCard';
 import { useNavigate } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
+import { slugify } from '../services/streamService';
 
 const MatchSchedule = () => {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -20,10 +21,8 @@ const MatchSchedule = () => {
   }, []);
 
   const handleMatchClick = (match: Match) => {
-    if (match.channelId) {
-      // In the watch page, we will play the rotated channel
-      navigate(`/watch/${match.channelId}`);
-    }
+    const slugName = `${match.homeTeam.name} vs ${match.awayTeam.name}`;
+    navigate(`/watch/${slugify(slugName)}`);
   };
 
   return (

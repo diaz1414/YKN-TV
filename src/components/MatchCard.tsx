@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Match } from '../services/matchService';
 import { Play, Radio } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface MatchCardProps {
   match: Match;
@@ -11,19 +12,76 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
   const isLive = match.status === 'live';
   const isFinished = match.status === 'finished';
 
+  const [timeLeftStr, setTimeLeftStr] = useState<string>('');
+  const [isStartingSoon, setIsStartingSoon] = useState(false);
+
+  useEffect(() => {
+    if (match.status !== 'upcoming' || !match.date) return;
+
+    const parseJadwal = (dateStr?: string): Date => {
+      if (!dateStr) return new Date();
+      let clean = dateStr.trim();
+      if (clean.includes(' ')) {
+        clean = clean.replace(' ', 'T');
+      }
+      const tzMatch = clean.match(/([+-]\d{2})$/);
+      if (tzMatch) {
+        clean += ':00';
+      }
+      return new Date(clean);
+    };
+
+    const kickoff = parseJadwal(match.date);
+    const playableStart = new Date(kickoff.getTime() - 30 * 60 * 1000);
+
+    const updateTimer = () => {
+      const now = new Date();
+      const diffToPlayable = playableStart.getTime() - now.getTime();
+      const diffToKickoff = kickoff.getTime() - now.getTime();
+
+      if (diffToPlayable <= 0) {
+        setTimeLeftStr('Buka Sekarang');
+        setIsStartingSoon(true);
+      } else if (diffToKickoff < 60 * 60 * 1000) {
+        const mins = Math.ceil(diffToPlayable / (1000 * 60));
+        setTimeLeftStr(`Buka dlm ${mins}m`);
+        setIsStartingSoon(true);
+      } else if (diffToKickoff < 24 * 60 * 60 * 1000) {
+        const hours = Math.floor(diffToKickoff / (1000 * 60 * 60));
+        const mins = Math.floor((diffToKickoff / (1000 * 60)) % 60);
+        setTimeLeftStr(`${hours}j ${mins}m lagi`);
+        setIsStartingSoon(false);
+      } else {
+        setTimeLeftStr('');
+        setIsStartingSoon(false);
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 30000);
+    return () => clearInterval(interval);
+  }, [match]);
+
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl ${
+      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 ${
         isLive 
-          ? 'bg-primary/[0.15] border-primary/45 shadow-lg shadow-primary/5' 
-          : 'bg-zinc-950/96 border-white/10 hover:border-white/20'
+          ? 'border-primary/45 shadow-lg shadow-primary/5' 
+          : isStartingSoon
+            ? 'border-amber-500/40 shadow-lg shadow-amber-500/5'
+            : isFinished
+              ? 'border-white/5 opacity-80'
+              : 'border-white/10 hover:border-white/20'
       }`}
     >
-      {/* Accent Glow for Live */}
+      {/* Accent Glow for Live / Starting Soon */}
       {isLive && (
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+      )}
+      {isStartingSoon && (
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl" />
       )}
 
       {/* League Header */}
@@ -37,6 +95,11 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
             <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">LIVE</span>
           </div>
         )}
+        {isStartingSoon && !isLive && (
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 rounded-full border border-amber-500/25 select-none animate-pulse">
+            <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">SEGERA MULAI</span>
+          </div>
+        )}
         {isFinished && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800/30 rounded-full border border-zinc-700/10 select-none">
             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Selesai</span>
@@ -46,7 +109,6 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
 
       {/* Score / Teams Matchup */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-6">
-        {/* Home Team */}
         <div className="flex flex-col items-center gap-2.5 min-w-0">
           <div className="w-14 h-10 rounded-xl bg-white/5 p-2 flex items-center justify-center border border-white/5 overflow-hidden">
             <img src={match.homeTeam.logo} alt={match.homeTeam.name} className="h-full w-full object-contain" />
@@ -54,7 +116,6 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
           <span className="text-xs font-black text-center text-zinc-200 truncate w-full">{match.homeTeam.name}</span>
         </div>
 
-        {/* VS / Score Divider */}
         <div className="flex flex-col items-center">
           {isLive || isFinished ? (
             <div className="text-2xl font-black italic italic-shadow tracking-tighter text-white">
@@ -66,7 +127,6 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
           <div className="text-[9px] font-black text-zinc-600 uppercase mt-1.5 select-none">VS</div>
         </div>
 
-        {/* Away Team */}
         <div className="flex flex-col items-center gap-2.5 min-w-0">
           <div className="w-14 h-10 rounded-xl bg-white/5 p-2 flex items-center justify-center border border-white/5 overflow-hidden">
             <img src={match.awayTeam.logo} alt={match.awayTeam.name} className="h-full w-full object-contain" />
@@ -78,12 +138,20 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
       {/* Action Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-white/5">
         <div className="text-[9px] font-black text-zinc-500 uppercase tracking-widest select-none">
-          {isLive ? 'Tonton Langsung' : isFinished ? 'Pertandingan Usai' : 'Akan Datang'}
+          {isLive 
+            ? 'Tonton Langsung' 
+            : isStartingSoon
+              ? timeLeftStr
+              : isFinished 
+                ? 'Pertandingan Selesai' 
+                : timeLeftStr || 'Akan Datang'}
         </div>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow ${
-          isLive ? 'bg-primary text-dark font-black' : 'bg-white/5 text-zinc-400'
+          isLive 
+            ? 'bg-primary text-dark font-black hover:scale-105' 
+            : 'bg-white/5 text-zinc-500 border border-white/5'
         }`}>
-          <Play size={12} fill={isLive ? "currentColor" : "none"} className="ml-0.5" />
+          <Play size={12} fill={isLive ? "currentColor" : "none"} className={isLive ? "ml-0.5" : "opacity-30"} />
         </div>
       </div>
     </motion.div>

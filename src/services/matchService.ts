@@ -154,7 +154,7 @@ export const getTodayMatches = async (): Promise<Match[]> => {
         let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
         if (now > stop) {
           status = 'finished';
-        } else if (now >= new Date(start.getTime() - 20 * 60 * 1000)) {
+        } else if (now >= new Date(start.getTime() - 30 * 60 * 1000)) {
           status = 'live';
         }
 
@@ -221,7 +221,7 @@ export const getTodayMatches = async (): Promise<Match[]> => {
       let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
       if (now > stop) {
         status = 'finished';
-      } else if (now >= new Date(start.getTime() - 20 * 60 * 1000)) {
+      } else if (now >= new Date(start.getTime() - 30 * 60 * 1000)) {
         status = 'live';
       }
 

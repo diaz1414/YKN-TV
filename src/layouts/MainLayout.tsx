@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Tv, Home, Award, Calendar, Menu, X } from 'lucide-react';
 import { getTodayMatches, type Match } from '../services/matchService';
 import yknwcLogo from '../assets/yknwc-logo.png';
+import { slugify } from '../services/streamService';
 
 
 interface MainLayoutProps {
@@ -198,9 +199,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {activeMatch && (
             <div
               onClick={() => {
-                if (activeMatch.channelId || activeMatch.id) {
-                  navigate(`/watch/${activeMatch.channelId || activeMatch.id}`);
-                }
+                const slugName = `${activeMatch.homeTeam.name} vs ${activeMatch.awayTeam.name}`;
+                navigate(`/watch/${slugify(slugName)}`);
               }}
               className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300"
             >
@@ -298,8 +298,27 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 pb-20 md:pb-8 p-4 md:p-8">
-        {children}
+      <main className="flex-1 pb-24 md:pb-12 p-4 md:p-8 flex flex-col justify-between min-h-[calc(100vh-80px)]">
+        <div className="flex-1">
+          {children}
+        </div>
+
+        {/* Sleek, Beautiful, Premium Footer */}
+        <footer className="mt-16 pt-6 pb-6 px-6 border-t border-white/[0.04] bg-zinc-950/30 backdrop-blur-md rounded-2xl select-none">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500 text-[10px] font-bold uppercase tracking-widest text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+              <span className="text-white font-black tracking-wide">YKN TV</span>
+              <span className="hidden sm:inline text-zinc-700">|</span>
+              <span className="text-zinc-500">© {new Date().getFullYear()} All Rights Reserved</span>
+            </div>
+
+            <div className="flex items-center gap-6">
+              <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer">Jadwal</span>
+              <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer">Saluran TV</span>
+              <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer">Klasemen</span>
+            </div>
+          </div>
+        </footer>
       </main>
 
       {/* Mobile Sticky Bottom Navigation Bar */}
