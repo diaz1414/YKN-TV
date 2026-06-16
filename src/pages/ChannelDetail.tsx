@@ -260,7 +260,7 @@ const ChannelDetail = () => {
             className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group py-2.5 px-4 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none"
           >
             <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-            <span>Kembali ke Grid</span>
+            <span>KEMBALI</span>
           </button>
 
           <div className="flex items-center gap-2">
