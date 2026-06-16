@@ -71,9 +71,26 @@ const COUNTRIES_MARQUEE = [
 
 const MARQUEE_FLAGS = [...COUNTRIES_MARQUEE, ...COUNTRIES_MARQUEE];
 
-// Countdown to the FIFA World Cup 2026 Grand Final (July 19, 2026)
+// Countdown to the FIFA World Cup 2026 Grand Final
+// Kickoff: 20 Juli 2026 02:00 WIB = 19 Juli 2026 19:00 UTC
 const WorldCupCountdown = () => {
-  const targetDate = useMemo(() => new Date('2026-07-19T20:00:00-04:00'), []);
+  const targetDate = useMemo(() => new Date('2026-07-19T19:00:00Z'), []);
+
+  // Format kickoff time in the user's local timezone (auto-detected by browser)
+  const localKickoff = useMemo(() => {
+    try {
+      const dateStr = new Intl.DateTimeFormat(undefined, {
+        day: 'numeric', month: 'long', year: 'numeric',
+      }).format(targetDate);
+      const timeStr = new Intl.DateTimeFormat(undefined, {
+        hour: '2-digit', minute: '2-digit', hour12: false,
+      }).format(targetDate);
+      return `${dateStr} • ${timeStr}`;
+    } catch {
+      return '20 Juli 2026 • 02:00';
+    }
+  }, [targetDate]);
+
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isCelebration, setIsCelebration] = useState(false);
 
@@ -113,7 +130,9 @@ const WorldCupCountdown = () => {
       <div className="space-y-1 text-center md:text-left shrink-0">
         <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">Road to MetLife Stadium</span>
         <h4 className="text-lg sm:text-xl font-black uppercase font-display tracking-tight text-white mt-2">Menuju Final Piala Dunia FIFA 2026</h4>
-        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">New York New Jersey • 20 Juli 2026</p>
+        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+          New York New Jersey • {localKickoff}
+        </p>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4 font-display">
