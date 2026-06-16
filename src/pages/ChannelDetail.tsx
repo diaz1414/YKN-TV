@@ -300,10 +300,10 @@ const ChannelDetail = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => navigate('/?tab=channels')}
+                    onClick={() => navigate('/watch/worldcup-tv')}
                     className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-primary text-dark font-black text-[9px] sm:text-[10px] uppercase tracking-wider rounded-xl hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] active:scale-95 transition-all cursor-pointer shrink-0"
                   >
-                    <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg>
+                    <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z" /></svg>
                     Tonton Channel World Cup TV
                   </button>
                 </div>
