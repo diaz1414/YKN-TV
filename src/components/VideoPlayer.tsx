@@ -262,11 +262,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Buffer targets to optimize live startup
+          // Buffer targets to optimize live startup and reduce buffering issues
           player.configure({
             streaming: {
-              rebufferingGoal: 1.5,
-              bufferingGoal: 10
+              rebufferingGoal: 4,
+              bufferingGoal: 30,
+              retryParameters: {
+                maxAttempts: 4,
+                baseDelay: 1000,
+                backoffFactor: 2,
+                timeout: 15000
+              }
             }
           });
 
