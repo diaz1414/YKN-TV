@@ -7,7 +7,7 @@ import WorldCupDashboard from '../components/WorldCupDashboard';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { Zap, Tv, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import heroBg from '../assets/banner.png';
+import heroBg from '../assets/banner3.png';
 import { supabase } from '../services/supabase';
 
 // World Cup 2026 Participating Countries & Flags for Marquee (All 48 qualified teams)
@@ -113,7 +113,7 @@ const WorldCupCountdown = () => {
       <div className="space-y-1 text-center md:text-left shrink-0">
         <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">Road to MetLife Stadium</span>
         <h4 className="text-lg sm:text-xl font-black uppercase font-display tracking-tight text-white mt-2">Menuju Final Piala Dunia FIFA 2026</h4>
-        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">New York New Jersey • 19 Juli 2026</p>
+        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">New York New Jersey • 20 Juli 2026</p>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4 font-display">
@@ -165,7 +165,7 @@ const Home = () => {
       .on('presence', { event: 'sync' }, () => {
         const presenceState = channel.presenceState();
         const counts: Record<string, number> = {};
-        
+
         Object.values(presenceState).forEach((presences: any) => {
           presences.forEach((p: any) => {
             if (p.watching) {
@@ -173,7 +173,7 @@ const Home = () => {
             }
           });
         });
-        
+
         setViewerCounts(counts);
       })
       .subscribe(async (status) => {
