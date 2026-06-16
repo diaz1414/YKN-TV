@@ -10,6 +10,7 @@ export interface StreamServer {
   type: string;
   keyId?: string;
   key?: string;
+  keys?: Record<string, string>;
 }
 
 export interface PlayableStream {
@@ -86,9 +87,23 @@ export const buildServers = (urlIptv: string, urlLicense: string | undefined, je
 
   if (decryptedLicense) {
     if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
-      const [keyId, key] = decryptedLicense.split(':');
-      servers[0].keyId = keyId;
-      servers[0].key = key;
+      const keys: Record<string, string> = {};
+      const pairs = decryptedLicense.split(',');
+      pairs.forEach(pair => {
+        const parts = pair.split(':');
+        if (parts.length === 2) {
+          const [kid, k] = parts;
+          if (kid && k) {
+            keys[kid.trim()] = k.trim();
+          }
+        }
+      });
+      if (Object.keys(keys).length > 0) {
+        servers[0].keys = keys;
+        const firstKeyId = Object.keys(keys)[0];
+        servers[0].keyId = firstKeyId;
+        servers[0].key = keys[firstKeyId];
+      }
     } else if (decryptedLicense.startsWith('http')) {
       servers.push({
         name: 'Server 2 (Alt)',
