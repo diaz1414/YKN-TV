@@ -55,6 +55,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
   const getDrmKeys = (server: StreamServer) => {
+    if (server.keys && Object.keys(server.keys).length > 0) {
+      return server.keys;
+    }
+
     if (server.keyId && server.key) {
       return { [server.keyId.trim()]: server.key.trim() };
     }
@@ -757,7 +761,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 }`}
             >
               <span className="relative z-10">{server.name}</span>
-              {(server.keyId || server.url.includes('|')) && (
+              {(server.keyId || server.keys || server.url.includes('|')) && (
                 <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
               )}
             </button>
