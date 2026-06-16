@@ -532,9 +532,16 @@ export const WorldCupDashboard: React.FC<WorldCupDashboardProps> = ({ lang = 'id
         });
 
         mappedMatches.sort((a, b) => {
-          const timeA = parseMatchDate(a.date, a.stadiumId);
-          const timeB = parseMatchDate(b.date, b.stadiumId);
-          return timeA - timeB;
+          if (a.status === b.status) {
+            const timeA = parseMatchDate(a.date, a.stadiumId);
+            const timeB = parseMatchDate(b.date, b.stadiumId);
+            return timeA - timeB;
+          }
+          if (a.status === 'LIVE') return -1;
+          if (b.status === 'LIVE') return 1;
+          if (a.status === 'UPCOMING' && b.status === 'FT') return -1;
+          if (a.status === 'FT' && b.status === 'UPCOMING') return 1;
+          return 0;
         });
 
         // Detect live goals

@@ -396,8 +396,20 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           channelId: event.id_event
         };
       });
+      const sorted = [...parsedMatches].sort((a, b) => {
+        if (a.status === b.status) {
+          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+          return dateA - dateB;
+        }
+        if (a.status === 'live') return -1;
+        if (b.status === 'live') return 1;
+        if (a.status === 'upcoming' && b.status === 'finished') return -1;
+        if (a.status === 'finished' && b.status === 'upcoming') return 1;
+        return 0;
+      });
 
-      return parsedMatches;
+      return sorted;
     } catch (err) {
       console.error('Failed fallback mapping', err);
       return [];
