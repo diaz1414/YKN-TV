@@ -62,7 +62,23 @@ async function handleRequest(url, req, res) {
         return;
       }
 
-      const body = response.data;
+      let body = response.data;
+
+      // If it's an IPTV container playlist (M3U) pointing to a single HLS stream
+      if (typeof body === 'string' && body.includes('#EXTINF') && !body.includes('#EXT-X-TARGETDURATION') && !body.includes('#EXT-X-STREAM-INF')) {
+        const lines = body.split('\n');
+        const targetLine = lines.find((line) => {
+          const trimmed = line.trim();
+          return trimmed && !trimmed.startsWith('#') && (trimmed.startsWith('http') || trimmed.includes('.m3u8') || trimmed.includes('.ts'));
+        });
+        
+        if (targetLine) {
+          const resolvedUrl = new URL(targetLine.trim(), response.request?.res?.responseUrl || url).toString();
+          await handleRequest(resolvedUrl, req, res);
+          return;
+        }
+      }
+
       const proto = req.headers['x-forwarded-proto'] || 'http';
       const host = req.headers.host;
       const proxyPrefix = `${proto}://${host}/api/proxy/`;

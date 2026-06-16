@@ -52,6 +52,7 @@ interface ChannelEvent {
   url_license?: string;
   jenis: string;
   gbr_base64?: string;
+  logo?: string;
   tagline?: string;
   premium?: string;
   aktif?: string;
@@ -101,9 +102,9 @@ export const buildServers = (urlIptv: string, urlLicense: string | undefined, je
 
 // Reliable CORS Proxy Helper
 export const getProxiedUrl = (url: string, force = false) => {
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net'];
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com'];
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
-  
+
   if (needsProxy) {
     const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'http://147.135.252.68:20114/api/proxy';
     const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
@@ -146,7 +147,7 @@ export const getLiveSportsData = async (): Promise<{
     liveData = liveRes.data;
   } catch (botErr) {
     console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
-    
+
     // 2. First Fallback (Backup): Fetch from external GitHub configurations
     try {
       const [eventsRes, sportsRes, liveRes] = await Promise.all([
@@ -159,13 +160,193 @@ export const getLiveSportsData = async (): Promise<{
       liveData = liveRes.data;
     } catch (githubErr) {
       console.warn('Failed to fetch from GitHub source, falling back to local JSON data...', githubErr);
-      
+
       // 3. Second Fallback (Final Backup): Use local imported JSON files
       eventsData = backupEvents as MatchEvent[];
       sportsData = backupSports as ChannelEvent[];
       liveData = backupLive as ChannelEvent[];
     }
   }
+
+  // Inject custom channels that should always be present
+  // Inject custom channels that should always be present
+  const customSports: ChannelEvent[] = [
+    {
+      id_iptv: "custom-bein-sports-xtra",
+      nama_channel: "beIN SPORTS XTRA",
+      tagline: "Live Sports & Action",
+      jenis: "hls",
+      url_iptv: "https://bein-xtra-bein.amagi.tv/playlist.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/BeIN_Sports_logo.svg/1200px-BeIN_Sports_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-fox-sports",
+      nama_channel: "FOX Sports",
+      tagline: "Live International Sports",
+      jenis: "hls",
+      url_iptv: "https://jmp2.uk/plu-5a74b8e1e22a61737979c6bf.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fox_Sports_logo.svg/1200px-Fox_Sports_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-fubo-sports",
+      nama_channel: "fubo Sports Network",
+      tagline: "Live Sports News & Matches",
+      jenis: "hls",
+      url_iptv: "https://dnf08l6u6uxnz.cloudfront.net/master.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/FuboTV_logo.svg/1200px-FuboTV_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-alkass-one",
+      nama_channel: "Alkass One HD",
+      tagline: "Saluran Olahraga Alkass 1",
+      jenis: "hls",
+      url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass1-p/main.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-alkass-two",
+      nama_channel: "Alkass Two HD",
+      tagline: "Saluran Olahraga Alkass 2",
+      jenis: "hls",
+      url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass2-p/main.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-alkass-three",
+      nama_channel: "Alkass Three HD",
+      tagline: "Saluran Olahraga Alkass 3",
+      jenis: "hls",
+      url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass3-p/main.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-tvri-sport",
+      nama_channel: "TVRI Sport HD",
+      tagline: "Saluran Olahraga Nasional",
+      jenis: "hls",
+      url_iptv: "https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/TVRI_Sport_logo_2018.svg/1200px-TVRI_Sport_logo_2018.svg.png",
+      url_license: ""
+    }
+  ];
+
+  const customLive: ChannelEvent[] = [
+    {
+      id_iptv: "custom-trans-tv",
+      nama_channel: "Trans TV",
+      tagline: "Informasi & Hiburan Keluarga",
+      jenis: "hls",
+      url_iptv: "https://video.detik.com/transtv/smil:transtv.smil/index.m3u8",
+      gbr_base64: "",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ8dlG4_n4MXGQXvrKvctGxKhEOv7D5kLRFQ&s",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-trans7",
+      nama_channel: "Trans7",
+      tagline: "Aktif, Cerdas & Menghibur",
+      jenis: "hls",
+      url_iptv: "https://video.detik.com/trans7/smil:trans7.smil/index.m3u8",
+      gbr_base64: "",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSscALyQ9IIiuzQGoWLp4aA8f2I2SVniDKRcg&s",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-sctv",
+      nama_channel: "SCTV",
+      tagline: "Satu Untuk Semua",
+      jenis: "hls",
+      url_iptv: "https://op-group1-swiftservehd-1.dens.tv/h/h217/index.m3u8",
+      gbr_base64: "",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu1T4sGfPsFdky5crZBeP8uUpsxb7h_jDPbw&s",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-kompas-tv",
+      nama_channel: "Kompas TV",
+      tagline: "Independen, Terpercaya",
+      jenis: "hls",
+      url_iptv: "https://op-group1-swiftservehd-1.dens.tv/h/h234/index.m3u8",
+      gbr_base64: "",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4r2EmiXirt-AWSG3oKz1Nz_tzSLbzssdIKw&s",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-metro-tv",
+      nama_channel: "Metro TV",
+      tagline: "Knowledge to Elevate",
+      jenis: "hls",
+      url_iptv: "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8",
+      gbr_base64: "",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJrB73cHIEve53WFt8WK3r3y16zFL0UlCyeQ&s",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-tvone",
+      nama_channel: "tvOne",
+      tagline: "Memang Beda",
+      jenis: "hls",
+      url_iptv: "http://202.80.222.20/cdn/iptv/Tvod/001/channel2000018/1024.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/9/91/TvOne_2023.svg",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-cnbc-indo",
+      nama_channel: "CNBC Indonesia",
+      tagline: "News & Business",
+      jenis: "hls",
+      url_iptv: "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/master.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/CNBC_Indonesia_2025.svg/1280px-CNBC_Indonesia_2025.svg.png",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-tvri-nasional",
+      nama_channel: "TVRI Nasional",
+      tagline: "Media Pemersatu Bangsa",
+      jenis: "hls",
+      url_iptv: "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/e/eb/TVRILogo2019.svg",
+      url_license: ""
+    },
+    {
+      id_iptv: "custom-tvri-world",
+      nama_channel: "TVRI World",
+      tagline: "Indonesia to the World",
+      jenis: "hls",
+      url_iptv: "https://ott-balancer.tvri.go.id/live/eds/TVRIWorld/hls/TVRIWorld.m3u8",
+      gbr_base64: "",
+      logo: "https://yt3.googleusercontent.com/cZVbLx5HjtRTvtmfZLO91BQG3c33v-1LY-ewGyA7TveUg3TMWUTE79Qst-_T9QHvR3nLbKxt=s900-c-k-c0x00ffffff-no-rj",
+      url_license: ""
+    }
+  ];
+
+  customSports.forEach(ch => {
+    if (!sportsData.some(existing => existing.id_iptv === ch.id_iptv || existing.nama_channel === ch.nama_channel)) {
+      sportsData.push(ch);
+    }
+  });
+
+  customLive.forEach(ch => {
+    if (!liveData.some(existing => existing.id_iptv === ch.id_iptv || existing.nama_channel === ch.nama_channel)) {
+      liveData.push(ch);
+    }
+  });
 
   // If we couldn't load anything (both APIs and backups empty), use stable channels
   if (eventsData.length === 0 && sportsData.length === 0 && liveData.length === 0) {
@@ -234,7 +415,7 @@ export const getLiveSportsData = async (): Promise<{
       id: item.id_iptv,
       name: item.nama_channel,
       subName: item.tagline || 'Saluran Sports Premium',
-      logo: item.gbr_base64,
+      logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
       servers: buildServers(item.url_iptv, item.url_license, item.jenis),
       isChannel: true
@@ -252,7 +433,7 @@ export const getLiveSportsData = async (): Promise<{
       id: item.id_iptv,
       name: item.nama_channel,
       subName: item.tagline || 'Saluran Hiburan & Lokal',
-      logo: item.gbr_base64,
+      logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
       servers: buildServers(item.url_iptv, item.url_license, item.jenis),
       isChannel: true
@@ -278,7 +459,7 @@ export const slugify = (text: string): string => {
 export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | undefined> => {
   const data = await getLiveSportsData();
   const allStreams = [...data.matches, ...data.sportsTv, ...data.liveTv];
-  
+
   // 1. Direct ID match
   let found = allStreams.find(s => s.id === idOrSlug);
   if (found) return found;

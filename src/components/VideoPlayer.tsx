@@ -157,9 +157,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const keys = getDrmKeys(currentServer);
 
       const autoProxiedUrl = getProxiedUrl(rawUrl);
-      const streamUrl = autoProxiedUrl;
+      let streamUrl = autoProxiedUrl;
+      let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
-      const isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
+      // Client-side parser for IPTV playlist containers (e.g. IPTVCat lists)
+      if (isHls) {
+        try {
+          const checkRes = await fetch(streamUrl);
+          if (checkRes.ok) {
+            const bodyText = await checkRes.text();
+            if (bodyText.includes('#EXTINF') && !bodyText.includes('#EXT-X-TARGETDURATION') && !bodyText.includes('#EXT-X-STREAM-INF')) {
+              const lines = bodyText.split('\n');
+              const targetLine = lines.find(line => {
+                const trimmed = line.trim();
+                return trimmed && !trimmed.startsWith('#') && (trimmed.startsWith('http') || trimmed.includes('.m3u8') || trimmed.includes('.ts'));
+              });
+              if (targetLine) {
+                const resolvedUrl = new URL(targetLine.trim(), checkRes.url).toString();
+                console.log('Frontend resolved IPTV container to:', resolvedUrl);
+                streamUrl = getProxiedUrl(resolvedUrl, true);
+                isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('IPTV container resolver failed or timed out:', e);
+        }
+      }
 
       setError(null);
       setIsBuffering(true);
