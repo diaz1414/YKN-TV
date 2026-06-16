@@ -18,6 +18,7 @@ const ChannelDetail = () => {
   const [loading, setLoading] = useState(true);
   const [matches, setMatches] = useState<PlayableStream[]>([]);
   const [activeTab, setActiveTab] = useState<'channels' | 'matches'>('matches');
+  const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
 
   useEffect(() => {
     // Scroll to top when entering a new channel/match detail page
@@ -206,6 +207,11 @@ const ChannelDetail = () => {
   }
 
   const otherChannels = [...sportsTv, ...liveTv].filter(c => c.id !== stream.id);
+  const filteredOtherChannels = channelSubTab === 'sports'
+    ? sportsTv.filter(c => c.id !== stream.id)
+    : channelSubTab === 'general'
+      ? liveTv.filter(c => c.id !== stream.id)
+      : otherChannels;
 
   const getMatchStatus = (ch: PlayableStream) => {
     if (!ch.jadwal_event) return { status: 'playable' as const, timeLeft: '' };
@@ -450,13 +456,37 @@ const ChannelDetail = () => {
                 </button>
               </div>
 
+              {/* Sub-tab pills — only visible on Saluran TV tab */}
+              {activeTab === 'channels' && (
+                <div className="flex bg-zinc-950/50 p-0.5 rounded-xl border border-white/5 gap-0.5 select-none mb-3">
+                  {([
+                    { key: 'all',     label: 'Semua',    icon: <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> },
+                    { key: 'sports',  label: 'Olahraga', icon: <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
+                    { key: 'general', label: 'Hiburan',  icon: <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg> },
+                  ] as const).map(({ key: t, label, icon }) => (
+                    <button
+                      key={t}
+                      onClick={() => setChannelSubTab(t)}
+                      className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+                        channelSubTab === t
+                          ? 'bg-white/10 text-white'
+                          : 'text-zinc-500 hover:text-zinc-300'
+                      }`}
+                    >
+                      {icon}
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Scrollable list */}
               <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
                 {activeTab === 'channels' ? (
-                  otherChannels.length === 0 ? (
-                    <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran lain</p>
+                  filteredOtherChannels.length === 0 ? (
+                    <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran</p>
                   ) : (
-                    otherChannels.map((ch) => (
+                    filteredOtherChannels.map((ch) => (
                       <div
                         key={ch.id}
                         onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
