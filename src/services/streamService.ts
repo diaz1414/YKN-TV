@@ -178,7 +178,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://bein-xtra-bein.amagi.tv/playlist.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/BeIN_Sports_logo.svg/1200px-BeIN_Sports_logo.svg.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Bein_sport_logo.png",
       url_license: ""
     },
     {
@@ -188,7 +188,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://jmp2.uk/plu-5a74b8e1e22a61737979c6bf.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fox_Sports_logo.svg/1200px-Fox_Sports_logo.svg.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/FOX_Sports_logo.svg/1280px-FOX_Sports_logo.svg.png",
       url_license: ""
     },
     {
@@ -198,7 +198,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://dnf08l6u6uxnz.cloudfront.net/master.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/FuboTV_logo.svg/1200px-FuboTV_logo.svg.png",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlgp5-BQ9kkzVotJleKKyHMjOWwf1LUKOyXA&s",
       url_license: ""
     },
     {
@@ -208,7 +208,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass1-p/main.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      logo: "https://www.cne-eg.com/uploads/logos/20183142627377.png",
       url_license: ""
     },
     {
@@ -218,7 +218,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass2-p/main.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      logo: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/e07af070606335.5ba94e1546767.jpg",
       url_license: ""
     },
     {
@@ -228,7 +228,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://liveeu-gcp.alkassdigital.net/alkass3-p/main.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Al_Kass_Sports_Channels_logo.svg/1200px-Al_Kass_Sports_Channels_logo.svg.png",
+      logo: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/e07af070606335.5ba94e1546767.jpg",
       url_license: ""
     },
     {
@@ -238,7 +238,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8",
       gbr_base64: "",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/TVRI_Sport_logo_2018.svg/1200px-TVRI_Sport_logo_2018.svg.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/e/eb/TVRILogo2019.svg",
       url_license: ""
     }
   ];
@@ -331,7 +331,7 @@ export const getLiveSportsData = async (): Promise<{
       jenis: "hls",
       url_iptv: "https://ott-balancer.tvri.go.id/live/eds/TVRIWorld/hls/TVRIWorld.m3u8",
       gbr_base64: "",
-      logo: "https://yt3.googleusercontent.com/cZVbLx5HjtRTvtmfZLO91BQG3c33v-1LY-ewGyA7TveUg3TMWUTE79Qst-_T9QHvR3nLbKxt=s900-c-k-c0x00ffffff-no-rj",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/e/eb/TVRILogo2019.svg",
       url_license: ""
     }
   ];
