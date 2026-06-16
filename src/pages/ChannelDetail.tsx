@@ -430,7 +430,7 @@ const ChannelDetail = () => {
 
           {/* Right Sidebar Quick Switcher Section (4 columns on desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card rounded-[2rem] p-6 flex flex-col max-h-[520px] md:max-h-[620px] relative overflow-hidden">
+            <div className="glass-card rounded-[2rem] p-4 sm:p-6 flex flex-col lg:max-h-[620px] relative overflow-hidden">
               {/* Tab Selector Segment Control */}
               <div className="flex bg-zinc-950/60 p-1 rounded-[1.25rem] border border-white/5 gap-1 select-none mb-6">
                 <button
@@ -524,62 +524,54 @@ const ChannelDetail = () => {
                         <div
                           key={ch.id}
                           onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
-                          className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isLive
+                          className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isLive
                             ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
                             : isSoon
                               ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
                               : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
                             }`}
                         >
-                          <div className="flex items-center gap-3.5 truncate">
-                            <div className="flex items-center -space-x-3 shrink-0 select-none">
-                              <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md group-hover:border-primary/20 transition-all duration-300">
-                                <img
-                                  src={ch.logo || "https://flagcdn.com/w80/un.png"}
-                                  alt={ch.player1 || 'Home'}
-                                  className="w-full h-full object-contain filter brightness-110"
-                                />
-                              </div>
-                              <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10 group-hover:border-primary/20 transition-all duration-300">
-                                <img
-                                  src={ch.logo2 || "https://flagcdn.com/w80/un.png"}
-                                  alt={ch.player2 || 'Away'}
-                                  className="w-full h-full object-contain filter brightness-110"
-                                />
-                              </div>
+                          {/* Flags */}
+                          <div className="flex items-center -space-x-3 shrink-0 select-none">
+                            <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md group-hover:border-primary/20 transition-all">
+                              <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
                             </div>
-                            <div className="truncate">
-                              <h5 className="text-xs sm:text-sm font-black text-white group-hover:text-primary transition-colors truncate">
-                                {ch.name}
-                              </h5>
-                              <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">
-                                {ch.subName}
-                              </p>
+                            <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10 group-hover:border-primary/20 transition-all">
+                              <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 shrink-0 ml-2">
-                            {isLive ? (
-                              <span className="px-2.5 py-1 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[9px] font-black uppercase tracking-widest animate-pulse-live">
-                                LIVE
-                              </span>
-                            ) : (
-                              <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${isSoon
-                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
+
+                          {/* Name + badge stacked on mobile, row on desktop */}
+                          <div className="flex-1 min-w-0">
+                            <h5 className="text-xs font-black text-white group-hover:text-primary transition-colors leading-snug line-clamp-2 lg:line-clamp-1">
+                              {ch.name}
+                            </h5>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                              <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">{ch.subName}</p>
+                              {/* Badge inline on mobile */}
+                              {isLive ? (
+                                <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
+                                  LIVE
+                                </span>
+                              ) : (
+                                <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${
+                                  isSoon
+                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                    : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
                                 }`}>
-                                {ch.matchInfo.timeLeft}
-                              </span>
-                            )}
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow ${isLive
+                                  {ch.matchInfo.timeLeft}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Play button */}
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${
+                            isLive
                               ? 'bg-primary text-dark group-hover:scale-105'
                               : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
-                              }`}>
-                              <Play
-                                size={12}
-                                className="ml-0.5"
-                                fill={isLive ? "currentColor" : "none"}
-                              />
-                            </div>
+                          }`}>
+                            <Play size={12} className="ml-0.5" fill={isLive ? 'currentColor' : 'none'} />
                           </div>
                         </div>
                       );
