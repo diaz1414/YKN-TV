@@ -41,6 +41,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [hasStarted, setHasStarted] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
+  const [activeHeight, setActiveHeight] = useState<number | null>(null);
 
   // Sync current server if servers list changes
   useEffect(() => {
@@ -115,6 +116,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
     player.addEventListener('buffering', (event: any) => {
       setIsBuffering(event.buffering);
+    });
+
+    player.addEventListener('adaptation', () => {
+      const activeTrack = player.getVariantTracks().find(t => t.active);
+      if (activeTrack && activeTrack.height) {
+        setActiveHeight(activeTrack.height);
+      }
     });
 
     const handleFullscreenChange = () => {
@@ -221,6 +229,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             });
           });
 
+          hls.on(Hls.Events.LEVEL_SWITCHED, (_event, data) => {
+            const level = hls.levels[data.level];
+            if (level && level.height) {
+              setActiveHeight(level.height);
+            }
+          });
+
           let triedProxy = false;
           hls.on(Hls.Events.ERROR, async (_event, data) => {
             if (data.fatal) {
@@ -278,6 +293,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           await player.load(streamUrl);
           console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+
+          const activeTrack = player.getVariantTracks().find(t => t.active);
+          if (activeTrack && activeTrack.height) {
+            setActiveHeight(activeTrack.height);
+          }
 
           videoRef.current?.play().then(() => {
             setIsPlaying(true);
@@ -475,7 +495,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
     } else if (playerRef.current) {
       if (levelIdx === 'auto') {
-        playerRef.current.configure({ abr: { enabled: true } });
+        const tracks = playerRef.current.getVariantTracks();
+        const sortedTracks = [...tracks].sort((a, b) => (a.height || 0) - (b.height || 0));
+        const mediumTrack = sortedTracks.find(t => (t.height || 0) >= 480) || sortedTracks[0];
+        if (mediumTrack) {
+          playerRef.current.selectVariantTrack(mediumTrack, true);
+        }
+        playerRef.current.configure({
+          abr: {
+            enabled: true,
+            clearBufferSwitch: true
+          }
+        });
       } else {
         playerRef.current.configure({ abr: { enabled: false } });
         const tracks = playerRef.current.getVariantTracks();
@@ -641,7 +672,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer"
                   >
                     <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
-                    {currentLevel === 'auto' ? 'Auto' : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                    {currentLevel === 'auto' ? `Auto ${activeHeight ? `(${activeHeight}p)` : ''}` : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
                   </button>
                   {showQualityMenu && (
                     <div className="absolute bottom-9 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-xl p-1 w-20 sm:w-24 shadow-2xl flex flex-col gap-0.5 z-50">
