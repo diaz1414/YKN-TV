@@ -285,23 +285,26 @@ const ChannelDetail = () => {
               {matchStatus === 'playable' ? (
                 <VideoPlayer servers={stream.servers} />
               ) : matchStatus === 'finished' ? (
-                <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-4 shadow-inner">
-                  <div className="w-14 h-14 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center text-zinc-400">
-                    <Lock size={24} />
+                <div className="min-h-[280px] sm:aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-5 sm:p-8 text-center select-none gap-4 shadow-inner relative overflow-hidden">
+                  <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center text-zinc-400 shrink-0">
+                    <Lock size={20} />
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="text-lg md:text-xl font-display font-black uppercase tracking-tight text-white italic">
+                  <div className="space-y-2 max-w-xs sm:max-w-sm">
+                    <h3 className="text-base sm:text-lg md:text-xl font-display font-black uppercase tracking-tight text-white italic">
                       Pertandingan Selesai
                     </h3>
-                    <p className="text-[10px] sm:text-xs text-zinc-500 font-bold max-w-md">
-                      Siaran langsung pertandingan ini telah berakhir. Silakan pilih World Cup TV untuk tetap menyaksikan siaran langsung.
+                    <p className="text-[10px] sm:text-xs text-zinc-400 font-bold leading-relaxed">
+                      Pertandingan ini telah usai. Masih ingin menikmati serunya Piala Dunia?{' '}
+                      <span className="text-primary">Yuk, lanjut nonton lewat Channel World Cup TV</span> yang masih mengudara!
                     </p>
                   </div>
                   <button
-                    onClick={() => navigate('/watch/worldcup-tv')}
-                    className="px-5 py-2 bg-primary text-dark font-black text-[10px] uppercase tracking-wider rounded-xl hover:scale-105 transition-transform cursor-pointer"
+                    onClick={() => navigate('/?tab=channels')}
+                    className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-primary text-dark font-black text-[9px] sm:text-[10px] uppercase tracking-wider rounded-xl hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] active:scale-95 transition-all cursor-pointer shrink-0"
                   >
-                    Tonton World Cup TV
+                    <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/></svg>
+                    Tonton Channel World Cup TV
                   </button>
                 </div>
               ) : (
