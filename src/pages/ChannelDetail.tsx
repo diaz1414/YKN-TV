@@ -430,7 +430,7 @@ const ChannelDetail = () => {
 
           {/* Right Sidebar Quick Switcher Section (4 columns on desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card rounded-[2rem] p-4 sm:p-6 flex flex-col lg:max-h-[620px] relative overflow-hidden">
+            <div className="glass-card rounded-[2rem] p-4 sm:p-6 flex flex-col h-[480px] sm:h-[520px] lg:h-[620px] relative overflow-hidden">
               {/* Tab Selector Segment Control */}
               <div className="flex bg-zinc-950/60 p-1 rounded-[1.25rem] border border-white/5 gap-1 select-none mb-6">
                 <button
