@@ -161,8 +161,8 @@ const AdminDashboard = () => {
     };
   }, [selectedChannel?.id, isLoggedIn]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!chatInput.trim() || !socket || !connected || !selectedChannel) return;
 
     socket.emit('send_message', {
@@ -717,14 +717,23 @@ const AdminDashboard = () => {
 
                   {/* Input Form */}
                   <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-white/5 shrink-0">
-                    <input
-                      type="text"
+                    <textarea
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+                          if (!isMobile) {
+                            e.preventDefault();
+                            handleSendMessage();
+                          }
+                        }
+                      }}
                       placeholder={connected ? "Ketik balasan..." : "Menghubungkan..."}
                       disabled={!connected}
                       maxLength={150}
-                      className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50"
+                      rows={1}
+                      className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50 resize-none h-[40px] custom-scrollbar"
                     />
                     <button
                       type="submit"
