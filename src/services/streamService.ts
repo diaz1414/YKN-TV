@@ -115,8 +115,14 @@ export const buildServers = (urlIptv: string, urlLicense: string | undefined, je
   return servers;
 };
 
+// Toggle to temporarily enable/disable proxy server. Set to false to disable.
+const ENABLE_PROXY = true;
+
 // Reliable CORS Proxy Helper
 export const getProxiedUrl = (url: string, force = false) => {
+  if (!ENABLE_PROXY) {
+    return url;
+  }
   const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com'];
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
 
