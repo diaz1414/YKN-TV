@@ -84,9 +84,10 @@ const ChannelDetail = () => {
       setIsJoined(false);
     }
 
-    const socketUrl = 'http://147.135.252.68:20114';
+    const isProduction = import.meta.env.PROD;
+    const socketUrl = isProduction ? window.location.origin : 'http://147.135.252.68:20114';
     const newSocket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: isProduction ? ['polling'] : ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 2000
     });
