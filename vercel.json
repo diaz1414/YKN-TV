@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/api/proxy/(.*)", "destination": "/api/proxy.js" },
+    { "source": "/api/sports/(.*)", "destination": "http://147.135.252.68:20114/api/sports/$1" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api/).*)", "destination": "/" }
   ]
