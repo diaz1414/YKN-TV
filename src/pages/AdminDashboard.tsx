@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import { Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search } from 'lucide-react';
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import yknwcLogo from '../assets/yknwc-logo.png';
+import { io } from 'socket.io-client';
 
 interface MonitorRoom {
   roomId: string;
@@ -84,6 +85,96 @@ const AdminDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [monitorTab, setMonitorTab] = useState<'all' | 'channels' | 'matches'>('all');
+
+  // Chat States for monitoring
+  const [selectedChannel, setSelectedChannel] = useState<PlayableStream | null>(null);
+  const [socket, setSocket] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [connected, setConnected] = useState(false);
+  const [roomViewers, setRoomViewers] = useState(0);
+
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Automatically scroll chat to bottom
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
+
+  // Connect / disconnect to room socket.io when selected channel changes
+  useEffect(() => {
+    if (!isLoggedIn || !selectedChannel) {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+      setChatMessages([]);
+      setConnected(false);
+      return;
+    }
+
+    const isProduction = import.meta.env.PROD;
+    const socketUrl = isProduction ? window.location.origin : 'http://147.135.252.68:20114';
+    const newSocket = io(socketUrl, {
+      transports: isProduction ? ['polling'] : ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000
+    });
+
+    newSocket.on('connect', () => {
+      setConnected(true);
+      newSocket.emit('join_room', {
+        roomId: selectedChannel.id,
+        username: 'YKN TV',
+        avatar: yknwcLogo,
+        role: 'user'
+      });
+    });
+
+    newSocket.on('disconnect', () => {
+      setConnected(false);
+    });
+
+    newSocket.on('chat_history', (history: any[]) => {
+      setChatMessages(history);
+    });
+
+    newSocket.on('receive_message', (msgObj: any) => {
+      setChatMessages(prev => {
+        if (prev.some(m => m.id === msgObj.id)) return prev;
+        const next = [...prev, msgObj];
+        if (next.length > 50) next.shift();
+        return next;
+      });
+    });
+
+    newSocket.on('room_participants_count', (count: number) => {
+      setRoomViewers(count);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [selectedChannel?.id, isLoggedIn]);
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || !socket || !connected || !selectedChannel) return;
+
+    socket.emit('send_message', {
+      roomId: selectedChannel.id,
+      username: 'YKN TV',
+      message: chatInput.trim(),
+      avatar: yknwcLogo,
+      role: 'user'
+    });
+
+    setChatInput('');
+  };
 
   // Check existing session
   useEffect(() => {
@@ -350,9 +441,10 @@ const AdminDashboard = () => {
             </div>
 
             {/* Right Column: Realtime Active Channels Monitor (8 columns) */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
 
-              <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-5">
+              {/* Left Part: Channels List (5 columns or full if no chat open) */}
+              <div className={`${selectedChannel ? 'md:col-span-6' : 'md:col-span-12'} glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <h3 className="text-sm font-black text-white uppercase tracking-wider">Live Channels Monitor</h3>
@@ -418,12 +510,19 @@ const AdminDashboard = () => {
                     {filteredChannels.map(ch => {
                       const viewers = monitoringData[ch.id] || 0;
                       const hasActiveViewers = viewers > 0;
+                      const isSelected = selectedChannel?.id === ch.id;
 
                       return (
                         <div
                           key={ch.id}
-                          className={`flex items-center justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] transition-all hover:bg-zinc-900/40 ${hasActiveViewers ? 'border-primary/25 shadow-md shadow-primary/[0.02]' : 'border-white/5'
-                            }`}
+                          onClick={() => setSelectedChannel(ch)}
+                          className={`flex items-center justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] transition-all hover:bg-zinc-900/40 cursor-pointer ${
+                            isSelected 
+                              ? 'border-primary shadow-lg shadow-primary/10' 
+                              : hasActiveViewers 
+                                ? 'border-primary/25 shadow-md shadow-primary/[0.02]' 
+                                : 'border-white/5'
+                          }`}
                         >
                           <div className="flex items-center gap-3.5 truncate pr-4">
                             {/* Logo */}
@@ -499,7 +598,10 @@ const AdminDashboard = () => {
 
                             {/* Go to Stream */}
                             <button
-                              onClick={() => navigate(ch.isChannel ? `/watch/${slugify(ch.name)}` : `/watch/${slugify(ch.name)}-${ch.id}`)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(ch.isChannel ? `/watch/${slugify(ch.name)}` : `/watch/${slugify(ch.name)}-${ch.id}`);
+                              }}
                               className="w-7 h-7 bg-white/5 hover:bg-primary hover:text-dark text-zinc-400 rounded-lg flex items-center justify-center transition-all cursor-pointer border border-white/5"
                             >
                               <ExternalLink size={10} />
@@ -511,6 +613,129 @@ const AdminDashboard = () => {
                   </div>
                 )}
               </div>
+
+              {/* Selected Channel Live Chat Monitor */}
+              {selectedChannel && (
+                <div className="md:col-span-6 glass-card rounded-[2rem] p-5 border border-white/5 flex flex-col h-[500px] md:h-[600px] relative overflow-hidden transition-all duration-300">
+                  {/* Chat Header */}
+                  <div className="flex items-center justify-between pb-3 border-b border-white/5 select-none shrink-0">
+                    <div className="truncate pr-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <h4 className="text-xs font-black text-white truncate uppercase tracking-wider">
+                          Chat: {selectedChannel.name}
+                        </h4>
+                      </div>
+                      <p className="text-[8.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
+                        {roomViewers} Penonton Aktif
+                      </p>
+                    </div>
+
+                    {/* Close Button */}
+                    <button
+                      onClick={() => setSelectedChannel(null)}
+                      className="w-6 h-6 rounded-lg bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </div>
+
+                  {/* Message History area */}
+                  <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 my-3 space-y-3 min-h-0">
+                    {chatMessages.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                        <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-wider">Belum ada obrolan</p>
+                      </div>
+                    ) : (
+                      chatMessages.map((msg) => {
+                        const isMe = msg.username === 'YKN TV' && msg.avatar?.includes('yknwc-logo');
+                        const isSystem = msg.role === 'system';
+
+                        if (isSystem) {
+                          return (
+                            <div key={msg.id} className="text-center py-0.5">
+                              <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-950/40 px-2.5 py-0.5 rounded-full border border-white/5">
+                                {msg.message}
+                              </span>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div key={msg.id} className="flex flex-col space-y-0.5">
+                            <div className="flex items-center gap-1">
+                              <span className={`text-[9.5px] font-black ${isMe ? 'text-primary' : 'text-sky-400'}`}>
+                                {msg.username}
+                              </span>
+                              {isMe && (
+                                <span className="px-1 py-0.2 bg-primary text-dark font-black text-[6px] uppercase tracking-widest rounded">
+                                  HOST
+                                </span>
+                              )}
+                              <span className="text-[7.5px] text-zinc-500 font-mono">
+                                {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                              </span>
+                            </div>
+                            <div className={`px-2.5 py-1.5 rounded-xl text-xs font-bold leading-relaxed break-words w-fit max-w-[90%] ${
+                              isMe
+                                ? 'bg-primary/10 border border-primary/20 text-zinc-100'
+                                : 'bg-zinc-900/90 border border-white/5 text-zinc-200'
+                            }`}>
+                              {/* Inline Link Render */}
+                              {(() => {
+                                const text = msg.message;
+                                const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+                                const parts = text.split(urlRegex);
+                                if (parts.length === 1) return text;
+                                return parts.map((part: string, index: number) => {
+                                  if (urlRegex.test(part)) {
+                                    const href = part.startsWith('http') ? part : `https://${part}`;
+                                    return (
+                                      <a
+                                        key={index}
+                                        href={href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary hover:underline font-black inline-flex items-center gap-0.5"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {part}
+                                        <ExternalLink size={10} className="inline shrink-0" />
+                                      </a>
+                                    );
+                                  }
+                                  return part;
+                                });
+                              })()}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                    <div ref={chatEndRef} />
+                  </div>
+
+                  {/* Input Form */}
+                  <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-white/5 shrink-0">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={connected ? "Ketik balasan..." : "Menghubungkan..."}
+                      disabled={!connected}
+                      maxLength={150}
+                      className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!connected || !chatInput.trim()}
+                      className="bg-primary text-dark font-black hover:scale-105 active:scale-95 transition-all text-[9px] uppercase tracking-widest px-4 rounded-xl flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-45 disabled:pointer-events-none"
+                    >
+                      Kirim
+                    </button>
+                  </form>
+                </div>
+              )}
 
             </div>
 

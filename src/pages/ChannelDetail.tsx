@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
-import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy } from 'lucide-react';
+import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
 import { io } from 'socket.io-client';
@@ -859,12 +859,38 @@ const ChannelDetail = () => {
                                       ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
                                       : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
                                 }`}>
-                                  <p>{msg.message}</p>
-                                  <div className="text-right mt-1 select-none leading-none h-2">
-                                    <span className="text-[7.5px] text-zinc-500 font-mono font-bold">
-                                      {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                    </span>
-                                  </div>
+                                  <p className="break-words whitespace-pre-wrap">
+                                    {(() => {
+                                      const text = msg.message;
+                                      const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+                                      const parts = text.split(urlRegex);
+                                      if (parts.length === 1) return text;
+                                      return parts.map((part: string, index: number) => {
+                                        if (urlRegex.test(part)) {
+                                          const href = part.startsWith('http') ? part : `https://${part}`;
+                                          return (
+                                            <a
+                                              key={index}
+                                              href={href}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-primary hover:underline font-black inline-flex items-center gap-0.5"
+                                              onClick={(e) => e.stopPropagation()}
+                                            >
+                                              {part}
+                                              <ExternalLink size={10} className="inline shrink-0" />
+                                            </a>
+                                          );
+                                        }
+                                        return part;
+                                      });
+                                    })()}
+                                   </p>
+                                   <div className="text-right mt-1 select-none leading-none h-2">
+                                     <span className="text-[7.5px] text-zinc-500 font-mono font-bold">
+                                       {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                     </span>
+                                   </div>
                                 </div>
                               </div>
                             </div>
