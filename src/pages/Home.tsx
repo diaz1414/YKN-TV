@@ -125,11 +125,18 @@ const WorldCupCountdown = () => {
   }
 
   return (
-    <div className="bg-zinc-950/96 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group select-none">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500" />
-      <div className="space-y-1 text-center md:text-left shrink-0">
-        <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">Road to MetLife Stadium</span>
-        <h4 className="text-lg sm:text-xl font-black uppercase font-display tracking-tight text-white mt-2">Menuju Final Piala Dunia FIFA 2026</h4>
+    <div className="bg-[#09090b]/90 border border-white/[0.06] backdrop-blur-3xl rounded-[2rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group select-none">
+      {/* Dynamic Background Glows */}
+      <div className="absolute -left-10 -top-10 w-40 h-40 bg-gradient-to-br from-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+      <div className="space-y-2 text-center md:text-left shrink-0">
+        <span className="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/25 px-3 py-1 rounded-full shadow-sm shadow-amber-500/5">
+          Road to MetLife Stadium
+        </span>
+        <h4 className="text-xl sm:text-2xl font-black uppercase font-display tracking-tight text-white mt-2">
+          Menuju Final <span className="text-gradient-gold italic font-black">Piala Dunia FIFA 2026</span>
+        </h4>
         <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
           New York New Jersey • {localKickoff}
         </p>
@@ -137,11 +144,11 @@ const WorldCupCountdown = () => {
 
       <div className="flex items-center gap-2 sm:gap-4 font-display">
         <TimeSegment value={timeLeft.days} label="Hari" />
-        <span className="text-xl sm:text-2xl font-black text-zinc-700 -translate-y-2">:</span>
+        <span className="text-xl sm:text-2xl font-black text-amber-500/40 -translate-y-2 animate-pulse select-none">:</span>
         <TimeSegment value={timeLeft.hours} label="Jam" />
-        <span className="text-xl sm:text-2xl font-black text-zinc-700 -translate-y-2">:</span>
+        <span className="text-xl sm:text-2xl font-black text-amber-500/40 -translate-y-2 animate-pulse select-none">:</span>
         <TimeSegment value={timeLeft.minutes} label="Menit" />
-        <span className="text-xl sm:text-2xl font-black text-zinc-700 -translate-y-2">:</span>
+        <span className="text-xl sm:text-2xl font-black text-amber-500/40 -translate-y-2 animate-pulse select-none">:</span>
         <TimeSegment value={timeLeft.seconds} label="Detik" />
       </div>
     </div>
@@ -150,10 +157,10 @@ const WorldCupCountdown = () => {
 
 const TimeSegment = ({ value, label }: { value: number; label: string }) => (
   <div className="flex flex-col items-center">
-    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-lg sm:text-2xl font-black text-white font-mono shadow-inner">
+    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#141416] to-[#08080a] border border-white/[0.08] flex items-center justify-center text-lg sm:text-2xl font-black text-amber-400 font-mono shadow-2xl drop-shadow-[0_0_8px_rgba(245,158,11,0.2)]">
       {String(value).padStart(2, '0')}
     </div>
-    <span className="text-[9px] sm:text-[10px] font-black uppercase text-zinc-500 tracking-widest mt-1.5">{label}</span>
+    <span className="text-[9px] sm:text-[10px] font-black uppercase text-zinc-500 tracking-widest mt-2">{label}</span>
   </div>
 );
 
