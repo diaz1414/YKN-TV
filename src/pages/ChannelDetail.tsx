@@ -34,6 +34,7 @@ const ChannelDetail = () => {
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
   const [isJoined, setIsJoined] = useState(!!localStorage.getItem('ykn_chat_nickname'));
+  const [joinError, setJoinError] = useState('');
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -136,6 +137,24 @@ const ChannelDetail = () => {
       setParticipantsCount(count);
     });
 
+    newSocket.on('join_success', ({ username, avatar }: { username: string; avatar: string }) => {
+      setNickname(username);
+      setChatAvatar(avatar);
+      setIsJoined(true);
+      setShowJoinModal(false);
+      setJoinError('');
+      localStorage.setItem('ykn_chat_nickname', username);
+      localStorage.setItem('ykn_chat_avatar', avatar);
+    });
+
+    newSocket.on('join_error', ({ message }: { message: string }) => {
+      setJoinError(message);
+      setIsJoined(false);
+      localStorage.removeItem('ykn_chat_nickname');
+      localStorage.removeItem('ykn_chat_avatar');
+      setShowJoinModal(true);
+    });
+
     setSocket(newSocket);
 
     return () => {
@@ -148,13 +167,7 @@ const ChannelDetail = () => {
     const cleanNick = newNick.trim().substring(0, 25);
     const avatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(cleanNick)}`;
 
-    setNickname(cleanNick);
-    setChatAvatar(avatar);
-    setIsJoined(true);
-    setShowJoinModal(false);
-
-    localStorage.setItem('ykn_chat_nickname', cleanNick);
-    localStorage.setItem('ykn_chat_avatar', avatar);
+    setJoinError('');
 
     if (socket && connected && stream) {
       socket.emit('join_room', {
@@ -934,11 +947,19 @@ const ChannelDetail = () => {
                             <input
                               type="text"
                               value={tempNickname}
-                              onChange={(e) => setTempNickname(e.target.value)}
+                              onChange={(e) => {
+                                setTempNickname(e.target.value);
+                                if (joinError) setJoinError('');
+                              }}
                               placeholder="Ketik nickname kamu..."
                               maxLength={20}
                               className="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-xs font-black text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-600"
                             />
+                            {joinError && (
+                              <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 px-1">
+                                ⚠️ {joinError}
+                              </p>
+                            )}
                           </div>
                         </div>
 
