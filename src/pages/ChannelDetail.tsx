@@ -7,6 +7,7 @@ import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
 import { io } from 'socket.io-client';
+import yknwcLogo from '../assets/yknwc-logo.png';
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -164,8 +165,14 @@ const ChannelDetail = () => {
 
   const handleConfirmJoin = (newNick: string) => {
     if (!newNick.trim()) return;
-    const cleanNick = newNick.trim().substring(0, 25);
-    const avatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(cleanNick)}`;
+    let cleanNick = newNick.trim().substring(0, 25);
+    let avatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(cleanNick)}`;
+
+    // Special Admin Passcode handler
+    if (cleanNick === 'YKNTV#admin123') {
+      cleanNick = 'YKN TV';
+      avatar = yknwcLogo;
+    }
 
     setJoinError('');
 
@@ -799,6 +806,7 @@ const ChannelDetail = () => {
                           }
 
                           const isMe = msg.username === nickname;
+                          const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('yknwc-logo'));
 
                           const getNameColor = (name: string) => {
                             if (name === nickname) return 'text-primary';
@@ -829,14 +837,28 @@ const ChannelDetail = () => {
                               />
                               <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%] min-w-[80px]`}>
                                 {/* Username */}
-                                <span className={`text-[9.5px] font-black mb-1 px-1 ${isMe ? 'text-primary' : getNameColor(msg.username)}`}>
-                                  {isMe ? 'Anda' : msg.username}
+                                <span className={`text-[9.5px] font-black mb-1 px-1 flex items-center gap-1.5 ${
+                                  isAdmin
+                                    ? 'text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.45)]'
+                                    : isMe
+                                      ? 'text-primary'
+                                      : getNameColor(msg.username)
+                                }`}>
+                                  {isMe ? (isAdmin ? 'Admin (Anda)' : 'Anda') : msg.username}
+                                  {isAdmin && (
+                                    <span className="px-1 py-0.2 bg-primary text-dark font-black text-[7px] uppercase tracking-widest rounded flex items-center justify-center scale-90">
+                                      HOST
+                                    </span>
+                                  )}
                                 </span>
                                 {/* Bubble */}
-                                <div className={`px-3 py-2 rounded-2xl text-xs font-bold leading-relaxed break-words w-full ${isMe
-                                    ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
-                                    : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
-                                  }`}>
+                                <div className={`px-3 py-2 rounded-2xl text-xs font-bold leading-relaxed break-words w-full ${
+                                  isAdmin
+                                    ? `bg-primary/15 border border-primary/35 text-zinc-100 shadow-[0_0_12px_rgba(212,175,55,0.1)] ${isMe ? 'rounded-tr-none' : 'rounded-tl-none'}`
+                                    : isMe
+                                      ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
+                                      : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
+                                }`}>
                                   <p>{msg.message}</p>
                                   <div className="text-right mt-1 select-none leading-none h-2">
                                     <span className="text-[7.5px] text-zinc-500 font-mono font-bold">
@@ -922,7 +944,7 @@ const ChannelDetail = () => {
                         <div className="flex justify-center">
                           <div className="relative">
                             <img
-                              src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(tempNickname || 'Guest')}`}
+                              src={tempNickname === 'YKNTV#admin123' ? yknwcLogo : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(tempNickname || 'Guest')}`}
                               alt="avatar preview"
                               className="w-16 h-16 rounded-full bg-zinc-900 border-2 border-primary/30 p-1 transition-all"
                             />
