@@ -874,11 +874,11 @@ const ChannelDetail = () => {
                                               href={href}
                                               target="_blank"
                                               rel="noopener noreferrer"
-                                              className="text-primary hover:underline font-black inline-flex items-center gap-0.5"
+                                              className="text-primary hover:underline font-black break-all"
                                               onClick={(e) => e.stopPropagation()}
                                             >
                                               {part}
-                                              <ExternalLink size={10} className="inline shrink-0" />
+                                              <ExternalLink size={10} className="inline-block ml-0.5 align-middle shrink-0" />
                                             </a>
                                           );
                                         }
