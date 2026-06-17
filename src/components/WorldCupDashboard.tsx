@@ -107,7 +107,7 @@ const t = (key: string, lang: string = 'id'): string => {
       'gd_short': 'SG',
       'points_short': 'Poin',
       'loading_data': 'Memuat Data Piala Dunia...',
-      'error_loading': 'Gagal memuat data live dari API.',
+      'error_loading': 'Gagal menyinkronkan skor live terbaru. Silakan coba lagi.',
       'match_timeline': 'Linimasa Pertandingan',
       'stats_standings': 'Klasemen & Skor',
       'match_ended': 'Selesai',
