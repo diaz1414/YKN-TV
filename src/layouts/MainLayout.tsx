@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Tv, Home, Award, Calendar, Menu, X } from 'lucide-react';
+import { Search, Tv, Home, Award, Calendar, Menu, X, Coffee } from 'lucide-react';
 import { getTodayMatches, type Match } from '../services/matchService';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import { slugify } from '../services/streamService';
+import { SupportModal } from '../components/SupportDeveloper';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Set true to show mobile burger menu, false to hide it
 const SHOW_BURGER_MENU = false;
@@ -31,6 +33,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const [activeMatch, setActiveMatch] = useState<Match | null>(null);
   // State tambahan eksklusif hanya untuk kontrol buka/tutup burger menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
 
   useEffect(() => {
     const fetchLiveMatch = async () => {
@@ -407,6 +410,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer">Jadwal</span>
               <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer">Saluran TV</span>
               <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer">Klasemen</span>
+              <span onClick={() => setIsSupportOpen(true)} className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer flex items-center gap-1 select-none">
+                <Coffee size={12} className="fill-amber-400/10" />
+                Traktir Kopi
+              </span>
             </div>
           </div>
         </footer>
@@ -438,6 +445,25 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <span className="text-[9px] font-black uppercase tracking-wider">Klasemen</span>
         </button>
       </nav>
+
+      {/* Floating Action Button (FAB) for Support - Hidden on Watch Page */}
+      {!isWatchPage && (
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsSupportOpen(true)}
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 border border-amber-400/30 hover:shadow-amber-500/35 transition-all select-none cursor-pointer group"
+        >
+          <Coffee size={22} className="group-hover:rotate-12 transition-transform duration-300 fill-black/10" />
+        </motion.button>
+      )}
+
+      {/* Support Modal overlay */}
+      <AnimatePresence>
+        {isSupportOpen && (
+          <SupportModal onClose={() => setIsSupportOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

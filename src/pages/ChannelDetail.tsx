@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
-import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, Coffee, Gift } from 'lucide-react';
+import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock } from 'lucide-react';
 import { supabase } from '../services/supabase';
+import { SupportCard } from '../components/SupportDeveloper';
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -595,59 +596,8 @@ const ChannelDetail = () => {
                   )
                 )}
               </div>
-            </div>            {/* Support Developer Box */}
-            <div className="bg-gradient-to-br from-zinc-900/60 to-zinc-950/80 border border-white/5 rounded-[2rem] p-6 shadow-xl select-none relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-500" />
-
-              <h4 className="text-sm font-black mb-2 uppercase tracking-wider font-display flex items-center gap-2 text-white">
-                <Coffee size={16} className="text-primary fill-primary/10 animate-bounce" />
-                Beli Kopi Hangat
-              </h4>
-
-              <p className="text-zinc-400 text-[11px] font-bold leading-relaxed mb-5 uppercase tracking-wide">
-                YKN TV dibuat dengan sepenuh hati. Yuk traktir developer secangkir kopi agar tetap semangat menjaga kualitas dan kestabilan server streaming!
-              </p>
-
-              <div className="flex flex-col gap-3">
-                <a
-                  href="https://bagibagi.co/Diaww"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-3 bg-zinc-950/40 hover:bg-[#e8a317]/5 border border-white/5 hover:border-[#e8a317]/20 rounded-2xl transition-all duration-300 group cursor-pointer"
-                >
-                  <div className="w-10 h-10 bg-[#e8a317]/10 group-hover:bg-[#e8a317]/20 rounded-xl flex items-center justify-center border border-[#e8a317]/20 transition-all shrink-0">
-                    <Gift size={20} className="text-[#e8a317]" />
-                  </div>
-                  <div className="text-left truncate">
-                    <span className="block text-xs font-black text-white group-hover:text-[#e8a317] transition-colors uppercase tracking-wider truncate">
-                      BagiBagi (Local ID)
-                    </span>
-                    <span className="block text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5 truncate">
-                      Traktir via Qris / E-Wallet
-                    </span>
-                  </div>
-                </a>
-
-                <a
-                  href="https://ko-fi.com/diaww14"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-3 bg-zinc-950/40 hover:bg-[#13C3FF]/5 border border-white/5 hover:border-[#13C3FF]/20 rounded-2xl transition-all duration-300 group cursor-pointer"
-                >
-                  <div className="w-10 h-10 bg-[#13C3FF]/10 group-hover:bg-[#13C3FF]/20 rounded-xl flex items-center justify-center border border-[#13C3FF]/20 transition-all shrink-0">
-                    <Coffee size={20} className="text-[#13C3FF]" />
-                  </div>
-                  <div className="text-left truncate">
-                    <span className="block text-xs font-black text-white group-hover:text-[#13C3FF] transition-colors uppercase tracking-wider truncate">
-                      Ko-fi (Global)
-                    </span>
-                    <span className="block text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5 truncate">
-                      Support via Paypal / Card
-                    </span>
-                  </div>
-                </a>
-              </div>
             </div>
+            <SupportCard />
 
           </div>
         </div>
