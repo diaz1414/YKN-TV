@@ -206,11 +206,11 @@ const ChannelDetail = () => {
     );
   }
 
-  const otherChannels = [...sportsTv, ...liveTv].filter(c => c.id !== stream.id);
+  const otherChannels = [...sportsTv, ...liveTv];
   const filteredOtherChannels = channelSubTab === 'sports'
-    ? sportsTv.filter(c => c.id !== stream.id)
+    ? sportsTv
     : channelSubTab === 'general'
-      ? liveTv.filter(c => c.id !== stream.id)
+      ? liveTv
       : otherChannels;
 
   const getMatchStatus = (ch: PlayableStream) => {
@@ -240,7 +240,6 @@ const ChannelDetail = () => {
   };
 
   const otherMatches = matches
-    .filter(ch => ch.id !== stream.id)
     .map(ch => {
       const info = getMatchStatus(ch);
       return { ...ch, matchInfo: info };
@@ -486,32 +485,43 @@ const ChannelDetail = () => {
                   filteredOtherChannels.length === 0 ? (
                     <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran</p>
                   ) : (
-                    filteredOtherChannels.map((ch) => (
-                      <div
-                        key={ch.id}
-                        onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
-                        className="flex items-center justify-between p-3.5 bg-zinc-950/40 hover:bg-zinc-900/50 border border-white/5 hover:border-white/10 rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none"
-                      >
-                        <div className="flex items-center gap-3.5 truncate">
-                          {ch.isBase64Logo && ch.logo ? (
-                            <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300">
-                              <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
+                    filteredOtherChannels.map((ch) => {
+                      const isActive = ch.id === stream.id;
+                      return (
+                        <div
+                          key={ch.id}
+                          onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
+                          className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${
+                            isActive
+                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                              : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3.5 truncate">
+                            {ch.isBase64Logo && ch.logo ? (
+                              <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
+                              </div>
+                            ) : (
+                              <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
+                              </div>
+                            )}
+                            <div className="truncate">
+                              <h5 className={`text-xs sm:text-sm font-black transition-colors truncate ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>{ch.name}</h5>
+                              <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">{ch.subName}</p>
                             </div>
-                          ) : (
-                            <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300">
-                              <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
-                            </div>
-                          )}
-                          <div className="truncate">
-                            <h5 className="text-xs sm:text-sm font-black text-white group-hover:text-primary transition-colors truncate">{ch.name}</h5>
-                            <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">{ch.subName}</p>
+                          </div>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${
+                            isActive
+                              ? 'bg-primary text-dark scale-105'
+                              : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
+                          }`}>
+                            <Play size={12} fill={isActive ? 'currentColor' : 'none'} className="ml-0.5" />
                           </div>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark flex items-center justify-center transition-all duration-300 shadow shrink-0">
-                          <Play size={12} fill="none" className="ml-0.5 group-hover:fill-dark transition-all" />
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )
                 ) : (
                   otherMatches.length === 0 ? (
@@ -520,16 +530,20 @@ const ChannelDetail = () => {
                     otherMatches.map((ch) => {
                       const isLive = ch.matchInfo.status === 'playable';
                       const isSoon = ch.matchInfo.isStartingSoon;
+                      const isActive = ch.id === stream.id;
                       return (
                         <div
                           key={ch.id}
                           onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
-                          className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isLive
-                            ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
-                            : isSoon
-                              ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
-                              : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
-                            }`}
+                          className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${
+                            isActive
+                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                              : isLive
+                                ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
+                                : isSoon
+                                  ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
+                                  : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
+                          }`}
                         >
                           {/* Flags */}
                           <div className="flex items-center -space-x-3 shrink-0 select-none">
@@ -543,7 +557,9 @@ const ChannelDetail = () => {
 
                           {/* Name + badge stacked on mobile, row on desktop */}
                           <div className="flex-1 min-w-0">
-                            <h5 className="text-xs font-black text-white group-hover:text-primary transition-colors leading-snug line-clamp-2 lg:line-clamp-1">
+                            <h5 className={`text-xs font-black transition-colors leading-snug line-clamp-2 lg:line-clamp-1 ${
+                              isActive ? 'text-primary' : 'text-white group-hover:text-primary'
+                            }`}>
                               {ch.name}
                             </h5>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -567,11 +583,11 @@ const ChannelDetail = () => {
 
                           {/* Play button */}
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${
-                            isLive
+                            isActive || isLive
                               ? 'bg-primary text-dark group-hover:scale-105'
                               : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                           }`}>
-                            <Play size={12} className="ml-0.5" fill={isLive ? 'currentColor' : 'none'} />
+                            <Play size={12} className="ml-0.5" fill={isActive || isLive ? 'currentColor' : 'none'} />
                           </div>
                         </div>
                       );
