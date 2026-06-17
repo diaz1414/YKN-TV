@@ -15,6 +15,7 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
 
   const [timeLeftStr, setTimeLeftStr] = useState<string>('');
   const [isStartingSoon, setIsStartingSoon] = useState(false);
+  const [isGracePeriod, setIsGracePeriod] = useState(false);
   const [viewers, setViewers] = useState<string>('0');
 
   useEffect(() => {
@@ -75,6 +76,38 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
     return () => clearInterval(interval);
   }, [match]);
 
+  useEffect(() => {
+    if (match.status !== 'finished' || !match.stopDate) {
+      setIsGracePeriod(false);
+      return;
+    }
+
+    const parseJadwalDate = (dateStr?: string): Date => {
+      if (!dateStr) return new Date();
+      let clean = dateStr.trim();
+      if (clean.includes(' ')) {
+        clean = clean.replace(' ', 'T');
+      }
+      const tzMatch = clean.match(/([+-]\d{2})$/);
+      if (tzMatch) {
+        clean += ':00';
+      }
+      return new Date(clean);
+    };
+
+    const stop = parseJadwalDate(match.stopDate);
+    const graceEnd = new Date(stop.getTime() + 30 * 60 * 1000);
+
+    const updateGrace = () => {
+      const now = new Date();
+      setIsGracePeriod(now <= graceEnd);
+    };
+
+    updateGrace();
+    const interval = setInterval(updateGrace, 10000);
+    return () => clearInterval(interval);
+  }, [match]);
+
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
@@ -85,7 +118,7 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
           : isStartingSoon
             ? 'border-amber-500/40 shadow-lg shadow-amber-500/5'
             : isFinished
-              ? 'border-white/5 opacity-80'
+              ? (isGracePeriod ? 'border-primary/20 hover:border-primary/40 opacity-90' : 'border-white/5 opacity-80')
               : 'border-white/10 hover:border-white/20'
       }`}
     >
@@ -156,15 +189,15 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
             : isStartingSoon
               ? timeLeftStr
               : isFinished 
-                ? 'Pertandingan Selesai' 
+                ? (isGracePeriod ? 'Tonton Siaran' : 'Pertandingan Selesai')
                 : timeLeftStr || 'Akan Datang'}
         </div>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow ${
-          isLive 
+          isLive || (isFinished && isGracePeriod)
             ? 'bg-primary text-dark font-black hover:scale-105' 
             : 'bg-white/5 text-zinc-500 border border-white/5'
         }`}>
-          <Play size={12} fill={isLive ? "currentColor" : "none"} className={isLive ? "ml-0.5" : "opacity-30"} />
+          <Play size={12} fill={isLive || (isFinished && isGracePeriod) ? "currentColor" : "none"} className={isLive || (isFinished && isGracePeriod) ? "ml-0.5" : "opacity-30"} />
         </div>
       </div>
     </motion.div>

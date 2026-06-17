@@ -20,6 +20,7 @@ export interface Match {
   liveMinute?: string;
   channelId?: string;
   date?: string;
+  stopDate?: string;
 }
 
 
@@ -327,6 +328,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
             },
             time: timeStr,
             date: event.jadwal_event,
+            stopDate: event.jadwal_stop,
             status: status,
             score: score,
             liveMinute: liveMinute,
@@ -392,6 +394,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           },
           time: timeStr,
           date: event.jadwal_event,
+          stopDate: event.jadwal_stop,
           status: status,
           channelId: event.id_event
         };

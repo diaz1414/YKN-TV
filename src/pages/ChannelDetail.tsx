@@ -127,10 +127,11 @@ const ChannelDetail = () => {
     const start = parseJadwal(stream.jadwal_event);
     const stop = parseJadwal(stream.jadwal_stop);
     const playableStart = new Date(start.getTime() - 30 * 60 * 1000); // 30 minutes before kickoff
+    const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000); // 30 minutes after stop
 
     const checkTime = () => {
       const now = new Date();
-      if (now > stop) {
+      if (now > playableEnd) {
         setMatchStatus('finished');
       } else if (now < playableStart) {
         setMatchStatus('upcoming');
@@ -215,28 +216,32 @@ const ChannelDetail = () => {
       : otherChannels;
 
   const getMatchStatus = (ch: PlayableStream) => {
-    if (!ch.jadwal_event) return { status: 'playable' as const, timeLeft: '' };
+    if (!ch.jadwal_event) return { status: 'playable' as const, timeLeft: '', isFinishedMatch: false };
     const start = parseJadwal(ch.jadwal_event);
     const stop = parseJadwal(ch.jadwal_stop);
     const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
+    const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
     const now = new Date();
 
-    if (now > stop) {
-      return { status: 'finished' as const, timeLeft: 'Selesai' };
+    if (now > playableEnd) {
+      return { status: 'finished' as const, timeLeft: 'Selesai', isFinishedMatch: true };
     } else if (now < playableStart) {
       const diff = start.getTime() - now.getTime();
       const mins = Math.floor(diff / 60000);
       if (mins < 60) {
-        return { status: 'upcoming' as const, timeLeft: `${mins} mnt lagi`, isStartingSoon: true };
+        return { status: 'upcoming' as const, timeLeft: `${mins} mnt lagi`, isStartingSoon: true, isFinishedMatch: false };
       }
       const hours = Math.floor(diff / 3600000);
       if (hours < 24) {
-        return { status: 'upcoming' as const, timeLeft: `${hours} jam lagi` };
+        return { status: 'upcoming' as const, timeLeft: `${hours} jam lagi`, isFinishedMatch: false };
       }
       const days = Math.floor(hours / 24);
-      return { status: 'upcoming' as const, timeLeft: `${days} hari lagi` };
+      return { status: 'upcoming' as const, timeLeft: `${days} hari lagi`, isFinishedMatch: false };
     } else {
-      return { status: 'playable' as const, timeLeft: 'LIVE' };
+      if (now > stop) {
+        return { status: 'playable' as const, timeLeft: 'Selesai', isFinishedMatch: true };
+      }
+      return { status: 'playable' as const, timeLeft: 'LIVE', isFinishedMatch: false };
     }
   };
 
@@ -247,12 +252,22 @@ const ChannelDetail = () => {
     })
     .filter(ch => ch.matchInfo.status !== 'finished')
     .sort((a, b) => {
-      if (a.matchInfo.status === 'playable' && b.matchInfo.status !== 'playable') return -1;
-      if (a.matchInfo.status !== 'playable' && b.matchInfo.status === 'playable') return 1;
+      const aFinished = a.matchInfo.isFinishedMatch;
+      const bFinished = b.matchInfo.isFinishedMatch;
 
-      const timeA = a.jadwal_event ? parseJadwal(a.jadwal_event).getTime() : 0;
-      const timeB = b.jadwal_event ? parseJadwal(b.jadwal_event).getTime() : 0;
-      return timeA - timeB;
+      // If one is finished and the other is not, the finished one goes to the bottom
+      if (aFinished && !bFinished) return 1;
+      if (!aFinished && bFinished) return -1;
+
+      // If both are finished, or both are not finished, sort by status then time
+      if (a.matchInfo.status === b.matchInfo.status) {
+        const timeA = a.jadwal_event ? parseJadwal(a.jadwal_event).getTime() : 0;
+        const timeB = b.jadwal_event ? parseJadwal(b.jadwal_event).getTime() : 0;
+        return timeA - timeB;
+      }
+      if (a.matchInfo.status === 'playable') return -1;
+      if (b.matchInfo.status === 'playable') return 1;
+      return 0;
     });
 
   return (
@@ -532,6 +547,7 @@ const ChannelDetail = () => {
                       const isLive = ch.matchInfo.status === 'playable';
                       const isSoon = ch.matchInfo.isStartingSoon;
                       const isActive = ch.id === stream.id;
+                      const isFinished = ch.matchInfo.isFinishedMatch;
                       return (
                         <div
                           key={ch.id}
@@ -539,7 +555,7 @@ const ChannelDetail = () => {
                           className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${
                             isActive
                               ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                              : isLive
+                              : isLive && !isFinished
                                 ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
                                 : isSoon
                                   ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
@@ -566,15 +582,17 @@ const ChannelDetail = () => {
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">{ch.subName}</p>
                               {/* Badge inline on mobile */}
-                              {isLive ? (
+                              {isLive && !isFinished ? (
                                 <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
                                   LIVE
                                 </span>
                               ) : (
                                 <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${
-                                  isSoon
-                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                    : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
+                                  isFinished
+                                    ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
+                                    : isSoon
+                                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                      : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
                                 }`}>
                                   {ch.matchInfo.timeLeft}
                                 </span>
@@ -584,11 +602,11 @@ const ChannelDetail = () => {
 
                           {/* Play button */}
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${
-                            isActive || isLive
+                            isActive || (isLive && !isFinished)
                               ? 'bg-primary text-dark group-hover:scale-105'
                               : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                           }`}>
-                            <Play size={12} className="ml-0.5" fill={isActive || isLive ? 'currentColor' : 'none'} />
+                            <Play size={12} className="ml-0.5" fill={isActive || (isLive && !isFinished) ? 'currentColor' : 'none'} />
                           </div>
                         </div>
                       );
