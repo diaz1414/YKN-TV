@@ -16,6 +16,7 @@ const ChannelDetail = () => {
   const [copied, setCopied] = useState(false);
   const [matchTimeLeft, setMatchTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [matchStatus, setMatchStatus] = useState<'playable' | 'upcoming' | 'finished'>('playable');
+  const [kickoffSecondsLeft, setKickoffSecondsLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [matches, setMatches] = useState<PlayableStream[]>([]);
   const [activeTab, setActiveTab] = useState<'channels' | 'matches'>('matches');
@@ -133,6 +134,7 @@ const ChannelDetail = () => {
       const now = new Date();
       if (now > playableEnd) {
         setMatchStatus('finished');
+        setKickoffSecondsLeft(null);
       } else if (now < playableStart) {
         setMatchStatus('upcoming');
         const diff = playableStart.getTime() - now.getTime();
@@ -141,8 +143,15 @@ const ChannelDetail = () => {
         const minutes = Math.floor((diff / 1000 / 60) % 60);
         const seconds = Math.floor((diff / 1000) % 60);
         setMatchTimeLeft({ days, hours, minutes, seconds });
+        setKickoffSecondsLeft(null);
       } else {
         setMatchStatus('playable');
+        if (now < start) {
+          const diff = start.getTime() - now.getTime();
+          setKickoffSecondsLeft(Math.floor(diff / 1000));
+        } else {
+          setKickoffSecondsLeft(null);
+        }
       }
     };
 
@@ -386,6 +395,36 @@ const ChannelDetail = () => {
                 </div>
               )}
             </div>
+
+            {/* Kickoff Countdown Banner */}
+            {kickoffSecondsLeft !== null && kickoffSecondsLeft > 0 && (
+              <div className="bg-[#090909]/95 backdrop-blur-md border-l-4 border-l-amber-500 border-y border-r border-white/5 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl shadow-black/40 select-none">
+                <div className="flex items-center gap-2.5">
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  </span>
+                  <span className="bg-amber-500 text-black px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md shadow-amber-500/10 shrink-0">
+                    INFO KICKOFF
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-zinc-300 font-bold flex-wrap">
+                  <span>Pertandingan dimulai dalam</span>
+                  {Math.floor(kickoffSecondsLeft / 60) > 0 && (
+                    <>
+                      <span className="text-amber-400 font-mono font-black text-sm bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5 shadow-inner">
+                        {Math.floor(kickoffSecondsLeft / 60)}
+                      </span>
+                      <span>menit</span>
+                    </>
+                  )}
+                  <span className="text-amber-400 font-mono font-black text-sm bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/5 shadow-inner">
+                    {kickoffSecondsLeft % 60}
+                  </span>
+                  <span>detik</span>
+                </div>
+              </div>
+            )}
 
             {/* Stream info detail box */}
             <div className="glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
