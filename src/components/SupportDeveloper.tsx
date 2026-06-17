@@ -39,7 +39,7 @@ export const SupportCard: React.FC<SupportDeveloperProps> = ({ variant = 'card' 
               Traktir Kopi Hangat
               <Sparkles size={13} className="text-amber-400 animate-pulse" />
             </h4>
-            <p className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Dukung Pengembang YKN TV</p>
+            <p className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Dukung Developer YKN TV</p>
           </div>
         </div>
 
