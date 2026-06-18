@@ -6,6 +6,7 @@ import {
   RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, PictureInPicture2
 } from 'lucide-react';
 import { getProxiedUrl, type StreamServer } from '../services/streamService';
+import GlobalAnnouncement from './GlobalAnnouncement';
 
 interface VideoPlayerProps {
   servers: StreamServer[];
@@ -548,6 +549,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onLoadedData={() => setIsBuffering(false)}
           onTimeUpdate={handleTimeUpdate}
         />
+
+        {/* Global iOS Style Announcement Banner for Fullscreen Mode */}
+        <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
         {/* YKN TV Watermark Logo - top right, follows control visibility */}
         <div

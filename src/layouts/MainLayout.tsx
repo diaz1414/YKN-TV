@@ -7,6 +7,7 @@ import { slugify } from '../services/streamService';
 import { SupportModal } from '../components/SupportDeveloper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../services/supabase';
+import GlobalAnnouncement from '../components/GlobalAnnouncement';
 
 // Set true to show mobile burger menu, false to hide it
 const SHOW_BURGER_MENU = false;
@@ -518,6 +519,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <Coffee size={22} className="group-hover:rotate-12 transition-transform duration-300 fill-black/10" />
         </motion.button>
       )}
+
+      {/* Global iOS Style Announcement Banner */}
+      <GlobalAnnouncement onlyShowWhenNormal={true} />
 
       {/* Support Modal overlay */}
       <AnimatePresence>

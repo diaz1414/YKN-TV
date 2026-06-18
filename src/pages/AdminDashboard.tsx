@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import { Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search } from 'lucide-react';
+import { Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X } from 'lucide-react';
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import yknwcLogo from '../assets/yknwc-logo.png';
@@ -109,7 +109,16 @@ const AdminDashboard = () => {
   const [monitoringData, setMonitoringData] = useState<Record<string, number>>({});
   const [loadingData, setLoadingData] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [monitorTab, setMonitorTab] = useState<'all' | 'channels' | 'matches' | 'users'>('all');
+  const [monitorTab, setMonitorTab] = useState<'all' | 'channels' | 'matches' | 'users' | 'announcement'>('all');
+
+  // Announcement States
+  const [annMessage, setAnnMessage] = useState('');
+  const [annType, setAnnType] = useState<'info' | 'success' | 'warning' | 'alert'>('info');
+  const [annDuration, setAnnDuration] = useState(8);
+  const [annIsActive, setAnnIsActive] = useState(false);
+  const [annLoading, setAnnLoading] = useState(false);
+  const [annSuccessMessage, setAnnSuccessMessage] = useState('');
+  const [annErrorMessage, setAnnErrorMessage] = useState('');
 
   // Chat States for monitoring
   const [selectedChannel, setSelectedChannel] = useState<PlayableStream | null>(null);
@@ -120,6 +129,7 @@ const AdminDashboard = () => {
   const [roomViewers, setRoomViewers] = useState(0);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const announcementChannelRef = useRef<any>(null);
 
   // Automatically scroll chat to bottom
   useEffect(() => {
@@ -417,6 +427,123 @@ const AdminDashboard = () => {
     const interval = setInterval(fetchRealtimeViewers, 4000);
     return () => clearInterval(interval);
   }, [isLoggedIn]);
+
+  // Setup persistent announcement broadcast channel on login
+  useEffect(() => {
+    if (!isLoggedIn) {
+      if (announcementChannelRef.current) {
+        announcementChannelRef.current.unsubscribe();
+        announcementChannelRef.current = null;
+      }
+      return;
+    }
+
+    const channel = supabase.channel('ykn-global-announcements');
+    channel.subscribe((status) => {
+      console.log('Admin announcement channel subscription status:', status);
+    });
+    announcementChannelRef.current = channel;
+
+    return () => {
+      if (announcementChannelRef.current) {
+        announcementChannelRef.current.unsubscribe();
+        announcementChannelRef.current = null;
+      }
+    };
+  }, [isLoggedIn]);
+
+  // Fetch current announcement state for admin dashboard
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const fetchCurrentAnnouncement = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('ykn_announcements')
+          .select('message, type, duration, is_active')
+          .eq('id', 1)
+          .single();
+
+        if (error) {
+          console.warn('Dashboard announcement query warning:', error.message);
+          return;
+        }
+
+        if (data) {
+          setAnnMessage(data.message);
+          setAnnType(data.type as any);
+          setAnnDuration(data.duration);
+          setAnnIsActive(data.is_active);
+        }
+      } catch (err) {
+        console.error('Failed to fetch current announcement for dashboard:', err);
+      }
+    };
+
+    fetchCurrentAnnouncement();
+  }, [isLoggedIn]);
+
+  const handleSaveAnnouncement = async (activate: boolean) => {
+    setAnnLoading(true);
+    setAnnSuccessMessage('');
+    setAnnErrorMessage('');
+
+    try {
+      const nowStr = new Date().toISOString();
+      const payload = {
+        message: annMessage.trim(),
+        type: annType,
+        duration: annDuration,
+        is_active: activate,
+        updated_at: nowStr
+      };
+
+      // 1. Update/Upsert in Supabase Table
+      const { error } = await supabase
+        .from('ykn_announcements')
+        .upsert({
+          id: 1,
+          ...payload
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      setAnnIsActive(activate);
+
+      // 2. Publish Real-time Broadcast Event to all clients instantly
+      if (announcementChannelRef.current) {
+        if (activate) {
+          await announcementChannelRef.current.send({
+            type: 'broadcast',
+            event: 'new-announcement',
+            payload: {
+              message: annMessage.trim(),
+              type: annType,
+              duration: annDuration,
+              updated_at: nowStr
+            }
+          });
+          setAnnSuccessMessage('Pengumuman berhasil diaktifkan dan disiarkan secara real-time!');
+        } else {
+          await announcementChannelRef.current.send({
+            type: 'broadcast',
+            event: 'clear-announcement',
+            payload: {}
+          });
+          setAnnSuccessMessage('Pengumuman berhasil dinonaktifkan.');
+        }
+      } else {
+        setAnnSuccessMessage('Pengumuman berhasil disimpan di database (Broadcast channel belum siap).');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setAnnErrorMessage('Gagal menyimpan/menyiarkan pengumuman. Pastikan tabel ykn_announcements sudah dibuat di Supabase.');
+    } finally {
+      setAnnLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -852,6 +979,275 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 </div>
+              ) : (monitorTab as string) === 'announcement' ? (
+                /* Announcement Management Panel (Admin and Developer) */
+                <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-6 transition-all duration-300">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+                    <div>
+                      <h3 className="text-sm font-black text-white uppercase tracking-wider">Kelola Pengumuman Global</h3>
+                      <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Kirim pengumuman bergaya iOS melayang dari atas layar secara real-time</p>
+                    </div>
+                    {/* Back button */}
+                    <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none">
+                      <button
+                        onClick={() => setMonitorTab('all')}
+                        className="px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/5"
+                      >
+                        Kembali Ke Monitor
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Split Grid for Form Controls and Live iOS Preview */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    
+                    {/* Left side: Controls (7 columns) */}
+                    <div className="md:col-span-7 space-y-5">
+                      
+                      {/* Message Input */}
+                      <div className="space-y-1.5">
+                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Pesan Pengumuman</label>
+                        <textarea
+                          rows={3}
+                          value={annMessage}
+                          onChange={(e) => setAnnMessage(e.target.value)}
+                          placeholder="Contoh: Pemeliharaan sistem akan dilakukan pukul 00:00 WIB..."
+                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-650 resize-none font-sans"
+                        />
+                        <div className="text-right text-[8px] text-zinc-500 font-bold">
+                          {annMessage.length} karakter
+                        </div>
+                      </div>
+
+                      {/* Announcement Type (iOS color picker style) */}
+                      <div className="space-y-1.5">
+                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Tipe / Warna Notifikasi</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                          {/* Info (Blue) */}
+                          <button
+                            type="button"
+                            onClick={() => setAnnType('info')}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                              annType === 'info' 
+                                ? 'bg-blue-500/10 border-blue-500 text-blue-400 font-black shadow-md' 
+                                : 'bg-zinc-900 border-white/5 text-zinc-400'
+                            }`}
+                          >
+                            <p className="text-[9px] font-black uppercase tracking-wider">Info (Biru)</p>
+                          </button>
+
+                          {/* Success (Green) */}
+                          <button
+                            type="button"
+                            onClick={() => setAnnType('success')}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                              annType === 'success' 
+                                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-black shadow-md' 
+                                : 'bg-zinc-900 border-white/5 text-zinc-400'
+                            }`}
+                          >
+                            <p className="text-[9px] font-black uppercase tracking-wider">Sukses (Hijau)</p>
+                          </button>
+
+                          {/* Warning (Yellow) */}
+                          <button
+                            type="button"
+                            onClick={() => setAnnType('warning')}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                              annType === 'warning' 
+                                ? 'bg-amber-500/10 border-amber-500 text-amber-400 font-black shadow-md' 
+                                : 'bg-zinc-900 border-white/5 text-zinc-400'
+                            }`}
+                          >
+                            <p className="text-[9px] font-black uppercase tracking-wider">Warning (Kuning)</p>
+                          </button>
+
+                          {/* Alert (Red) */}
+                          <button
+                            type="button"
+                            onClick={() => setAnnType('alert')}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                              annType === 'alert' 
+                                ? 'bg-red-500/10 border-red-500 text-red-400 font-black shadow-md' 
+                                : 'bg-zinc-900 border-white/5 text-zinc-400'
+                            }`}
+                          >
+                            <p className="text-[9px] font-black uppercase tracking-wider">Alert (Merah)</p>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Duration & Status Switch */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Duration */}
+                        <div className="space-y-1.5">
+                          <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Durasi Tayang (Detik)</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="3600"
+                            value={annDuration}
+                            onChange={(e) => setAnnDuration(parseInt(e.target.value) || 0)}
+                            className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-primary/50 transition-all font-sans"
+                            placeholder="Contoh: 8 (0 = tetap tampil)"
+                          />
+                          <p className="text-[7.5px] text-zinc-500 font-bold uppercase tracking-wider">Gunakan nilai 0 agar pengumuman tidak menutup otomatis</p>
+                        </div>
+
+                        {/* Status Info */}
+                        <div className="space-y-1.5">
+                          <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Status Saat Ini</label>
+                          <div className={`p-2.5 rounded-xl border font-mono text-center flex items-center justify-center gap-1.5 h-[38px] ${
+                            annIsActive 
+                              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-black animate-pulse' 
+                              : 'bg-zinc-900 border-white/5 text-zinc-500 font-bold'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${annIsActive ? 'bg-emerald-400' : 'bg-zinc-700'}`} />
+                            <span className="text-[9px] uppercase tracking-wider">{annIsActive ? 'AKTIF & TAYANG' : 'TIDAK AKTIF / HILANG'}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Messages */}
+                      {annErrorMessage && (
+                        <p className="text-[9.5px] text-red-500 font-bold uppercase tracking-wider px-1">
+                          ⚠️ {annErrorMessage}
+                        </p>
+                      )}
+                      {annSuccessMessage && (
+                        <p className="text-[9.5px] text-emerald-500 font-bold uppercase tracking-wider px-1">
+                          ✓ {annSuccessMessage}
+                        </p>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveAnnouncement(true)}
+                          disabled={annLoading || !annMessage.trim()}
+                          className="py-2.5 px-6 bg-primary text-dark font-black text-[9px] uppercase tracking-widest rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-primary/10 disabled:opacity-45"
+                        >
+                          {annLoading ? 'Memproses...' : 'Simpan & Siarkan'}
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={() => handleSaveAnnouncement(false)}
+                          disabled={annLoading}
+                          className="py-2.5 px-6 bg-red-500/15 hover:bg-red-500/20 text-red-400 border border-red-500/25 font-black text-[9px] uppercase tracking-widest rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-45"
+                        >
+                          {annLoading ? 'Memproses...' : 'Matikan Pengumuman'}
+                        </button>
+                      </div>
+
+                    </div>
+
+                    {/* Right side: iOS Live Preview (5 columns) */}
+                    <div className="md:col-span-5 space-y-4">
+                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400 block">Live Preview (Gaya iOS)</label>
+                      <div className="relative h-[220px] rounded-2xl bg-zinc-950/80 border border-white/5 p-4 flex flex-col items-center justify-center overflow-hidden">
+                        
+                        {/* Fake Page Mockup behind preview */}
+                        <div className="absolute inset-0 opacity-20 pointer-events-none p-4 flex flex-col justify-between">
+                          <div className="w-12 h-2 bg-zinc-700 rounded" />
+                          <div className="space-y-1">
+                            <div className="w-full h-1 bg-zinc-700 rounded" />
+                            <div className="w-2/3 h-1 bg-zinc-700 rounded" />
+                          </div>
+                          <div className="w-full h-12 bg-zinc-900 border border-white/5 rounded-xl" />
+                        </div>
+
+                        {/* iOS style preview banner */}
+                        <div 
+                          className="relative w-full rounded-2xl bg-zinc-900/95 border border-white/15 shadow-[0_12px_24px_rgba(0,0,0,0.6)] overflow-hidden z-10 transition-all duration-300"
+                          style={{ 
+                            borderLeft: `4px solid ${
+                              annType === 'success' ? '#10b981' : 
+                              annType === 'warning' ? '#f59e0b' : 
+                              annType === 'alert' ? '#ef4444' : '#3b82f6'
+                            }` 
+                          }}
+                        >
+                          <div className="p-3.5 flex items-start gap-2.5 pr-8 relative">
+                            {/* Left App Icon / Avatar */}
+                            <div className="w-8 h-8 rounded-full bg-zinc-900 border border-primary/20 p-0.5 shrink-0 shadow-lg flex items-center justify-center">
+                              <img
+                                src={yknwcLogo}
+                                alt="YKN TV"
+                                className="w-full h-full object-contain rounded-full"
+                              />
+                            </div>
+
+                            {/* Text preview */}
+                            <div className="flex-1 min-w-0 space-y-1 text-left">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] font-black text-white font-display tracking-wide uppercase italic">YKN TV</span>
+                                <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">• Sekarang</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span 
+                                  className="text-[7.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border font-sans inline-flex items-center gap-1"
+                                  style={{ 
+                                    backgroundColor: `${
+                                      annType === 'success' ? '#10b98115' : 
+                                      annType === 'warning' ? '#f59e0b15' : 
+                                      annType === 'alert' ? '#ef444415' : '#3b82f615'
+                                    }`, 
+                                    borderColor: `${
+                                      annType === 'success' ? '#10b98125' : 
+                                      annType === 'warning' ? '#f59e0b25' : 
+                                      annType === 'alert' ? '#ef444425' : '#3b82f625'
+                                    }`,
+                                    color: 
+                                      annType === 'success' ? '#10b981' : 
+                                      annType === 'warning' ? '#f59e0b' : 
+                                      annType === 'alert' ? '#ef4444' : '#3b82f6'
+                                  }}
+                                >
+                                  {annType === 'success' && <CheckCircle size={9} strokeWidth={3} />}
+                                  {annType === 'warning' && <AlertTriangle size={9} strokeWidth={3} />}
+                                  {annType === 'alert' && <ShieldAlert size={9} strokeWidth={3} />}
+                                  {annType === 'info' && <Info size={9} strokeWidth={3} />}
+                                  {
+                                    annType === 'success' ? 'SUKSES' : 
+                                    annType === 'warning' ? 'PERINGATAN' : 
+                                    annType === 'alert' ? 'PERHATIAN' : 'PENGUMUMAN'
+                                  }
+                                </span>
+                              </div>
+                              <p className="text-[10px] font-black text-zinc-200 leading-normal break-words font-sans">
+                                {annMessage.trim() || 'Teks pengumuman Anda akan tampil di sini...'}
+                              </p>
+                            </div>
+
+                            {/* Fake Close Button */}
+                            <div className="absolute top-3 right-3 w-5 h-5 rounded-md bg-white/5 border border-white/5 text-zinc-500 flex items-center justify-center">
+                              <X size={10} strokeWidth={2.5} />
+                            </div>
+                          </div>
+
+                          {/* Fake progress bar */}
+                          {annDuration > 0 && (
+                            <div className="w-full h-[2px] bg-white/5 absolute bottom-0 left-0 overflow-hidden">
+                              <div 
+                                className="h-full w-4/5"
+                                style={{ 
+                                  backgroundColor: 
+                                    annType === 'success' ? '#10b981' : 
+                                    annType === 'warning' ? '#f59e0b' : 
+                                    annType === 'alert' ? '#ef4444' : '#3b82f6'
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
               ) : (
                 /* Default Monitoring Grid: Channels + Chat */
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -906,6 +1302,15 @@ const AdminDashboard = () => {
                           }`}
                       >
                         Jadwal Pertandingan
+                      </button>
+                      <button
+                        onClick={() => setMonitorTab('announcement')}
+                        className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'announcement'
+                          ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                          : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                          }`}
+                      >
+                        Pengumuman
                       </button>
                       {adminRole === 'developer' && (
                         <button
