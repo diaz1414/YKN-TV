@@ -302,8 +302,13 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
               console.log(`[ESPN] ${homeTeamName} vs ${awayTeamName}: ${score} (${espnScore.state})`);
             } else {
               // 2) Fallback to worldcup26.ir
+              const isWc = event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup");
               const wcScore = getWcScore(homeTeamName, matchedGame);
-              score = wcScore || '0 - 0';
+              if (isWc) {
+                score = wcScore || '0 - 0';
+              } else {
+                score = wcScore || undefined;
+              }
               if (matchedGame && matchedGame.time_elapsed &&
                   matchedGame.time_elapsed !== 'notstarted' &&
                   matchedGame.time_elapsed !== 'finished') {

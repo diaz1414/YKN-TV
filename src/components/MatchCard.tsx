@@ -163,7 +163,7 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
         </div>
 
         <div className="flex flex-col items-center">
-          {isLive || isFinished ? (
+          {(isLive || isFinished) && match.score ? (
             <div className="text-2xl font-black italic italic-shadow tracking-tighter text-white">
               {match.score}
             </div>
