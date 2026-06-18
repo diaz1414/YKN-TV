@@ -94,7 +94,10 @@ const ChannelDetail = () => {
 
     if (savedNickname) {
       setNickname(savedNickname);
-      setChatAvatar(savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`);
+      const computedAvatar = savedNickname === 'YKN TV'
+        ? '/yknwc-logo.png'
+        : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`);
+      setChatAvatar(computedAvatar);
       setIsJoined(true);
     } else {
       const suggestion = generateRandomNickname();
@@ -118,7 +121,9 @@ const ChannelDetail = () => {
         newSocket.emit('join_room', {
           roomId: stream.id,
           username: savedNickname,
-          avatar: savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`,
+          avatar: savedNickname === 'YKN TV'
+            ? '/yknwc-logo.png'
+            : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`),
           role: 'user',
           userId: savedUserId
         });
@@ -189,7 +194,7 @@ const ChannelDetail = () => {
     // Special Admin Passcode handler
     if (cleanNick === 'YKNTV#admin123') {
       cleanNick = 'YKN TV';
-      avatar = yknwcLogo;
+      avatar = '/yknwc-logo.png';
     }
 
     setJoinError('');
@@ -839,7 +844,17 @@ const ChannelDetail = () => {
                   {isJoined && (
                     <div className="flex items-center justify-between p-2 mb-2 bg-white/5 border border-white/5 rounded-xl text-xs select-none shrink-0">
                       <div className="flex items-center gap-2 truncate">
-                        <img src={chatAvatar} alt="avatar" className="w-5 h-5 rounded-full bg-zinc-800 border border-white/10 shrink-0" />
+                        <img
+                          src={chatAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nickname)}`}
+                          alt="avatar"
+                          className="w-5 h-5 rounded-full bg-zinc-800 border border-white/10 shrink-0"
+                          onError={(e) => {
+                            const isAdmin = nickname === 'YKN TV' || (chatAvatar && chatAvatar.includes('yknwc-logo'));
+                            e.currentTarget.src = isAdmin
+                              ? '/yknwc-logo.png'
+                              : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nickname)}`;
+                          }}
+                        />
                         <span className="font-bold text-zinc-300 truncate">
                           Sebagai: <span className="text-primary font-black">{nickname}</span>
                         </span>
@@ -911,6 +926,12 @@ const ChannelDetail = () => {
                                 src={msg.avatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(msg.username)}`}
                                 alt="avatar"
                                 className="w-7 h-7 rounded-full bg-zinc-900 border border-white/10 shrink-0 select-none mt-1"
+                                onError={(e) => {
+                                  const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('yknwc-logo'));
+                                  e.currentTarget.src = isAdmin
+                                    ? '/yknwc-logo.png'
+                                    : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(msg.username)}`;
+                                }}
                               />
                               <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%] min-w-[80px]`}>
                                 {/* Username */}
