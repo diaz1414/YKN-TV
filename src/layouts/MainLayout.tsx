@@ -6,6 +6,7 @@ import yknwcLogo from '../assets/yknwc-logo.png';
 import { slugify } from '../services/streamService';
 import { SupportModal } from '../components/SupportDeveloper';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../services/supabase';
 
 // Set true to show mobile burger menu, false to hide it
 const SHOW_BURGER_MENU = false;
@@ -35,6 +36,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminRole, setAdminRole] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLiveMatch = async () => {
@@ -72,18 +74,37 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   }, [location.pathname, searchParams]);
 
   useEffect(() => {
-    const checkAdminSession = () => {
+    const checkAdminSession = async () => {
       const loggedIn = localStorage.getItem('ykn_admin_logged_in') === 'true';
-      const savedPasscode = localStorage.getItem('ykn_admin_passcode') || '';
+      const savedUsername = localStorage.getItem('ykn_admin_username') || '';
+      const savedToken = localStorage.getItem('ykn_admin_token') || '';
 
-      // Compute simple hash to verify without querying Supabase on every visitor load
-      let hash = 0;
-      for (let i = 0; i < savedPasscode.length; i++) {
-        hash = savedPasscode.charCodeAt(i) + ((hash << 5) - hash);
+      if (loggedIn && savedUsername && savedToken) {
+        try {
+          const { data } = await supabase
+            .from('ykn_users')
+            .select('role')
+            .eq('username', savedUsername)
+            .eq('password', savedToken)
+            .single();
+
+          if (data) {
+            setIsAdminLoggedIn(true);
+            setAdminRole(data.role);
+          } else {
+            setIsAdminLoggedIn(false);
+            setAdminRole(null);
+          }
+        } catch (err) {
+          // Fallback if offline/error, trust local storage session
+          setIsAdminLoggedIn(true);
+          const savedRole = localStorage.getItem('ykn_admin_role');
+          setAdminRole(savedRole);
+        }
+      } else {
+        setIsAdminLoggedIn(false);
+        setAdminRole(null);
       }
-      const isPasscodeValid = Math.abs(hash).toString(16) === '4be19ee7';
-
-      setIsAdminLoggedIn(loggedIn && isPasscodeValid);
     };
 
     checkAdminSession();
@@ -91,8 +112,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     // Check when localStorage changes (e.g. login/logout from another tab/page)
     window.addEventListener('storage', checkAdminSession);
 
-    // Also poll every 2 seconds to make sure navigation changes update the badge immediately
-    const interval = setInterval(checkAdminSession, 2000);
+    // Also poll every 3 seconds to make sure navigation changes update the badge immediately
+    const interval = setInterval(checkAdminSession, 3000);
 
     return () => {
       window.removeEventListener('storage', checkAdminSession);
@@ -235,9 +256,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 WC 2026
               </span>
               {isAdminLoggedIn && (
-                <span className="ml-2 text-[8px] md:text-[9.5px] bg-[#e50914]/10 text-[#e50914] border border-[#e50914]/20 font-black px-2 py-0.5 rounded-full tracking-wider uppercase shadow-[0_0_12px_rgba(229,9,20,0.15)] animate-pulse inline-flex items-center gap-1 select-none">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#e50914]" />
-                  Admin
+                <span className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase animate-pulse inline-flex items-center gap-1 select-none ${
+                  adminRole === 'developer'
+                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]'
+                    : 'bg-[#e50914]/10 text-[#e50914] border-[#e50914]/20 shadow-[0_0_12px_rgba(229,9,20,0.15)]'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-[#e50914]'}`} />
+                  {adminRole === 'developer' ? 'Developer' : 'Admin'}
                 </span>
               )}
             </div>
