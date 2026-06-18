@@ -53,7 +53,7 @@ function _registerChannelListener(listener: (event: string, data: any) => void) 
     }
   };
 }
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────── p
 
 
 const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
@@ -67,7 +67,7 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
   const [isFS, setIsFS] = useState(!!document.fullscreenElement);
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Ref to always call the latest version of checkAndShowAnnouncement (avoids stale closure in broadcast listeners)
-  const checkAndShowRef = useRef<(data: AnnouncementData) => void>(() => {});
+  const checkAndShowRef = useRef<(data: AnnouncementData) => void>(() => { });
 
   // Auto-detect fullscreen if prop is not provided
   useEffect(() => {
@@ -105,7 +105,7 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
     console.log('GlobalAnnouncement: checkAndShowAnnouncement called with:', data);
     const closedKey = `ykn_announcement_closed_${data.updated_at}`;
     const shownKey = `ykn_announcement_shown_${data.updated_at}`;
-    
+
     const isClosed = localStorage.getItem(closedKey) === 'true';
     console.log('GlobalAnnouncement: closedKey check:', closedKey, 'isClosed:', isClosed);
     if (isClosed) return;
@@ -199,8 +199,8 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
   // Responds dynamically when toggling between fullscreen and normal modes.
   useEffect(() => {
     // Determine if this instance should be active
-    const isDormant = 
-      (onlyShowWhenFullscreen && !isFS) || 
+    const isDormant =
+      (onlyShowWhenFullscreen && !isFS) ||
       (onlyShowWhenNormal && isFS);
 
     if (isDormant) {
@@ -312,9 +312,8 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
           exit={{ opacity: 0, y: -80, scale: 0.95, x: '-50%' }}
           transition={{ type: 'spring', stiffness: 260, damping: 25 }}
-          className={`${
-            isFS ? 'absolute' : 'fixed'
-          } top-5 left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-[420px] rounded-2xl bg-zinc-950/85 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.8)] overflow-hidden`}
+          className={`${isFS ? 'absolute' : 'fixed'
+            } top-5 left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-[420px] rounded-2xl bg-zinc-950/85 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.8)] overflow-hidden`}
           style={{ borderLeft: `4px solid ${accentColor}` }}
         >
           {/* Main Card Content */}
@@ -335,7 +334,7 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
                 <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">• Sekarang</span>
               </div>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span 
+                <span
                   className="text-[7.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border font-sans inline-flex items-center gap-1"
                   style={{ backgroundColor: `${accentColor}10`, borderColor: `${accentColor}25`, color: accentColor }}
                 >
