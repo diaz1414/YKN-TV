@@ -34,7 +34,9 @@ const ChannelDetail = () => {
   const [participantsCount, setParticipantsCount] = useState(1);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
-  const [isJoined, setIsJoined] = useState(!!localStorage.getItem('ykn_chat_nickname'));
+  const [isJoined, setIsJoined] = useState(
+    !!localStorage.getItem('ykn_chat_nickname') || !!sessionStorage.getItem('ykn_chat_nickname')
+  );
   const [joinError, setJoinError] = useState('');
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -84,9 +86,9 @@ const ChannelDetail = () => {
   useEffect(() => {
     if (!stream) return;
 
-    const savedNickname = localStorage.getItem('ykn_chat_nickname');
-    const savedAvatar = localStorage.getItem('ykn_chat_avatar');
-    let savedUserId = localStorage.getItem('ykn_chat_user_id');
+    const savedNickname = localStorage.getItem('ykn_chat_nickname') || sessionStorage.getItem('ykn_chat_nickname');
+    const savedAvatar = localStorage.getItem('ykn_chat_avatar') || sessionStorage.getItem('ykn_chat_avatar');
+    let savedUserId = localStorage.getItem('ykn_chat_user_id') || sessionStorage.getItem('ykn_chat_user_id');
     if (!savedUserId) {
       savedUserId = 'usr_' + Math.random().toString(36).substr(2, 9);
       localStorage.setItem('ykn_chat_user_id', savedUserId);
@@ -176,6 +178,8 @@ const ChannelDetail = () => {
       setIsJoined(false);
       localStorage.removeItem('ykn_chat_nickname');
       localStorage.removeItem('ykn_chat_avatar');
+      sessionStorage.removeItem('ykn_chat_nickname');
+      sessionStorage.removeItem('ykn_chat_avatar');
       setShowJoinModal(true);
     });
 
@@ -199,7 +203,7 @@ const ChannelDetail = () => {
 
     setJoinError('');
 
-    let savedUserId = localStorage.getItem('ykn_chat_user_id');
+    let savedUserId = localStorage.getItem('ykn_chat_user_id') || sessionStorage.getItem('ykn_chat_user_id');
     if (!savedUserId) {
       savedUserId = 'usr_' + Math.random().toString(36).substr(2, 9);
       localStorage.setItem('ykn_chat_user_id', savedUserId);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import { Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X } from 'lucide-react';
+import { ChevronLeft, Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X } from 'lucide-react';
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import yknwcLogo from '../assets/yknwc-logo.png';
@@ -132,7 +132,15 @@ const AdminDashboard = () => {
   const [roomViewers, setRoomViewers] = useState(0);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatMonitorRef = useRef<HTMLDivElement>(null);
   const announcementChannelRef = useRef<any>(null);
+
+  // Scroll to chat monitor on mobile when a channel is selected
+  useEffect(() => {
+    if (selectedChannel && window.innerWidth < 768 && chatMonitorRef.current) {
+      chatMonitorRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedChannel]);
 
   // Automatically scroll chat to bottom
   useEffect(() => {
@@ -758,19 +766,33 @@ const AdminDashboard = () => {
 
               {/* Profile Card */}
               <div className="glass-card rounded-[2rem] p-6 border border-white/5 relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl animate-pulse" />
-                <div className="flex items-center gap-4">
-                  <img
-                    src={yknwcLogo}
-                    alt="YKN TV Logo"
-                    className="w-12 h-12 rounded-full bg-zinc-900 border border-primary/30 p-1 shrink-0 shadow-lg"
-                  />
-                  <div className="truncate">
-                    <div className="flex items-center gap-1.5">
-                      <h2 className="text-sm font-black text-white tracking-wide uppercase">YKN TV Admin</h2>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl animate-pulse pointer-events-none" />
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl animate-pulse pointer-events-none" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="relative shrink-0 select-none">
+                    <img
+                      src={yknwcLogo}
+                      alt="YKN TV Logo"
+                      className="w-12 h-12 rounded-full bg-zinc-900 border border-primary/30 p-1 shadow-lg"
+                    />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-zinc-950 rounded-full animate-pulse" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-sm font-black text-white tracking-wide uppercase truncate max-w-[120px] sm:max-w-none">
+                        {adminUsername || 'Administrator'}
+                      </h2>
+                      <span className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${
+                        adminRole === 'developer'
+                          ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25'
+                          : 'bg-red-500/10 text-red-400 border border-red-500/25'
+                      }`}>
+                        {adminRole || 'Staff'}
+                      </span>
                     </div>
-                    <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Pengendali Utama</p>
+                    <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mt-1.5">
+                      {adminRole === 'developer' ? 'Akses Penuh Pengembang' : 'Akses Terbatas Staf Admin'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -863,15 +885,13 @@ const AdminDashboard = () => {
                       <h3 className="text-sm font-black text-white uppercase tracking-wider">Kelola Admin</h3>
                       <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Tambah, ubah, atau hapus akun akses admin YKN TV</p>
                     </div>
-                    {/* Back button or tab indicator */}
-                    <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none">
-                      <button
-                        onClick={() => setMonitorTab('all')}
-                        className="px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/5"
-                      >
-                        Kembali Ke Monitor
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => setMonitorTab('all')}
+                      className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-all group py-2 px-3.5 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[9px] font-black uppercase tracking-widest cursor-pointer select-none self-start sm:self-auto"
+                    >
+                      <ChevronLeft size={12} className="group-hover:-translate-x-0.5 transition-transform text-zinc-400 group-hover:text-white" />
+                      <span>KEMBALI KE MONITOR</span>
+                    </button>
                   </div>
 
                   {/* Form to Add User */}
@@ -946,7 +966,7 @@ const AdminDashboard = () => {
                             key={user.id}
                             className="p-4 bg-zinc-950/40 border border-white/5 rounded-2xl space-y-3"
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                               <div>
                                 <div className="flex items-center gap-2">
                                   <p className="text-xs font-black text-white">{user.username}</p>
@@ -969,7 +989,7 @@ const AdminDashboard = () => {
                               </div>
 
                               {!isEditing && (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <button
                                     onClick={() => {
                                       setEditingUserId(user.id);
@@ -992,27 +1012,27 @@ const AdminDashboard = () => {
                             </div>
 
                             {isEditing && (
-                              <div className="flex items-end gap-3 pt-2.5 border-t border-white/5">
-                                <div className="flex-1 space-y-1">
+                              <div className="flex flex-col sm:flex-row sm:items-end gap-3 pt-2.5 border-t border-white/5 w-full">
+                                <div className="flex-1 space-y-1 w-full">
                                   <label className="text-[7.5px] font-black uppercase tracking-wider text-zinc-400">Password Baru</label>
                                   <input
                                     type="password"
                                     value={editPasswordInput}
                                     onChange={(e) => setEditPasswordInput(e.target.value)}
                                     placeholder="Masukkan password baru..."
-                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-650"
+                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-650"
                                   />
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 w-full justify-end sm:w-auto">
                                   <button
                                     onClick={() => handleUpdatePassword(user.id, isSelf)}
-                                    className="px-4 py-2 bg-primary text-dark font-black text-[8.5px] uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                    className="px-4 py-2.5 bg-primary text-dark font-black text-[8.5px] uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                   >
                                     Simpan
                                   </button>
                                   <button
                                     onClick={() => setEditingUserId(null)}
-                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-400 border border-white/5 rounded-xl font-black text-[8.5px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                    className="px-4 py-2.5 bg-white/5 hover:bg-white/10 text-zinc-400 border border-white/5 rounded-xl font-black text-[8.5px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                   >
                                     Batal
                                   </button>
@@ -1033,15 +1053,13 @@ const AdminDashboard = () => {
                       <h3 className="text-sm font-black text-white uppercase tracking-wider">Kelola Pengumuman Global</h3>
                       <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Kirim pengumuman bergaya iOS melayang dari atas layar secara real-time</p>
                     </div>
-                    {/* Back button */}
-                    <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none">
-                      <button
-                        onClick={() => setMonitorTab('all')}
-                        className="px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/5"
-                      >
-                        Kembali Ke Monitor
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => setMonitorTab('all')}
+                      className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-all group py-2 px-3.5 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[9px] font-black uppercase tracking-widest cursor-pointer select-none self-start sm:self-auto"
+                    >
+                      <ChevronLeft size={12} className="group-hover:-translate-x-0.5 transition-transform text-zinc-400 group-hover:text-white" />
+                      <span>KEMBALI KE MONITOR</span>
+                    </button>
                   </div>
 
                   {/* Split Grid for Form Controls and Live iOS Preview */}
@@ -1321,10 +1339,10 @@ const AdminDashboard = () => {
                     </div>
 
                     {/* Tab Selector for Monitoring */}
-                    <div className="flex flex-wrap bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none w-full sm:w-fit">
+                    <div className="flex flex-row overflow-x-auto bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none w-full custom-scrollbar pb-2 sm:pb-1">
                       <button
                         onClick={() => setMonitorTab('all')}
-                        className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'all'
+                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'all'
                           ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                           : 'text-zinc-400 hover:text-white hover:bg-white/5'
                           }`}
@@ -1333,7 +1351,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => setMonitorTab('channels')}
-                        className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'channels'
+                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'channels'
                           ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                           : 'text-zinc-400 hover:text-white hover:bg-white/5'
                           }`}
@@ -1342,7 +1360,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => setMonitorTab('matches')}
-                        className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'matches'
+                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'matches'
                           ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                           : 'text-zinc-400 hover:text-white hover:bg-white/5'
                           }`}
@@ -1351,7 +1369,7 @@ const AdminDashboard = () => {
                       </button>
                       <button
                         onClick={() => setMonitorTab('announcement')}
-                        className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'announcement'
+                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'announcement'
                           ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                           : 'text-zinc-400 hover:text-white hover:bg-white/5'
                           }`}
@@ -1361,7 +1379,7 @@ const AdminDashboard = () => {
                       {adminRole === 'developer' && (
                         <button
                           onClick={() => setMonitorTab('users')}
-                          className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'users'
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'users'
                             ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                             : 'text-zinc-400 hover:text-white hover:bg-white/5'
                             }`}
@@ -1390,15 +1408,14 @@ const AdminDashboard = () => {
                             <div
                               key={ch.id}
                               onClick={() => setSelectedChannel(ch)}
-                              className={`flex items-center justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] transition-all hover:bg-zinc-900/40 cursor-pointer ${
+                              className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] gap-3 transition-all hover:bg-zinc-900/40 cursor-pointer ${
                                 isSelected 
                                   ? 'border-primary shadow-lg shadow-primary/10' 
                                   : hasActiveViewers 
                                     ? 'border-primary/25 shadow-md shadow-primary/[0.02]' 
                                     : 'border-white/5'
-                              }`}
-                            >
-                              <div className="flex items-center gap-3.5 truncate pr-4">
+                              }`}>
+                              <div className="flex items-center gap-3.5 min-w-0 sm:pr-4 flex-1">
                                 {/* Logo */}
                                 {!ch.isChannel ? (
                                   <div className="flex items-center -space-x-3 shrink-0 select-none">
@@ -1419,7 +1436,7 @@ const AdminDashboard = () => {
                                   </div>
                                 )}
                                 {/* Info */}
-                                <div className="truncate">
+                                <div className="min-w-0 flex-1">
                                   <div className="flex items-center gap-1.5 flex-wrap">
                                     <span className="px-1.5 py-0.5 bg-white/5 border border-white/5 rounded-md text-[7.5px] font-black text-zinc-500 uppercase tracking-widest">
                                       {ch.isChannel ? 'Saluran TV' : 'Live Match'}
@@ -1442,12 +1459,12 @@ const AdminDashboard = () => {
                                       })()
                                     )}
                                   </div>
-                                  <h4 className="text-xs font-black text-white truncate mt-1 group-hover:text-primary transition-colors">
+                                  <h4 className="text-xs font-black text-white md:truncate mt-1 group-hover:text-primary transition-colors">
                                     {ch.name}
                                   </h4>
-                                  <div className="flex items-center gap-2 mt-0.5 truncate flex-wrap">
+                                  <div className="flex items-center gap-2 mt-0.5 md:truncate flex-wrap">
                                     {ch.subName && (
-                                      <p className="text-[8.5px] text-zinc-500 font-bold truncate uppercase tracking-wider">
+                                      <p className="text-[8.5px] text-zinc-500 font-bold md:truncate uppercase tracking-wider">
                                         {ch.subName}
                                       </p>
                                     )}
@@ -1461,7 +1478,7 @@ const AdminDashboard = () => {
                               </div>
 
                               {/* Spectator Indicator */}
-                              <div className="flex items-center gap-3 shrink-0">
+                              <div className="flex items-center gap-3 shrink-0 justify-end w-full sm:w-auto border-t border-white/5 sm:border-t-0 pt-2.5 sm:pt-0">
                                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black font-mono tracking-wider transition-all ${viewers > 0
                                   ? 'bg-primary/10 border-primary/20 text-primary animate-pulse-light'
                                   : 'bg-zinc-900/50 border-white/5 text-zinc-600'
@@ -1488,9 +1505,8 @@ const AdminDashboard = () => {
                     )}
                   </div>
 
-                  {/* Selected Channel Live Chat Monitor */}
                   {selectedChannel && (
-                    <div className="md:col-span-6 glass-card rounded-[2rem] p-5 border border-white/5 flex flex-col h-[500px] md:h-[600px] relative overflow-hidden transition-all duration-300">
+                    <div ref={chatMonitorRef} className="md:col-span-6 glass-card rounded-[2rem] p-5 border border-white/5 flex flex-col h-[500px] md:h-[600px] relative overflow-hidden transition-all duration-300">
                       {/* Chat Header */}
                       <div className="flex items-center justify-between pb-3 border-b border-white/5 select-none shrink-0">
                         <div className="truncate pr-2">

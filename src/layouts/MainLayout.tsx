@@ -76,9 +76,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
   useEffect(() => {
     const checkAdminSession = async () => {
-      const loggedIn = localStorage.getItem('ykn_admin_logged_in') === 'true';
-      const savedUsername = localStorage.getItem('ykn_admin_username') || '';
-      const savedToken = localStorage.getItem('ykn_admin_token') || '';
+      const loggedIn = (localStorage.getItem('ykn_admin_logged_in') || sessionStorage.getItem('ykn_admin_logged_in')) === 'true';
+      const savedUsername = localStorage.getItem('ykn_admin_username') || sessionStorage.getItem('ykn_admin_username') || '';
+      const savedToken = localStorage.getItem('ykn_admin_token') || sessionStorage.getItem('ykn_admin_token') || '';
 
       if (loggedIn && savedUsername && savedToken) {
         try {
@@ -97,9 +97,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             setAdminRole(null);
           }
         } catch (err) {
-          // Fallback if offline/error, trust local storage session
+          // Fallback if offline/error, trust local storage/session storage session
           setIsAdminLoggedIn(true);
-          const savedRole = localStorage.getItem('ykn_admin_role');
+          const savedRole = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
           setAdminRole(savedRole);
         }
       } else {
