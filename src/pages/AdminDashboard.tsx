@@ -125,11 +125,17 @@ const AdminDashboard = () => {
 
     newSocket.on('connect', () => {
       setConnected(true);
+      let savedUserId = localStorage.getItem('ykn_chat_user_id');
+      if (!savedUserId) {
+        savedUserId = 'usr_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('ykn_chat_user_id', savedUserId);
+      }
       newSocket.emit('join_room', {
         roomId: selectedChannel.id,
         username: 'YKN TV',
         avatar: yknwcLogo,
-        role: 'user'
+        role: 'user',
+        userId: savedUserId
       });
     });
 

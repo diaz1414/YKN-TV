@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
-import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink } from 'lucide-react';
+import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink, Film } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
 import { io } from 'socket.io-client';
@@ -42,12 +42,23 @@ const ChannelDetail = () => {
   const generateRandomNickname = () => {
     const randomId = Math.floor(1000 + Math.random() * 9000);
     const prefixes = [
-      'Suporter', 'Pendukung', 'Fans', 'Kiper', 'Striker', 'Gelandang', 'Bek',
-      'Winger', 'Playmaker', 'Sobat', 'Squad', 'Komentator', 'Wasit', 'Ultras', 'Kolektor'
+      'Lord', 'Coach', 'Wasit', 'Kiper', 'Bek', 'Gelandang', 'Striker', 'Winger', 
+      'Playmaker', 'Komentator', 'Manager', 'Kapten', 'Ultras', 'Sultan', 'Juragan', 
+      'Raja', 'Dewa', 'Master', 'Legenda', 'Bintang', 'Jawara', 'Kampiun', 'Gladiator', 
+      'Predator', 'Sniper', 'Maestro', 'Ksatria', 'Kaisar', 'Challenger', 'Champion',
+      'Suporter', 'Pendukung', 'Pengamat', 'Kolektor', 'Hooligans', 'Pakar', 'Sobat',
+      'Squad', 'Rival', 'Fanatik', 'Manik', 'Gila', 'Dukun', 'Suhu', 'Guru', 'Prajurit',
+      'Jagoan', 'Bomber', 'KiperTerbang', 'BekTembok', 'WasitVAR'
     ];
     const nouns = [
       'Garuda', 'MerahPutih', 'Bola', 'Gawang', 'Tribun', 'Lapangan', 'Sepatu',
-      'Jersei', 'Peluit', 'Piala', 'Kapten', 'Stadion', 'YKN', 'Nusantara'
+      'Jersei', 'Peluit', 'Piala', 'Stadion', 'YKN', 'Nusantara', 'TikiTaka', 'VAR',
+      'Gacor', 'Meluncur', 'Hattrick', 'Nutmeg', 'Offside', 'Freekick', 'Penalty', 
+      'CornerKick', 'GoldenBoot', 'BallonDor', 'Trophy', 'RedCard', 'YellowCard',
+      'Gegenpressing', 'ParkirBus', 'JogaBonito', 'Wembley', 'SanSiro', 'CampNou', 
+      'OldTrafford', 'SantiagoBernabeu', 'Anfield', 'Maracana', 'GBK', 'JIS', 'GBT',
+      'LigaChampions', 'PialaDunia', 'Manahan', 'Samba', 'Tango', 'TotalFootball',
+      'Selebrasi', 'Golazo', 'Tembakan'
     ];
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
@@ -75,6 +86,11 @@ const ChannelDetail = () => {
 
     const savedNickname = localStorage.getItem('ykn_chat_nickname');
     const savedAvatar = localStorage.getItem('ykn_chat_avatar');
+    let savedUserId = localStorage.getItem('ykn_chat_user_id');
+    if (!savedUserId) {
+      savedUserId = 'usr_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('ykn_chat_user_id', savedUserId);
+    }
 
     if (savedNickname) {
       setNickname(savedNickname);
@@ -103,7 +119,8 @@ const ChannelDetail = () => {
           roomId: stream.id,
           username: savedNickname,
           avatar: savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`,
-          role: 'user'
+          role: 'user',
+          userId: savedUserId
         });
       } else {
         // Connect in read-only mode first to view messages
@@ -111,7 +128,8 @@ const ChannelDetail = () => {
           roomId: stream.id,
           username: 'Penonton',
           avatar: '',
-          role: 'reader'
+          role: 'reader',
+          userId: savedUserId
         });
       }
     });
@@ -176,12 +194,19 @@ const ChannelDetail = () => {
 
     setJoinError('');
 
+    let savedUserId = localStorage.getItem('ykn_chat_user_id');
+    if (!savedUserId) {
+      savedUserId = 'usr_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('ykn_chat_user_id', savedUserId);
+    }
+
     if (socket && connected && stream) {
       socket.emit('join_room', {
         roomId: stream.id,
         username: cleanNick,
         avatar: avatar,
-        role: 'user'
+        role: 'user',
+        userId: savedUserId
       });
     }
   };
@@ -673,6 +698,28 @@ const ChannelDetail = () => {
                 <StatItem label="Latensi" value={liveLatency} />
                 <StatItem label="Format" value={stream.servers[0]?.type.toUpperCase() || 'HLS'} />
                 <StatItem label="Penonton" value={`${getFormattedViewers(stream.id)} Live`} />
+              </div>
+
+              {/* Partner Banner YKN MOVIES */}
+              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-zinc-950/40 p-4 rounded-2xl border border-white/[0.02] relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent pointer-events-none" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
+                    <Film size={20} />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-white">YKN MOVIES</h4>
+                    <p className="text-[10px] text-zinc-400 font-bold mt-0.5">Mau nonton ribuan film gratis sub Indo? Yuk kunjungi partner kami!</p>
+                  </div>
+                </div>
+                <a
+                  href="https://yknmovies.diaww.my.id/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-dark font-black text-[9px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-md shadow-primary/10"
+                >
+                  Nonton Gratis <ExternalLink size={11} />
+                </a>
               </div>
             </div>
           </div>
