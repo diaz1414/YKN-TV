@@ -418,6 +418,7 @@ export const getLiveSportsData = async (): Promise<{
     const key = item.id_event || `${item.player_1} vs ${item.player_2}`;
     if (seenEvents.has(key)) continue;
     seenEvents.add(key);
+
     mappedEvents.push({
       id: item.id_event,
       name: `${item.player_1} vs ${item.player_2}`,
@@ -434,6 +435,25 @@ export const getLiveSportsData = async (): Promise<{
       deskripsi: cleanDescription(item.deskripsi),
       deskripsi_en: cleanDescription(item.deskripsi_en)
     });
+
+    if (item.nama_event && item.nama_event.toLowerCase() === "fifa world cup") {
+      mappedEvents.push({
+        id: `${item.id_event}9`,
+        name: `${item.player_1} vs ${item.player_2}`,
+        subName: "FIFA World Cup [RTB Go]",
+        logo: item.logo_1,
+        logo2: item.logo_2,
+        isBase64Logo: false,
+        servers: buildServers("https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8", "", "hls"),
+        isChannel: false,
+        player1: item.player_1,
+        player2: item.player_2,
+        jadwal_event: item.jadwal_event,
+        jadwal_stop: item.jadwal_stop,
+        deskripsi: cleanDescription(item.deskripsi),
+        deskripsi_en: cleanDescription(item.deskripsi_en)
+      });
+    }
   }
 
   // Process Sports TV

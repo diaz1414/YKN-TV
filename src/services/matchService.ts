@@ -255,7 +255,8 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
       }
 
       if (eventsData.length > 0) {
-        const parsedMatches: Match[] = eventsData.map((event: any) => {
+        const parsedMatches: Match[] = [];
+        eventsData.forEach((event: any) => {
           const homeTeamName = event.player_1 || 'TBD';
           const awayTeamName = event.player_2 || 'TBD';
 
@@ -312,7 +313,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
           const timeStr = formatMatchTime(start);
 
-          return {
+          const originalMatch: Match = {
             id: event.id_event,
             homeTeam: {
               name: homeTeamName,
@@ -334,6 +335,20 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
             liveMinute: liveMinute,
             channelId: event.id_event
           };
+
+          parsedMatches.push(originalMatch);
+
+          if (event.nama_event && event.nama_event.toLowerCase() === "fifa world cup") {
+            parsedMatches.push({
+              ...originalMatch,
+              id: `${event.id_event}9`,
+              league: {
+                name: "FIFA World Cup [RTB Go]",
+                logo: '/favicon.svg'
+              },
+              channelId: `${event.id_event}9`
+            });
+          }
         });
 
         // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
@@ -341,6 +356,12 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           if (a.status === b.status) {
             const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
             const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+            if (dateA === dateB) {
+              const isRtbA = a.league.name.includes("[RTB Go]");
+              const isRtbB = b.league.name.includes("[RTB Go]");
+              if (isRtbA && !isRtbB) return 1;
+              if (!isRtbA && isRtbB) return -1;
+            }
             return dateA - dateB;
           }
           if (a.status === 'live') return -1;
@@ -358,7 +379,8 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
     // Fallback to local events if everything fails
     try {
-      const parsedMatches: Match[] = (localEvents as any[]).map((event: any) => {
+      const parsedMatches: Match[] = [];
+      (localEvents as any[]).forEach((event: any) => {
         const homeTeamName = event.player_1 || 'TBD';
         const awayTeamName = event.player_2 || 'TBD';
 
@@ -378,7 +400,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
         const timeStr = formatMatchTime(start);
 
-        return {
+        const originalMatch: Match = {
           id: event.id_event,
           homeTeam: {
             name: homeTeamName,
@@ -387,7 +409,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           awayTeam: {
             name: awayTeamName,
             logo: awayTeamFlag
-            },
+          },
           league: {
             name: event.nama_event || 'FIFA World Cup',
             logo: '/favicon.svg'
@@ -398,11 +420,31 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           status: status,
           channelId: event.id_event
         };
+
+        parsedMatches.push(originalMatch);
+
+        if (event.nama_event && event.nama_event.toLowerCase() === "fifa world cup") {
+          parsedMatches.push({
+            ...originalMatch,
+            id: `${event.id_event}9`,
+            league: {
+              name: "FIFA World Cup [RTB Go]",
+              logo: '/favicon.svg'
+            },
+            channelId: `${event.id_event}9`
+          });
+        }
       });
       const sorted = [...parsedMatches].sort((a, b) => {
         if (a.status === b.status) {
           const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
           const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+          if (dateA === dateB) {
+            const isRtbA = a.league.name.includes("[RTB Go]");
+            const isRtbB = b.league.name.includes("[RTB Go]");
+            if (isRtbA && !isRtbB) return 1;
+            if (!isRtbA && isRtbB) return -1;
+          }
           return dateA - dateB;
         }
         if (a.status === 'live') return -1;
