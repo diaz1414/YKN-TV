@@ -34,6 +34,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   // State tambahan eksklusif hanya untuk kontrol buka/tutup burger menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   useEffect(() => {
     const fetchLiveMatch = async () => {
@@ -69,6 +70,35 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname, searchParams]);
+
+  useEffect(() => {
+    const checkAdminSession = () => {
+      const loggedIn = localStorage.getItem('ykn_admin_logged_in') === 'true';
+      const savedPasscode = localStorage.getItem('ykn_admin_passcode') || '';
+
+      // Compute simple hash to verify without querying Supabase on every visitor load
+      let hash = 0;
+      for (let i = 0; i < savedPasscode.length; i++) {
+        hash = savedPasscode.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const isPasscodeValid = Math.abs(hash).toString(16) === '4be19ee7';
+
+      setIsAdminLoggedIn(loggedIn && isPasscodeValid);
+    };
+
+    checkAdminSession();
+
+    // Check when localStorage changes (e.g. login/logout from another tab/page)
+    window.addEventListener('storage', checkAdminSession);
+
+    // Also poll every 2 seconds to make sure navigation changes update the badge immediately
+    const interval = setInterval(checkAdminSession, 2000);
+
+    return () => {
+      window.removeEventListener('storage', checkAdminSession);
+      clearInterval(interval);
+    };
+  }, []);
 
   // Protect Developer Tools in Production
   useEffect(() => {
@@ -204,6 +234,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               <span className="hidden sm:inline-block ml-2 text-[9px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                 WC 2026
               </span>
+              {isAdminLoggedIn && (
+                <span className="ml-2 text-[8px] md:text-[9.5px] bg-[#e50914]/10 text-[#e50914] border border-[#e50914]/20 font-black px-2 py-0.5 rounded-full tracking-wider uppercase shadow-[0_0_12px_rgba(229,9,20,0.15)] animate-pulse inline-flex items-center gap-1 select-none">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#e50914]" />
+                  Admin
+                </span>
+              )}
             </div>
           </div>
 

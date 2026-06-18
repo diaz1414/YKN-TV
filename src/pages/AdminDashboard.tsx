@@ -6,6 +6,7 @@ import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import { io } from 'socket.io-client';
+import { supabase } from '../services/supabase';
 
 interface MonitorRoom {
   roomId: string;
@@ -182,12 +183,38 @@ const AdminDashboard = () => {
     setChatInput('');
   };
 
-  // Check existing session
+  // Check existing session on mount via Supabase verification
   useEffect(() => {
-    const adminSession = localStorage.getItem('ykn_admin_logged_in');
-    if (adminSession === 'true') {
-      setIsLoggedIn(true);
-    }
+    const checkSession = async () => {
+      const adminSession = localStorage.getItem('ykn_admin_logged_in');
+      const savedPasscode = localStorage.getItem('ykn_admin_passcode');
+
+      if (adminSession === 'true' && savedPasscode) {
+        try {
+          const { data, error } = await supabase
+            .from('ykn_settings')
+            .select('value')
+            .eq('key', 'admin_passcode')
+            .single();
+
+          if (data && data.value === savedPasscode) {
+            setIsLoggedIn(true);
+          } else {
+            // Invalid passcode, clear storage and log out
+            localStorage.removeItem('ykn_admin_logged_in');
+            localStorage.removeItem('ykn_admin_passcode');
+            localStorage.removeItem('ykn_chat_nickname');
+            localStorage.removeItem('ykn_chat_avatar');
+            setIsLoggedIn(false);
+          }
+        } catch (err) {
+          // If offline / network error, trust session locally but log warning
+          console.warn('Supabase offline session check failed, using local fallback:', err);
+          setIsLoggedIn(true);
+        }
+      }
+    };
+    checkSession();
   }, []);
 
   // Fetch Channels & Real-time Active Viewers
@@ -237,22 +264,47 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, [isLoggedIn]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Admin passcode check
-    if (passcode === 'Ferdiaz140104') {
-      localStorage.setItem('ykn_admin_logged_in', 'true');
-      localStorage.setItem('ykn_chat_nickname', 'YKN TV');
-      localStorage.setItem('ykn_chat_avatar', yknwcLogo);
-      setIsLoggedIn(true);
-      setError('');
-    } else {
-      setError('Kode akses salah! Hubungi developer jika lupa.');
+    setError('');
+
+    if (!passcode.trim()) {
+      setError('Kode akses tidak boleh kosong!');
+      return;
+    }
+
+    try {
+      const { data, error: dbError } = await supabase
+        .from('ykn_settings')
+        .select('value')
+        .eq('key', 'admin_passcode')
+        .single();
+
+      if (dbError || !data) {
+        console.error('Supabase query error:', dbError);
+        setError('Gagal memverifikasi ke database. Pastikan tabel ykn_settings sudah terkonfigurasi.');
+        return;
+      }
+
+      if (data.value === passcode.trim()) {
+        localStorage.setItem('ykn_admin_logged_in', 'true');
+        localStorage.setItem('ykn_admin_passcode', passcode.trim());
+        localStorage.setItem('ykn_chat_nickname', 'YKN TV');
+        localStorage.setItem('ykn_chat_avatar', yknwcLogo);
+        setIsLoggedIn(true);
+        setError('');
+      } else {
+        setError('Kode akses salah! Hubungi developer jika lupa.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Terjadi kesalahan sistem saat mencoba masuk.');
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('ykn_admin_logged_in');
+    localStorage.removeItem('ykn_admin_passcode');
     localStorage.removeItem('ykn_chat_nickname');
     localStorage.removeItem('ykn_chat_avatar');
     setIsLoggedIn(false);

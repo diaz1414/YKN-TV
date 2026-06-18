@@ -713,7 +713,7 @@ const ChannelDetail = () => {
                   </div>
                 </div>
                 <a
-                  href="https://yknmovies.diaww.my.id/"
+                  href="https://movies.ykn.my.id/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-dark font-black text-[9px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-md shadow-primary/10"
@@ -885,10 +885,10 @@ const ChannelDetail = () => {
                               <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%] min-w-[80px]`}>
                                 {/* Username */}
                                 <span className={`text-[9.5px] font-black mb-1 px-1 flex items-center gap-1.5 ${isAdmin
-                                    ? 'text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.45)]'
-                                    : isMe
-                                      ? 'text-primary'
-                                      : getNameColor(msg.username)
+                                  ? 'text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.45)]'
+                                  : isMe
+                                    ? 'text-primary'
+                                    : getNameColor(msg.username)
                                   }`}>
                                   {isMe ? (isAdmin ? 'Admin (Anda)' : 'Anda') : msg.username}
                                   {isAdmin && (
@@ -899,10 +899,10 @@ const ChannelDetail = () => {
                                 </span>
                                 {/* Bubble */}
                                 <div className={`px-3 py-2 rounded-2xl text-xs font-bold leading-relaxed break-words w-full ${isAdmin
-                                    ? `bg-primary/15 border border-primary/35 text-zinc-100 shadow-[0_0_12px_rgba(212,175,55,0.1)] ${isMe ? 'rounded-tr-none' : 'rounded-tl-none'}`
-                                    : isMe
-                                      ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
-                                      : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
+                                  ? `bg-primary/15 border border-primary/35 text-zinc-100 shadow-[0_0_12px_rgba(212,175,55,0.1)] ${isMe ? 'rounded-tr-none' : 'rounded-tl-none'}`
+                                  : isMe
+                                    ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
+                                    : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
                                   }`}>
                                   <p className="break-words whitespace-pre-wrap">
                                     {(() => {
