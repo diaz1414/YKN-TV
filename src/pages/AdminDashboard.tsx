@@ -91,6 +91,10 @@ const AdminDashboard = () => {
   const [createUserError, setCreateUserError] = useState('');
   const [createUserSuccess, setCreateUserSuccess] = useState('');
 
+  // Password editing states
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editPasswordInput, setEditPasswordInput] = useState('');
+
   // Hashing helper using Native Web Crypto API
   const sha256 = async (message: string): Promise<string> => {
     const msgBuffer = new TextEncoder().encode(message);
@@ -330,6 +334,40 @@ const AdminDashboard = () => {
       fetchAdminUsers();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleUpdatePassword = async (userId: number, isSelf: boolean) => {
+    if (!editPasswordInput.trim()) {
+      alert('Password baru tidak boleh kosong!');
+      return;
+    }
+
+    try {
+      const hashedPassword = await sha256(editPasswordInput.trim());
+
+      const { error } = await supabase
+        .from('ykn_users')
+        .update({ password: hashedPassword })
+        .eq('id', userId);
+
+      if (error) {
+        alert('Gagal memperbarui password: ' + error.message);
+        return;
+      }
+
+      alert('Password berhasil diperbarui!');
+      
+      if (isSelf) {
+        localStorage.setItem('ykn_admin_token', hashedPassword);
+      }
+
+      setEditingUserId(null);
+      setEditPasswordInput('');
+      fetchAdminUsers();
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan sistem.');
     }
   };
 
@@ -728,39 +766,85 @@ const AdminDashboard = () => {
                     <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                       {adminUsers.map(user => {
                         const isSelf = user.username.toLowerCase() === adminUsername.toLowerCase();
+                        const isEditing = editingUserId === user.id;
+
                         return (
                           <div
                             key={user.id}
-                            className="flex items-center justify-between p-4 bg-zinc-950/40 border border-white/5 rounded-2xl"
+                            className="p-4 bg-zinc-950/40 border border-white/5 rounded-2xl space-y-3"
                           >
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="text-xs font-black text-white">{user.username}</p>
-                                <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest ${
-                                  user.role === 'developer'
-                                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                    : 'bg-zinc-800 text-zinc-400'
-                                }`}>
-                                  {user.role}
-                                </span>
-                                {isSelf && (
-                                  <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-[7px] font-black uppercase tracking-widest">
-                                    Saya
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-xs font-black text-white">{user.username}</p>
+                                  <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest ${
+                                    user.role === 'developer'
+                                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                      : 'bg-zinc-800 text-zinc-400'
+                                  }`}>
+                                    {user.role}
                                   </span>
-                                )}
+                                  {isSelf && (
+                                    <span className="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-[7px] font-black uppercase tracking-widest">
+                                      Saya
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
+                                  Dibuat: {new Date(user.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </p>
                               </div>
-                              <p className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider mt-1">
-                                Dibuat: {new Date(user.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                              </p>
+
+                              {!isEditing && (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => {
+                                      setEditingUserId(user.id);
+                                      setEditPasswordInput('');
+                                    }}
+                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/5 rounded-xl font-black text-[8px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                  >
+                                    Ganti Password
+                                  </button>
+                                  {!isSelf && (
+                                    <button
+                                      onClick={() => handleDeleteUser(user.id, user.username)}
+                                      className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl font-black text-[8px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                    >
+                                      Hapus Akun
+                                    </button>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
-                            {!isSelf && (
-                              <button
-                                onClick={() => handleDeleteUser(user.id, user.username)}
-                                className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl font-black text-[8px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                              >
-                                Hapus Akun
-                              </button>
+                            {isEditing && (
+                              <div className="flex items-end gap-3 pt-2.5 border-t border-white/5">
+                                <div className="flex-1 space-y-1">
+                                  <label className="text-[7.5px] font-black uppercase tracking-wider text-zinc-400">Password Baru</label>
+                                  <input
+                                    type="password"
+                                    value={editPasswordInput}
+                                    onChange={(e) => setEditPasswordInput(e.target.value)}
+                                    placeholder="Masukkan password baru..."
+                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-650"
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleUpdatePassword(user.id, isSelf)}
+                                    className="px-4 py-2 bg-primary text-dark font-black text-[8.5px] uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                  >
+                                    Simpan
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingUserId(null)}
+                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-400 border border-white/5 rounded-xl font-black text-[8.5px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                  >
+                                    Batal
+                                  </button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         );
