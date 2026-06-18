@@ -416,11 +416,36 @@ const AdminDashboard = () => {
     const loadInitialData = async () => {
       try {
         const data = await getLiveSportsData();
+        
+        // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
+        // For matches with equal kickoff time, sort [RTB Go] matches to the end
+        const sortedMatches = [...data.matches].sort((a, b) => {
+          const statusA = getMatchStatus(a).status;
+          const statusB = getMatchStatus(b).status;
+
+          if (statusA === statusB) {
+            const dateA = a.jadwal_event ? parseJadwal(a.jadwal_event).getTime() : 0;
+            const dateB = b.jadwal_event ? parseJadwal(b.jadwal_event).getTime() : 0;
+            if (dateA === dateB) {
+              const isRtbA = a.subName && a.subName.toLowerCase().includes("[rtb go]");
+              const isRtbB = b.subName && b.subName.toLowerCase().includes("[rtb go]");
+              if (isRtbA && !isRtbB) return 1;
+              if (!isRtbA && isRtbB) return -1;
+            }
+            return dateA - dateB;
+          }
+          if (statusA === 'playable') return -1;
+          if (statusB === 'playable') return 1;
+          if (statusA === 'upcoming' && statusB === 'finished') return -1;
+          if (statusA === 'finished' && statusB === 'upcoming') return 1;
+          return 0;
+        });
+
         // Combine all channels and matches
         const allChannels = [
           ...data.sportsTv.map(c => ({ ...c, isChannel: true })),
           ...data.liveTv.map(c => ({ ...c, isChannel: true })),
-          ...data.matches.map(m => ({ ...m, isChannel: false }))
+          ...sortedMatches.map(m => ({ ...m, isChannel: false }))
         ];
         setChannels(allChannels);
       } catch (err) {
@@ -1408,14 +1433,14 @@ const AdminDashboard = () => {
                             <div
                               key={ch.id}
                               onClick={() => setSelectedChannel(ch)}
-                              className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] gap-3 transition-all hover:bg-zinc-900/40 cursor-pointer ${
+                              className={`flex flex-col ${selectedChannel ? 'w-full' : 'sm:flex-row sm:items-center'} justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] gap-3 transition-all hover:bg-zinc-900/40 cursor-pointer ${
                                 isSelected 
                                   ? 'border-primary shadow-lg shadow-primary/10' 
                                   : hasActiveViewers 
                                     ? 'border-primary/25 shadow-md shadow-primary/[0.02]' 
                                     : 'border-white/5'
                               }`}>
-                              <div className="flex items-center gap-3.5 min-w-0 sm:pr-4 flex-1">
+                              <div className={`flex items-center gap-3.5 min-w-0 ${selectedChannel ? '' : 'sm:pr-4'} flex-1`}>
                                 {/* Logo */}
                                 {!ch.isChannel ? (
                                   <div className="flex items-center -space-x-3 shrink-0 select-none">
@@ -1459,12 +1484,12 @@ const AdminDashboard = () => {
                                       })()
                                     )}
                                   </div>
-                                  <h4 className="text-xs font-black text-white md:truncate mt-1 group-hover:text-primary transition-colors">
+                                  <h4 className={`text-xs font-black text-white ${selectedChannel ? 'break-words' : 'md:truncate'} mt-1 group-hover:text-primary transition-colors`}>
                                     {ch.name}
                                   </h4>
                                   <div className="flex items-center gap-2 mt-0.5 md:truncate flex-wrap">
                                     {ch.subName && (
-                                      <p className="text-[8.5px] text-zinc-500 font-bold md:truncate uppercase tracking-wider">
+                                      <p className={`text-[8.5px] text-zinc-500 font-bold ${selectedChannel ? 'break-words' : 'md:truncate'} uppercase tracking-wider`}>
                                         {ch.subName}
                                       </p>
                                     )}
@@ -1478,7 +1503,7 @@ const AdminDashboard = () => {
                               </div>
 
                               {/* Spectator Indicator */}
-                              <div className="flex items-center gap-3 shrink-0 justify-end w-full sm:w-auto border-t border-white/5 sm:border-t-0 pt-2.5 sm:pt-0">
+                              <div className={`flex items-center gap-3 shrink-0 justify-end w-full ${selectedChannel ? 'w-full border-t border-white/5 pt-2.5' : 'sm:w-auto sm:border-t-0 sm:pt-0'} pt-2.5`}>
                                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black font-mono tracking-wider transition-all ${viewers > 0
                                   ? 'bg-primary/10 border-primary/20 text-primary animate-pulse-light'
                                   : 'bg-zinc-900/50 border-white/5 text-zinc-600'
