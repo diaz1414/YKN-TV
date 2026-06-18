@@ -701,25 +701,55 @@ const ChannelDetail = () => {
               </div>
 
               {/* Partner Banner YKN MOVIES */}
-              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-zinc-950/40 p-4 rounded-2xl border border-white/[0.02] relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent pointer-events-none" />
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
-                    <Film size={20} />
+              <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-r from-zinc-950/80 via-zinc-900/60 to-black/80 backdrop-blur-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-primary/20 transition-all duration-300 shadow-[0_15px_35px_rgba(0,0,0,0.5)] mt-6 group select-none">
+                {/* Stadium background overlay for premium look */}
+                <div className="absolute inset-0 z-0 opacity-10 pointer-events-none transition-transform duration-700 group-hover:scale-105">
+                  <img src="/stadium_pitch_bg.png" alt="" className="w-full h-full object-cover" />
+                </div>
+                {/* Gold/Emerald highlight line on the left */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-emerald-500 rounded-l-3xl" />
+                
+                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-5 flex-1 w-full">
+                  {/* Logo Container */}
+                  <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 p-3 rounded-2xl shadow-inner shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 text-primary">
+                      <Film size={20} />
+                    </div>
+                    <div className="text-left font-display">
+                      <span className="text-base font-black tracking-tighter uppercase italic text-white block">
+                        YKN <span className="text-[#E50914]">MOVIES</span>
+                      </span>
+                      <span className="inline-block text-[8px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase mt-0.5">
+                        PARTNER
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-white">YKN MOVIES</h4>
-                    <p className="text-[10px] text-zinc-400 font-bold mt-0.5">Mau nonton ribuan film gratis? Yuk kunjungi partner kami!</p>
+
+                  {/* Text Content */}
+                  <div className="text-center sm:text-left space-y-1.5 max-w-xl">
+                    <span className="inline-block text-[8px] font-black bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Rekomendasi
+                    </span>
+                    <h4 className="text-xs font-black uppercase text-white tracking-wide">
+                      Mau nonton ribuan film gratis?
+                    </h4>
+                    <p className="text-[10px] text-zinc-400 font-bold leading-relaxed">
+                      Yuk kunjungi partner kami di YKN Movies dan streaming ribuan film blockbuster favorit Anda sekarang secara gratis!
+                    </p>
                   </div>
                 </div>
-                <a
-                  href="https://movies.ykn.my.id/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-dark font-black text-[9px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer shadow-md shadow-primary/10"
-                >
-                  Nonton Gratis <ExternalLink size={11} />
-                </a>
+
+                {/* Button Container */}
+                <div className="relative z-10 w-full sm:w-auto flex justify-center shrink-0">
+                  <a
+                    href="https://movies.ykn.my.id/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-primary hover:bg-primary/95 hover:scale-105 active:scale-95 text-dark font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer shadow-lg shadow-primary/10 border border-primary/20"
+                  >
+                    Nonton Gratis <ExternalLink size={12} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
