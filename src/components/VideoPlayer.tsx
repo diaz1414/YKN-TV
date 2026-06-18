@@ -198,6 +198,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       }
 
+      const onShakaLoadSuccess = (playerInstance: shaka.Player) => {
+        console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+
+        const activeTrack = playerInstance.getVariantTracks().find(t => t.active);
+        if (activeTrack && activeTrack.height) {
+          setActiveHeight(activeTrack.height);
+        }
+
+        videoRef.current?.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => console.warn(err));
+
+        const tracks = playerInstance.getVariantTracks();
+        const uniqueHeights = Array.from(new Set(tracks.map(t => t.height).filter(Boolean)));
+        uniqueHeights.sort((a, b) => (b ?? 0) - (a ?? 0));
+        const qualityLevels: QualityOption[] = uniqueHeights.map(height => ({
+          index: height as number,
+          label: `${height}p`
+        }));
+        setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
+      };
+
       setError(null);
       setIsBuffering(true);
       setLevels([]);
@@ -293,25 +315,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           });
 
           await player.load(streamUrl);
-          console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
-
-          const activeTrack = player.getVariantTracks().find(t => t.active);
-          if (activeTrack && activeTrack.height) {
-            setActiveHeight(activeTrack.height);
-          }
-
-          videoRef.current?.play().then(() => {
-            setIsPlaying(true);
-          }).catch(err => console.warn(err));
-
-          const tracks = player.getVariantTracks();
-          const uniqueHeights = Array.from(new Set(tracks.map(t => t.height).filter(Boolean)));
-          uniqueHeights.sort((a, b) => (b ?? 0) - (a ?? 0));
-          const qualityLevels: QualityOption[] = uniqueHeights.map(height => ({
-            index: height as number,
-            label: `${height}p`
-          }));
-          setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
+          onShakaLoadSuccess(player);
         } else {
           setError('Format siaran tidak didukung di peramban ini.');
         }
@@ -324,6 +328,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           try {
             if (playerRef.current) {
               await playerRef.current.load(proxiedUrl);
+              onShakaLoadSuccess(playerRef.current);
             }
             return;
           } catch (proxyError) {
