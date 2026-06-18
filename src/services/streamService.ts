@@ -414,6 +414,7 @@ export const getLiveSportsData = async (): Promise<{
   // Process Matches (Deduplicated)
   const seenEvents = new Set<string>();
   const mappedEvents: PlayableStream[] = [];
+  const seenRtbMatchups = new Set<string>();
   for (const item of eventsData) {
     const key = item.id_event || `${item.player_1} vs ${item.player_2}`;
     if (seenEvents.has(key)) continue;
@@ -436,23 +437,48 @@ export const getLiveSportsData = async (): Promise<{
       deskripsi_en: cleanDescription(item.deskripsi_en)
     });
 
-    if (item.nama_event && item.nama_event.toLowerCase() === "fifa world cup") {
-      mappedEvents.push({
-        id: `${item.id_event}9`,
-        name: `${item.player_1} vs ${item.player_2}`,
-        subName: "FIFA World Cup [RTB Go]",
-        logo: item.logo_1,
-        logo2: item.logo_2,
-        isBase64Logo: false,
-        servers: buildServers("https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8", "", "hls"),
-        isChannel: false,
-        player1: item.player_1,
-        player2: item.player_2,
-        jadwal_event: item.jadwal_event,
-        jadwal_stop: item.jadwal_stop,
-        deskripsi: cleanDescription(item.deskripsi),
-        deskripsi_en: cleanDescription(item.deskripsi_en)
-      });
+    const parseJadwal = (dateStr?: string): Date => {
+      if (!dateStr) return new Date();
+      let clean = dateStr.trim();
+      if (clean.includes(' ')) {
+        clean = clean.replace(' ', 'T');
+      }
+      const tzMatch = clean.match(/([+-]\d{2})$/);
+      if (tzMatch) {
+        clean += ':00';
+      }
+      return new Date(clean);
+    };
+
+    const start = parseJadwal(item.jadwal_event);
+    const stop = parseJadwal(item.jadwal_stop);
+    const nowTime = new Date();
+    const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+
+    const homeTeamName = item.player_1 || 'TBD';
+    const awayTeamName = item.player_2 || 'TBD';
+    const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
+
+    if (item.nama_event && item.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+      if (!seenRtbMatchups.has(matchupKey)) {
+        seenRtbMatchups.add(matchupKey);
+        mappedEvents.push({
+          id: `${item.id_event}9`,
+          name: `${item.player_1} vs ${item.player_2}`,
+          subName: "FIFA World Cup [RTB Go]",
+          logo: item.logo_1,
+          logo2: item.logo_2,
+          isBase64Logo: false,
+          servers: buildServers("https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8", "", "hls"),
+          isChannel: false,
+          player1: item.player_1,
+          player2: item.player_2,
+          jadwal_event: item.jadwal_event,
+          jadwal_stop: item.jadwal_stop,
+          deskripsi: cleanDescription(item.deskripsi),
+          deskripsi_en: cleanDescription(item.deskripsi_en)
+        });
+      }
     }
   }
 
