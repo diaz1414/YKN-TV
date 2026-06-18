@@ -344,7 +344,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
           parsedMatches.push(originalMatch);
 
-          const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+          const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
           const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
           if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
             if (!seenRtbMatchups.has(matchupKey)) {
@@ -435,7 +435,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
         parsedMatches.push(originalMatch);
 
-        const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+        const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
         const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
         if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
           if (!seenRtbMatchups.has(matchupKey)) {

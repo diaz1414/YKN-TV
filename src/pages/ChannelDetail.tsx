@@ -497,6 +497,12 @@ const ChannelDetail = () => {
       if (a.matchInfo.status === b.matchInfo.status) {
         const timeA = a.jadwal_event ? parseJadwal(a.jadwal_event).getTime() : 0;
         const timeB = b.jadwal_event ? parseJadwal(b.jadwal_event).getTime() : 0;
+        if (timeA === timeB) {
+          const isRtbA = a.subName?.includes("[RTB Go]");
+          const isRtbB = b.subName?.includes("[RTB Go]");
+          if (isRtbA && !isRtbB) return 1;
+          if (!isRtbA && isRtbB) return -1;
+        }
         return timeA - timeB;
       }
       if (a.matchInfo.status === 'playable') return -1;

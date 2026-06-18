@@ -451,9 +451,8 @@ export const getLiveSportsData = async (): Promise<{
     };
 
     const start = parseJadwal(item.jadwal_event);
-    const stop = parseJadwal(item.jadwal_stop);
     const nowTime = new Date();
-    const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+    const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
 
     const homeTeamName = item.player_1 || 'TBD';
     const awayTeamName = item.player_2 || 'TBD';
