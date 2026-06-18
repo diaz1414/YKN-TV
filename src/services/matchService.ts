@@ -256,6 +256,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
       if (eventsData.length > 0) {
         const parsedMatches: Match[] = [];
+        const seenRtbMatchups = new Set<string>();
         eventsData.forEach((event: any) => {
           const homeTeamName = event.player_1 || 'TBD';
           const awayTeamName = event.player_2 || 'TBD';
@@ -338,16 +339,21 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
           parsedMatches.push(originalMatch);
 
-          if (event.nama_event && event.nama_event.toLowerCase() === "fifa world cup") {
-            parsedMatches.push({
-              ...originalMatch,
-              id: `${event.id_event}9`,
-              league: {
-                name: "FIFA World Cup [RTB Go]",
-                logo: '/favicon.svg'
-              },
-              channelId: `${event.id_event}9`
-            });
+          const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+          const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
+          if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+            if (!seenRtbMatchups.has(matchupKey)) {
+              seenRtbMatchups.add(matchupKey);
+              parsedMatches.push({
+                ...originalMatch,
+                id: `${event.id_event}9`,
+                league: {
+                  name: "FIFA World Cup [RTB Go]",
+                  logo: '/favicon.svg'
+                },
+                channelId: `${event.id_event}9`
+              });
+            }
           }
         });
 
@@ -380,6 +386,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
     // Fallback to local events if everything fails
     try {
       const parsedMatches: Match[] = [];
+      const seenRtbMatchups = new Set<string>();
       (localEvents as any[]).forEach((event: any) => {
         const homeTeamName = event.player_1 || 'TBD';
         const awayTeamName = event.player_2 || 'TBD';
@@ -423,16 +430,21 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
         parsedMatches.push(originalMatch);
 
-        if (event.nama_event && event.nama_event.toLowerCase() === "fifa world cup") {
-          parsedMatches.push({
-            ...originalMatch,
-            id: `${event.id_event}9`,
-            league: {
-              name: "FIFA World Cup [RTB Go]",
-              logo: '/favicon.svg'
-            },
-            channelId: `${event.id_event}9`
-          });
+        const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000 && nowTime.getTime() <= stop.getTime();
+        const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
+        if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+          if (!seenRtbMatchups.has(matchupKey)) {
+            seenRtbMatchups.add(matchupKey);
+            parsedMatches.push({
+              ...originalMatch,
+              id: `${event.id_event}9`,
+              league: {
+                name: "FIFA World Cup [RTB Go]",
+                logo: '/favicon.svg'
+              },
+              channelId: `${event.id_event}9`
+            });
+          }
         }
       });
       const sorted = [...parsedMatches].sort((a, b) => {
