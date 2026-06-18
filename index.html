@@ -12,7 +12,7 @@
     content="Tonton siaran langsung pertandingan Piala Dunia 2026 dan saluran TV olahraga premium terlengkap secara live, stabil, low-latency, dan tanpa gangguan hanya di YKN TV." />
   <meta name="keywords"
     content="ykn tv, live streaming bola, piala dunia 2026, streaming world cup 2026, nonton bola online, live football streaming, sports tv online, ykn sports" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, noarchive, nosnippet, max-image-preview:none" />
   <meta name="author" content="YKN TV" />
   <link rel="canonical" href="https://worldcup2026-ykntv.diaww.my.id" />
   <meta property="og:type" content="website" />
@@ -131,6 +131,10 @@
         justify-content: center !important;
       }
     }
+    /* Block printing / print-to-PDF screenshot */
+    @media print {
+      body { display: none !important; }
+    }
   </style>
 </head>
 
@@ -144,15 +148,130 @@
   <script type="module" src="/src/main.tsx"></script>
 
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const loader = document.getElementById('initial-loader');
+    /* Restore initial loader on DOMContentLoaded */
+    window.addEventListener('DOMContentLoaded', function () {
+      var loader = document.getElementById('initial-loader');
       if (loader) {
-        setTimeout(() => {
+        setTimeout(function () {
           loader.style.opacity = '0';
-          setTimeout(() => loader.remove(), 400);
+          setTimeout(function () { loader.remove(); }, 400);
         }, 300);
       }
     });
+  </script>
+
+  <script>
+    // ╔══════════════════════════════════════════════════════════╗
+    // ║           YKN TV — SITE PROTECTION LAYER v1             ║
+    // ║  Anti-scrape · Anti-devtools · Anti-iframe · Anti-copy  ║
+    // ╚══════════════════════════════════════════════════════════╝
+
+    (function () {
+      'use strict';
+
+      // ── 0. Production-only guard — skip ALL protections on localhost ─
+      var _host = window.location.hostname;
+      var _isLocal = _host === 'localhost' || _host === '127.0.0.1' || _host.startsWith('192.168.');
+      if (_isLocal) return;
+
+      // ── 1. Anti-iframe: prevent embedding in foreign sites ──────
+      if (window.top !== window.self) {
+        document.documentElement.style.display = 'none';
+        window.top.location.replace(window.self.location.href);
+      }
+
+      // ── 2. Disable right-click context menu ─────────────────────
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // ── 3. Block keyboard inspector shortcuts ───────────────────
+      document.addEventListener('keydown', function (e) {
+        // F12
+        if (e.key === 'F12') { e.preventDefault(); return false; }
+        // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (DevTools)
+        if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key)) {
+          e.preventDefault(); return false;
+        }
+        // Ctrl+U (View Source)
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+          e.preventDefault(); return false;
+        }
+        // Ctrl+S (Save Page)
+        if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+          e.preventDefault(); return false;
+        }
+        // Ctrl+P (Print/screenshot)
+        if (e.ctrlKey && (e.key === 'p' || e.key === 'P')) {
+          e.preventDefault(); return false;
+        }
+      });
+
+      // ── 4. DevTools size detection (desktop only) ───────────────
+      var _devToolsThreshold = 160;
+      var _devToolsOpen = false;
+
+      function _checkDevTools() {
+        var widthDiff = window.outerWidth - window.innerWidth;
+        var heightDiff = window.outerHeight - window.innerHeight;
+        var isOpen = widthDiff > _devToolsThreshold || heightDiff > _devToolsThreshold;
+
+        if (isOpen && !_devToolsOpen) {
+          _devToolsOpen = true;
+          console.clear();
+          console.log('%c⛔ YKN TV — AKSES DILARANG', 'color:#d4af37;font-size:32px;font-weight:900;');
+          console.log('%cHalaman ini dilindungi. Aktivitas mencurigakan telah terdeteksi dan dicatat.', 'color:#ef4444;font-size:14px;font-weight:bold;');
+          console.log('%c© 2026 YKN TV. Hak cipta dilindungi undang-undang.', 'color:#71717a;font-size:11px;');
+        } else if (!isOpen) {
+          _devToolsOpen = false;
+        }
+      }
+
+      // ── 5. Clear console continuously when DevTools is open ─────
+      setInterval(function () {
+        _checkDevTools();
+        if (_devToolsOpen) {
+          console.clear();
+        }
+      }, 1000);
+
+      // ── 6. Debugger trap (slows down automated inspection) ──────
+      // Runs only in production (not localhost)
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        setInterval(function () {
+          (function () {
+            return false;
+          }.toString().includes('devtools'));
+        }, 100);
+      }
+
+      // ── 7. Anti-clipboard scrape — disable copy of page text ────
+      document.addEventListener('copy', function (e) {
+        if (e.clipboardData) {
+          e.clipboardData.setData('text/plain', '© YKN TV — Konten ini dilindungi hak cipta.');
+          e.preventDefault();
+        }
+      });
+
+      // ── 8. Disable drag (prevents dragging images/links) ────────
+      document.addEventListener('dragstart', function (e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // ── 9. Disable print screen via CSS in print media ──────────
+      // (handled via @media print in CSS)
+
+      // ── 10. Console warning for curious devs ────────────────────
+      setTimeout(function () {
+        console.clear();
+        console.log('%c⚠ Perhatian!', 'color:#f59e0b;font-size:24px;font-weight:900;');
+        console.log('%cJika seseorang menyuruh Anda mengetik/paste sesuatu di sini, itu adalah penipuan.', 'color:#ef4444;font-size:13px;font-weight:bold;');
+        console.log('%c© 2026 YKN TV — Diproteksi. Segala bentuk scraping & reverse engineering dilarang.', 'color:#71717a;font-size:11px;');
+      }, 500);
+
+    })();
   </script>
 </body>
 
