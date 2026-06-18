@@ -42,9 +42,9 @@ const ChannelDetail = () => {
   const generateRandomNickname = () => {
     const randomId = Math.floor(1000 + Math.random() * 9000);
     const prefixes = [
-      'Lord', 'Coach', 'Wasit', 'Kiper', 'Bek', 'Gelandang', 'Striker', 'Winger', 
-      'Playmaker', 'Komentator', 'Manager', 'Kapten', 'Ultras', 'Sultan', 'Juragan', 
-      'Raja', 'Dewa', 'Master', 'Legenda', 'Bintang', 'Jawara', 'Kampiun', 'Gladiator', 
+      'Lord', 'Coach', 'Wasit', 'Kiper', 'Bek', 'Gelandang', 'Striker', 'Winger',
+      'Playmaker', 'Komentator', 'Manager', 'Kapten', 'Ultras', 'Sultan', 'Juragan',
+      'Raja', 'Dewa', 'Master', 'Legenda', 'Bintang', 'Jawara', 'Kampiun', 'Gladiator',
       'Predator', 'Sniper', 'Maestro', 'Ksatria', 'Kaisar', 'Challenger', 'Champion',
       'Suporter', 'Pendukung', 'Pengamat', 'Kolektor', 'Hooligans', 'Pakar', 'Sobat',
       'Squad', 'Rival', 'Fanatik', 'Manik', 'Gila', 'Dukun', 'Suhu', 'Guru', 'Prajurit',
@@ -53,9 +53,9 @@ const ChannelDetail = () => {
     const nouns = [
       'Garuda', 'MerahPutih', 'Bola', 'Gawang', 'Tribun', 'Lapangan', 'Sepatu',
       'Jersei', 'Peluit', 'Piala', 'Stadion', 'YKN', 'Nusantara', 'TikiTaka', 'VAR',
-      'Gacor', 'Meluncur', 'Hattrick', 'Nutmeg', 'Offside', 'Freekick', 'Penalty', 
+      'Gacor', 'Meluncur', 'Hattrick', 'Nutmeg', 'Offside', 'Freekick', 'Penalty',
       'CornerKick', 'GoldenBoot', 'BallonDor', 'Trophy', 'RedCard', 'YellowCard',
-      'Gegenpressing', 'ParkirBus', 'JogaBonito', 'Wembley', 'SanSiro', 'CampNou', 
+      'Gegenpressing', 'ParkirBus', 'JogaBonito', 'Wembley', 'SanSiro', 'CampNou',
       'OldTrafford', 'SantiagoBernabeu', 'Anfield', 'Maracana', 'GBK', 'JIS', 'GBT',
       'LigaChampions', 'PialaDunia', 'Manahan', 'Samba', 'Tango', 'TotalFootball',
       'Selebrasi', 'Golazo', 'Tembakan'
@@ -709,7 +709,7 @@ const ChannelDetail = () => {
                   </div>
                   <div className="text-left">
                     <h4 className="text-xs font-black uppercase tracking-wider text-white">YKN MOVIES</h4>
-                    <p className="text-[10px] text-zinc-400 font-bold mt-0.5">Mau nonton ribuan film gratis sub Indo? Yuk kunjungi partner kami!</p>
+                    <p className="text-[10px] text-zinc-400 font-bold mt-0.5">Mau nonton ribuan film gratis? Yuk kunjungi partner kami!</p>
                   </div>
                 </div>
                 <a
@@ -777,8 +777,8 @@ const ChannelDetail = () => {
                       key={t}
                       onClick={() => setChannelSubTab(t)}
                       className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${channelSubTab === t
-                          ? 'bg-white/10 text-white'
-                          : 'text-zinc-500 hover:text-zinc-300'
+                        ? 'bg-white/10 text-white'
+                        : 'text-zinc-500 hover:text-zinc-300'
                         }`}
                     >
                       {icon}
@@ -884,13 +884,12 @@ const ChannelDetail = () => {
                               />
                               <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[75%] min-w-[80px]`}>
                                 {/* Username */}
-                                <span className={`text-[9.5px] font-black mb-1 px-1 flex items-center gap-1.5 ${
-                                  isAdmin
+                                <span className={`text-[9.5px] font-black mb-1 px-1 flex items-center gap-1.5 ${isAdmin
                                     ? 'text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.45)]'
                                     : isMe
                                       ? 'text-primary'
                                       : getNameColor(msg.username)
-                                }`}>
+                                  }`}>
                                   {isMe ? (isAdmin ? 'Admin (Anda)' : 'Anda') : msg.username}
                                   {isAdmin && (
                                     <span className="px-1 py-0.2 bg-primary text-dark font-black text-[7px] uppercase tracking-widest rounded flex items-center justify-center scale-90">
@@ -899,13 +898,12 @@ const ChannelDetail = () => {
                                   )}
                                 </span>
                                 {/* Bubble */}
-                                <div className={`px-3 py-2 rounded-2xl text-xs font-bold leading-relaxed break-words w-full ${
-                                  isAdmin
+                                <div className={`px-3 py-2 rounded-2xl text-xs font-bold leading-relaxed break-words w-full ${isAdmin
                                     ? `bg-primary/15 border border-primary/35 text-zinc-100 shadow-[0_0_12px_rgba(212,175,55,0.1)] ${isMe ? 'rounded-tr-none' : 'rounded-tl-none'}`
                                     : isMe
                                       ? 'bg-primary/10 border border-primary/20 text-zinc-100 rounded-tr-none'
                                       : 'bg-zinc-900/90 border border-white/5 text-zinc-200 rounded-tl-none'
-                                }`}>
+                                  }`}>
                                   <p className="break-words whitespace-pre-wrap">
                                     {(() => {
                                       const text = msg.message;
@@ -932,12 +930,12 @@ const ChannelDetail = () => {
                                         return part;
                                       });
                                     })()}
-                                   </p>
-                                   <div className="text-right mt-1 select-none leading-none h-2">
-                                     <span className="text-[7.5px] text-zinc-500 font-mono font-bold">
-                                       {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                     </span>
-                                   </div>
+                                  </p>
+                                  <div className="text-right mt-1 select-none leading-none h-2">
+                                    <span className="text-[7.5px] text-zinc-500 font-mono font-bold">
+                                      {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1103,8 +1101,8 @@ const ChannelDetail = () => {
                             key={ch.id}
                             onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
                             className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isActive
-                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                                : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
+                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                              : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
                               }`}
                           >
                             <div className="flex items-center gap-3.5 truncate">
@@ -1123,8 +1121,8 @@ const ChannelDetail = () => {
                               </div>
                             </div>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive
-                                ? 'bg-primary text-dark scale-105'
-                                : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
+                              ? 'bg-primary text-dark scale-105'
+                              : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                               }`}>
                               <Play size={12} fill={isActive ? 'currentColor' : 'none'} className="ml-0.5" />
                             </div>
@@ -1146,12 +1144,12 @@ const ChannelDetail = () => {
                             key={ch.id}
                             onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
                             className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isActive
-                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                                : isLive && !isFinished
-                                  ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
-                                  : isSoon
-                                    ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
-                                    : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
+                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                              : isLive && !isFinished
+                                ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
+                                : isSoon
+                                  ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
+                                  : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
                               }`}
                           >
                             <div className="flex items-center -space-x-3 shrink-0 select-none">
@@ -1176,10 +1174,10 @@ const ChannelDetail = () => {
                                   </span>
                                 ) : (
                                   <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${isFinished
-                                      ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
-                                      : isSoon
-                                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                        : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
+                                    ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
+                                    : isSoon
+                                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                      : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
                                     }`}>
                                     {ch.matchInfo.timeLeft}
                                   </span>
@@ -1188,8 +1186,8 @@ const ChannelDetail = () => {
                             </div>
 
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive || (isLive && !isFinished)
-                                ? 'bg-primary text-dark group-hover:scale-105'
-                                : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
+                              ? 'bg-primary text-dark group-hover:scale-105'
+                              : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                               }`}>
                               <Play size={12} className="ml-0.5" fill={isActive || (isLive && !isFinished) ? 'currentColor' : 'none'} />
                             </div>
