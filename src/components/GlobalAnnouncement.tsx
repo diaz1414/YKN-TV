@@ -17,6 +17,45 @@ interface AnnouncementData {
   updated_at: string;
 }
 
+// ─── Shared Supabase Channel Singleton ──────────────────────────────────────
+// Supabase closes duplicate channel subscriptions with the same name.
+// This module-level singleton ensures only ONE real channel exists.
+// All GlobalAnnouncement instances register as in-memory listeners.
+// ─────────────────────────────────────────────────────────────────────────────
+let _sharedChannel: any = null;
+let _channelSubscriberCount = 0;
+const _channelListeners = new Set<(event: string, data: any) => void>();
+
+function _registerChannelListener(listener: (event: string, data: any) => void) {
+  _channelListeners.add(listener);
+  _channelSubscriberCount++;
+
+  if (!_sharedChannel) {
+    _sharedChannel = supabase.channel('ykn-global-announcements');
+    _sharedChannel
+      .on('broadcast', { event: 'new-announcement' }, (payload: any) => {
+        _channelListeners.forEach(cb => cb('new-announcement', payload.payload));
+      })
+      .on('broadcast', { event: 'clear-announcement' }, () => {
+        _channelListeners.forEach(cb => cb('clear-announcement', null));
+      })
+      .subscribe((status: string) => {
+        console.log('GlobalAnnouncement [shared channel]:', status);
+      });
+  }
+
+  return () => {
+    _channelListeners.delete(listener);
+    _channelSubscriberCount--;
+    if (_channelSubscriberCount === 0 && _sharedChannel) {
+      _sharedChannel.unsubscribe();
+      _sharedChannel = null;
+    }
+  };
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
   onlyShowWhenNormal = false,
   onlyShowWhenFullscreen = false,
@@ -24,8 +63,11 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
 }) => {
   const [announcement, setAnnouncement] = useState<AnnouncementData | null>(null);
   const [visible, setVisible] = useState(false);
+  const [remainingDuration, setRemainingDuration] = useState<number>(0);
   const [isFS, setIsFS] = useState(!!document.fullscreenElement);
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Ref to always call the latest version of checkAndShowAnnouncement (avoids stale closure in broadcast listeners)
+  const checkAndShowRef = useRef<(data: AnnouncementData) => void>(() => {});
 
   // Auto-detect fullscreen if prop is not provided
   useEffect(() => {
@@ -47,63 +89,141 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
   }, [propIsFullscreen]);
 
   // Handle auto-dismiss timer
-  const startDismissTimer = (durationInSeconds: number, elapsedMs = 0) => {
+  const startDismissTimer = (durationInSeconds: number) => {
     if (dismissTimerRef.current) {
       clearTimeout(dismissTimerRef.current);
     }
 
-    if (durationInSeconds <= 0) return; // Keep persistent if duration is 0 or less
-
-    const remainingTimeMs = durationInSeconds * 1000 - elapsedMs;
-    if (remainingTimeMs <= 0) {
-      setVisible(false);
-      return;
-    }
+    if (durationInSeconds <= 0) return;
 
     dismissTimerRef.current = setTimeout(() => {
       setVisible(false);
-    }, remainingTimeMs);
+    }, durationInSeconds * 1000);
   };
 
   const checkAndShowAnnouncement = (data: AnnouncementData) => {
+    console.log('GlobalAnnouncement: checkAndShowAnnouncement called with:', data);
     const closedKey = `ykn_announcement_closed_${data.updated_at}`;
-    const seenKey = `ykn_announcement_seen_${data.updated_at}`;
+    const shownKey = `ykn_announcement_shown_${data.updated_at}`;
     
     const isClosed = localStorage.getItem(closedKey) === 'true';
-    const isSeen = localStorage.getItem(seenKey) === 'true';
+    console.log('GlobalAnnouncement: closedKey check:', closedKey, 'isClosed:', isClosed);
+    if (isClosed) return;
 
-    if (isClosed || isSeen) return;
+    let initialRemaining = data.duration;
 
+    if (data.duration > 0) {
+      const shownAtStr = localStorage.getItem(shownKey);
+      console.log('GlobalAnnouncement: shownKey check:', shownKey, 'shownAtStr:', shownAtStr);
+      if (shownAtStr) {
+        const shownAt = parseInt(shownAtStr, 10);
+        if (!isNaN(shownAt)) {
+          const elapsed = (Date.now() - shownAt) / 1000;
+          console.log('GlobalAnnouncement: elapsed time:', elapsed, 'duration:', data.duration);
+          if (elapsed >= data.duration) {
+            console.log('GlobalAnnouncement: Announcement has expired. Not showing.');
+            return;
+          }
+          initialRemaining = data.duration - elapsed;
+        }
+      } else {
+        // Record the start time when shown for the first time
+        try {
+          console.log('GlobalAnnouncement: Setting shown timestamp in localStorage:', shownKey);
+          localStorage.setItem(shownKey, Date.now().toString());
+        } catch (e) {
+          console.warn('LocalStorage shown-state write failed:', e);
+        }
+      }
+    }
+
+    // Cache to sessionStorage for seamless/instant transitions
+    try {
+      sessionStorage.setItem('ykn_current_active_announcement', JSON.stringify(data));
+    } catch (e) {
+      console.warn('SessionStorage write failed:', e);
+    }
+
+    console.log('GlobalAnnouncement: Displaying announcement, remaining duration:', initialRemaining);
     setAnnouncement(data);
+    setRemainingDuration(initialRemaining);
     setVisible(true);
 
-    // Mark as seen immediately so it doesn't show up again on page refresh or navigation
+    // Clean up old announcement keys to keep localStorage clean
     try {
-      localStorage.setItem(seenKey, 'true');
-
-      // Clean up old announcement keys to keep localStorage clean
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && (key.startsWith('ykn_announcement_seen_') || key.startsWith('ykn_announcement_closed_'))) {
+        if (key && (key.startsWith('ykn_announcement_shown_') || key.startsWith('ykn_announcement_closed_'))) {
           if (!key.endsWith(data.updated_at)) {
             keysToRemove.push(key);
           }
         }
       }
-      keysToRemove.forEach(k => localStorage.removeItem(k));
+      keysToRemove.forEach(k => {
+        console.log('GlobalAnnouncement: Cleaning up old localStorage key:', k);
+        localStorage.removeItem(k);
+      });
     } catch (e) {
-      console.warn('LocalStorage seen-state write or cleanup failed:', e);
+      console.warn('LocalStorage cleanup failed:', e);
     }
 
-    if (data.duration > 0) {
-      startDismissTimer(data.duration, 0); // Always show for the full duration to new visitors
+    if (initialRemaining > 0) {
+      startDismissTimer(initialRemaining);
     }
   };
 
-  // Initial fetch and Realtime channel subscription
+  // Keep ref always pointing to the latest version of checkAndShowAnnouncement
   useEffect(() => {
+    checkAndShowRef.current = checkAndShowAnnouncement;
+  });
+
+  // 1. Mount-once shared channel listener registration.
+  // Uses the module-level singleton so only one real Supabase channel exists
+  // across all GlobalAnnouncement instances. Avoids Supabase closing duplicate channels.
+  useEffect(() => {
+    const unregister = _registerChannelListener((event, data) => {
+      if (event === 'new-announcement' && data) {
+        // Use ref to always call the latest non-stale version of checkAndShowAnnouncement
+        checkAndShowRef.current(data as AnnouncementData);
+      } else if (event === 'clear-announcement') {
+        sessionStorage.removeItem('ykn_current_active_announcement');
+        setVisible(false);
+      }
+    });
+
+    return unregister;
+  }, []);
+
+  // 2. Active announcement polling and layout dormancy checks.
+  // Responds dynamically when toggling between fullscreen and normal modes.
+  useEffect(() => {
+    // Determine if this instance should be active
+    const isDormant = 
+      (onlyShowWhenFullscreen && !isFS) || 
+      (onlyShowWhenNormal && isFS);
+
+    if (isDormant) {
+      // If dormant, ensure we clear state and timers
+      setVisible(false);
+      if (dismissTimerRef.current) {
+        clearTimeout(dismissTimerRef.current);
+      }
+      return;
+    }
+
     const fetchActiveAnnouncement = async () => {
+      // Check cache first for instant layout restoration
+      try {
+        const cached = sessionStorage.getItem('ykn_current_active_announcement');
+        if (cached) {
+          const parsed = JSON.parse(cached) as AnnouncementData;
+          checkAndShowAnnouncement(parsed);
+        }
+      } catch (e) {
+        console.warn('SessionStorage read failed:', e);
+      }
+
       try {
         const { data, error } = await supabase
           .from('ykn_announcements')
@@ -116,13 +236,19 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
           return;
         }
 
-        if (data && data.is_active) {
-          checkAndShowAnnouncement({
+        if (data) {
+          const payloadData = {
             message: data.message,
             type: data.type,
             duration: data.duration,
             updated_at: data.updated_at,
-          });
+          };
+          if (data.is_active) {
+            checkAndShowAnnouncement(payloadData);
+          } else {
+            sessionStorage.removeItem('ykn_current_active_announcement');
+            setVisible(false);
+          }
         }
       } catch (err) {
         console.error('Error fetching announcement:', err);
@@ -131,26 +257,10 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
 
     fetchActiveAnnouncement();
 
-    // Subscribe to Realtime Broadcast channel
-    const channel = supabase.channel('ykn-global-announcements');
-
-    channel
-      .on('broadcast', { event: 'new-announcement' }, (payload: any) => {
-        const data = payload.payload as AnnouncementData;
-        if (data) {
-          checkAndShowAnnouncement(data);
-        }
-      })
-      .on('broadcast', { event: 'clear-announcement' }, () => {
-        setVisible(false);
-      })
-      .subscribe();
-
     return () => {
       if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
-      channel.unsubscribe();
     };
-  }, []);
+  }, [onlyShowWhenFullscreen, onlyShowWhenNormal, isFS]);
 
   const handleClose = () => {
     if (announcement) {
@@ -248,12 +358,13 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
           </div>
 
           {/* iOS Style Bottom Progress Dismiss Bar */}
-          {announcement.duration > 0 && (
+          {announcement.duration > 0 && remainingDuration > 0 && (
             <div className="w-full h-[3px] bg-white/5 absolute bottom-0 left-0 overflow-hidden">
               <motion.div
-                initial={{ width: '100%' }}
+                key={`${announcement.updated_at}_${remainingDuration}`}
+                initial={{ width: `${(remainingDuration / announcement.duration) * 100}%` }}
                 animate={{ width: '0%' }}
-                transition={{ duration: announcement.duration, ease: 'linear' }}
+                transition={{ duration: remainingDuration, ease: 'linear' }}
                 className="h-full"
                 style={{ backgroundColor: accentColor }}
               />
