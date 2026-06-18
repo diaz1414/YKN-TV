@@ -9,7 +9,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/watch/:id" element={<ChannelDetail />} />
-        <Route path="/ykn-gate" element={<AdminDashboard />} />
+        <Route path="/ykn-c0ntr0l-hq" element={<AdminDashboard />} />
+        <Route path="/ykn-c0ntr0l-hq/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

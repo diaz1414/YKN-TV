@@ -260,7 +260,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate('/ykn-gate');
+                    navigate('/ykn-c0ntr0l-hq/dashboard');
                   }}
                   className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all ${
                     adminRole === 'developer'

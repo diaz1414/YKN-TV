@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import { Key, ShieldAlert, RefreshCw, LogOut, ExternalLink, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X } from 'lucide-react';
 import axios from 'axios';
@@ -74,12 +74,15 @@ const getMatchStatus = (ch: PlayableStream) => {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboardPath = location.pathname === '/ykn-c0ntr0l-hq/dashboard';
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminRole, setAdminRole] = useState<'developer' | 'admin' | null>(null);
   const [adminUsername, setAdminUsername] = useState('');
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [scraping, setScraping] = useState(false);
   const [scrapeSuccess, setScrapeSuccess] = useState(false);
 
@@ -239,11 +242,22 @@ const AdminDashboard = () => {
   };
 
   // Check existing session on mount via Supabase verification against ykn_users table
+  // Checks both localStorage (remember me) and sessionStorage (session-only)
   useEffect(() => {
     const checkSession = async () => {
-      const adminSession = localStorage.getItem('ykn_admin_logged_in');
-      const savedUsername = localStorage.getItem('ykn_admin_username');
-      const savedToken = localStorage.getItem('ykn_admin_token');
+      const adminSession =
+        localStorage.getItem('ykn_admin_logged_in') ||
+        sessionStorage.getItem('ykn_admin_logged_in');
+      const savedUsername =
+        localStorage.getItem('ykn_admin_username') ||
+        sessionStorage.getItem('ykn_admin_username');
+      const savedToken =
+        localStorage.getItem('ykn_admin_token') ||
+        sessionStorage.getItem('ykn_admin_token');
+      const savedRole = (
+        localStorage.getItem('ykn_admin_role') ||
+        sessionStorage.getItem('ykn_admin_role')
+      ) as 'developer' | 'admin' | null;
 
       if (adminSession === 'true' && savedUsername && savedToken) {
         try {
@@ -258,24 +272,30 @@ const AdminDashboard = () => {
             setIsLoggedIn(true);
             setAdminRole(data.role);
             setAdminUsername(data.username);
+            // If already logged in and visiting the login path, redirect to dashboard
+            if (!isDashboardPath) {
+              navigate('/ykn-c0ntr0l-hq/dashboard', { replace: true });
+            }
           } else {
             // Invalid token, force logout
-            localStorage.removeItem('ykn_admin_logged_in');
-            localStorage.removeItem('ykn_admin_username');
-            localStorage.removeItem('ykn_admin_role');
-            localStorage.removeItem('ykn_admin_token');
-            localStorage.removeItem('ykn_chat_nickname');
-            localStorage.removeItem('ykn_chat_avatar');
+            ['ykn_admin_logged_in','ykn_admin_username','ykn_admin_role','ykn_admin_token','ykn_chat_nickname','ykn_chat_avatar'].forEach(k => {
+              localStorage.removeItem(k);
+              sessionStorage.removeItem(k);
+            });
             setIsLoggedIn(false);
+            if (isDashboardPath) navigate('/ykn-c0ntr0l-hq', { replace: true });
           }
         } catch (err) {
           // If offline / network error, trust session locally but log warning
           console.warn('Supabase offline session check failed, using local fallback:', err);
-          const savedRole = localStorage.getItem('ykn_admin_role') as 'developer' | 'admin' | null;
           setIsLoggedIn(true);
           setAdminRole(savedRole);
           setAdminUsername(savedUsername || '');
+          if (!isDashboardPath) navigate('/ykn-c0ntr0l-hq/dashboard', { replace: true });
         }
+      } else if (isDashboardPath) {
+        // No session but trying to access /dashboard → redirect to login
+        navigate('/ykn-c0ntr0l-hq', { replace: true });
       }
     };
     checkSession();
@@ -570,17 +590,21 @@ const AdminDashboard = () => {
         return;
       }
 
-      localStorage.setItem('ykn_admin_logged_in', 'true');
-      localStorage.setItem('ykn_admin_username', data.username);
-      localStorage.setItem('ykn_admin_role', data.role);
-      localStorage.setItem('ykn_admin_token', data.password);
-      localStorage.setItem('ykn_chat_nickname', 'YKN TV');
-      localStorage.setItem('ykn_chat_avatar', yknwcLogo);
+      // If Remember Me is checked → persist in localStorage (survives browser restart)
+      // If unchecked → use sessionStorage (clears when tab/browser is closed)
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('ykn_admin_logged_in', 'true');
+      storage.setItem('ykn_admin_username', data.username);
+      storage.setItem('ykn_admin_role', data.role);
+      storage.setItem('ykn_admin_token', data.password);
+      storage.setItem('ykn_chat_nickname', 'YKN TV');
+      storage.setItem('ykn_chat_avatar', yknwcLogo);
       
       setIsLoggedIn(true);
       setAdminRole(data.role);
       setAdminUsername(data.username);
       setError('');
+      navigate('/ykn-c0ntr0l-hq/dashboard', { replace: true });
     } catch (err) {
       console.error(err);
       setError('Terjadi kesalahan sistem saat mencoba masuk.');
@@ -588,18 +612,17 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('ykn_admin_logged_in');
-    localStorage.removeItem('ykn_admin_username');
-    localStorage.removeItem('ykn_admin_role');
-    localStorage.removeItem('ykn_admin_token');
-    localStorage.removeItem('ykn_chat_nickname');
-    localStorage.removeItem('ykn_chat_avatar');
+    const keys = ['ykn_admin_logged_in','ykn_admin_username','ykn_admin_role','ykn_admin_token','ykn_chat_nickname','ykn_chat_avatar'];
+    keys.forEach(k => {
+      localStorage.removeItem(k);
+      sessionStorage.removeItem(k);
+    });
     setIsLoggedIn(false);
     setAdminRole(null);
     setAdminUsername('');
     setUsernameInput('');
     setPasswordInput('');
-    navigate('/');
+    navigate('/ykn-c0ntr0l-hq');
   };
 
   const triggerScraper = async () => {
@@ -693,6 +716,23 @@ const AdminDashboard = () => {
                     </p>
                   )}
                 </div>
+
+                {/* Remember Me */}
+                <label className="flex items-center gap-2.5 cursor-pointer group select-none">
+                  <div
+                    onClick={() => setRememberMe(prev => !prev)}
+                    className={`relative w-9 h-5 rounded-full transition-all duration-300 flex-shrink-0 ${
+                      rememberMe ? 'bg-primary' : 'bg-zinc-800 border border-white/10'
+                    }`}
+                  >
+                    <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                      rememberMe ? 'translate-x-4' : 'translate-x-0'
+                    }`} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-zinc-200 transition-colors">
+                    Ingat saya <span className="text-zinc-600 font-bold normal-case tracking-normal">(tetap login setelah browser ditutup)</span>
+                  </span>
+                </label>
 
                 <button
                   type="submit"
