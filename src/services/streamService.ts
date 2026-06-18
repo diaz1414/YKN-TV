@@ -262,6 +262,16 @@ export const getLiveSportsData = async (): Promise<{
       gbr_base64: "",
       logo: "https://upload.wikimedia.org/wikipedia/commons/e/eb/TVRILogo2019.svg",
       url_license: ""
+    },
+    {
+      id_iptv: "custom-rtb-go",
+      nama_channel: "RTB Go",
+      tagline: "Live Streaming RTB Go",
+      jenis: "hls",
+      url_iptv: "https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8",
+      gbr_base64: "",
+      logo: "https://www.rtbgo.bn/assets/favicon/favicon-96x96.png",
+      url_license: ""
     }
   ];
 
@@ -433,9 +443,15 @@ export const getLiveSportsData = async (): Promise<{
     const key = item.id_iptv || item.nama_channel;
     if (seenSports.has(key)) continue;
     seenSports.add(key);
+
+    let name = item.nama_channel;
+    if (name.toLowerCase() === "init duktek") {
+      name = "init ykn";
+    }
+
     mappedSports.push({
       id: item.id_iptv,
-      name: item.nama_channel,
+      name: name,
       subName: item.tagline || 'Saluran Sports Premium',
       logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
