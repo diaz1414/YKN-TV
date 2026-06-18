@@ -718,9 +718,15 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Remember Me */}
-                <label className="flex items-center gap-2.5 cursor-pointer group select-none">
+                <label htmlFor="rememberMe" className="flex items-center gap-2.5 cursor-pointer group select-none">
+                  <input
+                    id="rememberMe"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="sr-only"
+                  />
                   <div
-                    onClick={() => setRememberMe(prev => !prev)}
                     className={`relative w-9 h-5 rounded-full transition-all duration-300 flex-shrink-0 ${
                       rememberMe ? 'bg-primary' : 'bg-zinc-800 border border-white/10'
                     }`}
