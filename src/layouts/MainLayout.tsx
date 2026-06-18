@@ -257,14 +257,23 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 WC 2026
               </span>
               {isAdminLoggedIn && (
-                <span className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase animate-pulse inline-flex items-center gap-1 select-none ${
-                  adminRole === 'developer'
-                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)]'
-                    : 'bg-[#e50914]/10 text-[#e50914] border-[#e50914]/20 shadow-[0_0_12px_rgba(229,9,20,0.15)]'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-[#e50914]'}`} />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/ykn-gate');
+                  }}
+                  className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all ${
+                    adminRole === 'developer'
+                      ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)] hover:bg-purple-500/20'
+                      : 'bg-[#e50914]/10 text-[#e50914] border-[#e50914]/20 shadow-[0_0_12px_rgba(229,9,20,0.15)] hover:bg-[#e50914]/20'
+                  }`}
+                >
+                  <span className="relative flex h-1.5 w-1.5 shrink-0">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-red-400'}`}></span>
+                    <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-[#e50914]'}`} />
+                  </span>
                   {adminRole === 'developer' ? 'Developer' : 'Admin'}
-                </span>
+                </button>
               )}
             </div>
           </div>
