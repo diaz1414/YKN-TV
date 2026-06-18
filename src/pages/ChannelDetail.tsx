@@ -719,11 +719,11 @@ const ChannelDetail = () => {
               <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-r from-zinc-950/80 via-zinc-900/60 to-black/80 backdrop-blur-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-primary/20 transition-all duration-300 shadow-[0_15px_35px_rgba(0,0,0,0.5)] mt-6 group select-none">
                 {/* Stadium background overlay for premium look */}
                 <div className="absolute inset-0 z-0 opacity-10 pointer-events-none transition-transform duration-700 group-hover:scale-105">
-                  <img src="/stadium_pitch_bg.png" alt="" className="w-full h-full object-cover" />
+                  <img src="/ykn-cinema-bg.png" alt="" className="w-full h-full object-cover" />
                 </div>
                 {/* Gold/Emerald highlight line on the left */}
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-emerald-500 rounded-l-3xl" />
-                
+
                 <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-5 flex-1 w-full">
                   {/* Logo Container */}
                   <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 p-3 rounded-2xl shadow-inner shrink-0">
