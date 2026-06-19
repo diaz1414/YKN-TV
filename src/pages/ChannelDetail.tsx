@@ -8,6 +8,7 @@ import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
 import { io } from 'socket.io-client';
 import yknwcLogo from '../assets/yknwc-logo.png';
+import ShareModal from '../components/ShareModal';
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const ChannelDetail = () => {
   const [stream, setStream] = useState<PlayableStream | null>(null);
   const [sportsTv, setSportsTv] = useState<PlayableStream[]>([]);
   const [liveTv, setLiveTv] = useState<PlayableStream[]>([]);
-  const [copied, setCopied] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const [matchTimeLeft, setMatchTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [matchStatus, setMatchStatus] = useState<'playable' | 'upcoming' | 'finished'>('playable');
   const [kickoffSecondsLeft, setKickoffSecondsLeft] = useState<number | null>(null);
@@ -413,11 +414,7 @@ const ChannelDetail = () => {
   }, [id]);
 
   const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    setIsShareOpen(true);
   };
 
   if (loading) {
@@ -534,7 +531,7 @@ const ChannelDetail = () => {
               className="py-2.5 px-4 text-zinc-400 hover:text-primary transition-all bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none"
             >
               <Share2 size={14} />
-              <span>{copied ? 'Tersalin' : 'Bagikan'}</span>
+              <span>Bagikan</span>
             </button>
           </div>
         </div>
@@ -1265,6 +1262,15 @@ const ChannelDetail = () => {
           </div>
         </div>
       </div>
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        shareUrl={window.location.href}
+        shareTitle={stream.name}
+        logo={stream.logo}
+        logo2={stream.logo2}
+        isChannel={stream.isChannel}
+      />
     </MainLayout>
   );
 };
