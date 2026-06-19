@@ -109,17 +109,21 @@ const BagiBagiLeaderboard: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4 px-1">
           <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 group-hover:scale-105 transition-transform duration-300">
-              <Trophy size={18} className="relative z-10 fill-amber-500/10" />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500" />
+            <div className="relative flex items-center justify-center w-14 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 group-hover:scale-105 transition-transform duration-300 overflow-hidden px-1">
+              <img
+                src="/saweria-icon.png"
+                alt="Saweria Mascot"
+                className="w-full h-full object-contain relative z-10"
+              />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping" />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-orange-500" />
             </div>
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider font-display text-white flex items-center gap-1.5 italic leading-none">
                 Top Donatur
                 <Sparkles size={11} className="text-amber-400 animate-pulse" />
               </h4>
-              <p className="text-[8px] font-bold text-amber-500 uppercase tracking-widest leading-none mt-1">Leaderboard BagiBagi.co</p>
+              <p className="text-[8px] font-bold text-orange-500 uppercase tracking-widest leading-none mt-1">Leaderboard Saweria.co</p>
             </div>
           </div>
         </div>
@@ -250,13 +254,11 @@ const BagiBagiLeaderboard: React.FC = () => {
                         </div>
 
                         {/* Amount */}
-                        <div className="flex items-center gap-1 shrink-0">
-                          <img
-                            src="/bagibagi-coin.png"
-                            alt="Coin"
-                            className="w-3.5 h-3.5 object-contain select-none"
-                          />
-                          <span className={`text-[10px] font-black ${isTop3 ? rankConfig.text : 'text-amber-500'}`}>
+                        <div className="flex items-center gap-0.5 shrink-0">
+                          <span className={`text-[8px] font-black tracking-wider select-none opacity-75 mr-0.5 ${isTop3 ? rankConfig.text : 'text-zinc-500'}`}>
+                            Rp
+                          </span>
+                          <span className={`text-[10px] font-black ${isTop3 ? rankConfig.text : 'text-orange-500'}`}>
                             {formatNumber(donor.amount)}
                           </span>
                         </div>
@@ -290,7 +292,7 @@ const BagiBagiLeaderboard: React.FC = () => {
 
         {/* CTA Button */}
         <a
-          href="https://bagibagi.co/Diaww"
+          href="https://saweria.co/diaw14"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-primary hover:from-amber-600 hover:to-primary hover:scale-[1.01] active:scale-[0.99] text-dark font-black text-[9px] uppercase tracking-widest transition-all cursor-pointer shadow-lg shadow-amber-500/10 border border-amber-500/20 select-none"

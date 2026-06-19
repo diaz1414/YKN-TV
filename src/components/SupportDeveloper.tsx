@@ -49,8 +49,33 @@ export const SupportCard: React.FC<SupportDeveloperProps> = ({ variant = 'card' 
         </p>
 
         {/* Buttons Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <div className="flex flex-col gap-3.5">
           
+          {/* Saweria (Local ID) */}
+          <motion.a
+            href="https://saweria.co/diaw14"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ y: -3, scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center justify-between p-4 bg-zinc-900/30 hover:bg-orange-500/[0.03] border border-white/5 hover:border-orange-500/30 rounded-2xl transition-all duration-300 group/btn cursor-pointer shadow-md"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-11 h-11 bg-orange-500/10 group-hover/btn:bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/20 transition-all shrink-0">
+                <Heart size={20} className="text-orange-500 fill-orange-500/10" />
+              </div>
+              <div className="text-left truncate">
+                <span className="block text-xs font-black text-white group-hover/btn:text-orange-500 transition-colors uppercase tracking-wider">
+                  Saweria (Local ID)
+                </span>
+                <span className="block text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">
+                  QRIS, Gopay, OVO, Dana, & LinkAja
+                </span>
+              </div>
+            </div>
+            <ChevronRight size={14} className="text-zinc-600 group-hover/btn:text-orange-500 group-hover/btn:translate-x-0.5 transition-all shrink-0" />
+          </motion.a>
+
           {/* Local ID Payment Card */}
           <motion.a
             href="https://bagibagi.co/Diaww"
@@ -163,6 +188,29 @@ export const SupportModal: React.FC<SupportDeveloperProps> = ({ onClose }) => {
           {/* Grid buttons inside modal */}
           <div className="space-y-4">
             
+            {/* Saweria */}
+            <a
+              href="https://saweria.co/diaw14"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4.5 bg-zinc-900/20 hover:bg-orange-500/[0.04] border border-white/5 hover:border-orange-500/40 rounded-2xl transition-all duration-300 group cursor-pointer"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-12 h-12 bg-orange-500/10 group-hover:bg-orange-500/20 rounded-xl flex items-center justify-center border border-orange-500/20 shrink-0">
+                  <Heart size={22} className="text-orange-500 fill-orange-500/10" />
+                </div>
+                <div className="text-left truncate">
+                  <span className="block text-sm font-black text-white group-hover:text-orange-500 transition-colors uppercase tracking-wider">
+                    Saweria (Local QRIS & E-Wallet)
+                  </span>
+                  <span className="block text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                    Gopay, OVO, Dana, LinkAja, & QRIS
+                  </span>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-zinc-600 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </a>
+
             {/* Local ID */}
             <a
               href="https://bagibagi.co/Diaww"

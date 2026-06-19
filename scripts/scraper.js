@@ -1,10 +1,16 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { Client } from 'saweria';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, '../data');
 const FILE_NAME = 'ykn-leaderboard.json';
 const FILE_PATH = path.join(DATA_DIR, FILE_NAME);
-const LEADERBOARD_API = 'https://bagibagi.co/api/partnerintegration/top-donator/streamkey?streamkey=k6OOWWlQNACUlvhsujt0xGGYOh44REgM';
+const STREAM_KEY = '404af2c94a1776c1acb47060b881adf4';
+const LEADERBOARD_API = `https://backend.saweria.co/widgets/leaderboard?stream_key=${STREAM_KEY}`;
 
 let cache = [];
 
@@ -28,7 +34,7 @@ function compareAndLog(oldList, newList) {
   if (!oldList || oldList.length === 0) {
     console.log('[LEADERBOARD SCRAPER] Inisialisasi leaderboard pertama kali. Menampilkan donatur saat ini:');
     newList.forEach((d, idx) => {
-      const name = d.userName || d.name || 'Anonymous';
+      const name = d.name || 'Anonymous';
       console.log(`  #${idx + 1} - ${name}: Rp ${Number(d.amount).toLocaleString('id-ID')}`);
     });
     return;
@@ -36,13 +42,13 @@ function compareAndLog(oldList, newList) {
 
   const oldMap = new Map();
   oldList.forEach((d, idx) => {
-    const key = d.userName || d.name || 'Anonymous';
+    const key = d.name || 'Anonymous';
     oldMap.set(key, { rank: idx + 1, amount: Number(d.amount) });
   });
 
   const changes = [];
   newList.forEach((d, idx) => {
-    const key = d.userName || d.name || 'Anonymous';
+    const key = d.name || 'Anonymous';
     const newRank = idx + 1;
     const newAmount = Number(d.amount);
 
@@ -84,14 +90,14 @@ function compareAndLog(oldList, newList) {
   // Tampilkan peringkat leaderboard terbaru di console
   console.log('\n--- POSISI LEADERBOARD SAAT INI ---');
   newList.forEach((d, idx) => {
-    const name = d.userName || d.name || 'Anonymous';
+    const name = d.name || 'Anonymous';
     console.log(`  [Rank #${idx + 1}] ${name} - Rp ${Number(d.amount).toLocaleString('id-ID')}`);
   });
   console.log('------------------------------------\n');
 }
 
 async function runScraper() {
-  console.log('[LEADERBOARD SCRAPER] Memulai fetch data leaderboard BagiBagi...');
+  console.log('[LEADERBOARD SCRAPER] Memulai fetch data leaderboard dari Saweria...');
   
   try {
     const res = await fetch(LEADERBOARD_API, {
@@ -102,13 +108,19 @@ async function runScraper() {
     
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.data)) {
+      if (data && Array.isArray(data.data)) {
         const oldCache = [...cache];
-        cache = data.data;
         
-        // Simpan ke file disk
+        // Map data dari format Saweria (donator, amount) ke format web (name, amount)
+        cache = data.data.map(item => ({
+          name: item.donator || 'Anonymous',
+          amount: Number(item.amount) || 0,
+          isVerified: false
+        }));
+        
+        // Simpan ke disk
         fs.writeFileSync(FILE_PATH, JSON.stringify(cache, null, 2));
-        console.log(`[LEADERBOARD SCRAPER] Sukses update leaderboard secara langsung -> ${FILE_NAME}`);
+        console.log(`[LEADERBOARD SCRAPER] Sukses update leaderboard dari Saweria -> ${FILE_NAME}`);
         
         // Bandingkan dan log perbedaan
         compareAndLog(oldCache, cache);
@@ -124,13 +136,43 @@ async function runScraper() {
   }
 }
 
-// Jalankan scraper saat script dimuat
+// Inisialisasi Saweria Client untuk mendengar donasi live secara real-time
+try {
+  const client = new Client();
+  client.setStreamKey(STREAM_KEY);
+
+  client.on('donations', (donations) => {
+    console.log(`\n[SAWERIA EVENT] Menerima ${donations.length} donasi baru secara real-time!`);
+    donations.forEach(d => {
+      console.log(`  - Dari: ${d.donator || 'Anonymous'}`);
+      console.log(`  - Jumlah: Rp ${Number(d.amount).toLocaleString('id-ID')}`);
+      if (d.message) console.log(`  - Pesan: "${d.message}"`);
+    });
+    
+    // Tunggu 2 detik lalu jalankan update cache
+    console.log('[SAWERIA EVENT] Menjadwalkan sinkronisasi data dengan Saweria dalam 2 detik...');
+    setTimeout(runScraper, 2000);
+  });
+
+  // Tangani error agar script tidak crash jika koneksi WebSocket diblokir oleh Cloudflare WAF hosting
+  client.on('error', (err) => {
+    console.error('[LEADERBOARD SCRAPER] Saweria client WebSocket error (Kemungkinan diblokir oleh Cloudflare WAF hosting):', err.message);
+  });
+
+  console.log(`[LEADERBOARD SCRAPER] Saweria live listener diaktifkan dengan Stream Key: ${STREAM_KEY.slice(0, 6)}***`);
+} catch (err) {
+  console.error('[LEADERBOARD SCRAPER] Gagal menginisialisasi Saweria client:', err.message);
+}
+
+// Jalankan scraper saat startup
 runScraper();
 
-// Jalankan berkala setiap 2 menit
+// Jalankan berkala setiap 2 menit (sebagai cadangan / backup sync)
 setInterval(runScraper, 2 * 60 * 1000);
 
-module.exports = {
-  getLeaderboard: () => cache,
+const getLeaderboard = () => cache;
+
+export {
+  getLeaderboard,
   runScraper
 };
