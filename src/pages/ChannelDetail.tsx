@@ -9,6 +9,7 @@ import { SupportCard } from '../components/SupportDeveloper';
 import { io } from 'socket.io-client';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import ShareModal from '../components/ShareModal';
+import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -1258,6 +1259,7 @@ const ChannelDetail = () => {
               )}
             </div>
             <SupportCard />
+            <BagiBagiLeaderboard />
 
           </div>
         </div>
