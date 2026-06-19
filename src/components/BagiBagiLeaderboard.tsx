@@ -109,7 +109,7 @@ const BagiBagiLeaderboard: React.FC = () => {
     try {
       const date = new Date(dateStr.replace(' ', 'T'));
       if (isNaN(date.getTime())) return dateStr;
-      
+
       const diffMs = Date.now() - date.getTime();
       const diffMins = Math.floor(diffMs / (1000 * 60));
       const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
@@ -119,7 +119,7 @@ const BagiBagiLeaderboard: React.FC = () => {
       if (diffHours < 24) return `${diffHours} jam lalu`;
       if (diffDays === 1) return 'Kemarin';
       if (diffDays < 7) return `${diffDays} hari lalu`;
-      
+
       return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     } catch {
       return dateStr;
@@ -152,7 +152,7 @@ const BagiBagiLeaderboard: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider font-display text-white flex items-center gap-1.5 italic leading-none">
-                Para Sultan Ganteng & Cantik
+                Top Donatur
                 <Sparkles size={11} className="text-amber-400 animate-pulse" />
               </h4>
               <p className="text-[8px] font-bold text-amber-500 uppercase tracking-widest leading-none mt-1">Leaderboard BagiBagi.co</p>
@@ -226,7 +226,7 @@ const BagiBagiLeaderboard: React.FC = () => {
                 {donors.map((donor, index) => {
                   const rank = index + 1;
                   const isTop3 = rank <= 3;
-                  
+
                   // Styled variants based on rank
                   const rankConfig = {
                     1: {
@@ -273,7 +273,7 @@ const BagiBagiLeaderboard: React.FC = () => {
                           <div className={`w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-black border shrink-0 ${rankConfig.badgeBg}`}>
                             {rankConfig.icon ? rankConfig.icon : `#${rank}`}
                           </div>
-                          
+
                           {/* Name & Verification */}
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className={`text-[10px] tracking-wide truncate ${isTop3 ? rankConfig.text : 'text-white'}`}>
