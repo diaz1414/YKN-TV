@@ -152,17 +152,11 @@ const BagiBagiLeaderboard: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider font-display text-white flex items-center gap-1.5 italic leading-none">
-                Penyokong Teratas
+                Para Sultan Ganteng & Cantik
                 <Sparkles size={11} className="text-amber-400 animate-pulse" />
               </h4>
               <p className="text-[8px] font-bold text-amber-500 uppercase tracking-widest leading-none mt-1">Leaderboard BagiBagi.co</p>
             </div>
-          </div>
-          
-          {/* Real-time Indicator */}
-          <div className="flex items-center gap-1 bg-zinc-900/80 border border-white/5 px-2 py-1 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[7px] text-zinc-400 font-extrabold uppercase tracking-wider">Live</span>
           </div>
         </div>
 
