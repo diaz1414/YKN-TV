@@ -180,7 +180,7 @@ const BagiBagiLeaderboard: React.FC = () => {
               >
                 <Heart size={32} className="text-amber-500/40 mb-2 animate-pulse" />
                 <p className="text-zinc-400 font-extrabold text-[10px] uppercase tracking-wide">Belum ada donasi terdaftar</p>
-                <p className="text-zinc-500 font-medium text-[8px] mt-1 max-w-[200px]">Dukung streamer favoritmu dan jadilah penyokong pertama di sini!</p>
+                <p className="text-zinc-500 font-medium text-[8px] mt-1 max-w-[200px]">Dukung YKN TV dan jadilah donatur pertama di sini!</p>
               </motion.div>
             ) : (
               // Leaderboard Rankings List
