@@ -13,11 +13,7 @@ interface Donor {
   createdAt?: string;
 }
 
-const getBotApiUrl = () => {
-  const envVal = import.meta.env.VITE_BOT_API_URL;
-  return envVal === '/api' ? '' : (envVal || 'http://147.135.252.68:20114');
-};
-const BOT_API_URL = getBotApiUrl();
+
 
 const BagiBagiLeaderboard: React.FC = () => {
   const [donors, setDonors] = useState<Donor[]>([]);
@@ -32,13 +28,19 @@ const BagiBagiLeaderboard: React.FC = () => {
 
     const loadData = async () => {
       try {
-        const response = await fetch(`${BOT_API_URL}/api/sports/leaderboard`);
+        const response = await fetch(`/api/proxy/https/backend.saweria.co/widgets/leaderboard?stream_key=404af2c94a1776c1acb47060b881adf4`);
         if (!response.ok) throw new Error('Response status not OK');
         
         const data = await response.json();
-        if (data.success && Array.isArray(data.data)) {
+        if (data && Array.isArray(data.data)) {
+          const mappedData = data.data.map((item: any) => ({
+            name: item.donator || 'Anonymous',
+            amount: Number(item.amount) || 0,
+            isVerified: item.is_user || false
+          }));
+
           if (isMounted) {
-            setDonors(data.data);
+            setDonors(mappedData);
             setLoading(false);
           }
         } else {
