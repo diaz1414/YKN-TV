@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Coffee, Sparkles, AlertCircle, Award, Heart, MessageSquare, CheckCircle } from 'lucide-react';
+import { supabase } from '../services/supabase';
 
 interface Donor {
   userName?: string;
@@ -28,29 +29,88 @@ const BagiBagiLeaderboard: React.FC = () => {
 
     const loadData = async () => {
       try {
-        const response = await fetch(`/api/proxy/https/backend.saweria.co/widgets/leaderboard?stream_key=404af2c94a1776c1acb47060b881adf4`);
-        if (!response.ok) throw new Error('Response status not OK');
+        // 1. Try fetching aggregated leaderboard from Supabase RPC
+        const { data, error: rpcError } = await supabase.rpc('get_ykn_leaderboard');
         
-        const data = await response.json();
-        if (data && Array.isArray(data.data)) {
-          const mappedData = data.data.map((item: any) => ({
-            name: item.donator || 'Anonymous',
+        if (rpcError) throw rpcError;
+
+        if (data && Array.isArray(data)) {
+          const mappedData = data.map((item: any) => ({
+            name: item.donator_name || 'Anonymous',
             amount: Number(item.amount) || 0,
-            isVerified: item.is_user || false
+            isVerified: false
           }));
 
           if (isMounted) {
             setDonors(mappedData);
             setLoading(false);
+            return;
           }
-        } else {
-          throw new Error('API reported unsuccessful or invalid format');
         }
       } catch (err: any) {
-        console.error('[Leaderboard] Direct API fetch failed:', err.message);
-        if (isMounted) {
-          setError('Gagal memuat leaderboard donatur');
-          setLoading(false);
+        console.warn('[Leaderboard] Supabase RPC failed, using manual aggregation:', err.message);
+        
+        // 2. Fallback: Aggregate manually from raw table rows
+        try {
+          const { data, error: tableError } = await supabase
+            .from('ykn_donations')
+            .select('donator_name, amount');
+
+          if (tableError) throw tableError;
+
+          if (data && Array.isArray(data)) {
+            const totals: Record<string, number> = {};
+            data.forEach((d: any) => {
+              const name = d.donator_name || 'Anonymous';
+              totals[name] = (totals[name] || 0) + (Number(d.amount) || 0);
+            });
+
+            const sortedData = Object.entries(totals)
+              .map(([name, amount]) => ({
+                name,
+                amount,
+                isVerified: false
+              }))
+              .sort((a, b) => b.amount - a.amount)
+              .slice(0, 15);
+
+            if (isMounted) {
+              setDonors(sortedData);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (fallbackErr: any) {
+          console.error('[Leaderboard] Supabase table fallback query failed:', fallbackErr.message);
+          
+          // 3. Final Fallback: Direct proxy fetch (works in local dev/residential IP environments)
+          try {
+            const url = import.meta.env.VITE_LEADERBOARD_API_URL || 
+              `/api/proxy/https/backend.saweria.co/widgets/leaderboard?stream_key=404af2c94a1776c1acb47060b881adf4`;
+            const response = await fetch(url);
+            if (response.ok) {
+              const data = await response.json();
+              if (data && Array.isArray(data.data)) {
+                const mappedData = data.data.map((item: any) => ({
+                  name: item.donator || 'Anonymous',
+                  amount: Number(item.amount) || 0,
+                  isVerified: item.is_user || false
+                }));
+                if (isMounted) {
+                  setDonors(mappedData);
+                  setLoading(false);
+                  return;
+                }
+              }
+            }
+          } catch (directErr: any) {
+            console.error('[Leaderboard] Saweria API direct fetch fallback failed:', directErr.message);
+          }
+
+          if (isMounted) {
+            setError('Gagal memuat leaderboard donatur');
+            setLoading(false);
+          }
         }
       }
     };
