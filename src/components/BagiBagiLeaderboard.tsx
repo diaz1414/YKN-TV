@@ -13,7 +13,11 @@ interface Donor {
   createdAt?: string;
 }
 
-const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
+const getBotApiUrl = () => {
+  const envVal = import.meta.env.VITE_BOT_API_URL;
+  return envVal === '/api' ? '' : (envVal || 'http://147.135.252.68:20114');
+};
+const BOT_API_URL = getBotApiUrl();
 
 const BagiBagiLeaderboard: React.FC = () => {
   const [donors, setDonors] = useState<Donor[]>([]);

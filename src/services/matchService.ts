@@ -198,7 +198,8 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
       const [eventsResult, wcGamesResult, espnResult] = await Promise.allSettled([
         (async () => {
           try {
-            const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
+            const envVal = import.meta.env.VITE_BOT_API_URL;
+            const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'http://147.135.252.68:20114');
             const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
             return await res.json();
           } catch (botErr) {
