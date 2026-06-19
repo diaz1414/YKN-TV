@@ -13,8 +13,6 @@ interface Donor {
   createdAt?: string;
 }
 
-const STREAMKEY = 'k6OOWWlQNACUlvhsujt0xGGYOh44REgM';
-const API_URL = `https://bagibagi.co/api/partnerintegration/top-donator/streamkey?streamkey=${STREAMKEY}`;
 const BOT_API_URL = import.meta.env.VITE_BOT_API_URL || 'http://147.135.252.68:20114';
 
 const BagiBagiLeaderboard: React.FC = () => {
@@ -29,63 +27,25 @@ const BagiBagiLeaderboard: React.FC = () => {
     setError(null);
 
     const loadData = async () => {
-      // Strategy 1: Fetch through the dedicated Bot Scraper Endpoint
       try {
         const response = await fetch(`${BOT_API_URL}/api/sports/leaderboard`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && Array.isArray(data.data)) {
-            if (isMounted) {
-              setDonors(data.data);
-              setLoading(false);
-            }
-            return;
+        if (!response.ok) throw new Error('Response status not OK');
+        
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          if (isMounted) {
+            setDonors(data.data);
+            setLoading(false);
           }
+        } else {
+          throw new Error('API reported unsuccessful or invalid format');
         }
-      } catch (err) {
-        console.warn('[Leaderboard] Bot scraper endpoint failed, trying client-side bypass...', err);
-      }
-
-      // Strategy 2: allorigins.win (Client fallback)
-      try {
-        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(API_URL)}&nocache=${Date.now()}`);
-        if (response.ok) {
-          const wrapper = await response.json();
-          if (wrapper.contents) {
-            const data = JSON.parse(wrapper.contents);
-            if (data.success && Array.isArray(data.data)) {
-              if (isMounted) {
-                setDonors(data.data);
-                setLoading(false);
-              }
-              return;
-            }
-          }
+      } catch (err: any) {
+        console.error('[Leaderboard] Direct API fetch failed:', err.message);
+        if (isMounted) {
+          setError('Gagal memuat leaderboard donatur');
+          setLoading(false);
         }
-      } catch (err) {
-        console.warn('[Leaderboard] Proxy 1 (AllOrigins) client fallback failed:', err);
-      }
-
-      // Strategy 3: codetabs (Client fallback)
-      try {
-        const response = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(API_URL)}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && Array.isArray(data.data)) {
-            if (isMounted) {
-              setDonors(data.data);
-              setLoading(false);
-            }
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn('[Leaderboard] Proxy 2 (CodeTabs) client fallback failed:', err);
-      }
-
-      if (isMounted) {
-        setError('Gagal memuat leaderboard donatur');
-        setLoading(false);
       }
     };
 
