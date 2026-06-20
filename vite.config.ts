@@ -59,9 +59,20 @@ const dynamicCorsProxyPlugin = () => ({
 async function handleRequest(url: string, host: string, req: any, res: any) {
   try {
     const targetUrl = new URL(url);
+    
+    let referer = targetUrl.origin;
+    let origin = targetUrl.origin;
+    
+    // Explicit referer/origin override for RTB Go CloudFront streams to bypass 403 restrictions
+    if (targetUrl.hostname.includes('cloudfront.net') || url.includes('rtbgo')) {
+      referer = 'https://www.rtbgo.bn/';
+      origin = 'https://www.rtbgo.bn';
+    }
+
     const headers: Record<string, string> = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Referer': targetUrl.origin
+      'Referer': referer,
+      'Origin': origin
     };
 
     if (req.headers['range']) {
