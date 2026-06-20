@@ -115,6 +115,7 @@
 
     /* On mobile, when in fullscreen, rotate to landscape if portrait */
     @media screen and (max-width: 768px) {
+
       :fullscreen,
       :-webkit-full-screen {
         position: fixed !important;
@@ -131,9 +132,12 @@
         justify-content: center !important;
       }
     }
+
     /* Block printing / print-to-PDF screenshot */
     @media print {
-      body { display: none !important; }
+      body {
+        display: none !important;
+      }
     }
 
     /* --- YKN TV Toast Notification Styles --- */
@@ -210,9 +214,21 @@
     }
 
     @keyframes ykn-shake-anim {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      20%, 60% { transform: translateX(-52%) translateY(0); }
-      40%, 80% { transform: translateX(-48%) translateY(0); }
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-52%) translateY(0);
+      }
+
+      40%,
+      80% {
+        transform: translateX(-48%) translateY(0);
+      }
     }
   </style>
 </head>
@@ -277,13 +293,13 @@
         createToast();
         // Reset classes
         toastContainer.classList.remove('show', 'ykn-shake');
-        
+
         // Trigger reflow to restart animation
         void toastContainer.offsetWidth;
-        
+
         // Show and shake
         toastContainer.classList.add('show', 'ykn-shake');
-        
+
         // Clear previous timeout and set new one
         clearTimeout(toastTimeout);
         toastTimeout = setTimeout(function () {
@@ -357,7 +373,7 @@
           console.clear();
           console.log('%c⛔ YKN TV — AKSES DILARANG', 'color:#d4af37;font-size:32px;font-weight:900;');
           console.log('%cHalaman ini dilindungi. Aktivitas mencurigakan telah terdeteksi dan dicatat.', 'color:#ef4444;font-size:14px;font-weight:bold;');
-          console.log('%c© 2026 YKN TV. Hak cipta dilindungi undang-undang.', 'color:#71717a;font-size:11px;');
+          console.log('%c© 2026 YKN TV. Dilindungi Oleh YKN TV.', 'color:#71717a;font-size:11px;');
         } else if (!isOpen) {
           _devToolsOpen = false;
         }
