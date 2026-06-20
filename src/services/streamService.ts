@@ -127,7 +127,7 @@ export const getProxiedUrl = (url: string, force = false) => {
   const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
 
   if (needsProxy) {
-    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'http://147.135.252.68:20114/api/proxy';
+    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxyy';
     const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
     return `${proxyBase}/${cleanUrl}`;
   }
