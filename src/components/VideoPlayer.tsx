@@ -39,7 +39,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [levels, setLevels] = useState<QualityOption[]>([]);
   const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
   const [showQualityMenu, setShowQualityMenu] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(true);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
@@ -49,7 +49,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     if (servers.length > 0) {
       setCurrentServer(servers[0]);
       setIsPlaying(false);
-      setHasStarted(false);
+      setHasStarted(true);
       setIsBuffering(false);
       setIsAtLiveEdge(true);
     }
@@ -200,6 +200,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       const onShakaLoadSuccess = (playerInstance: shaka.Player) => {
         console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+        setError(null);
 
         const activeTrack = playerInstance.getVariantTracks().find(t => t.active);
         if (activeTrack && activeTrack.height) {
@@ -797,7 +798,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               onClick={() => {
                 setCurrentServer(server);
                 setIsPlaying(false);
-                setHasStarted(false);
+                setHasStarted(true);
                 setIsBuffering(false);
                 setIsAtLiveEdge(true);
               }}
