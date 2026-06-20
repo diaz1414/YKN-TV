@@ -414,6 +414,25 @@ const ChannelDetail = () => {
     fetchStreamData();
   }, [id]);
 
+  // Dynamically update document title based on stream status and name
+  useEffect(() => {
+    const originalTitle = document.title;
+    if (stream) {
+      if (stream.isChannel) {
+        document.title = `📺 Nonton ${stream.name} Live | YKN TV`;
+      } else if (matchStatus === 'upcoming') {
+        document.title = `📅 Jadwal ${stream.name} | YKN TV`;
+      } else if (matchStatus === 'finished') {
+        document.title = `🏁 Selesai: ${stream.name} | YKN TV`;
+      } else {
+        document.title = `🔴 Live ${stream.name} | YKN TV`;
+      }
+    }
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [stream, matchStatus]);
+
   const handleShare = () => {
     setIsShareOpen(true);
   };
