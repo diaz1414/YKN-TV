@@ -161,10 +161,10 @@ const AdminDashboard = () => {
       return;
     }
 
-    const isProduction = import.meta.env.PROD;
-    const socketUrl = isProduction ? window.location.origin : 'http://147.135.252.68:20114';
+    const envVal = import.meta.env.VITE_BOT_API_URL;
+    const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'http://147.135.252.68:20114');
     const newSocket = io(socketUrl, {
-      transports: isProduction ? ['polling'] : ['websocket', 'polling'],
+      transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 2000
     });
