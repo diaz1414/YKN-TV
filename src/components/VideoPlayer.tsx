@@ -133,6 +133,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
+    const videoEl = videoRef.current;
+    const handleWebkitBeginFullscreen = () => {
+      setIsFullscreen(true);
+    };
+    const handleWebkitEndFullscreen = () => {
+      setIsFullscreen(false);
+    };
+
+    if (videoEl) {
+      videoEl.addEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen);
+      videoEl.addEventListener('webkitendfullscreen', handleWebkitEndFullscreen);
+    }
+
     return () => {
       destroyPlayers();
       if (playerRef.current) {
@@ -140,6 +153,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      if (videoEl) {
+        videoEl.removeEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen);
+        videoEl.removeEventListener('webkitendfullscreen', handleWebkitEndFullscreen);
+      }
     };
   }, []);
 
