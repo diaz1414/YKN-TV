@@ -264,6 +264,15 @@
     (function () {
       'use strict';
 
+      var _host = window.location.hostname;
+      var _isLocal = _host === 'localhost' || _host === '127.0.0.1' || _host.startsWith('192.168.');
+
+      function isDevBypassed() {
+        if (_isLocal) return true;
+        var _role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+        return _role === 'developer';
+      }
+
       // ── Anti-copy protection with premium toast notification ──────────────────
       var toastContainer;
       var toastTimeout;
@@ -313,6 +322,7 @@
       }
 
       document.addEventListener('copy', function (e) {
+        if (isDevBypassed()) return;
         if (e.clipboardData) {
           e.clipboardData.setData('text/plain', '© YKN TV — Konten ini dilindungi hak cipta.');
           e.preventDefault();
@@ -320,10 +330,8 @@
         showCopyToast();
       });
 
-      // ── 0. Production-only guard — skip ALL other protections on localhost ─
-      var _host = window.location.hostname;
-      var _isLocal = _host === 'localhost' || _host === '127.0.0.1' || _host.startsWith('192.168.');
-      if (_isLocal) return;
+      // ── 0. Production-only guard — skip ALL other protections on localhost & for developers ─
+      if (isDevBypassed()) return;
 
       // ── 1. Anti-iframe: prevent embedding in foreign sites ──────
       if (window.top !== window.self) {
@@ -333,12 +341,14 @@
 
       // ── 2. Disable right-click context menu ─────────────────────
       document.addEventListener('contextmenu', function (e) {
+        if (isDevBypassed()) return;
         e.preventDefault();
         return false;
       });
 
       // ── 3. Block keyboard inspector shortcuts ───────────────────
       document.addEventListener('keydown', function (e) {
+        if (isDevBypassed()) return;
         // F12
         if (e.key === 'F12') { e.preventDefault(); return false; }
         // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (DevTools)
@@ -364,6 +374,7 @@
       var _devToolsOpen = false;
 
       function _checkDevTools() {
+        if (isDevBypassed()) return;
         var widthDiff = window.outerWidth - window.innerWidth;
         var heightDiff = window.outerHeight - window.innerHeight;
         var isOpen = widthDiff > _devToolsThreshold || heightDiff > _devToolsThreshold;
@@ -381,6 +392,7 @@
 
       // ── 5. Clear console continuously when DevTools is open ─────
       setInterval(function () {
+        if (isDevBypassed()) return;
         _checkDevTools();
         if (_devToolsOpen) {
           console.clear();
@@ -391,6 +403,7 @@
       // Runs only in production (not localhost)
       if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         setInterval(function () {
+          if (isDevBypassed()) return;
           (function () {
             return false;
           }.toString().includes('devtools'));
@@ -400,6 +413,7 @@
 
       // ── 8. Disable drag (prevents dragging images/links) ────────
       document.addEventListener('dragstart', function (e) {
+        if (isDevBypassed()) return;
         e.preventDefault();
         return false;
       });
@@ -409,6 +423,7 @@
 
       // ── 10. Console warning for curious devs ────────────────────
       setTimeout(function () {
+        if (isDevBypassed()) return;
         console.clear();
         console.log('%c⚠ Perhatian!', 'color:#f59e0b;font-size:24px;font-weight:900;');
         console.log('%cJika seseorang menyuruh Anda mengetik/paste sesuatu di sini, itu adalah penipuan.', 'color:#ef4444;font-size:13px;font-weight:bold;');

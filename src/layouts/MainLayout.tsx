@@ -127,6 +127,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     // Only protect in production mode
     if (!import.meta.env.PROD) return;
 
+    // Check if developer role is logged in
+    const savedRole = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+    if (savedRole === 'developer' || adminRole === 'developer') return;
+
     // 1. Disable Right Click
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -156,6 +160,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     document.addEventListener('keydown', handleKeyDown);
 
     // 3. Disable Console Output in Production
+    const originalLog = window.console.log;
+    const originalWarn = window.console.warn;
+    const originalError = window.console.error;
+    const originalInfo = window.console.info;
+    const originalDebug = window.console.debug;
+
     const dummyFunc = () => {};
     window.console.log = dummyFunc;
     window.console.warn = dummyFunc;
@@ -166,8 +176,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
+      
+      // Restore console functions
+      window.console.log = originalLog;
+      window.console.warn = originalWarn;
+      window.console.error = originalError;
+      window.console.info = originalInfo;
+      window.console.debug = originalDebug;
     };
-  }, []);
+  }, [adminRole]);
 
   const getTeamAbbreviation = (name: string): string => {
     if (!name) return 'TBD';

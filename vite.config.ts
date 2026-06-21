@@ -40,7 +40,11 @@ const dynamicCorsProxyPlugin = () => ({
         return;
       }
 
-      const match = (req.url || '').match(/^\/api\/proxy\/(https?)\/(.+)$/);
+      // Normalize path format (convert /api/proxy/https://... to /api/proxy/https/...)
+      let cleanUrl = req.url || '';
+      cleanUrl = cleanUrl.replace(/^\/api\/proxy\/(https?):\/\//i, '/api/proxy/$1/');
+
+      const match = cleanUrl.match(/^\/api\/proxy\/(https?)\/(.+)$/);
       if (!match) {
         res.statusCode = 400;
         res.end('Invalid proxy request format. Use /api/proxy/https/domain/path?query');
@@ -48,7 +52,16 @@ const dynamicCorsProxyPlugin = () => ({
       }
 
       const protocol = match[1];
-      const rest = match[2];
+      let rest = match[2];
+
+      // Auto-correct known typos in target URL
+      if (rest.includes('d12l1ahplmeugs.cloudfront.net')) {
+        rest = rest.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
+      }
+      if (rest.includes('smil:rtbg/')) {
+        rest = rest.replace('smil:rtbg/', 'smil:rtbgo/');
+      }
+
       const targetUrlStr = `${protocol}://${rest}`;
 
       await handleRequest(targetUrlStr, host, req, res);

@@ -123,8 +123,32 @@ export const getProxiedUrl = (url: string, force = false) => {
   if (!ENABLE_PROXY) {
     return url;
   }
+
+  // 1. If the URL already contains a proxy prefix, extract the raw target URL to avoid nested proxying
+  let cleanTargetUrl = url.trim();
+  const proxyPattern = /^(https?:\/\/[^\/]+)?\/api\/proxy\/(https?\/|https?:\/\/)?(.*)$/i;
+  const match = cleanTargetUrl.match(proxyPattern);
+  if (match) {
+    const targetPath = match[3];
+    if (targetPath.startsWith('http/') || targetPath.startsWith('https/')) {
+      cleanTargetUrl = targetPath.replace(/^(https?)\//i, '$1://');
+    } else if (targetPath.startsWith('http://') || targetPath.startsWith('https://')) {
+      cleanTargetUrl = targetPath;
+    } else {
+      cleanTargetUrl = `https://${targetPath}`;
+    }
+  }
+
+  // 2. Auto-correct known database input typos for RTB Go
+  if (cleanTargetUrl.includes('d12l1ahplmeugs.cloudfront.net')) {
+    cleanTargetUrl = cleanTargetUrl.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
+  }
+  if (cleanTargetUrl.includes('smil:rtbg/')) {
+    cleanTargetUrl = cleanTargetUrl.replace('smil:rtbg/', 'smil:rtbgo/');
+  }
+
   const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com', 'cloudfront.net'];
-  const needsProxy = force || restrictedDomains.some(domain => url.includes(domain));
+  const needsProxy = force || restrictedDomains.some(domain => cleanTargetUrl.includes(domain));
 
   if (needsProxy) {
     let proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxy';
@@ -134,10 +158,10 @@ export const getProxiedUrl = (url: string, force = false) => {
       proxyBase = '/api/proxy';
     }
 
-    const cleanUrl = url.replace(/^(https?):\/\//, '$1/');
+    const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
     return `${proxyBase}/${cleanUrl}`;
   }
-  return url;
+  return cleanTargetUrl;
 };
 
 // Clean HTML tags and redundant text from match descriptions
