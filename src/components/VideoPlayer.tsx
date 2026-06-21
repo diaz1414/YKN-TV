@@ -127,31 +127,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     });
 
     const handleFullscreenChange = () => {
-      const isFs = !!document.fullscreenElement;
+      const isFs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
       setIsFullscreen(isFs);
-      if (isFs) {
-        // Try native API (Android Chrome)
-        const orientation = screen.orientation as any;
-        if (orientation && typeof orientation.lock === 'function') {
-          orientation.lock('landscape').catch((err: any) => {
-            console.warn('Orientation lock failed:', err);
-          });
-        }
-        // CSS fallback for iOS Safari (no API support )
-        document.body.classList.add('ykn-fullscreen-active');
-      } else {
-        const orientation = screen.orientation as any;
-        if (orientation && typeof orientation.unlock === 'function') {
-          try {
-            orientation.unlock();
-          } catch (e) {
-            console.warn('Orientation unlock failed:', e);
-          }
-        }
-        document.body.classList.remove('ykn-fullscreen-active');
-      }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
     return () => {
       destroyPlayers();
@@ -159,8 +139,37 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
       }
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  // Manage body scroll and orientation lock dynamically when isFullscreen changes
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.classList.add('ykn-fullscreen-active');
+      document.body.style.overflow = 'hidden';
+
+      // Auto-lock landscape orientation if supported
+      const orientation = screen.orientation as any;
+      if (orientation && typeof orientation.lock === 'function') {
+        orientation.lock('landscape').catch((err: any) => {
+          console.warn('Orientation lock failed:', err);
+        });
+      }
+    } else {
+      document.body.classList.remove('ykn-fullscreen-active');
+      document.body.style.overflow = '';
+
+      const orientation = screen.orientation as any;
+      if (orientation && typeof orientation.unlock === 'function') {
+        try {
+          orientation.unlock();
+        } catch (e) {
+          console.warn('Orientation unlock failed:', e);
+        }
+      }
+    }
+  }, [isFullscreen]);
 
   useEffect(() => {
     const loadStream = async () => {
@@ -415,14 +424,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(err => {
-        console.error('Fullscreen failed:', err);
-      });
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!isFullscreen) {
+      // Enter Fullscreen (handles browser compatibility and fallbacks)
+      if (container.requestFullscreen) {
+        container.requestFullscreen().catch(err => {
+          console.warn('Native fullscreen failed, using CSS fallback:', err);
+        });
+      } else if ((container as any).webkitRequestFullscreen) {
+        (container as any).webkitRequestFullscreen();
+      } else if (videoRef.current && (videoRef.current as any).webkitEnterFullscreen) {
+        // iPhone native video fullscreen fallback
+        try {
+          (videoRef.current as any).webkitEnterFullscreen();
+        } catch (err) {
+          console.warn('webkitEnterFullscreen failed:', err);
+        }
+      }
       setIsFullscreen(true);
     } else {
-      document.exitFullscreen();
+      // Exit Fullscreen
+      if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(err => console.warn(err));
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      }
       setIsFullscreen(false);
     }
   };
@@ -533,7 +563,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       <div
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${isFullscreen
-          ? 'w-screen h-screen rounded-none ring-0 border-none z-[9999]'
+          ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
           } ${showControls ? '' : 'cursor-none'}`}
       >
