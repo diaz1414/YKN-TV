@@ -2,6 +2,7 @@ import localEvents from '../data/tv-events.json';
 
 export interface Match {
   id: string;
+  parentMatchId?: string;
   homeTeam: {
     name: string;
     logo: string;
@@ -353,6 +354,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
               parsedMatches.push({
                 ...originalMatch,
                 id: `${event.id_event}9`,
+                parentMatchId: event.id_event,
                 league: {
                   name: "FIFA World Cup [RTB Go]",
                   logo: '/favicon.svg'
@@ -365,21 +367,32 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
         // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
         const sorted = [...parsedMatches].sort((a, b) => {
-          if (a.status === b.status) {
-            const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
-            const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
-            if (dateA === dateB) {
-              const isRtbA = a.league.name.includes("[RTB Go]");
-              const isRtbB = b.league.name.includes("[RTB Go]");
-              if (isRtbA && !isRtbB) return 1;
-              if (!isRtbA && isRtbB) return -1;
-            }
+          if (a.status !== b.status) {
+            if (a.status === 'live') return -1;
+            if (b.status === 'live') return 1;
+            if (a.status === 'upcoming' && b.status === 'finished') return -1;
+            if (a.status === 'finished' && b.status === 'upcoming') return 1;
+            return 0;
+          }
+
+          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+          if (dateA !== dateB) {
             return dateA - dateB;
           }
-          if (a.status === 'live') return -1;
-          if (b.status === 'live') return 1;
-          if (a.status === 'upcoming' && b.status === 'finished') return -1;
-          if (a.status === 'finished' && b.status === 'upcoming') return 1;
+
+          // Group by their base match ID (parentMatchId or id) to keep RTB Go version with its parent match
+          const baseIdA = a.parentMatchId || a.id;
+          const baseIdB = b.parentMatchId || b.id;
+          if (baseIdA !== baseIdB) {
+            return baseIdA.localeCompare(baseIdB);
+          }
+
+          // Put RTB Go version directly after the original match
+          const isRtbA = a.league.name.includes("[RTB Go]");
+          const isRtbB = b.league.name.includes("[RTB Go]");
+          if (isRtbA && !isRtbB) return 1;
+          if (!isRtbA && isRtbB) return -1;
           return 0;
         });
 
@@ -444,6 +457,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
             parsedMatches.push({
               ...originalMatch,
               id: `${event.id_event}9`,
+              parentMatchId: event.id_event,
               league: {
                 name: "FIFA World Cup [RTB Go]",
                 logo: '/favicon.svg'
@@ -454,21 +468,32 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         }
       });
       const sorted = [...parsedMatches].sort((a, b) => {
-        if (a.status === b.status) {
-          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
-          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
-          if (dateA === dateB) {
-            const isRtbA = a.league.name.includes("[RTB Go]");
-            const isRtbB = b.league.name.includes("[RTB Go]");
-            if (isRtbA && !isRtbB) return 1;
-            if (!isRtbA && isRtbB) return -1;
-          }
+        if (a.status !== b.status) {
+          if (a.status === 'live') return -1;
+          if (b.status === 'live') return 1;
+          if (a.status === 'upcoming' && b.status === 'finished') return -1;
+          if (a.status === 'finished' && b.status === 'upcoming') return 1;
+          return 0;
+        }
+
+        const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+        const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+        if (dateA !== dateB) {
           return dateA - dateB;
         }
-        if (a.status === 'live') return -1;
-        if (b.status === 'live') return 1;
-        if (a.status === 'upcoming' && b.status === 'finished') return -1;
-        if (a.status === 'finished' && b.status === 'upcoming') return 1;
+
+        // Group by their base match ID (parentMatchId or id) to keep RTB Go version with its parent match
+        const baseIdA = a.parentMatchId || a.id;
+        const baseIdB = b.parentMatchId || b.id;
+        if (baseIdA !== baseIdB) {
+          return baseIdA.localeCompare(baseIdB);
+        }
+
+        // Put RTB Go version directly after the original match
+        const isRtbA = a.league.name.includes("[RTB Go]");
+        const isRtbB = b.league.name.includes("[RTB Go]");
+        if (isRtbA && !isRtbB) return 1;
+        if (!isRtbA && isRtbB) return -1;
         return 0;
       });
 
