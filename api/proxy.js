@@ -16,28 +16,24 @@ export default async function handler(req, res) {
   let cleanUrl = req.url || '';
   cleanUrl = cleanUrl.replace(/^\/api\/proxy\/(https?):\/\//i, '/api/proxy/$1/');
 
-  // Check if it is a CloudFront stream (which VPS blocks, so we must handle on Vercel)
-  const isCloudfront = cleanUrl.includes('cloudfront.net') || cleanUrl.includes('rtbgo');
-
-  if (!isCloudfront) {
-    // Redirect non-cloudfront proxy requests to the VPS to save Vercel bandwidth limits
-    const targetPath = (req.url || '').replace(/^\/api\/proxy\//, '');
-    res.writeHead(307, {
-      'Location': `https://api.ykn.my.id/api/proxy/${targetPath}`,
-      'Access-Control-Allow-Origin': '*'
-    });
-    res.end();
-    return;
-  }
-
-  // Parse path-based target URL
-  // req.url is like: /api/proxy/https/stitcher.pluto.tv/foo?token=123
+  // Extract target URL from path or query parameters
+  let targetUrlStr = '';
   const match = cleanUrl.match(/^\/api\/proxy\/(https?)\/(.+)$/);
-  if (!match) {
-    // Fallback to query parameter check just in case
+  if (match) {
+    const protocol = match[1];
+    let rest = match[2];
+    
+    // Auto-correct known typos in target URL
+    if (rest.includes('d12l1ahplmeugs.cloudfront.net')) {
+      rest = rest.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
+    }
+    if (rest.includes('smil:rtbg/')) {
+      rest = rest.replace('smil:rtbg/', 'smil:rtbgo/');
+    }
+    targetUrlStr = `${protocol}://${rest}`;
+  } else {
     const queryUrl = req.query.url;
     if (queryUrl) {
-      // Auto-correct typos in query URL
       let correctedQueryUrl = queryUrl;
       if (correctedQueryUrl.includes('d12l1ahplmeugs.cloudfront.net')) {
         correctedQueryUrl = correctedQueryUrl.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
@@ -45,28 +41,36 @@ export default async function handler(req, res) {
       if (correctedQueryUrl.includes('smil:rtbg/')) {
         correctedQueryUrl = correctedQueryUrl.replace('smil:rtbg/', 'smil:rtbgo/');
       }
-      await handleRequest(correctedQueryUrl, req, res);
-      return;
+      targetUrlStr = correctedQueryUrl;
     }
+  }
+
+  if (!targetUrlStr) {
     res.statusCode = 400;
     res.end('Invalid proxy request format. Use /api/proxy/https/domain/path?query');
     return;
   }
 
-  const protocol = match[1];
-  let rest = match[2];
+  const isCloudfront = targetUrlStr.includes('cloudfront.net') || targetUrlStr.includes('rtbgo');
 
-  // Auto-correct known typos in target URL
-  if (rest.includes('d12l1ahplmeugs.cloudfront.net')) {
-    rest = rest.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
+  if (isCloudfront) {
+    // Redirect cloudfront streams directly to the target URL (browser can play them directly)
+    res.writeHead(307, {
+      'Location': targetUrlStr,
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end();
+    return;
+  } else {
+    // Redirect other proxy requests to the VPS to completely save Vercel bandwidth and execution limits
+    const cleanTargetPath = targetUrlStr.replace(/^(https?):\/\//, '$1/');
+    res.writeHead(307, {
+      'Location': `https://api.ykn.my.id/api/proxy/${cleanTargetPath}`,
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end();
+    return;
   }
-  if (rest.includes('smil:rtbg/')) {
-    rest = rest.replace('smil:rtbg/', 'smil:rtbgo/');
-  }
-
-  const targetUrlStr = `${protocol}://${rest}`;
-
-  await handleRequest(targetUrlStr, req, res);
 }
 
 async function handleRequest(url, req, res) {

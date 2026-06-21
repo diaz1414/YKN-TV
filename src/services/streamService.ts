@@ -147,18 +147,21 @@ export const getProxiedUrl = (url: string, force = false) => {
     cleanTargetUrl = cleanTargetUrl.replace('smil:rtbg/', 'smil:rtbgo/');
   }
 
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com', 'cloudfront.net'];
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com'];
+  const isCloudfront = cleanTargetUrl.includes('cloudfront.net') || cleanTargetUrl.includes('rtbgo');
+
+  // CloudFront streams have CORS enabled and can be played directly by the browser.
+  // Bypassing the proxy completely eliminates Vercel Edge Requests and bandwidth usage.
+  if (isCloudfront && !force) {
+    return cleanTargetUrl;
+  }
+
   const needsProxy = force || restrictedDomains.some(domain => cleanTargetUrl.includes(domain));
 
   if (needsProxy) {
     let proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxy';
 
-    // If the stream is cloudfront.net (RTB Go), bypass VPS proxy and use Vercel proxy
-    // to avoid the VPS IP block.
-    const isCloudfront = cleanTargetUrl.includes('cloudfront.net') || cleanTargetUrl.includes('rtbgo');
-    if (isCloudfront) {
-      proxyBase = '/api/proxy';
-    } else if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
       // Use local proxy handler during development on localhost for other domains
       proxyBase = '/api/proxy';
     }
