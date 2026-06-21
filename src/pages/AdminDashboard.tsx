@@ -162,7 +162,7 @@ const AdminDashboard = () => {
     }
 
     const envVal = import.meta.env.VITE_BOT_API_URL;
-    const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'http://147.135.252.68:20114');
+    const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'https://api.ykn.my.id');
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
@@ -455,8 +455,8 @@ const AdminDashboard = () => {
 
     const fetchRealtimeViewers = async () => {
       try {
-        const isProd = import.meta.env.PROD;
-        const apiBase = isProd ? '' : 'http://147.135.252.68:20114';
+        const envVal = import.meta.env.VITE_BOT_API_URL;
+        const apiBase = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
         const res = await axios.get<MonitorRoom[]>(`${apiBase}/api/sports/monitoring`);
 
         // Convert array to record mapping: roomId -> viewers
@@ -662,8 +662,8 @@ const AdminDashboard = () => {
     setScraping(true);
     setScrapeSuccess(false);
     try {
-      const isProd = import.meta.env.PROD;
-      const apiBase = isProd ? '' : 'http://147.135.252.68:20114';
+      const envVal = import.meta.env.VITE_BOT_API_URL;
+      const apiBase = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
       await axios.post(`${apiBase}/api/sports/scrape`);
       setScrapeSuccess(true);
       setTimeout(() => setScrapeSuccess(false), 3000);

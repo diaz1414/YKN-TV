@@ -196,7 +196,7 @@ export const getLiveSportsData = async (): Promise<{
   try {
     // 1. Primary Source: Fetch from the bot's API endpoints
     const envVal = import.meta.env.VITE_BOT_API_URL;
-    const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'http://147.135.252.68:20114');
+    const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
     const [eventsRes, sportsRes, liveRes] = await Promise.all([
       axios.get<MatchEvent[]>(`${BOT_API_URL}/api/sports/events`),
       axios.get<ChannelEvent[]>(`${BOT_API_URL}/api/sports/tv`),

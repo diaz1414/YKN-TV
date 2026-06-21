@@ -110,7 +110,7 @@ const ChannelDetail = () => {
     }
 
     const envVal = import.meta.env.VITE_BOT_API_URL;
-    const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'http://147.135.252.68:20114');
+    const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'https://api.ykn.my.id');
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,

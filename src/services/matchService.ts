@@ -200,7 +200,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         (async () => {
           try {
             const envVal = import.meta.env.VITE_BOT_API_URL;
-            const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'http://147.135.252.68:20114');
+            const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
             const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
             return await res.json();
           } catch (botErr) {
