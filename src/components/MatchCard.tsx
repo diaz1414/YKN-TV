@@ -112,7 +112,7 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 ${
+      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 tv-focusable ${
         isLive 
           ? 'border-primary/45 shadow-lg shadow-primary/5' 
           : isStartingSoon
@@ -121,6 +121,7 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
               ? (isGracePeriod ? 'border-primary/20 hover:border-primary/40 opacity-90' : 'border-white/5 opacity-80')
               : 'border-white/10 hover:border-white/20'
       }`}
+      tabIndex={0}
     >
       {/* Accent Glow for Live / Starting Soon */}
       {isLive && (

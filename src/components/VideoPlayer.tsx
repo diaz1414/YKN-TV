@@ -579,10 +579,72 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     <div className="space-y-6">
       <div
         ref={containerRef}
-        className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 ${isFullscreen
+        className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
           ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
           } ${showControls ? '' : 'cursor-none'}`}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          // Only trigger if TV mode is active (body class exists)
+          if (!document.body.classList.contains('tv-mode-active')) return;
+          
+          switch (e.key) {
+            case 'ArrowUp':
+              e.preventDefault();
+              e.stopPropagation();
+              setVolume((prev) => {
+                const next = Math.min(prev + 0.1, 1);
+                if (videoRef.current) {
+                  videoRef.current.volume = next;
+                  videoRef.current.muted = next === 0;
+                  setIsMuted(next === 0);
+                }
+                return next;
+              });
+              setShowControls(true);
+              break;
+            case 'ArrowDown':
+              e.preventDefault();
+              e.stopPropagation();
+              setVolume((prev) => {
+                const next = Math.max(prev - 0.1, 0);
+                if (videoRef.current) {
+                  videoRef.current.volume = next;
+                  videoRef.current.muted = next === 0;
+                  setIsMuted(next === 0);
+                }
+                return next;
+              });
+              setShowControls(true);
+              break;
+            case 'ArrowLeft':
+              if (!isLive) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (videoRef.current) {
+                  videoRef.current.currentTime = Math.max(videoRef.current.currentTime - 10, 0);
+                }
+                setShowControls(true);
+              }
+              break;
+            case 'ArrowRight':
+              if (!isLive) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (videoRef.current) {
+                  videoRef.current.currentTime = Math.min(videoRef.current.currentTime + 10, duration);
+                }
+                setShowControls(true);
+              }
+              break;
+            case 'Enter':
+            case ' ':
+              e.preventDefault();
+              e.stopPropagation();
+              togglePlay();
+              break;
+          }
+        }}
       >
         <video
           ref={videoRef}
@@ -653,7 +715,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               {/* Play / Pause */}
               <button
                 onClick={() => togglePlay()}
-                className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0"
+                className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0 tv-focusable"
+                tabIndex={0}
               >
                 {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
               </button>
@@ -662,7 +725,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               <div className="flex items-center gap-1 group/volume relative">
                 <button
                   onClick={toggleMute}
-                  className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0"
+                  className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
+                  tabIndex={0}
                 >
                   {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
                 </button>
@@ -681,11 +745,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               {isLive ? (
                 <button
                   onClick={seekToLiveEdge}
-                  className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer ${isAtLiveEdge
+                  className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer tv-focusable ${isAtLiveEdge
                     ? 'bg-red-500/20 border border-red-400/50 text-red-400 shadow-[0_0_10px_rgba(248,113,113,0.35)] animate-pulse'
                     : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-400 hover:border-red-400/40'
                     }`}
                   title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
+                  tabIndex={0}
                 >
                   <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-400' : 'bg-zinc-500'}`} />
                   {isAtLiveEdge ? 'LIVE' : 'LIVE (SYNC)'}
@@ -714,8 +779,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                       console.warn('PiP failed:', err);
                     }
                   }}
-                  className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer"
+                  className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer tv-focusable"
                   title="Picture-in-Picture"
+                  tabIndex={0}
                 >
                   <PictureInPicture2 size={14} />
                 </button>
@@ -726,7 +792,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 <div className="relative">
                   <button
                     onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
-                    className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer"
+                    className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer tv-focusable"
+                    tabIndex={0}
                   >
                     <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
                     {currentLevel === 'auto' ? `Auto ${activeHeight ? `(${activeHeight}p)` : ''}` : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
@@ -737,10 +804,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                         <button
                           key={level.index}
                           onClick={() => handleLevelChange(level.index)}
-                          className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${currentLevel === level.index
+                          className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentLevel === level.index
                             ? 'bg-primary text-dark font-black shadow-md'
                             : 'text-zinc-400 hover:text-white hover:bg-white/5'
                             }`}
+                          tabIndex={0}
                         >
                           {level.label}
                         </button>
@@ -753,7 +821,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               {/* Fullscreen view toggle */}
               <button
                 onClick={toggleFullscreen}
-                className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none"
+                className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none tv-focusable rounded-lg"
+                tabIndex={0}
               >
                 {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               </button>
@@ -849,10 +918,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setIsBuffering(false);
                 setIsAtLiveEdge(true);
               }}
-              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer ${currentServer.url === server.url
+              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url
                 ? 'bg-primary text-dark shadow-md'
                 : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
                 }`}
+              tabIndex={0}
             >
               <span className="relative z-10">{server.name}</span>
               {(server.keyId || server.keys || server.url.includes('|')) && (

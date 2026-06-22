@@ -236,3 +236,90 @@
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* --- TV Mode Specific Styles & Spatial Focus Indicators --- */
+body.tv-mode-active {
+  font-size: 18px !important;
+}
+
+body.tv-mode-active h2 {
+  font-size: clamp(2rem, 5vw, 4.5rem) !important;
+}
+
+body.tv-mode-active h3 {
+  font-size: clamp(1.75rem, 4vw, 3.5rem) !important;
+}
+
+body.tv-mode-active p,
+body.tv-mode-active span,
+body.tv-mode-active button,
+body.tv-mode-active input,
+body.tv-mode-active a {
+  font-size: clamp(12px, 1.2vw, 20px) !important;
+}
+
+/* Ensure focus states are extremely prominent and aesthetic in TV Mode */
+body.tv-mode-active .tv-focusable {
+  outline: none !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s !important;
+}
+
+body.tv-mode-active .tv-focusable:focus,
+body.tv-mode-active .tv-focusable:focus-visible {
+  outline: 3px solid #D4AF37 !important;
+  outline-offset: 3px !important;
+  border-color: #D4AF37 !important;
+  transform: scale(1.04) !important;
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.6) !important;
+  z-index: 50 !important;
+  background-color: rgba(20, 20, 20, 0.95) !important;
+}
+
+/* Force action buttons inside focused cards or hover to stand out */
+body.tv-mode-active .tv-focusable:focus button,
+body.tv-mode-active .tv-focusable:focus .w-8.h-8.rounded-full {
+  background-color: #D4AF37 !important;
+  color: #020202 !important;
+}
+
+body.tv-mode-active .tv-focusable:focus button svg,
+body.tv-mode-active .tv-focusable:focus .w-8.h-8.rounded-full svg {
+  fill: #020202 !important;
+  stroke: #020202 !important;
+}
+
+/* TV Toast Notification */
+.tv-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(18, 18, 18, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid #D4AF37;
+  color: white;
+  padding: 16px 28px;
+  border-radius: 1.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 14px;
+  z-index: 99999;
+  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3), inset 0 0 15px rgba(212, 175, 55, 0.1);
+  text-align: center;
+  pointer-events: none;
+  animation: tv-toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tv-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

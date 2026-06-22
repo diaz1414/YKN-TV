@@ -8,6 +8,7 @@ import { SupportModal } from '../components/SupportDeveloper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../services/supabase';
 import GlobalAnnouncement from '../components/GlobalAnnouncement';
+import { useTvNavigation } from '../hooks/useTvNavigation';
 
 // Set true to show mobile burger menu, false to hide it
 const SHOW_BURGER_MENU = false;
@@ -28,6 +29,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { isTvMode, toggleTvMode, toastMessage } = useTvNavigation();
+
+  // Tombol toggle hanya relevan jika Mode TV sudah aktif
+  // (auto-detect UA, D-pad, atau sebelumnya manual diaktifkan)
+  const showTvToggle = isTvMode;
 
   const activeTab = searchParams.get('tab') || 'home';
   const isWatchPage = location.pathname.startsWith('/watch/');
@@ -259,7 +266,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {/* Logo YKN TV */}
           <div
             onClick={() => navigate('/')}
-            className="flex items-center gap-2.5 cursor-pointer select-none group"
+            className="flex items-center gap-2.5 cursor-pointer select-none group tv-focusable rounded-xl p-1"
+            tabIndex={0}
           >
             <img
               src={yknwcLogo}
@@ -279,11 +287,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                     e.stopPropagation();
                     navigate('/ykn-c0ntr0l-hq/dashboard');
                   }}
-                  className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all ${
+                  className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all tv-focusable ${
                     adminRole === 'developer'
                       ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)] hover:bg-purple-500/20'
                       : 'bg-[#e50914]/10 text-[#e50914] border-[#e50914]/20 shadow-[0_0_12px_rgba(229,9,20,0.15)] hover:bg-[#e50914]/20'
                   }`}
+                  tabIndex={0}
                 >
                   <span className="relative flex h-1.5 w-1.5 shrink-0">
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-red-400'}`}></span>
@@ -299,25 +308,45 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <button
               onClick={() => handleTabChange('home')}
-              className={`${getActiveTabClass('home')} cursor-pointer flex items-center gap-1.5`}
+              className={`${getActiveTabClass('home')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
+              tabIndex={0}
             >
               <Calendar size={14} />
               Jadwal
             </button>
             <button
               onClick={() => handleTabChange('channels')}
-              className={`${getActiveTabClass('channels')} cursor-pointer flex items-center gap-1.5`}
+              className={`${getActiveTabClass('channels')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
+              tabIndex={0}
             >
               <Tv size={14} />
               Saluran TV
             </button>
             <button
               onClick={() => handleTabChange('standings')}
-              className={`${getActiveTabClass('standings')} cursor-pointer flex items-center gap-1.5`}
+              className={`${getActiveTabClass('standings')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
+              tabIndex={0}
             >
               <Award size={14} />
               Klasemen
             </button>
+            {showTvToggle && (
+              <button
+                onClick={toggleTvMode}
+                className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-xs font-bold uppercase tracking-wider tv-focusable ${
+                  isTvMode
+                    ? 'bg-primary/20 text-primary border-primary/30 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
+                    : 'bg-white/5 text-zinc-400 border-white/5 hover:text-white hover:bg-white/10'
+                }`}
+                tabIndex={0}
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="2" y="3" width="20" height="15" rx="2" />
+                  <path d="M12 18v4M8 22h8" />
+                </svg>
+                {isTvMode ? 'Mode TV: ON' : 'Mode TV'}
+              </button>
+            )}
           </nav>
         </div>
 
@@ -325,7 +354,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         <div className="flex items-center gap-3 md:gap-6">
           {/* Search Input - Desktop */}
           {onSearchChange && (
-            <div className="hidden md:flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-64 focus-within:border-primary/40 focus-within:bg-white/[0.05] transition-all">
+            <div className="hidden md:flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-64 focus-within:border-primary/40 focus-within:bg-white/[0.05] transition-all tv-focusable" tabIndex={0}>
               <Search size={16} className="text-zinc-500" />
               <input
                 type="text"
@@ -344,7 +373,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 const slugName = `${activeMatch.homeTeam.name} vs ${activeMatch.awayTeam.name}`;
                 navigate(`/watch/${slugify(slugName)}-${activeMatch.id}`);
               }}
-              className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300"
+              className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300 tv-focusable"
+              tabIndex={0}
             >
               {/* Indikator Live Berkedip / Upcoming status */}
               <div className="relative flex h-2 w-2">
@@ -495,13 +525,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             </div>
 
             <div className="flex items-center gap-6">
-              <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer">Jadwal</span>
-              <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer">Saluran TV</span>
-              <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer">Klasemen</span>
-              <span onClick={() => setIsSupportOpen(true)} className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer flex items-center gap-1 select-none">
+              <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Jadwal</span>
+              <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Saluran TV</span>
+              <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Klasemen</span>
+              <span onClick={() => setIsSupportOpen(true)} className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer flex items-center gap-1 select-none tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>
                 <Coffee size={12} className="fill-amber-400/10" />
                 Traktir Kopi
               </span>
+              {showTvToggle && (
+                <span onClick={toggleTvMode} className={`font-bold transition-colors cursor-pointer flex items-center gap-1 select-none tv-focusable rounded px-1.5 py-0.5 ${isTvMode ? 'text-primary' : 'text-zinc-500 hover:text-white'}`} tabIndex={0}>
+                  <svg className="w-3.5 h-3.5 inline-block mr-1 align-middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="2" y="3" width="20" height="15" rx="2" />
+                    <path d="M12 18v4M8 22h8" />
+                  </svg>
+                  {isTvMode ? 'Mode TV: ON' : 'Mode TV'}
+                </span>
+              )}
             </div>
           </div>
         </footer>
@@ -540,7 +579,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsSupportOpen(true)}
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 border border-amber-400/30 hover:shadow-amber-500/35 transition-all select-none cursor-pointer group"
+          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 border border-amber-400/30 hover:shadow-amber-500/35 transition-all select-none cursor-pointer group tv-focusable"
+          tabIndex={0}
         >
           <Coffee size={22} className="group-hover:rotate-12 transition-transform duration-300 fill-black/10" />
         </motion.button>
@@ -555,6 +595,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <SupportModal onClose={() => setIsSupportOpen(false)} />
         )}
       </AnimatePresence>
+
+      {/* TV Mode Toast Notification */}
+      {toastMessage && (
+        <div className="tv-toast">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 };

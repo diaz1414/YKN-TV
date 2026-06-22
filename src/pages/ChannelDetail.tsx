@@ -576,7 +576,8 @@ const ChannelDetail = () => {
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group py-2.5 px-4 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group py-2.5 px-4 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none tv-focusable"
+            tabIndex={0}
           >
             <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
             <span>KEMBALI</span>
@@ -585,7 +586,8 @@ const ChannelDetail = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
-              className="py-2.5 px-4 text-zinc-400 hover:text-primary transition-all bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none"
+              className="py-2.5 px-4 text-zinc-400 hover:text-primary transition-all bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest cursor-pointer select-none tv-focusable"
+              tabIndex={0}
             >
               <Share2 size={14} />
               <span>Bagikan</span>
@@ -830,7 +832,8 @@ const ChannelDetail = () => {
               <div className="flex bg-zinc-950/60 p-1 rounded-[1.25rem] border border-white/5 gap-1 select-none mb-4 shrink-0">
                 <button
                   onClick={() => setActiveTab('chat')}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${activeTab === 'chat'
+                  tabIndex={0}
+                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'chat'
                     ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
                     }`}
@@ -843,7 +846,8 @@ const ChannelDetail = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab('channels')}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer ${activeTab === 'channels'
+                  tabIndex={0}
+                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer tv-focusable ${activeTab === 'channels'
                     ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
                     }`}
@@ -852,7 +856,8 @@ const ChannelDetail = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab('matches')}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer ${activeTab === 'matches'
+                  tabIndex={0}
+                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'matches'
                     ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
                     }`}
@@ -875,7 +880,8 @@ const ChannelDetail = () => {
                     <button
                       key={t}
                       onClick={() => setChannelSubTab(t)}
-                      className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${channelSubTab === t
+                      tabIndex={0}
+                      className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer tv-focusable ${channelSubTab === t
                         ? 'bg-white/10 text-white'
                         : 'text-zinc-500 hover:text-zinc-300'
                         }`}
@@ -1215,7 +1221,10 @@ const ChannelDetail = () => {
                           <div
                             key={ch.id}
                             onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
-                            className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isActive
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}`); } }}
+                            tabIndex={0}
+                            role="button"
+                            className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
                               ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
                               : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
                               }`}
@@ -1258,7 +1267,10 @@ const ChannelDetail = () => {
                           <div
                             key={ch.id}
                             onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
-                            className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none ${isActive
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}-${ch.id}`); } }}
+                            tabIndex={0}
+                            role="button"
+                            className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
                               ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
                               : isLive && !isFinished
                                 ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
