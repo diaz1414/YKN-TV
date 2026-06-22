@@ -9,6 +9,7 @@ import { Zap, Tv, Search, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner3.png';
 import { supabase } from '../services/supabase';
+import axios from 'axios';
 
 // World Cup 2026 Participating Countries & Flags for Marquee (All 48 qualified teams)
 const COUNTRIES_MARQUEE = [
@@ -176,12 +177,14 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [activeTab]);
 
+  // Load stream data on mount
   const [sportsTv, setSportsTv] = useState<PlayableStream[]>([]);
   const [liveTv, setLiveTv] = useState<PlayableStream[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSubTab, setActiveSubTab] = useState<'sports' | 'general'>('sports');
   const [viewerCounts, setViewerCounts] = useState<Record<string, number>>({});
+  const [fallbackViewerCounts, setFallbackViewerCounts] = useState<Record<string, number>>({});
 
   // Real-time tracking of viewers using Supabase Presence
   useEffect(() => {
@@ -212,6 +215,41 @@ const Home = () => {
       channel.unsubscribe();
     };
   }, []);
+
+  // Periodic fallback viewer tracking from WebSocket monitoring API
+  useEffect(() => {
+    const fetchFallbackViewers = async () => {
+      try {
+        const envVal = import.meta.env.VITE_BOT_API_URL;
+        const apiBase = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
+        const res = await axios.get<any[]>(`${apiBase}/api/sports/monitoring`);
+        
+        const mapping: Record<string, number> = {};
+        if (Array.isArray(res.data)) {
+          res.data.forEach((room: any) => {
+            if (room && room.roomId) {
+              mapping[room.roomId] = room.viewers;
+            }
+          });
+        }
+        setFallbackViewerCounts(mapping);
+      } catch (err) {
+        console.warn('[Viewer Tracking Fallback] Failed to fetch websocket monitoring data:', err);
+      }
+    };
+
+    fetchFallbackViewers();
+    const interval = setInterval(fetchFallbackViewers, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const mergedViewerCounts = useMemo(() => {
+    const merged: Record<string, number> = { ...viewerCounts };
+    Object.entries(fallbackViewerCounts).forEach(([id, val]) => {
+      merged[id] = Math.max(merged[id] || 0, val);
+    });
+    return merged;
+  }, [viewerCounts, fallbackViewerCounts]);
 
   // Load stream data on mount
   useEffect(() => {
@@ -322,7 +360,7 @@ const Home = () => {
               <WorldCupCountdown />
 
               {/* Match Schedule grid */}
-              <MatchSchedule viewerCounts={viewerCounts} />
+              <MatchSchedule viewerCounts={mergedViewerCounts} />
 
               {/* Join Community Banner */}
               <section className="relative overflow-hidden rounded-[2rem] border border-white/5 bg-zinc-950/80 backdrop-blur-xl shadow-xl">
