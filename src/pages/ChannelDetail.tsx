@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
@@ -267,6 +268,7 @@ const ChannelDetail = () => {
   const [liveBitrate, setLiveBitrate] = useState('6.4 Mbps');
   const [liveLatency, setLiveLatency] = useState('0.9s');
   const [viewerCounts, setViewerCounts] = useState<Record<string, number>>({});
+  const [fallbackViewerCounts, setFallbackViewerCounts] = useState<Record<string, number>>({});
 
   // Real-time tracking of viewers using Supabase Presence
   useEffect(() => {
@@ -299,6 +301,41 @@ const ChannelDetail = () => {
     };
   }, [stream?.id]);
 
+  // Periodic fallback viewer tracking from WebSocket monitoring API
+  useEffect(() => {
+    const fetchFallbackViewers = async () => {
+      try {
+        const envVal = import.meta.env.VITE_BOT_API_URL;
+        const apiBase = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
+        const res = await axios.get<any[]>(`${apiBase}/api/sports/monitoring`);
+        
+        const mapping: Record<string, number> = {};
+        if (Array.isArray(res.data)) {
+          res.data.forEach((room: any) => {
+            if (room && room.roomId) {
+              mapping[room.roomId] = room.viewers;
+            }
+          });
+        }
+        setFallbackViewerCounts(mapping);
+      } catch (err) {
+        console.warn('[Viewer Tracking Fallback] Failed to fetch websocket monitoring data:', err);
+      }
+    };
+
+    fetchFallbackViewers();
+    const interval = setInterval(fetchFallbackViewers, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const mergedViewerCounts = useMemo(() => {
+    const merged: Record<string, number> = { ...viewerCounts };
+    Object.entries(fallbackViewerCounts).forEach(([id, val]) => {
+      merged[id] = Math.max(merged[id] || 0, val);
+    });
+    return merged;
+  }, [viewerCounts, fallbackViewerCounts]);
+
   // Interval for specs fluctuations
   useEffect(() => {
     const interval = setInterval(() => {
@@ -311,7 +348,7 @@ const ChannelDetail = () => {
   }, []);
 
   const getFormattedViewers = (streamId: string) => {
-    const rawPresence = viewerCounts[streamId] || 0;
+    const rawPresence = mergedViewerCounts[streamId] || 0;
     const count = Math.max(1, rawPresence);
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;
