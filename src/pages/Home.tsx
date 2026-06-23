@@ -239,7 +239,9 @@ const Home = () => {
     };
 
     fetchFallbackViewers();
-    const interval = setInterval(fetchFallbackViewers, 8000);
+    // Interval dinaikkan 8s → 60s (hemat ~7.500 req/menit saat 1000 user)
+    // Supabase Presence sudah handle real-time, ini hanya fallback
+    const interval = setInterval(fetchFallbackViewers, 60000);
     return () => clearInterval(interval);
   }, []);
 

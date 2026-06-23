@@ -118,14 +118,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     checkAdminSession();
 
     // Check when localStorage changes (e.g. login/logout from another tab/page)
+    // Polling dihapus (hemat ~20.000 Supabase query/menit untuk 1000 user)
+    // Storage event sudah cukup untuk detect login/logout antar tab
     window.addEventListener('storage', checkAdminSession);
-
-    // Also poll every 3 seconds to make sure navigation changes update the badge immediately
-    const interval = setInterval(checkAdminSession, 3000);
 
     return () => {
       window.removeEventListener('storage', checkAdminSession);
-      clearInterval(interval);
     };
   }, []);
 

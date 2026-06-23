@@ -198,18 +198,20 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
       // Parallel fetching: bot events + worldcup26 (fallback scores) + ESPN (live scores)
       const [eventsResult, wcGamesResult, espnResult] = await Promise.allSettled([
         (async () => {
+          // 1. Primary: GitHub raw CDN (tahan beban banyak user)
           try {
-            const envVal = import.meta.env.VITE_BOT_API_URL;
-            const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
-            const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
+            const res = await fetchWithTimeout('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat', {}, 3000);
             return await res.json();
-          } catch (botErr) {
-            console.warn('Failed to fetch from Bot API, trying GitHub raw fallback...', botErr);
+          } catch (githubErr) {
+            // 2. Fallback: Bot API
+            console.warn('Failed to fetch events from GitHub raw, trying Bot API fallback...', githubErr);
             try {
-              const res = await fetchWithTimeout('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat', {}, 3000);
+              const envVal = import.meta.env.VITE_BOT_API_URL;
+              const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
+              const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
               return await res.json();
-            } catch (githubErr) {
-              console.warn('Failed to fetch events from GitHub, falling back to local JSON data...', githubErr);
+            } catch (botErr) {
+              console.warn('Failed to fetch events from Bot API, falling back to local JSON data...', botErr);
               return localEvents;
             }
           }
