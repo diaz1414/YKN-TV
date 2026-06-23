@@ -656,15 +656,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onPlay={() => {
             setIsPlaying(true);
             setHasStarted(true);
-            setIsBuffering(false);
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => setIsBuffering(true)}
           onPlaying={() => setIsBuffering(false)}
           onSeeking={() => setIsBuffering(true)}
-          onSeeked={() => setIsBuffering(false)}
           onLoadStart={() => setIsBuffering(true)}
-          onLoadedData={() => setIsBuffering(false)}
           onTimeUpdate={handleTimeUpdate}
         />
 
