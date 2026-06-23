@@ -22,7 +22,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
-  const lastTimeRef = useRef<number>(-1);
 
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -252,7 +251,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setIsBuffering(true);
       setLevels([]);
       setCurrentLevel('auto');
-      lastTimeRef.current = -1;
       await destroyPlayers();
 
       try {
@@ -512,13 +510,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     if (videoRef.current) {
       const cur = videoRef.current.currentTime;
       setCurrentTime(cur);
-
-      // watchdog: if buffering and playhead actually moves, dismiss the loading spinner
-      if (isBuffering && lastTimeRef.current !== -1 && cur !== lastTimeRef.current) {
-        setIsBuffering(false);
-      }
-      lastTimeRef.current = cur;
-
       const dur = videoRef.current.duration;
       if (dur === Infinity || isNaN(dur) || dur <= 0) {
         setIsLive(true);
@@ -599,7 +590,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         onKeyDown={(e) => {
           // Only trigger if TV mode is active (body class exists)
           if (!document.body.classList.contains('tv-mode-active')) return;
-          
+
           switch (e.key) {
             case 'ArrowUp':
               e.preventDefault();
@@ -668,6 +659,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => setIsBuffering(true)}
+          onPlaying={() => setIsBuffering(false)}
           onSeeking={() => setIsBuffering(true)}
           onLoadStart={() => setIsBuffering(true)}
           onTimeUpdate={handleTimeUpdate}
