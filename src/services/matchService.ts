@@ -252,6 +252,9 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         wcGames = wcGamesResult.value;
       }
 
+      if (!Array.isArray(eventsData)) eventsData = [];
+      if (!Array.isArray(wcGames)) wcGames = [];
+
       // Build ESPN score map from fetched ESPN events
       if (espnResult.status === 'fulfilled' && espnResult.value.length > 0) {
         espnMap = buildEspnScoreMap(espnResult.value);

@@ -406,6 +406,10 @@ export const getLiveSportsData = async (): Promise<{
     }
   ];
 
+  if (!Array.isArray(eventsData)) eventsData = [];
+  if (!Array.isArray(sportsData)) sportsData = [];
+  if (!Array.isArray(liveData)) liveData = [];
+
   customSports.forEach(ch => {
     if (!sportsData.some(existing => existing.id_iptv === ch.id_iptv || existing.nama_channel === ch.nama_channel)) {
       sportsData.push(ch);
