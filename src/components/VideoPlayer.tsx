@@ -258,7 +258,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: true
+            lowLatencyMode: true,
+            liveSyncDuration: 6,
+            liveMaxLatencyDuration: 10,
+            maxBufferLength: 20
           });
           hlsRef.current = hls;
 
