@@ -448,48 +448,30 @@
         // =====================================================
         // === PENGATURAN JEDA WAKTU & FREKUENSI IKLAN =======
         // Ubah angka di bawah ini sesuai keinginan Anda:
-        var POPUNDER_DELAY_SECONDS  = 5;   // Detik sebelum script popunder siap (setelah halaman dibuka)
-        var POPUNDER_COOLDOWN_MINS  = 15;  // Menit cooldown antar kemunculan popunder (sekali klik = 15 menit jeda)
+        var AD_REDIRECT_URL         = 'https://omg10.com/4/11195650'; // URL redirect iklan
+        var AD_COOLDOWN_MINS        = 15;  // Menit cooldown antar redirect (sekali klik = 15 menit jeda)
         var VIGNETTE_DELAY_SECONDS  = 15;  // Detik sebelum Vignette/Banner muncul
         var NOTIF_DELAY_SECONDS     = 20;  // Detik sebelum In-Page Push (Notif) muncul
         // =====================================================
 
-        // Monetag Popunder — dimuat setelah jeda, lalu dikontrol cooldown per klik
-        setTimeout(function() {
-          var s2 = document.createElement('script');
-          s2.dataset.zone = '11195261';
-          s2.src = 'https://al5sm.com/tag.min.js';
-          var t = [document.documentElement, document.body].filter(Boolean).pop();
-          if (t) {
-            t.appendChild(s2);
-            console.log('[Ads] Popunder script loaded after ' + POPUNDER_DELAY_SECONDS + 's delay.');
+        // Fungsi redirect dengan cooldown — dipanggil dari kartu saluran & jadwal
+        // Simpan di window agar bisa diakses komponen React
+        window.yknAdRedirect = function() {
+          var COOLDOWN_MS = AD_COOLDOWN_MINS * 60 * 1000;
+          var lastTime = localStorage.getItem('ykn_last_ad_redirect_time');
+          var now = Date.now();
+
+          if (lastTime && (now - parseInt(lastTime, 10)) < COOLDOWN_MS) {
+            var remaining = Math.ceil((COOLDOWN_MS - (now - parseInt(lastTime, 10))) / 60000);
+            console.log('[Ads] Redirect dalam cooldown, sisa ±' + remaining + ' menit.');
+            return; // Masih cooldown, tidak redirect
           }
 
-          // === COOLDOWN GUARD — capture phase (berjalan sebelum Monetag) ===
-          // Setiap klik dicek: jika belum 15 menit sejak popunder terakhir, klik diblokir dari Monetag.
-          // Jika sudah 15 menit, klik diizinkan lolos ke Monetag dan timestamp baru disimpan.
-          var COOLDOWN_MS = POPUNDER_COOLDOWN_MINS * 60 * 1000;
-          var popunderReady = true; // flag: script sudah dimuat, guard aktif
-
-          document.addEventListener('click', function(ev) {
-            if (!popunderReady) return; // guard belum aktif
-
-            var lastTime = localStorage.getItem('ykn_last_popunder_time');
-            var now = Date.now();
-
-            if (lastTime && (now - parseInt(lastTime, 10)) < COOLDOWN_MS) {
-              // Masih dalam cooldown — blokir klik dari Monetag
-              var remaining = Math.ceil((COOLDOWN_MS - (now - parseInt(lastTime, 10))) / 60000);
-              console.log('[Ads] Popunder dalam cooldown, sisa ±' + remaining + ' menit.');
-              ev.stopPropagation();
-            } else {
-              // Cooldown habis atau pertama kali — biarkan Monetag mendeteksi klik & simpan timestamp
-              console.log('[Ads] Popunder aktif! Cooldown ' + POPUNDER_COOLDOWN_MINS + ' menit dimulai.');
-              localStorage.setItem('ykn_last_popunder_time', now.toString());
-            }
-          }, true); // <-- capture: true agar berjalan sebelum listener Monetag
-
-        }, POPUNDER_DELAY_SECONDS * 1000);
+          // Cooldown habis atau pertama kali — buka URL iklan di tab baru & simpan timestamp
+          console.log('[Ads] Redirect aktif! Cooldown ' + AD_COOLDOWN_MINS + ' menit dimulai.');
+          localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
+          window.open(AD_REDIRECT_URL, '_blank', 'noopener,noreferrer');
+        };
 
         // Monetag Vignette Tag — dimuat setelah jeda waktu yang ditentukan
         setTimeout(function() {
