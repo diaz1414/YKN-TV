@@ -10,6 +10,7 @@ const ChannelCard = ({ stream, onClick }: ChannelCardProps) => {
   return (
     <div
       onClick={onClick}
+      data-trigger-popunder="true"
       className="group bg-zinc-950/96 backdrop-blur-2xl hover:bg-zinc-900/98 border border-white/10 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden shadow-xl tv-focusable"
       tabIndex={0}
     >
