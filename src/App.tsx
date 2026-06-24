@@ -13,10 +13,10 @@ function AdsController() {
     const isWatchPage = path.startsWith('/watch/');
     const isAdminPage = path.startsWith('/ykn-c0ntr0l-hq');
 
-    // Deteksi keberadaan script Monetag di DOM saat ini
+    // Deteksi keberadaan script Monetag di DOM saat ini (Vignette atau Push Notification)
     const hasMonetag = !!(
       document.querySelector('script[src*="nap5k.com"]') ||
-      document.querySelector('script[src*="al5sm.com"]')
+      document.querySelector('script[src*="5gvci.com"]')
     );
 
     if ((isWatchPage || isAdminPage) && hasMonetag) {
@@ -33,9 +33,11 @@ function AdsController() {
       s1.dataset.zone = '11195257';
       s1.src = 'https://nap5k.com/tag.min.js';
       
+      // Monetag Notification Tag (Replaced Popunder)
       const s2 = document.createElement('script');
-      s2.dataset.zone = '11195261';
-      s2.src = 'https://al5sm.com/tag.min.js';
+      s2.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
+      s2.setAttribute('data-cfasync', 'false');
+      s2.async = true;
       
       const target = [document.documentElement, document.body].filter(Boolean).pop();
       if (target) {
