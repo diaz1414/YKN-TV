@@ -11,7 +11,6 @@ import { io } from 'socket.io-client';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
-import AdsterraBanner from '../components/AdsterraBanner';
 
 
 const ChannelDetail = () => {
@@ -718,14 +717,6 @@ const ChannelDetail = () => {
                 </div>
               </div>
             )}
-
-            {/* Adsterra Banner Ad */}
-            <div className="hidden md:block">
-              <AdsterraBanner zoneId="7771db20eafaa6abe542d9533b3702d4" format="728x90" />
-            </div>
-            <div className="block md:hidden">
-              <AdsterraBanner zoneId="55fe5ec20c61d6e9a34d6c41de8e197a" format="320x50" />
-            </div>
 
             {/* Stream info detail box */}
             <div className="glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">

@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/banner3.png';
 import { supabase } from '../services/supabase';
 import axios from 'axios';
-import AdsterraBanner from '../components/AdsterraBanner';
+
 
 // World Cup 2026 Participating Countries & Flags for Marquee (All 48 qualified teams)
 const COUNTRIES_MARQUEE = [
@@ -362,13 +362,6 @@ const Home = () => {
               {/* World Cup Countdown Timer */}
               <WorldCupCountdown />
 
-              {/* Adsterra Banner Ad - horizontal between countdown and schedule */}
-              <div className="hidden md:block">
-                <AdsterraBanner zoneId="7771db20eafaa6abe542d9533b3702d4" format="728x90" />
-              </div>
-              <div className="block md:hidden">
-                <AdsterraBanner zoneId="55fe5ec20c61d6e9a34d6c41de8e197a" format="320x50" />
-              </div>
 
 
               {/* Match Schedule grid */}
