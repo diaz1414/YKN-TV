@@ -440,8 +440,12 @@
       var isWatchPage = path.indexOf('/watch/') === 0;
       var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
       
-      if (!isWatchPage && !isAdminPage) {
-        console.log('[Ads] Non-watch page detected. Loading Monetag scripts...');
+      // Deteksi sesi developer atau admin
+      var role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+      var isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
+      
+      if (!isWatchPage && !isAdminPage && !isAdmin) {
+        console.log('[Ads] Non-watch page and non-admin detected. Loading Monetag scripts...');
         
         // Monetag Vignette Tag
         var s1 = document.createElement('script');
@@ -466,7 +470,7 @@
           target.appendChild(s3);
         }
       } else {
-        console.log('[Ads] Watch/Admin page detected. Bypassing Monetag scripts.');
+        console.log('[Ads] Watch page, admin dashboard, or admin/dev session detected. Bypassing Monetag scripts.');
       }
     })();
   </script>
@@ -478,7 +482,10 @@
       var isWatchPage = path.indexOf('/watch/') === 0;
       var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
       
-      if (!isWatchPage && !isAdminPage) {
+      var role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+      var isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
+      
+      if (!isWatchPage && !isAdminPage && !isAdmin) {
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', function () {
             navigator.serviceWorker.register('/sw.js')
