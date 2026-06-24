@@ -445,30 +445,77 @@
       var isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
       
       if (!isWatchPage && !isAdminPage && !isAdmin) {
-        console.log('[Ads] Non-watch page and non-admin detected. Loading Monetag scripts...');
-        
-        // Monetag Vignette Tag
-        var s1 = document.createElement('script');
-        s1.dataset.zone = '11195257';
-        s1.src = 'https://nap5k.com/tag.min.js';
-        
-        // Monetag Popunder Tag
-        var s2 = document.createElement('script');
-        s2.dataset.zone = '11195261';
-        s2.src = 'https://al5sm.com/tag.min.js';
-        
-        // Monetag Push Notification Tag
-        var s3 = document.createElement('script');
-        s3.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
-        s3.setAttribute('data-cfasync', 'false');
-        s3.async = true;
-        
-        var target = [document.documentElement, document.body].filter(Boolean).pop();
-        if (target) {
-          target.appendChild(s1);
-          target.appendChild(s2);
-          target.appendChild(s3);
-        }
+        // =====================================================
+        // === PENGATURAN JEDA WAKTU & FREKUENSI IKLAN =======
+        // Ubah angka di bawah ini sesuai keinginan Anda:
+        var POPUNDER_DELAY_SECONDS  = 5;   // Detik sebelum script popunder siap (setelah halaman dibuka)
+        var POPUNDER_COOLDOWN_MINS  = 15;  // Menit cooldown antar kemunculan popunder (sekali klik = 15 menit jeda)
+        var VIGNETTE_DELAY_SECONDS  = 15;  // Detik sebelum Vignette/Banner muncul
+        var NOTIF_DELAY_SECONDS     = 20;  // Detik sebelum In-Page Push (Notif) muncul
+        // =====================================================
+
+        // Monetag Popunder — dimuat setelah jeda, lalu dikontrol cooldown per klik
+        setTimeout(function() {
+          var s2 = document.createElement('script');
+          s2.dataset.zone = '11195261';
+          s2.src = 'https://al5sm.com/tag.min.js';
+          var t = [document.documentElement, document.body].filter(Boolean).pop();
+          if (t) {
+            t.appendChild(s2);
+            console.log('[Ads] Popunder script loaded after ' + POPUNDER_DELAY_SECONDS + 's delay.');
+          }
+
+          // === COOLDOWN GUARD — capture phase (berjalan sebelum Monetag) ===
+          // Setiap klik dicek: jika belum 15 menit sejak popunder terakhir, klik diblokir dari Monetag.
+          // Jika sudah 15 menit, klik diizinkan lolos ke Monetag dan timestamp baru disimpan.
+          var COOLDOWN_MS = POPUNDER_COOLDOWN_MINS * 60 * 1000;
+          var popunderReady = true; // flag: script sudah dimuat, guard aktif
+
+          document.addEventListener('click', function(ev) {
+            if (!popunderReady) return; // guard belum aktif
+
+            var lastTime = localStorage.getItem('ykn_last_popunder_time');
+            var now = Date.now();
+
+            if (lastTime && (now - parseInt(lastTime, 10)) < COOLDOWN_MS) {
+              // Masih dalam cooldown — blokir klik dari Monetag
+              var remaining = Math.ceil((COOLDOWN_MS - (now - parseInt(lastTime, 10))) / 60000);
+              console.log('[Ads] Popunder dalam cooldown, sisa ±' + remaining + ' menit.');
+              ev.stopPropagation();
+            } else {
+              // Cooldown habis atau pertama kali — biarkan Monetag mendeteksi klik & simpan timestamp
+              console.log('[Ads] Popunder aktif! Cooldown ' + POPUNDER_COOLDOWN_MINS + ' menit dimulai.');
+              localStorage.setItem('ykn_last_popunder_time', now.toString());
+            }
+          }, true); // <-- capture: true agar berjalan sebelum listener Monetag
+
+        }, POPUNDER_DELAY_SECONDS * 1000);
+
+        // Monetag Vignette Tag — dimuat setelah jeda waktu yang ditentukan
+        setTimeout(function() {
+          var s1 = document.createElement('script');
+          s1.dataset.zone = '11195257';
+          s1.src = 'https://nap5k.com/tag.min.js';
+          var t = [document.documentElement, document.body].filter(Boolean).pop();
+          if (t) {
+            t.appendChild(s1);
+            console.log('[Ads] Vignette script loaded after ' + VIGNETTE_DELAY_SECONDS + 's delay.');
+          }
+        }, VIGNETTE_DELAY_SECONDS * 1000);
+
+        // Monetag In-Page Push Notification Tag — dimuat setelah jeda waktu yang ditentukan
+        setTimeout(function() {
+          var s3 = document.createElement('script');
+          s3.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
+          s3.setAttribute('data-cfasync', 'false');
+          s3.async = true;
+          var t = [document.documentElement, document.body].filter(Boolean).pop();
+          if (t) {
+            t.appendChild(s3);
+            console.log('[Ads] Push Notification script loaded after ' + NOTIF_DELAY_SECONDS + 's delay.');
+          }
+        }, NOTIF_DELAY_SECONDS * 1000);
+
       } else {
         console.log('[Ads] Watch page, admin dashboard, or admin/dev session detected. Bypassing Monetag scripts.');
       }
@@ -487,11 +534,12 @@
       
       if (!isWatchPage && !isAdminPage && !isAdmin) {
         if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function () {
+          // Service Worker juga didaftarkan setelah jeda agar tidak bersaing dengan pemuatan awal halaman
+          setTimeout(function() {
             navigator.serviceWorker.register('/sw.js')
               .then(function(reg) { console.log('SW registered:', reg.scope); })
               .catch(function(err) { console.log('SW registration failed:', err); });
-          });
+          }, 5000);
         }
       }
     })();
