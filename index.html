@@ -443,21 +443,27 @@
       if (!isWatchPage && !isAdminPage) {
         console.log('[Ads] Non-watch page detected. Loading Monetag scripts...');
         
-        // Monetag Tag
+        // Monetag Vignette Tag
         var s1 = document.createElement('script');
         s1.dataset.zone = '11195257';
         s1.src = 'https://nap5k.com/tag.min.js';
         
-        // Monetag Notification Tag (Replaced Popunder)
+        // Monetag Popunder Tag
         var s2 = document.createElement('script');
-        s2.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
-        s2.setAttribute('data-cfasync', 'false');
-        s2.async = true;
+        s2.dataset.zone = '11195261';
+        s2.src = 'https://al5sm.com/tag.min.js';
+        
+        // Monetag Push Notification Tag
+        var s3 = document.createElement('script');
+        s3.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
+        s3.setAttribute('data-cfasync', 'false');
+        s3.async = true;
         
         var target = [document.documentElement, document.body].filter(Boolean).pop();
         if (target) {
           target.appendChild(s1);
           target.appendChild(s2);
+          target.appendChild(s3);
         }
       } else {
         console.log('[Ads] Watch/Admin page detected. Bypassing Monetag scripts.');
