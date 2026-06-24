@@ -13,9 +13,10 @@ function AdsController() {
     const isWatchPage = path.startsWith('/watch/');
     const isAdminPage = path.startsWith('/ykn-c0ntr0l-hq');
 
-    // Deteksi keberadaan script Monetag di DOM saat ini (Vignette atau Push Notification)
+    // Deteksi keberadaan script Monetag di DOM saat ini (Vignette, Popunder, atau Push Notification)
     const hasMonetag = !!(
       document.querySelector('script[src*="nap5k.com"]') ||
+      document.querySelector('script[src*="al5sm.com"]') ||
       document.querySelector('script[src*="5gvci.com"]')
     );
 
@@ -29,20 +30,27 @@ function AdsController() {
       // suntikkan iklan secara dinamis tanpa reload halaman untuk transisi yang mulus.
       console.log('[AdsController] Home page detected without Monetag. Injecting ads dynamically...');
       
+      // 1. Monetag Vignette Tag
       const s1 = document.createElement('script');
       s1.dataset.zone = '11195257';
       s1.src = 'https://nap5k.com/tag.min.js';
       
-      // Monetag Notification Tag (Replaced Popunder)
+      // 2. Monetag Popunder Tag
       const s2 = document.createElement('script');
-      s2.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
-      s2.setAttribute('data-cfasync', 'false');
-      s2.async = true;
+      s2.dataset.zone = '11195261';
+      s2.src = 'https://al5sm.com/tag.min.js';
+      
+      // 3. Monetag Push Notification Tag
+      const s3 = document.createElement('script');
+      s3.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
+      s3.setAttribute('data-cfasync', 'false');
+      s3.async = true;
       
       const target = [document.documentElement, document.body].filter(Boolean).pop();
       if (target) {
         target.appendChild(s1);
         target.appendChild(s2);
+        target.appendChild(s3);
       }
     }
   }, [location]);
@@ -51,15 +59,38 @@ function AdsController() {
 }
 
 function App() {
+  // Handler klik global tingkat React untuk membatasi popunder iklan
+  const handleAppClick = (e: React.MouseEvent) => {
+    let target = e.target as HTMLElement;
+    let isTriggerClick = false;
+    
+    // Cari apakah klik dilakukan pada elemen dengan data-trigger-popunder="true" (seperti kartu saluran/pertandingan)
+    while (target && target !== e.currentTarget) {
+      if (target.getAttribute && target.getAttribute('data-trigger-popunder') === 'true') {
+        isTriggerClick = true;
+        break;
+      }
+      target = target.parentNode as HTMLElement;
+    }
+    
+    // Jika BUKAN klik pada kartu saluran/pertandingan, hentikan penyebaran event klik (stopPropagation)
+    // agar event klik tidak didengar oleh script popunder Monetag di tingkat document.
+    if (!isTriggerClick) {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <Router>
       <AdsController />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/watch/:id" element={<ChannelDetail />} />
-        <Route path="/ykn-c0ntr0l-hq" element={<AdminDashboard />} />
-        <Route path="/ykn-c0ntr0l-hq/dashboard" element={<AdminDashboard />} />
-      </Routes>
+      <div onClick={handleAppClick} className="min-h-screen">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/watch/:id" element={<ChannelDetail />} />
+          <Route path="/ykn-c0ntr0l-hq" element={<AdminDashboard />} />
+          <Route path="/ykn-c0ntr0l-hq/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
