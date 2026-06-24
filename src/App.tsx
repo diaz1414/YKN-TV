@@ -73,50 +73,10 @@ function AdsController() {
 }
 
 function App() {
-  // Handler klik global tingkat React untuk membatasi popunder iklan
-  const handleAppClick = (e: React.MouseEvent) => {
-    let target = e.target as HTMLElement;
-    let isTriggerClick = false;
-    
-    // Cari apakah klik dilakukan pada elemen dengan data-trigger-popunder="true" (seperti kartu saluran/pertandingan)
-    while (target && target !== e.currentTarget) {
-      if (target.getAttribute && target.getAttribute('data-trigger-popunder') === 'true') {
-        isTriggerClick = true;
-        break;
-      }
-      target = target.parentNode as HTMLElement;
-    }
-    
-    if (isTriggerClick) {
-      // === FREQUENCY CAPPING (BATASAN FREKUENSI) FRONTEND ===
-      // Menentukan seberapa sering iklan popunder boleh muncul per pengguna unik.
-      // Anda dapat mengubah angka menit di bawah ini sesuai keinginan Anda:
-      const COOLDOWN_MINUTES = 15; // Contoh: Iklan hanya muncul sekali setiap 15 menit
-      
-      const COOLDOWN_MS = COOLDOWN_MINUTES * 60 * 1000;
-      const lastPopunder = localStorage.getItem('ykn_last_popunder_time');
-      const now = Date.now();
-      
-      if (lastPopunder && (now - parseInt(lastPopunder)) < COOLDOWN_MS) {
-        // Jika masih dalam masa jeda (cooldown), amankan klik dengan menghentikan event bubbling
-        console.log(`[AdsController] Popunder dalam masa jeda ${COOLDOWN_MINUTES} menit. Klik diamankan.`);
-        e.stopPropagation();
-      } else {
-        // Jika masa jeda habis, biarkan klik naik ke document untuk memicu popunder, dan mulai jeda baru
-        console.log('[AdsController] Popunder aktif. Memulai jeda baru...');
-        localStorage.setItem('ykn_last_popunder_time', now.toString());
-      }
-    } else {
-      // Jika BUKAN klik pada kartu saluran/pertandingan, hentikan penyebaran event klik (stopPropagation)
-      // agar event klik tidak didengar oleh script popunder Monetag di tingkat document.
-      e.stopPropagation();
-    }
-  };
-
   return (
     <Router>
       <AdsController />
-      <div onClick={handleAppClick} className="min-h-screen">
+      <div className="min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/watch/:id" element={<ChannelDetail />} />
