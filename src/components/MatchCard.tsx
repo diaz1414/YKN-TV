@@ -108,11 +108,21 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
     return () => clearInterval(interval);
   }, [match]);
 
+  const handleClick = () => {
+    if (typeof window !== 'undefined' && (window as any).yknAdRedirect) {
+      try {
+        (window as any).yknAdRedirect();
+      } catch (err) {
+        console.error('[Ads] Redirect error:', err);
+      }
+    }
+    onClick();
+  };
+
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
-      onClick={onClick}
-      data-trigger-popunder="true"
+      onClick={handleClick}
       className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 tv-focusable ${
         isLive 
           ? 'border-primary/45 shadow-lg shadow-primary/5' 
