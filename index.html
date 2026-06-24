@@ -433,21 +433,54 @@
     })();
   </script>
 
-  <!-- Monetag Tag -->
-  <script>(function(s){s.dataset.zone='11195257',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
-  <!-- Monetag Popunder Tag -->
-  <script>(function(s){s.dataset.zone='11195261',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
-  <!-- Monetag/PropellerAds Service Worker Registration -->
+  <!-- Monetag Ads Loader (Conditional) -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(reg) { console.log('SW registered:', reg.scope); })
-          .catch(function(err) { console.log('SW registration failed:', err); });
-      });
-    }
+    (function() {
+      var path = window.location.pathname;
+      var isWatchPage = path.indexOf('/watch/') === 0;
+      var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
+      
+      if (!isWatchPage && !isAdminPage) {
+        console.log('[Ads] Non-watch page detected. Loading Monetag scripts...');
+        
+        // Monetag Tag
+        var s1 = document.createElement('script');
+        s1.dataset.zone = '11195257';
+        s1.src = 'https://nap5k.com/tag.min.js';
+        
+        // Monetag Popunder Tag
+        var s2 = document.createElement('script');
+        s2.dataset.zone = '11195261';
+        s2.src = 'https://al5sm.com/tag.min.js';
+        
+        var target = [document.documentElement, document.body].filter(Boolean).pop();
+        if (target) {
+          target.appendChild(s1);
+          target.appendChild(s2);
+        }
+      } else {
+        console.log('[Ads] Watch/Admin page detected. Bypassing Monetag scripts.');
+      }
+    })();
+  </script>
+
+  <!-- Monetag/PropellerAds Service Worker Registration (Conditional) -->
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      var isWatchPage = path.indexOf('/watch/') === 0;
+      var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
+      
+      if (!isWatchPage && !isAdminPage) {
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js')
+              .then(function(reg) { console.log('SW registered:', reg.scope); })
+              .catch(function(err) { console.log('SW registration failed:', err); });
+          });
+        }
+      }
+    })();
   </script>
 </body>
 
