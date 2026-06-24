@@ -432,6 +432,30 @@
 
     })();
   </script>
+
+  <!-- Adsterra Popunder Integration (Anti-Bala & Clean Production Only) -->
+  <script>
+    (function () {
+      var hostname = window.location.hostname;
+      var isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
+      if (!isLocal) {
+        // 1. Popunder Ad (New Domain: worldcup2026-tv.ykn.my.id)
+        var popunder = document.createElement('script');
+        popunder.src = 'https://pl29877243.effectivecpmnetwork.com/88/77/bc/8877bc746cbd07408d2924a413aa676c.js';
+        popunder.async = true;
+        document.body.appendChild(popunder);
+
+        // 2. SocialBar Ad (Silakan hapus komentar & sesuaikan URL jika Anda sudah membuat unit SocialBar baru untuk domain ini)
+        /*
+        var socialbar = document.createElement('script');
+        socialbar.src = 'URL_SOCIALBAR_BARU_DISINI';
+        socialbar.async = true;
+        document.body.appendChild(socialbar);
+        */
+      }
+    })();
+  </script>
 </body>
+
 
 </html>
