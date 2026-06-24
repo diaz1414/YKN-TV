@@ -13,12 +13,26 @@ function AdsController() {
     const isWatchPage = path.startsWith('/watch/');
     const isAdminPage = path.startsWith('/ykn-c0ntr0l-hq');
 
+    // Deteksi sesi developer atau admin
+    const role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+    const isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
+
     // Deteksi keberadaan script Monetag di DOM saat ini (Vignette, Popunder, atau Push Notification)
     const hasMonetag = !!(
       document.querySelector('script[src*="nap5k.com"]') ||
       document.querySelector('script[src*="al5sm.com"]') ||
       document.querySelector('script[src*="5gvci.com"]')
     );
+
+    if (isAdmin) {
+      // Jika terdeteksi admin/developer dan iklan masih ada di DOM (karena baru login/berpindah),
+      // lakukan reload sekali untuk membersihkannya secara bersih dari memori.
+      if (hasMonetag) {
+        console.log('[AdsController] Admin/Developer session active with Monetag loaded. Purging ads...');
+        window.location.reload();
+      }
+      return;
+    }
 
     if ((isWatchPage || isAdminPage) && hasMonetag) {
       // Jika masuk ke halaman nonton/admin dan iklan masih aktif di memori (dari halaman utama),
