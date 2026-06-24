@@ -446,12 +446,10 @@
       
       if (!isWatchPage && !isAdminPage && !isAdmin) {
         // =====================================================
-        // === PENGATURAN JEDA WAKTU & FREKUENSI IKLAN =======
+        // === PENGATURAN FREKUENSI REDIRECT IKLAN =============
         // Ubah angka di bawah ini sesuai keinginan Anda:
         var AD_REDIRECT_URL         = 'https://omg10.com/4/11195650'; // URL redirect iklan
         var AD_COOLDOWN_MINS        = 15;  // Menit cooldown antar redirect (sekali klik = 15 menit jeda)
-        var VIGNETTE_DELAY_SECONDS  = 15;  // Detik sebelum Vignette/Banner muncul
-        var NOTIF_DELAY_SECONDS     = 20;  // Detik sebelum In-Page Push (Notif) muncul
         // =====================================================
 
         // Fungsi redirect dengan cooldown — dipanggil dari kartu saluran & jadwal
@@ -473,56 +471,8 @@
           window.open(AD_REDIRECT_URL, '_blank', 'noopener,noreferrer');
         };
 
-        // Monetag Vignette Tag — dimuat setelah jeda waktu yang ditentukan
-        setTimeout(function() {
-          var s1 = document.createElement('script');
-          s1.dataset.zone = '11195257';
-          s1.src = 'https://nap5k.com/tag.min.js';
-          var t = [document.documentElement, document.body].filter(Boolean).pop();
-          if (t) {
-            t.appendChild(s1);
-            console.log('[Ads] Vignette script loaded after ' + VIGNETTE_DELAY_SECONDS + 's delay.');
-          }
-        }, VIGNETTE_DELAY_SECONDS * 1000);
-
-        // Monetag In-Page Push Notification Tag — dimuat setelah jeda waktu yang ditentukan
-        setTimeout(function() {
-          var s3 = document.createElement('script');
-          s3.src = 'https://5gvci.com/act/files/tag.min.js?z=11195471';
-          s3.setAttribute('data-cfasync', 'false');
-          s3.async = true;
-          var t = [document.documentElement, document.body].filter(Boolean).pop();
-          if (t) {
-            t.appendChild(s3);
-            console.log('[Ads] Push Notification script loaded after ' + NOTIF_DELAY_SECONDS + 's delay.');
-          }
-        }, NOTIF_DELAY_SECONDS * 1000);
-
       } else {
-        console.log('[Ads] Watch page, admin dashboard, or admin/dev session detected. Bypassing Monetag scripts.');
-      }
-    })();
-  </script>
-
-  <!-- Monetag/PropellerAds Service Worker Registration (Conditional) -->
-  <script>
-    (function() {
-      var path = window.location.pathname;
-      var isWatchPage = path.indexOf('/watch/') === 0;
-      var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
-      
-      var role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
-      var isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
-      
-      if (!isWatchPage && !isAdminPage && !isAdmin) {
-        if ('serviceWorker' in navigator) {
-          // Service Worker juga didaftarkan setelah jeda agar tidak bersaing dengan pemuatan awal halaman
-          setTimeout(function() {
-            navigator.serviceWorker.register('/sw.js')
-              .then(function(reg) { console.log('SW registered:', reg.scope); })
-              .catch(function(err) { console.log('SW registration failed:', err); });
-          }, 5000);
-        }
+        console.log('[Ads] Watch page, admin dashboard, or admin/dev session detected. Bypassing Ads redirect.');
       }
     })();
   </script>
