@@ -3,6 +3,7 @@ import backupEvents from '../data/tv-events.json';
 import backupSports from '../data/tv-sports.json';
 import backupLive from '../data/tv-hiburan.json';
 import axios from 'axios';
+import { SHOW_RTB_GO_IN_JADWAL } from './matchService';
 
 export interface StreamServer {
   name: string;
@@ -500,7 +501,7 @@ export const getLiveSportsData = async (): Promise<{
     const awayTeamName = item.player_2 || 'TBD';
     const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
 
-    if (item.nama_event && item.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+    if (SHOW_RTB_GO_IN_JADWAL && item.nama_event && item.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
       if (!seenRtbMatchups.has(matchupKey)) {
         seenRtbMatchups.add(matchupKey);
         mappedEvents.push({

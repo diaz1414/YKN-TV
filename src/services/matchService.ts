@@ -1,5 +1,8 @@
 import localEvents from '../data/tv-events.json';
 
+// Toggle to temporarily show/hide RTB Go matches in the match schedule (set to false to hide)
+export const SHOW_RTB_GO_IN_JADWAL = false;
+
 export interface Match {
   id: string;
   parentMatchId?: string;
@@ -353,7 +356,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
           const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
           const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
-          if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+          if (SHOW_RTB_GO_IN_JADWAL && event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
             if (!seenRtbMatchups.has(matchupKey)) {
               seenRtbMatchups.add(matchupKey);
               parsedMatches.push({
@@ -456,7 +459,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
         const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
         const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
-        if (event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
+        if (SHOW_RTB_GO_IN_JADWAL && event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
           if (!seenRtbMatchups.has(matchupKey)) {
             seenRtbMatchups.add(matchupKey);
             parsedMatches.push({
