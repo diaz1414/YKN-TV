@@ -448,8 +448,11 @@
         // =====================================================
         // === PENGATURAN FREKUENSI REDIRECT IKLAN =============
         // Ubah angka di bawah ini sesuai keinginan Anda:
-        var AD_REDIRECT_URL         = 'https://omg10.com/4/11195650'; // URL redirect iklan
-        var AD_COOLDOWN_MINS        = 15;  // Menit cooldown antar redirect (sekali klik = 15 menit jeda)
+        var AD_REDIRECT_URLS = [
+          'https://omg10.com/4/11195650',                                                              // Network 1
+          'https://www.effectivecpmnetwork.com/y1eyn99g?key=a90145a7b7e54a1196a76d83553b473d'          // Network 2 (Adsterra)
+        ];
+        var AD_COOLDOWN_MINS = 15;  // Menit cooldown antar redirect (sekali klik = 15 menit jeda)
         // =====================================================
 
         // Fungsi redirect dengan cooldown — dipanggil dari kartu saluran & jadwal
@@ -465,10 +468,11 @@
             return; // Masih cooldown, tidak redirect
           }
 
-          // Cooldown habis atau pertama kali — buka URL iklan di tab baru & simpan timestamp
-          console.log('[Ads] Redirect aktif! Cooldown ' + AD_COOLDOWN_MINS + ' menit dimulai.');
+          // Pilih URL iklan dengan peluang (contoh: 70% untuk Network 1, 30% untuk Network 2)
+          var randomUrl = Math.random() < 0.7 ? AD_REDIRECT_URLS[0] : AD_REDIRECT_URLS[1];
+          console.log('[Ads] Redirect aktif ke: ' + randomUrl + ' | Cooldown ' + AD_COOLDOWN_MINS + ' menit dimulai.');
           localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
-          window.open(AD_REDIRECT_URL, '_blank', 'noopener,noreferrer');
+          window.open(randomUrl, '_blank', 'noopener,noreferrer');
         };
 
       } else {
