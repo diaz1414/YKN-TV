@@ -433,21 +433,48 @@
     })();
   </script>
 
-  <!-- Monetag Tag -->
-  <script>(function(s){s.dataset.zone='11195257',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
-  <!-- Monetag Popunder Tag -->
-  <script>(function(s){s.dataset.zone='11195261',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-
-  <!-- Monetag/PropellerAds Service Worker Registration -->
+  <!-- Monetag Ads Loader (Conditional) -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(reg) { console.log('SW registered:', reg.scope); })
-          .catch(function(err) { console.log('SW registration failed:', err); });
-      });
-    }
+    (function() {
+      var path = window.location.pathname;
+      var isWatchPage = path.indexOf('/watch/') === 0;
+      var isAdminPage = path.indexOf('/ykn-c0ntr0l-hq') === 0;
+      
+      // Deteksi sesi developer atau admin
+      var role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
+      var isAdmin = role === 'developer' || role === 'admin' || localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
+      
+      if (!isWatchPage && !isAdminPage && !isAdmin) {
+        // =====================================================
+        // === PENGATURAN FREKUENSI REDIRECT IKLAN =============
+        // Ubah angka di bawah ini sesuai keinginan Anda:
+        var AD_REDIRECT_URL         = 'https://omg10.com/4/11195650'; // URL redirect iklan
+        var AD_COOLDOWN_MINS        = 15;  // Menit cooldown antar redirect (sekali klik = 15 menit jeda)
+        // =====================================================
+
+        // Fungsi redirect dengan cooldown — dipanggil dari kartu saluran & jadwal
+        // Simpan di window agar bisa diakses komponen React
+        window.yknAdRedirect = function() {
+          var COOLDOWN_MS = AD_COOLDOWN_MINS * 60 * 1000;
+          var lastTime = localStorage.getItem('ykn_last_ad_redirect_time');
+          var now = Date.now();
+
+          if (lastTime && (now - parseInt(lastTime, 10)) < COOLDOWN_MS) {
+            var remaining = Math.ceil((COOLDOWN_MS - (now - parseInt(lastTime, 10))) / 60000);
+            console.log('[Ads] Redirect dalam cooldown, sisa ±' + remaining + ' menit.');
+            return; // Masih cooldown, tidak redirect
+          }
+
+          // Cooldown habis atau pertama kali — buka URL iklan di tab baru & simpan timestamp
+          console.log('[Ads] Redirect aktif! Cooldown ' + AD_COOLDOWN_MINS + ' menit dimulai.');
+          localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
+          window.open(AD_REDIRECT_URL, '_blank', 'noopener,noreferrer');
+        };
+
+      } else {
+        console.log('[Ads] Watch page, admin dashboard, or admin/dev session detected. Bypassing Ads redirect.');
+      }
+    })();
   </script>
 </body>
 

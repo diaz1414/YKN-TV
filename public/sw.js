@@ -1,6 +1,13 @@
-self.options = {
-    "domain": "5gvci.com",
-    "zoneId": 11195221
-}
-self.lary = ""
-importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')
+self.addEventListener('install', function(e) {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', function(e) {
+  self.registration.unregister()
+    .then(function() {
+      return self.clients.claim();
+    })
+    .then(function() {
+      console.log('[SW] Service worker unregistered successfully.');
+    });
+});

@@ -249,7 +249,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <div className="min-h-screen bg-transparent text-white flex flex-col font-sans">
       {/* Top Header Navbar - Glassmorphism */}
-      <header className="h-16 md:h-20 glass border-b border-white/5 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#020202]/80 backdrop-blur-xl z-50">
+      <header 
+        onClick={(e) => e.stopPropagation()}
+        className="h-16 md:h-20 glass border-b border-white/5 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#020202]/80 backdrop-blur-xl z-50"
+      >
         <div className="flex items-center gap-3 md:gap-8">
           {/* Tombol Burger - Muncul hanya di layar mobile (md:hidden) */}
           {SHOW_BURGER_MENU && (
@@ -371,6 +374,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 const slugName = `${activeMatch.homeTeam.name} vs ${activeMatch.awayTeam.name}`;
                 navigate(`/watch/${slugify(slugName)}-${activeMatch.id}`);
               }}
+              data-trigger-popunder="true"
               className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300 tv-focusable"
               tabIndex={0}
             >
@@ -425,6 +429,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       {/* Dropdown Menu Tirai untuk Layar Mobile (md:hidden) */}
       {SHOW_BURGER_MENU && (
         <div
+          onClick={(e) => e.stopPropagation()}
           className={`fixed inset-x-0 top-16 bg-[#020202]/95 backdrop-blur-2xl border-b border-white/5 z-40 md:hidden flex flex-col p-4 gap-2.5 transition-all duration-300 transform origin-top ${isMenuOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
             }`}
         >
@@ -545,7 +550,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       </main>
 
       {/* Mobile Sticky Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#020202]/95 border-t border-white/5 backdrop-blur-xl z-50 flex items-center justify-around px-2 select-none shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+      <nav 
+        onClick={(e) => e.stopPropagation()}
+        className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#020202]/95 border-t border-white/5 backdrop-blur-xl z-50 flex items-center justify-around px-2 select-none shadow-[0_-10px_30px_rgba(0,0,0,0.8)]"
+      >
         <button
           onClick={() => handleTabChange('home')}
           className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('home')}`}
