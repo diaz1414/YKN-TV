@@ -295,16 +295,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: false, // Disable aggressive low latency to prevent micro-stalls
-            liveSyncDurationCount: 3.5, // Sync 3.5 segment durations behind live edge for safety buffer
-            liveMaxLatencyDurationCount: 7, // Max delay before speedup/catchup
-            maxBufferLength: 30, // Keep a healthy buffer
-            maxMaxBufferLength: 60,
-            maxBufferSize: 60 * 1000 * 1000, // 60 MB
+            lowLatencyMode: false,
+            // liveSyncDurationCount=2: player stays ~2 segments behind live edge
+            // (e.g. if segment is 6s, you're ~12s behind live). Lower = closer to live.
+            liveSyncDurationCount: 2,
+            // liveMaxLatencyDurationCount=5: if delay exceeds 5 segments, player speeds up to catch live
+            liveMaxLatencyDurationCount: 5,
+            maxBufferLength: 20,       // Keep 20s buffer maximum — enough cushion without heavy memory
+            maxMaxBufferLength: 40,
+            maxBufferSize: 40 * 1000 * 1000, // 40 MB
             startFragPrefetch: true,
-            // Start ABR bandwidth estimation at 5 Mbps so auto doesn't always pick lowest quality
+            // Start bandwidth estimate at 5 Mbps so ABR doesn't always pick lowest quality initially
             abrEwmaDefaultEstimate: 5_000_000,
-            // Fragment retry on network errors
             fragLoadPolicy: {
               default: {
                 maxTimeToFirstByteMs: 15000,
@@ -313,7 +315,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
               }
             },
-            // Manifest retry on network errors
             manifestLoadPolicy: {
               default: {
                 maxTimeToFirstByteMs: 15000,
@@ -402,12 +403,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Buffer targets to optimize live startup and reduce buffering issues
+          // Buffer tuning for live TV:
+          // - rebufferingGoal 4s: resume with enough cushion to avoid yo-yo effect
+          //   (2s was too low → player resumed, buffer immediately drained → stall again)
+          // - bufferingGoal 10s: download 10s ahead max. Was 20s → caused slow startup
+          //   and 20s delay from live edge. 10s is a good balance.
+          // - bufferBehind 15s: don't keep more than 15s behind current position
           player.configure({
             streaming: {
-              rebufferingGoal: 2,     // Resume play after 2s buffer (down from 4)
-              bufferingGoal: 20,      // Try to keep 20s ahead
-              bufferBehind: 30,
+              rebufferingGoal: 4,
+              bufferingGoal: 10,
+              bufferBehind: 15,
               retryParameters: {
                 maxAttempts: 6,
                 baseDelay: 500,
