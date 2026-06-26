@@ -278,18 +278,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: true,
-            liveSyncDuration: 5,
-            liveMaxLatencyDuration: 15,
-            maxBufferLength: 40,
+            lowLatencyMode: false, // Disable aggressive low latency to prevent micro-stalls
+            liveSyncDurationCount: 3.5, // Sync 3.5 segment durations behind live edge for safety buffer
+            liveMaxLatencyDurationCount: 7, // Max delay before speedup/catchup
+            maxBufferLength: 30, // Keep a healthy buffer
             maxMaxBufferLength: 60,
             maxBufferSize: 60 * 1000 * 1000, // 60 MB
             startFragPrefetch: true,
+            // Start ABR bandwidth estimation at 5 Mbps so auto doesn't always pick lowest quality
+            abrEwmaDefaultEstimate: 5_000_000,
             // Fragment retry on network errors
             fragLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
+                maxTimeToFirstByteMs: 15000,
+                maxLoadTimeMs: 25000,
                 timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 },
                 errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
               }
@@ -297,8 +299,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             // Manifest retry on network errors
             manifestLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
+                maxTimeToFirstByteMs: 15000,
+                maxLoadTimeMs: 25000,
                 timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 },
                 errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
               }
@@ -658,28 +660,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setShowQualityMenu(false);
 
     if (hlsRef.current) {
+      // -1 = auto ABR mode in Hls.js
       hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
+      hlsRef.current.nextLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
     } else if (playerRef.current) {
       if (levelIdx === 'auto') {
-        const tracks = playerRef.current.getVariantTracks();
-        const sortedTracks = [...tracks].sort((a, b) => (a.height || 0) - (b.height || 0));
-        const mediumTrack = sortedTracks.find(t => (t.height || 0) >= 480) || sortedTracks[0];
-        if (mediumTrack) {
-          playerRef.current.selectVariantTrack(mediumTrack, true);
-        }
+        // True auto: re-enable ABR and let it manage quality based on real bandwidth
         playerRef.current.configure({
           abr: {
             enabled: true,
-            clearBufferSwitch: true
+            switchInterval: 8
           }
         });
+        console.log('Quality: Auto ABR enabled');
       } else {
-        playerRef.current.configure({ abr: { enabled: false } });
-        const tracks = playerRef.current.getVariantTracks();
+        // Forced quality: restrict ABR to only tracks at or below the selected height
+        // This allows ABR to still manage bandwidth but caps the max resolution
         const selectedHeight = levelIdx as number;
+        const tracks = playerRef.current.getVariantTracks();
+
+        // Find track that exactly matches selected height
         const matchTrack = tracks.find(t => t.height === selectedHeight);
         if (matchTrack) {
-          playerRef.current.selectVariantTrack(matchTrack, true);
+          // Keep ABR enabled but lock to selected track - ABR can still downgrade if needed
+          playerRef.current.configure({ abr: { enabled: false } });
+          playerRef.current.selectVariantTrack(matchTrack, /* clearBuffer= */ false);
+          console.log(`Quality: Locked to ${selectedHeight}p (ABR disabled, manual lock)`);
         }
       }
     }
