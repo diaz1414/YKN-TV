@@ -43,6 +43,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
+  const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastTimeRef = useRef<number>(0);
+  const stallCountRef = useRef<number>(0);
 
   // Sync current server if servers list changes
   useEffect(() => {
@@ -111,7 +114,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     player.addEventListener('error', (event: any) => {
       console.error('Shaka Player Error:', event.detail);
       if (!hlsRef.current) {
-        setError(`Stream Error: ${event.detail.code}`);
+        // Only trigger UI error overlay if the error severity is CRITICAL (2)
+        if (event.detail && event.detail.severity === 2) {
+          setError(`Stream Error: ${event.detail.code}`);
+        } else {
+          console.warn('Recoverable Shaka error ignored in UI:', event.detail.code);
+        }
       }
     });
 
@@ -188,6 +196,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   }, [isFullscreen]);
 
+  // Pause playback and stop audio when a connection error screen is displayed
+  useEffect(() => {
+    if (error && videoRef.current) {
+      try {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } catch (e) {
+        console.warn('Failed to pause video on error:', e);
+      }
+    }
+  }, [error]);
+
   useEffect(() => {
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
@@ -259,9 +279,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           const hls = new Hls({
             enableWorker: true,
             lowLatencyMode: true,
-            liveSyncDuration: 6,
-            liveMaxLatencyDuration: 10,
-            maxBufferLength: 20
+            liveSyncDuration: 5,
+            liveMaxLatencyDuration: 15,
+            maxBufferLength: 40,
+            maxMaxBufferLength: 60,
+            maxBufferSize: 60 * 1000 * 1000, // 60 MB
+            startFragPrefetch: true,
+            // Fragment retry on network errors
+            fragLoadPolicy: {
+              default: {
+                maxTimeToFirstByteMs: 10000,
+                maxLoadTimeMs: 20000,
+                timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 },
+                errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
+              }
+            },
+            // Manifest retry on network errors
+            manifestLoadPolicy: {
+              default: {
+                maxTimeToFirstByteMs: 10000,
+                maxLoadTimeMs: 20000,
+                timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 },
+                errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
+              }
+            }
           });
           hlsRef.current = hls;
 
@@ -333,11 +374,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           // Buffer targets to optimize live startup and reduce buffering issues
           player.configure({
             streaming: {
-              rebufferingGoal: 4,
-              bufferingGoal: 30,
+              rebufferingGoal: 2,     // Resume play after 2s buffer (down from 4)
+              bufferingGoal: 20,      // Try to keep 20s ahead
+              bufferBehind: 30,
+              retryParameters: {
+                maxAttempts: 6,
+                baseDelay: 500,
+                backoffFactor: 2,
+                timeout: 20000
+              }
+            },
+            manifest: {
               retryParameters: {
                 maxAttempts: 4,
-                baseDelay: 1000,
+                baseDelay: 500,
                 backoffFactor: 2,
                 timeout: 15000
               }
@@ -374,6 +424,51 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
     loadStream();
   }, [currentServer]);
+
+  // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
+  // and automatically recovers by skipping forward to the live edge
+  useEffect(() => {
+    const startWatchdog = () => {
+      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
+      stallWatchdogRef.current = setInterval(() => {
+        const video = videoRef.current;
+        if (!video || !isPlaying || isBuffering || error) {
+          stallCountRef.current = 0;
+          return;
+        }
+        const currentPos = video.currentTime;
+        if (currentPos === lastTimeRef.current && !video.paused && !video.ended) {
+          stallCountRef.current += 1;
+          console.warn(`Stream stall detected (count: ${stallCountRef.current}), currentTime: ${currentPos}`);
+          if (stallCountRef.current >= 2) {
+            // Try to recover: skip to live edge or nudge forward
+            if (video.seekable && video.seekable.length > 0) {
+              const liveEdge = video.seekable.end(video.seekable.length - 1);
+              console.log('Stall recovery: seeking to live edge', liveEdge);
+              video.currentTime = Math.max(liveEdge - 2, currentPos + 0.1);
+            } else {
+              video.currentTime = currentPos + 0.1;
+            }
+            video.play().catch(e => console.warn('Stall recovery play failed:', e));
+            stallCountRef.current = 0;
+          }
+        } else {
+          stallCountRef.current = 0;
+        }
+        lastTimeRef.current = currentPos;
+      }, 3000); // check every 3 seconds
+    };
+
+    if (isPlaying) {
+      startWatchdog();
+    } else {
+      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
+    }
+
+    return () => {
+      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
+    };
+  }, [isPlaying, isBuffering, error]);
 
   // Autohide Controls
   useEffect(() => {
