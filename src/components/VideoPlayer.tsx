@@ -699,23 +699,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         playerRef.current.configure({
           abr: {
             enabled: true,
-            switchInterval: 8
+            switchInterval: 6  // Allow ABR to re-adapt faster when switching back to auto
           }
         });
         console.log('Quality: Auto ABR enabled');
       } else {
-        // Forced quality: restrict ABR to only tracks at or below the selected height
-        // This allows ABR to still manage bandwidth but caps the max resolution
+        // Forced quality: lock to exact selected track
         const selectedHeight = levelIdx as number;
         const tracks = playerRef.current.getVariantTracks();
 
         // Find track that exactly matches selected height
         const matchTrack = tracks.find(t => t.height === selectedHeight);
         if (matchTrack) {
-          // Keep ABR enabled but lock to selected track - ABR can still downgrade if needed
           playerRef.current.configure({ abr: { enabled: false } });
-          playerRef.current.selectVariantTrack(matchTrack, /* clearBuffer= */ false);
-          console.log(`Quality: Locked to ${selectedHeight}p (ABR disabled, manual lock)`);
+          // clearBuffer=true: flush old segments so there's no mix of old and new quality in the buffer.
+          // Without this, the player freezes/glitches while draining mismatched segments.
+          playerRef.current.selectVariantTrack(matchTrack, /* clearBuffer= */ true);
+          console.log(`Quality: Locked to ${selectedHeight}p (buffer cleared, fresh download)`);
         }
       }
     }
