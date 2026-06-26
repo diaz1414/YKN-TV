@@ -481,7 +481,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         if (currentPos === lastTimeRef.current && !video.paused && !video.ended) {
           stallCountRef.current += 1;
           console.warn(`Stream stall detected (count: ${stallCountRef.current}), currentTime: ${currentPos}`);
-          
+
           // Trigger recovery only after 3 consecutive stalls (9 seconds total) to prevent aggressive seeking
           if (stallCountRef.current >= 3) {
             if (isLive && video.seekable && video.seekable.length > 0) {
