@@ -43,6 +43,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
+  const [showBufferingOverlay, setShowBufferingOverlay] = useState(false);
+  const lastQualityChangeTimeRef = useRef<number>(0);
   const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastTimeRef = useRef<number>(0);
   const stallCountRef = useRef<number>(0);
@@ -57,6 +59,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setIsAtLiveEdge(true);
     }
   }, [servers]);
+
+  // Debounce the buffering overlay representation to prevent screen flickering during fast/micro stalls
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (isBuffering) {
+      timeoutId = setTimeout(() => {
+        setShowBufferingOverlay(true);
+      }, 700);
+    } else {
+      setShowBufferingOverlay(false);
+    }
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isBuffering]);
 
   // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
   const getDrmKeys = (server: StreamServer) => {
@@ -442,7 +459,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   }, [currentServer]);
 
   // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
-  // and automatically recovers by skipping forward to the live edge
+  // and automatically recovers by skipping forward to a safe live offset (not the extreme edge)
   useEffect(() => {
     const startWatchdog = () => {
       if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
@@ -452,18 +469,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           stallCountRef.current = 0;
           return;
         }
+
+        // Skip watchdog check for 12 seconds after a manual quality switch to let buffer stabilize
+        const timeSinceQualityChange = Date.now() - lastQualityChangeTimeRef.current;
+        if (timeSinceQualityChange < 12000) {
+          stallCountRef.current = 0;
+          return;
+        }
+
         const currentPos = video.currentTime;
         if (currentPos === lastTimeRef.current && !video.paused && !video.ended) {
           stallCountRef.current += 1;
           console.warn(`Stream stall detected (count: ${stallCountRef.current}), currentTime: ${currentPos}`);
-          if (stallCountRef.current >= 2) {
-            // Try to recover: skip to live edge or nudge forward
-            if (video.seekable && video.seekable.length > 0) {
+          
+          // Trigger recovery only after 3 consecutive stalls (9 seconds total) to prevent aggressive seeking
+          if (stallCountRef.current >= 3) {
+            if (isLive && video.seekable && video.seekable.length > 0) {
               const liveEdge = video.seekable.end(video.seekable.length - 1);
-              console.log('Stall recovery: seeking to live edge', liveEdge);
-              video.currentTime = Math.max(liveEdge - 2, currentPos + 0.1);
+              // Seek to a safe position 10s behind the live edge to avoid instant re-stalls
+              const targetSeek = Math.max(liveEdge - 10, video.seekable.start(0));
+              console.log(`Stall recovery: seeking to safe live offset ${targetSeek} (liveEdge: ${liveEdge})`);
+              video.currentTime = targetSeek;
             } else {
-              video.currentTime = currentPos + 0.1;
+              console.log('Stall recovery: nudging currentTime forward');
+              video.currentTime = currentPos + 0.5;
             }
             video.play().catch(e => console.warn('Stall recovery play failed:', e));
             stallCountRef.current = 0;
@@ -484,7 +513,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return () => {
       if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
     };
-  }, [isPlaying, isBuffering, error]);
+  }, [isPlaying, isBuffering, error, isLive]);
 
   // Autohide Controls
   useEffect(() => {
@@ -658,6 +687,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const handleLevelChange = (levelIdx: number | 'auto') => {
     setCurrentLevel(levelIdx);
     setShowQualityMenu(false);
+    lastQualityChangeTimeRef.current = Date.now();
 
     if (hlsRef.current) {
       // -1 = auto ABR mode in Hls.js
@@ -964,7 +994,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
 
         {/* Buffering Overlay */}
-        {isBuffering && !error && (
+        {showBufferingOverlay && !error && (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
             <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">Memuat Aliran...</p>
