@@ -160,12 +160,7 @@ export const getProxiedUrl = (url: string, force = false) => {
   const needsProxy = force || restrictedDomains.some(domain => cleanTargetUrl.includes(domain));
 
   if (needsProxy) {
-    let proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxy';
-
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      // Use local proxy handler during development on localhost for other domains
-      proxyBase = '/api/proxy';
-    }
+    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxy';
 
     const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
     return `${proxyBase}/${cleanUrl}`;

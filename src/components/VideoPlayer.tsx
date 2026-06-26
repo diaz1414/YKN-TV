@@ -363,6 +363,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           player.getNetworkingEngine()?.clearAllRequestFilters();
 
+          // Inject Origin + Referer headers so CDN providers (e.g. Akamai, akamaihd.net)
+          // don't reject requests with 400 Bad Request due to missing origin headers
+          try {
+            const streamOrigin = new URL(rawUrl).origin;
+            player.getNetworkingEngine()?.registerRequestFilter((_type: any, request: any) => {
+              request.headers['Origin'] = streamOrigin;
+              request.headers['Referer'] = streamOrigin + '/';
+            });
+          } catch (_) {
+            // Non-critical: ignore if URL parsing fails
+          }
+
           if (keys) {
             player.configure({
               drm: { clearKeys: keys }
@@ -402,7 +414,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       } catch (e: any) {
         console.error('Player Load/Attach Error:', e);
 
-        if (e.code === 1002 || e.code === 1001) {
+        // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
+        const isNetworkError = [1001, 1002, 1009].includes(e.code);
+        if (isNetworkError) {
           const proxiedUrl = getProxiedUrl(rawUrl, true);
           console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
           try {
