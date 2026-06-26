@@ -468,8 +468,8 @@
             return; // Masih cooldown, tidak redirect
           }
 
-          // Pilih URL iklan dengan peluang (contoh: 50% untuk Network 1, 50% untuk Network 2)
-          var randomUrl = Math.random() < 0.5 ? AD_REDIRECT_URLS[0] : AD_REDIRECT_URLS[1];
+          // Pilih URL iklan dengan peluang (contoh: 20% untuk Network 1, 80% untuk Network 2 - Adsterra)
+          var randomUrl = Math.random() < 0.2 ? AD_REDIRECT_URLS[0] : AD_REDIRECT_URLS[1];
           console.log('[Ads] Redirect aktif ke: ' + randomUrl + ' | Cooldown ' + AD_COOLDOWN_MINS + ' menit dimulai.');
           localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
           window.open(randomUrl, '_blank', 'noopener,noreferrer');
