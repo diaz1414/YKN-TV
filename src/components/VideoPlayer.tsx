@@ -305,8 +305,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             maxMaxBufferLength: 40,
             maxBufferSize: 40 * 1000 * 1000, // 40 MB
             startFragPrefetch: true,
-            // Start bandwidth estimate at 5 Mbps so ABR doesn't always pick lowest quality initially
-            abrEwmaDefaultEstimate: 5_000_000,
+            // Conservative start estimate: ABR measures each user's real bandwidth
+            // and ramps up quality gradually from there.
+            // Don't set this high — it defeats the purpose of ABR.
+            abrEwmaDefaultEstimate: 1_500_000, // 1.5 Mbps starting point
             fragLoadPolicy: {
               default: {
                 maxTimeToFirstByteMs: 15000,
@@ -420,6 +422,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 backoffFactor: 2,
                 timeout: 20000
               }
+            },
+            // ABR config:
+            // - defaultBandwidthEstimate 1.5 Mbps: start conservative, measure real bandwidth per user
+            //   and ramp up quality gradually (proper ABR behavior)
+            // - bandwidthUpgradeTarget 0.75: switch UP when we have 75% of next level's bitrate needed
+            //   (less conservative than default 0.85 → upgrades quality reasonably fast)
+            // - switchInterval 3: re-evaluate quality every 3s so upgrades happen quickly
+            abr: {
+              enabled: true,
+              defaultBandwidthEstimate: 1_500_000,
+              bandwidthUpgradeTarget: 0.75,
+              switchInterval: 3
             },
             manifest: {
               retryParameters: {
