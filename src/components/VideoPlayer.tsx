@@ -216,7 +216,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const rawUrl = cleanStreamUrl(currentServer.url);
       const keys = getDrmKeys(currentServer);
 
-      const autoProxiedUrl = getProxiedUrl(rawUrl);
+      const autoProxiedUrl = getProxiedUrl(rawUrl, currentServer.forceProxy === true);
       let streamUrl = autoProxiedUrl;
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
@@ -238,7 +238,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               if (targetLine) {
                 const resolvedUrl = new URL(targetLine.trim(), checkRes.url).toString();
                 console.log('Frontend resolved IPTV container to:', resolvedUrl);
-                streamUrl = getProxiedUrl(resolvedUrl, true);
+                streamUrl = getProxiedUrl(resolvedUrl, currentServer.forceProxy === true);
                 isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
               }
             }
@@ -377,14 +377,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
             console.error('Fatal Hls.js Error:', data);
             if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-              if (!triedProxy) {
-                triedProxy = true;
-                const proxied = getProxiedUrl(rawUrl, true);
-                console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
-                hls.loadSource(proxied);
-                hls.startLoad();
+              if (currentServer.forceProxy === true) {
+                if (!triedProxy) {
+                  triedProxy = true;
+                  hls.startLoad();
+                } else {
+                  setError('Gagal memuat siaran video (Error Jaringan).');
+                }
               } else {
-                setError('Gagal memuat siaran video (Error Jaringan).');
+                setError('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
               }
             } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
               try {
@@ -460,18 +461,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
         // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
         const isNetworkError = [1001, 1002, 1009].includes(e.code);
-        if (isNetworkError) {
-          const proxiedUrl = getProxiedUrl(rawUrl, true);
-          console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
-          try {
-            if (playerRef.current) {
-              await playerRef.current.load(proxiedUrl);
-              onShakaLoadSuccess(playerRef.current);
-            }
-            return;
-          } catch (proxyError) {
-            console.error('Proxy Fallback Failed:', proxyError);
-          }
+        if (isNetworkError && currentServer.forceProxy !== true) {
+          setError('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
+          return;
         }
 
         if (e.code !== 7000) {
@@ -1096,14 +1088,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setIsBuffering(false);
                 setIsAtLiveEdge(true);
               }}
-              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url
+              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
                 ? 'bg-primary text-dark shadow-md'
                 : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
                 }`}
               tabIndex={0}
             >
               <span className="relative z-10">{server.name}</span>
-              {(server.keyId || server.keys || server.url.includes('|')) && (
+              {(server.forceProxy || server.keyId || server.keys || server.url.includes('|')) && (
                 <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
               )}
             </button>
