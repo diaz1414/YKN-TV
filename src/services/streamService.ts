@@ -148,7 +148,7 @@ export const getProxiedUrl = (url: string, force = false) => {
     cleanTargetUrl = cleanTargetUrl.replace('smil:rtbg/', 'smil:rtbgo/');
   }
 
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com'];
+  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com', 'akamaihd.net'];
   const isCloudfront = cleanTargetUrl.includes('cloudfront.net') || cleanTargetUrl.includes('rtbgo');
 
   // CloudFront streams have CORS enabled and can be played directly by the browser.

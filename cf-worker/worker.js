@@ -91,6 +91,18 @@ export default {
     const isMPD  = targetUrl.pathname.endsWith('.mpd')  || targetUrlStr.includes('.mpd');
     const isManifest = isM3U8 || isMPD;
 
+    // Akamai / AlKass linear streams require Origin & Referer header verification on ALL requests.
+    // We cannot redirect segments or inject BaseURL for these.
+    const isBypassExcluded = targetUrl.hostname.includes('akamaihd.net') || 
+                             targetUrl.hostname.includes('alkassdigital.net') || 
+                             targetUrl.hostname.includes('streamlock.net');
+
+    // Bypass heavy segments by redirecting client directly to CDN (saves Worker CPU time & limits)
+    if (DIRECT_EXT.test(targetUrl.pathname) && !isBypassExcluded) {
+      console.log(`[BYPASS] Redirecting segment request to CDN: ${targetUrlStr}`);
+      return Response.redirect(targetUrlStr, 307);
+    }
+
     // ── CF Cache lookup (manifests only) ─────────────────────────────
     if (isManifest) {
       const cache     = caches.default;
@@ -160,8 +172,8 @@ export default {
         if (trimmed.startsWith('#')) {
           return line.replace(/URI="([^"]+)"/g, (_, p1) => {
             const resolved = new URL(p1, finalUrl).toString();
-            // DRM keys, init segments → always proxy
-            if (PROXY_EXT.test(resolved) || resolved.includes('key') || resolved.includes('init')) {
+            // DRM keys, init segments → always proxy. If excluded (Akamai), always proxy keys/segments too.
+            if (isBypassExcluded || PROXY_EXT.test(resolved) || resolved.includes('key') || resolved.includes('init')) {
               const clean = resolved.replace(/^(https?):\/\//, '$1/');
               return `URI="${proxyPrefix}${clean}"`;
             }
@@ -171,8 +183,8 @@ export default {
 
         const resolved = new URL(trimmed, finalUrl).toString();
 
-        // Heavy video/audio segments → DIRECT from CDN (bypasses worker entirely)
-        if (DIRECT_EXT.test(resolved)) {
+        // Heavy video/audio segments → DIRECT from CDN (bypasses worker entirely) unless excluded
+        if (DIRECT_EXT.test(resolved) && !isBypassExcluded) {
           return resolved;
         }
 
@@ -225,7 +237,7 @@ export default {
 
       let rewrittenBody = body;
 
-      if (originBaseUrl) {
+      if (originBaseUrl && !isBypassExcluded) {
         // Inject <BaseURL> after the opening <MPD ...> or <Period ...> tag so
         // Shaka resolves all relative segment URLs directly against the origin.
         // If BaseURL already present, skip injection to avoid doubling.
