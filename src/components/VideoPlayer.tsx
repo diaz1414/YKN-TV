@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -288,8 +288,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             maxMaxBufferLength: 50,
             maxBufferSize: 50 * 1000 * 1000, // 50 MB
             startFragPrefetch: true,
-            // ABR bandwidth estimation starting point (2 Mbps is a stable middle ground)
-            abrEwmaDefaultEstimate: 2_000_000,
+            // Mulai estimasi di 10 Mbps supaya ABR langsung pilih kualitas tertinggi.
+            // Kalau internet lambat, ABR akan turun sendiri. Tanpa ini, default-nya mulai dari ~500kbps.
+            abrEwmaDefaultEstimate: 10_000_000,
             // Fragment retry on network errors
             fragLoadPolicy: {
               default: {
@@ -388,11 +389,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Buffer targets to optimize live startup and reduce buffering issues
+          // Hanya konfigurasi retry & buffer — ABR sepenuhnya diserahkan ke default Shaka
           player.configure({
+            abr: {
+              // Mulai estimasi di 10 Mbps supaya ABR langsung pilih kualitas tertinggi.
+              // Shaka default-nya sangat rendah (~1 Mbps), bikin ramp-up lambat.
+              defaultBandwidthEstimate: 10_000_000
+            },
             streaming: {
-              rebufferingGoal: 4,     // Resume play after 4s buffer (avoids yo-yo buffering)
-              bufferingGoal: 10,      // Keep 10s of buffer ahead (avoids live edge starvation)
+              rebufferingGoal: 4,
+              bufferingGoal: 10,
               bufferBehind: 15,
               retryParameters: {
                 maxAttempts: 6,
@@ -400,16 +406,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 backoffFactor: 2,
                 timeout: 20000
               }
-            },
-            // ABR config:
-            // - defaultBandwidthEstimate 2 Mbps: starts at decent quality, then adapts
-            // - bandwidthUpgradeTarget 0.75: upgrades when we have 75% of next level's bitrate
-            // - switchInterval 3: check and upgrade quality every 3s
-            abr: {
-              enabled: true,
-              defaultBandwidthEstimate: 2_000_000,
-              bandwidthUpgradeTarget: 0.75,
-              switchInterval: 3
             },
             manifest: {
               retryParameters: {
