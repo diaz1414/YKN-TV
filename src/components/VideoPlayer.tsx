@@ -210,6 +210,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   }, [error]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
 
@@ -245,7 +247,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       }
 
+      // If this effect invocation was cancelled (currentServer changed mid-await), bail out early
+      if (cancelled) return;
+
       const onShakaLoadSuccess = (playerInstance: shaka.Player) => {
+        if (cancelled) return;
         console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
         setError(null);
 
@@ -273,6 +279,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setLevels([]);
       setCurrentLevel('auto');
       await destroyPlayers();
+
+      // Check again after the async destroyPlayers — another render may have fired
+      if (cancelled) return;
 
       try {
         if (isHls && Hls.isSupported() && !keys) {
@@ -315,6 +324,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           hls.attachMedia(videoRef.current);
 
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            if (cancelled) return;
             const qualityLevels: QualityOption[] = hls.levels.map((level, idx) => ({
               index: idx,
               label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}k`
@@ -337,6 +347,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           let triedProxy = false;
           hls.on(Hls.Events.ERROR, async (_event, data) => {
+            if (cancelled) return;
             if (data.fatal) {
               console.error('Fatal Hls.js Error:', data);
               if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
@@ -365,6 +376,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using Shaka Player:', streamUrl);
           const player = playerRef.current;
           await player.attach(videoRef.current);
+
+          // Check after async attach — bail if cancelled
+          if (cancelled) return;
 
           player.getNetworkingEngine()?.clearAllRequestFilters();
 
@@ -422,11 +436,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           });
 
           await player.load(streamUrl);
+
+          // Final check — if cancelled during player.load(), bail silently (avoids error 7000)
+          if (cancelled) return;
+
           onShakaLoadSuccess(player);
         } else {
           setError('Format siaran tidak didukung di peramban ini.');
         }
       } catch (e: any) {
+        if (cancelled) return; // Ignore errors from cancelled invocations
+
+        // 7000 = LOAD_INTERRUPTED — safe to ignore, caused by rapid server/channel switch
+        if (e.code === 7000) {
+          console.warn('Shaka load interrupted (7000) — caused by rapid channel/server switch, ignoring.');
+          return;
+        }
+
         console.error('Player Load/Attach Error:', e);
 
         // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
@@ -435,23 +461,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           const proxiedUrl = getProxiedUrl(rawUrl, true);
           console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
           try {
-            if (playerRef.current) {
+            if (playerRef.current && !cancelled) {
               await playerRef.current.load(proxiedUrl);
-              onShakaLoadSuccess(playerRef.current);
+              if (!cancelled) onShakaLoadSuccess(playerRef.current);
             }
             return;
-          } catch (proxyError) {
+          } catch (proxyError: any) {
+            if (proxyError.code === 7000 || cancelled) return;
             console.error('Proxy Fallback Failed:', proxyError);
           }
         }
 
-        if (e.code !== 7000) {
-          setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
-        }
+        setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
       }
     };
 
     loadStream();
+    return () => {
+      cancelled = true;
+    };
   }, [currentServer]);
 
   // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
