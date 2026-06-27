@@ -91,11 +91,11 @@ export default {
     const isMPD  = targetUrl.pathname.endsWith('.mpd')  || targetUrlStr.includes('.mpd');
     const isManifest = isM3U8 || isMPD;
 
-    // Akamai / AlKass linear streams require Origin & Referer header verification on ALL requests.
-    // We cannot redirect segments or inject BaseURL for these.
-    const isBypassExcluded = targetUrl.hostname.includes('akamaihd.net') || 
-                             targetUrl.hostname.includes('alkassdigital.net') || 
-                             targetUrl.hostname.includes('streamlock.net');
+    // We ONLY bypass segment downloads for CloudFront / RTB Go streams (they support direct segment loads).
+    // For all other domains, we proxy them fully (both manifest & segments) to prevent CORS/Referer block errors (e.g. Akamai, PV-CDN).
+    const isBypassCompatible = targetUrl.hostname.includes('cloudfront.net') || 
+                               targetUrlStr.includes('rtbgo');
+    const isBypassExcluded = !isBypassCompatible;
 
     // Bypass heavy segments by redirecting client directly to CDN (saves Worker CPU time & limits)
     if (DIRECT_EXT.test(targetUrl.pathname) && !isBypassExcluded) {
