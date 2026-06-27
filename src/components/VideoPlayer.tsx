@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -288,9 +288,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             maxMaxBufferLength: 50,
             maxBufferSize: 50 * 1000 * 1000, // 50 MB
             startFragPrefetch: true,
-            // Mulai estimasi di 10 Mbps supaya ABR langsung pilih kualitas tertinggi.
-            // Kalau internet lambat, ABR akan turun sendiri. Tanpa ini, default-nya mulai dari ~500kbps.
+            // startLevel -1 = biarkan ABR pilih level awal berdasarkan estimasi bandwidth
+            startLevel: -1,
+            // Estimasi awal 10 Mbps supaya ABR coba kualitas tertinggi lebih dulu
             abrEwmaDefaultEstimate: 10_000_000,
+            // KUNCI: pakai kecepatan download nyata dari segmen (bukan estimasi manifest)
+            // sehingga ABR langsung nemu kualitas terbaik yang bisa di-handle koneksi kamu
+            abrMaxWithRealBitrate: true,
             // Fragment retry on network errors
             fragLoadPolicy: {
               default: {
@@ -393,8 +397,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           player.configure({
             abr: {
               // Mulai estimasi di 10 Mbps supaya ABR langsung pilih kualitas tertinggi.
-              // Shaka default-nya sangat rendah (~1 Mbps), bikin ramp-up lambat.
-              defaultBandwidthEstimate: 10_000_000
+              defaultBandwidthEstimate: 10_000_000,
+              // Naik kualitas ketika bandwidth nyata sudah 70% dari level berikutnya (agresif naik)
+              bandwidthUpgradeTarget: 0.7,
+              // Cek dan naik kualitas setiap 2 detik — jadi kalau jaringan membaik, cepat naiknya
+              switchInterval: 2
             },
             streaming: {
               rebufferingGoal: 4,
