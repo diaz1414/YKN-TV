@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -221,9 +221,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
       // Client-side parser for IPTV playlist containers (e.g. IPTVCat lists)
+      // Jangan biarkan pre-fetch manifest menggantung lama, karena bisa kelihatan seperti buffering.
       if (isHls) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 7000);
         try {
-          const checkRes = await fetch(streamUrl);
+          const checkRes = await fetch(streamUrl, { signal: controller.signal, cache: 'no-store' });
           if (checkRes.ok) {
             const bodyText = await checkRes.text();
             if (bodyText.includes('#EXTINF') && !bodyText.includes('#EXT-X-TARGETDURATION') && !bodyText.includes('#EXT-X-STREAM-INF')) {
@@ -242,6 +245,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }
         } catch (e) {
           console.warn('IPTV container resolver failed or timed out:', e);
+        } finally {
+          clearTimeout(timer);
         }
       }
 
@@ -280,37 +285,48 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           const hls = new Hls({
             enableWorker: true,
             lowLatencyMode: false,
-            // liveSyncDurationCount=3: stay 3 segments behind live edge (e.g. 3 * 6s = 18s).
-            // This is the industry standard sweet spot for standard HLS streaming stability.
-            liveSyncDurationCount: 3,
-            liveMaxLatencyDurationCount: 5,
-            maxBufferLength: 30,             // Cushion of up to 30s buffer
-            maxMaxBufferLength: 50,
-            maxBufferSize: 50 * 1000 * 1000, // 50 MB
+
+            // Stabilitas live > latency. Jangan terlalu nempel live edge karena gampang rebuffer.
+            liveSyncDurationCount: 5,
+            liveMaxLatencyDurationCount: 10,
+
+            // Buffer lebih tebal supaya aman di jaringan mobile/VPS proxy yang naik-turun.
+            maxBufferLength: 45,
+            maxMaxBufferLength: 90,
+            backBufferLength: 30,
+            maxBufferSize: 80 * 1000 * 1000,
+            maxBufferHole: 0.5,
             startFragPrefetch: true,
-            // startLevel -1 = biarkan ABR pilih level awal berdasarkan estimasi bandwidth
+
+            // ABR dibuat lebih konservatif. 10 Mbps terlalu agresif dan sering mulai dari 1080p lalu buffering.
             startLevel: -1,
-            // Estimasi awal 10 Mbps supaya ABR coba kualitas tertinggi lebih dulu
-            abrEwmaDefaultEstimate: 10_000_000,
-            // KUNCI: pakai kecepatan download nyata dari segmen (bukan estimasi manifest)
-            // sehingga ABR langsung nemu kualitas terbaik yang bisa di-handle koneksi kamu
+            testBandwidth: true,
+            abrEwmaDefaultEstimate: 2_500_000,
+            abrEwmaFastLive: 3,
+            abrEwmaSlowLive: 9,
+            abrBandWidthFactor: 0.8,
+            abrBandWidthUpFactor: 0.65,
             abrMaxWithRealBitrate: true,
-            // Fragment retry on network errors
+            maxStarvationDelay: 4,
+            maxLoadingDelay: 4,
+            nudgeOffset: 0.1,
+            nudgeMaxRetry: 5,
+
+            // Retry jangan terlalu lama menggantung di 1 segment rusak.
             fragLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
-                timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 },
-                errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
+                maxTimeToFirstByteMs: 7000,
+                maxLoadTimeMs: 15000,
+                timeoutRetry: { maxNumRetry: 3, retryDelayMs: 800, maxRetryDelayMs: 4000 },
+                errorRetry: { maxNumRetry: 4, retryDelayMs: 800, maxRetryDelayMs: 5000 }
               }
             },
-            // Manifest retry on network errors
             manifestLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
-                timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 },
-                errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
+                maxTimeToFirstByteMs: 5000,
+                maxLoadTimeMs: 10000,
+                timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 2500 },
+                errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 2500 }
               }
             }
           });
@@ -342,21 +358,42 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           let triedProxy = false;
           hls.on(Hls.Events.ERROR, async (_event, data) => {
-            if (data.fatal) {
-              console.error('Fatal Hls.js Error:', data);
-              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                if (!triedProxy) {
-                  triedProxy = true;
-                  const proxied = getProxiedUrl(rawUrl, true);
-                  console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
-                  hls.loadSource(proxied);
-                  hls.startLoad();
-                } else {
-                  setError('Gagal memuat siaran video (Error Jaringan).');
+            // Non-fatal stall sering terjadi di live HLS. Coba recover tanpa menampilkan error layar.
+            if (!data.fatal) {
+              if (
+                data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR ||
+                data.details === Hls.ErrorDetails.BUFFER_NUDGE_ON_STALL ||
+                data.details === Hls.ErrorDetails.BUFFER_SEEK_OVER_HOLE
+              ) {
+                const video = videoRef.current;
+                if (video && isLive && video.seekable && video.seekable.length > 0) {
+                  const liveEdge = video.seekable.end(video.seekable.length - 1);
+                  video.currentTime = Math.max(liveEdge - 12, video.seekable.start(0));
                 }
+                hls.startLoad();
+              }
+              return;
+            }
+
+            console.error('Fatal Hls.js Error:', data);
+            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+              if (!triedProxy) {
+                triedProxy = true;
+                const proxied = getProxiedUrl(rawUrl, true);
+                console.log('Attempting CORS Proxy Fallback for Hls.js:', proxied);
+                hls.loadSource(proxied);
+                hls.startLoad();
               } else {
+                setError('Gagal memuat siaran video (Error Jaringan).');
+              }
+            } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+              try {
+                hls.recoverMediaError();
+              } catch (_) {
                 setError(`Playback Error: ${data.details}`);
               }
+            } else {
+              setError(`Playback Error: ${data.details}`);
             }
           });
 
@@ -373,17 +410,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           player.getNetworkingEngine()?.clearAllRequestFilters();
 
-          // Inject Origin + Referer headers so CDN providers (e.g. Akamai, akamaihd.net)
-          // don't reject requests with 400 Bad Request due to missing origin headers
-          try {
-            const streamOrigin = new URL(rawUrl).origin;
-            player.getNetworkingEngine()?.registerRequestFilter((_type: any, request: any) => {
-              request.headers['Origin'] = streamOrigin;
-              request.headers['Referer'] = streamOrigin + '/';
-            });
-          } catch (_) {
-            // Non-critical: ignore if URL parsing fails
-          }
+          // Jangan set Origin/Referer dari browser: header ini sering ditolak browser/CDN dan bisa memicu fallback/proxy.
+          // Origin/Referer khusus upstream cukup diatur di proxy Node.js lewat env SOURCE_ORIGIN/SOURCE_REFERER.
 
           if (keys) {
             player.configure({
@@ -393,25 +421,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Hanya konfigurasi retry & buffer — ABR sepenuhnya diserahkan ke default Shaka
+          // Konfigurasi Shaka dibuat stabil untuk live stream/proxy: jangan terlalu agresif naik kualitas.
           player.configure({
             abr: {
-              // Mulai estimasi di 10 Mbps supaya ABR langsung pilih kualitas tertinggi.
-              defaultBandwidthEstimate: 10_000_000,
-              // Naik kualitas ketika bandwidth nyata sudah 70% dari level berikutnya (agresif naik)
-              bandwidthUpgradeTarget: 0.7,
-              // Cek dan naik kualitas setiap 2 detik — jadi kalau jaringan membaik, cepat naiknya
-              switchInterval: 2
+              defaultBandwidthEstimate: 2_500_000,
+              bandwidthUpgradeTarget: 0.85,
+              bandwidthDowngradeTarget: 0.95,
+              switchInterval: 8
             },
             streaming: {
-              rebufferingGoal: 4,
-              bufferingGoal: 10,
-              bufferBehind: 15,
+              rebufferingGoal: 8,
+              bufferingGoal: 30,
+              bufferBehind: 30,
               retryParameters: {
-                maxAttempts: 6,
-                baseDelay: 500,
+                maxAttempts: 5,
+                baseDelay: 700,
                 backoffFactor: 2,
-                timeout: 20000
+                timeout: 15000
               }
             },
             manifest: {
@@ -419,7 +445,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 maxAttempts: 4,
                 baseDelay: 500,
                 backoffFactor: 2,
-                timeout: 15000
+                timeout: 10000
               }
             }
           });
@@ -630,13 +656,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     try {
       if (playerRef.current) {
         const seekRange = playerRef.current.seekRange();
-        videoRef.current.currentTime = seekRange.end - 1;
+        videoRef.current.currentTime = Math.max(seekRange.end - 8, seekRange.start);
       } else {
         const seekable = videoRef.current.seekable;
         if (seekable && seekable.length > 0) {
-          videoRef.current.currentTime = seekable.end(seekable.length - 1) - 1;
+          videoRef.current.currentTime = Math.max(seekable.end(seekable.length - 1) - 8, seekable.start(0));
         } else if (videoRef.current.duration && isFinite(videoRef.current.duration)) {
-          videoRef.current.currentTime = videoRef.current.duration - 1;
+          videoRef.current.currentTime = Math.max(videoRef.current.duration - 8, 0);
         }
       }
       setIsAtLiveEdge(true);
@@ -664,7 +690,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
         if (liveEnd > 0) {
           const delay = liveEnd - cur;
-          setIsAtLiveEdge(delay <= 10); // Synced if delay is 10 seconds or less
+          setIsAtLiveEdge(delay <= 20); // Synced if delay is 20 seconds or less
         } else {
           setIsAtLiveEdge(true);
         }
@@ -684,13 +710,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   };
 
   const handleLevelChange = (levelIdx: number | 'auto') => {
+    lastQualityChangeTimeRef.current = Date.now();
     setCurrentLevel(levelIdx);
     setShowQualityMenu(false);
 
     if (hlsRef.current) {
       // -1 = auto ABR mode in Hls.js
-      hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
-      hlsRef.current.nextLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
+      if (levelIdx === 'auto') {
+        hlsRef.current.currentLevel = -1;
+        hlsRef.current.nextAutoLevel = -1;
+      } else {
+        hlsRef.current.currentLevel = levelIdx as number;
+        hlsRef.current.nextLevel = levelIdx as number;
+      }
     } else if (playerRef.current) {
       if (levelIdx === 'auto') {
         // True auto: re-enable ABR and let it manage quality based on real bandwidth
@@ -803,6 +835,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onPause={() => setIsPlaying(false)}
           onWaiting={() => setIsBuffering(true)}
           onPlaying={() => setIsBuffering(false)}
+          onCanPlay={() => setIsBuffering(false)}
+          onSeeked={() => setIsBuffering(false)}
+          onStalled={() => setIsBuffering(true)}
           onSeeking={() => setIsBuffering(true)}
           onLoadStart={() => setIsBuffering(true)}
           onTimeUpdate={handleTimeUpdate}
