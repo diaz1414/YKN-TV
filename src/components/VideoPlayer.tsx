@@ -43,10 +43,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
-  const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTimeRef = useRef<number>(0);
-  const stallCountRef = useRef<number>(0);
-  const lastQualityChangeTimeRef = useRef<number>(0);
 
   // Sync current server if servers list changes
   useEffect(() => {
@@ -115,12 +111,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     player.addEventListener('error', (event: any) => {
       console.error('Shaka Player Error:', event.detail);
       if (!hlsRef.current) {
-        // Only trigger UI error overlay if the error severity is CRITICAL (2)
-        if (event.detail && event.detail.severity === 2) {
-          setError(`Stream Error: ${event.detail.code}`);
-        } else {
-          console.warn('Recoverable Shaka error ignored in UI:', event.detail.code);
-        }
+        setError(`Stream Error: ${event.detail.code}`);
       }
     });
 
@@ -197,21 +188,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   }, [isFullscreen]);
 
-  // Pause playback and stop audio when a connection error screen is displayed
   useEffect(() => {
-    if (error && videoRef.current) {
-      try {
-        videoRef.current.pause();
-        setIsPlaying(false);
-      } catch (e) {
-        console.warn('Failed to pause video on error:', e);
-      }
-    }
-  }, [error]);
-
-  useEffect(() => {
-    let cancelled = false;
-
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
 
@@ -247,11 +224,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       }
 
-      // If this effect invocation was cancelled (currentServer changed mid-await), bail out early
-      if (cancelled) return;
-
       const onShakaLoadSuccess = (playerInstance: shaka.Player) => {
-        if (cancelled) return;
         console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
         setError(null);
 
@@ -280,43 +253,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setCurrentLevel('auto');
       await destroyPlayers();
 
-      // Check again after the async destroyPlayers — another render may have fired
-      if (cancelled) return;
-
       try {
         if (isHls && Hls.isSupported() && !keys) {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: false,
-            // liveSyncDurationCount=3: stay 3 segments behind live edge (e.g. 3 * 6s = 18s).
-            // This is the industry standard sweet spot for standard HLS streaming stability.
-            liveSyncDurationCount: 3,
-            liveMaxLatencyDurationCount: 5,
-            maxBufferLength: 30,             // Cushion of up to 30s buffer
-            maxMaxBufferLength: 50,
-            maxBufferSize: 50 * 1000 * 1000, // 50 MB
-            startFragPrefetch: true,
-            // ABR bandwidth estimation starting point (2 Mbps is a stable middle ground)
-            abrEwmaDefaultEstimate: 2_000_000,
-            // Fragment retry on network errors
-            fragLoadPolicy: {
-              default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
-                timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 },
-                errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
-              }
-            },
-            // Manifest retry on network errors
-            manifestLoadPolicy: {
-              default: {
-                maxTimeToFirstByteMs: 10000,
-                maxLoadTimeMs: 20000,
-                timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 },
-                errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
-              }
-            }
+            lowLatencyMode: true,
+            liveSyncDuration: 6,
+            liveMaxLatencyDuration: 10,
+            maxBufferLength: 20
           });
           hlsRef.current = hls;
 
@@ -324,7 +269,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           hls.attachMedia(videoRef.current);
 
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            if (cancelled) return;
             const qualityLevels: QualityOption[] = hls.levels.map((level, idx) => ({
               index: idx,
               label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}k`
@@ -347,7 +291,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           let triedProxy = false;
           hls.on(Hls.Events.ERROR, async (_event, data) => {
-            if (cancelled) return;
             if (data.fatal) {
               console.error('Fatal Hls.js Error:', data);
               if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
@@ -377,22 +320,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           const player = playerRef.current;
           await player.attach(videoRef.current);
 
-          // Check after async attach — bail if cancelled
-          if (cancelled) return;
-
           player.getNetworkingEngine()?.clearAllRequestFilters();
-
-          // Inject Origin + Referer headers so CDN providers (e.g. Akamai, akamaihd.net)
-          // don't reject requests with 400 Bad Request due to missing origin headers
-          try {
-            const streamOrigin = new URL(rawUrl).origin;
-            player.getNetworkingEngine()?.registerRequestFilter((_type: any, request: any) => {
-              request.headers['Origin'] = streamOrigin;
-              request.headers['Referer'] = streamOrigin + '/';
-            });
-          } catch (_) {
-            // Non-critical: ignore if URL parsing fails
-          }
 
           if (keys) {
             player.configure({
@@ -405,30 +333,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           // Buffer targets to optimize live startup and reduce buffering issues
           player.configure({
             streaming: {
-              rebufferingGoal: 4,     // Resume play after 4s buffer (avoids yo-yo buffering)
-              bufferingGoal: 10,      // Keep 10s of buffer ahead (avoids live edge starvation)
-              bufferBehind: 15,
-              retryParameters: {
-                maxAttempts: 6,
-                baseDelay: 500,
-                backoffFactor: 2,
-                timeout: 20000
-              }
-            },
-            // ABR config:
-            // - defaultBandwidthEstimate 2 Mbps: starts at decent quality, then adapts
-            // - bandwidthUpgradeTarget 0.75: upgrades when we have 75% of next level's bitrate
-            // - switchInterval 3: check and upgrade quality every 3s
-            abr: {
-              enabled: true,
-              defaultBandwidthEstimate: 2_000_000,
-              bandwidthUpgradeTarget: 0.75,
-              switchInterval: 3
-            },
-            manifest: {
+              rebufferingGoal: 4,
+              bufferingGoal: 30,
               retryParameters: {
                 maxAttempts: 4,
-                baseDelay: 500,
+                baseDelay: 1000,
                 backoffFactor: 2,
                 timeout: 15000
               }
@@ -436,108 +345,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           });
 
           await player.load(streamUrl);
-
-          // Final check — if cancelled during player.load(), bail silently (avoids error 7000)
-          if (cancelled) return;
-
           onShakaLoadSuccess(player);
         } else {
           setError('Format siaran tidak didukung di peramban ini.');
         }
       } catch (e: any) {
-        if (cancelled) return; // Ignore errors from cancelled invocations
-
-        // 7000 = LOAD_INTERRUPTED — safe to ignore, caused by rapid server/channel switch
-        if (e.code === 7000) {
-          console.warn('Shaka load interrupted (7000) — caused by rapid channel/server switch, ignoring.');
-          return;
-        }
-
         console.error('Player Load/Attach Error:', e);
 
-        // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
-        const isNetworkError = [1001, 1002, 1009].includes(e.code);
-        if (isNetworkError) {
+        if (e.code === 1002 || e.code === 1001) {
           const proxiedUrl = getProxiedUrl(rawUrl, true);
           console.log('Attempting CORS Proxy Fallback for Shaka Player:', proxiedUrl);
           try {
-            if (playerRef.current && !cancelled) {
+            if (playerRef.current) {
               await playerRef.current.load(proxiedUrl);
-              if (!cancelled) onShakaLoadSuccess(playerRef.current);
+              onShakaLoadSuccess(playerRef.current);
             }
             return;
-          } catch (proxyError: any) {
-            if (proxyError.code === 7000 || cancelled) return;
+          } catch (proxyError) {
             console.error('Proxy Fallback Failed:', proxyError);
           }
         }
 
-        setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
+        if (e.code !== 7000) {
+          setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
+        }
       }
     };
 
     loadStream();
-    return () => {
-      cancelled = true;
-    };
   }, [currentServer]);
-
-  // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
-  // and automatically recovers by skipping forward to a safe live offset (not the extreme edge)
-  useEffect(() => {
-    const startWatchdog = () => {
-      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
-      stallWatchdogRef.current = setInterval(() => {
-        const video = videoRef.current;
-        if (!video || !isPlaying || isBuffering || error) {
-          stallCountRef.current = 0;
-          return;
-        }
-
-        // Skip watchdog check for 12 seconds after a manual quality switch to let buffer stabilize
-        const timeSinceQualityChange = Date.now() - lastQualityChangeTimeRef.current;
-        if (timeSinceQualityChange < 12000) {
-          stallCountRef.current = 0;
-          return;
-        }
-
-        const currentPos = video.currentTime;
-        if (currentPos === lastTimeRef.current && !video.paused && !video.ended) {
-          stallCountRef.current += 1;
-          console.warn(`Stream stall detected (count: ${stallCountRef.current}), currentTime: ${currentPos}`);
-
-          // Trigger recovery only after 3 consecutive stalls (9 seconds total) to prevent aggressive seeking
-          if (stallCountRef.current >= 3) {
-            if (isLive && video.seekable && video.seekable.length > 0) {
-              const liveEdge = video.seekable.end(video.seekable.length - 1);
-              // Seek to a safe position 10s behind the live edge to avoid instant re-stalls
-              const targetSeek = Math.max(liveEdge - 10, video.seekable.start(0));
-              console.log(`Stall recovery: seeking to safe live offset ${targetSeek} (liveEdge: ${liveEdge})`);
-              video.currentTime = targetSeek;
-            } else {
-              console.log('Stall recovery: nudging currentTime forward');
-              video.currentTime = currentPos + 0.5;
-            }
-            video.play().catch(e => console.warn('Stall recovery play failed:', e));
-            stallCountRef.current = 0;
-          }
-        } else {
-          stallCountRef.current = 0;
-        }
-        lastTimeRef.current = currentPos;
-      }, 3000); // check every 3 seconds
-    };
-
-    if (isPlaying) {
-      startWatchdog();
-    } else {
-      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
-    }
-
-    return () => {
-      if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
-    };
-  }, [isPlaying, isBuffering, error, isLive]);
 
   // Autohide Controls
   useEffect(() => {
@@ -711,63 +547,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const handleLevelChange = (levelIdx: number | 'auto') => {
     setCurrentLevel(levelIdx);
     setShowQualityMenu(false);
-    lastQualityChangeTimeRef.current = Date.now();
 
     if (hlsRef.current) {
-      const hls = hlsRef.current;
-      // -1 = auto ABR mode in Hls.js
-      hls.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
-      hls.nextLevel    = levelIdx === 'auto' ? -1 : (levelIdx as number);
-
-      // Snap to a safe live position so the viewer gets the freshest content in the new quality immediately
-      // instead of playing out old buffered segments at the previous quality.
-      if (isLive && videoRef.current) {
-        const livePos = hls.liveSyncPosition;
-        if (typeof livePos === 'number' && livePos > 0) {
-          videoRef.current.currentTime = livePos;
-        } else if (videoRef.current.seekable.length > 0) {
-          const liveEdge = videoRef.current.seekable.end(videoRef.current.seekable.length - 1);
-          videoRef.current.currentTime = Math.max(liveEdge - 10, 0);
-        }
-      }
+      hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
     } else if (playerRef.current) {
       if (levelIdx === 'auto') {
-        // True auto: re-enable ABR, snap to live edge so ABR starts measuring from latest content
-        playerRef.current.configure({
-          abr: { enabled: true, switchInterval: 3 }
-        });
-
-        // Seek to safe live edge
-        if (isLive) {
-          try {
-            const seekRange = playerRef.current.seekRange();
-            if (seekRange.end > 0 && videoRef.current) {
-              videoRef.current.currentTime = Math.max(seekRange.end - 10, seekRange.start);
-            }
-          } catch (_) { /* non-fatal */ }
-        }
-        console.log('Quality: Auto ABR enabled, jumped to safe live edge');
-      } else {
-        // Forced quality: lock to exact selected track
-        const selectedHeight = levelIdx as number;
         const tracks = playerRef.current.getVariantTracks();
-        const matchTrack = tracks.find(t => t.height === selectedHeight);
-
-        if (matchTrack) {
-          playerRef.current.configure({ abr: { enabled: false } });
-          // clearBuffer=true: flush old segments immediately so the quality changes instantly
-          playerRef.current.selectVariantTrack(matchTrack, /* clearBuffer= */ true);
-
-          // Snap to safe live edge after buffer clear so new quality starts from the latest content
-          if (isLive) {
-            try {
-              const seekRange = playerRef.current.seekRange();
-              if (seekRange.end > 0 && videoRef.current) {
-                videoRef.current.currentTime = Math.max(seekRange.end - 10, seekRange.start);
-              }
-            } catch (_) { /* non-fatal */ }
+        const sortedTracks = [...tracks].sort((a, b) => (a.height || 0) - (b.height || 0));
+        const mediumTrack = sortedTracks.find(t => (t.height || 0) >= 480) || sortedTracks[0];
+        if (mediumTrack) {
+          playerRef.current.selectVariantTrack(mediumTrack, true);
+        }
+        playerRef.current.configure({
+          abr: {
+            enabled: true,
+            clearBufferSwitch: true
           }
-          console.log(`Quality: Locked to ${selectedHeight}p (clearBuffer=true), jumped to safe live edge`);
+        });
+      } else {
+        playerRef.current.configure({ abr: { enabled: false } });
+        const tracks = playerRef.current.getVariantTracks();
+        const selectedHeight = levelIdx as number;
+        const matchTrack = tracks.find(t => t.height === selectedHeight);
+        if (matchTrack) {
+          playerRef.current.selectVariantTrack(matchTrack, true);
         }
       }
     }
