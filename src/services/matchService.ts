@@ -89,6 +89,94 @@ const normalizeTeamName = (name: string): string => {
   return lower.replace(/[^a-z0-9]/g, '').trim();
 };
 
+const getMatchGroupKey = (match: Match): string => {
+  const teams = [
+    normalizeTeamName(match.homeTeam.name),
+    normalizeTeamName(match.awayTeam.name)
+  ].sort().join('|');
+
+  const kickoff = match.date ? parseJadwal(match.date).getTime() : 0;
+
+  return `${kickoff}|${teams}`;
+};
+
+const getChannelOrder = (match: Match): number => {
+  const leagueName = match.league?.name || '';
+  const bracketRaw = leagueName.match(/\[([^\]]+)\]/)?.[1]?.trim() || '';
+  const bracket = bracketRaw.toUpperCase().replace(/\s+/g, '');
+
+  // CH harus paling depan: CH1, CH2, CH3, CH4
+  const chMatch = bracket.match(/^CH(\d+)$/);
+  if (chMatch) return Number(chMatch[1]);
+
+  // S setelah CH: S1, S2, S3
+  const sMatch = bracket.match(/^S(\d+)$/);
+  if (sMatch) return 30 + Number(sMatch[1]);
+
+  // iOS setelah CH/S: IOS, IOS1, IOS2
+  const iosMatch = bracket.match(/^IOS(\d+)?$/);
+  if (iosMatch) {
+    const num = iosMatch[1] ? Number(iosMatch[1]) : 1;
+    return 80 + num;
+  }
+
+  // RTB paling belakang
+  if (bracket.includes('RTB')) return 95;
+
+  // Unknown jangan 0, taruh belakang
+  return 99;
+};
+
+const sortMatchesNeatly = (matches: Match[]): Match[] => {
+  const groupOrder = new Map<string, number>();
+
+  matches.forEach((match) => {
+    const key = getMatchGroupKey(match);
+
+    if (!groupOrder.has(key)) {
+      groupOrder.set(key, groupOrder.size);
+    }
+  });
+
+  return [...matches].sort((a, b) => {
+    if (a.status !== b.status) {
+      if (a.status === 'live') return -1;
+      if (b.status === 'live') return 1;
+
+      if (a.status === 'upcoming' && b.status === 'finished') return -1;
+      if (a.status === 'finished' && b.status === 'upcoming') return 1;
+
+      return 0;
+    }
+
+    const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
+    const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
+
+    if (dateA !== dateB) {
+      return dateA - dateB;
+    }
+
+    const groupA = getMatchGroupKey(a);
+    const groupB = getMatchGroupKey(b);
+
+    const orderA = groupOrder.get(groupA) ?? 9999;
+    const orderB = groupOrder.get(groupB) ?? 9999;
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    const channelA = getChannelOrder(a);
+    const channelB = getChannelOrder(b);
+
+    if (channelA !== channelB) {
+      return channelA - channelB;
+    }
+
+    return (a.parentMatchId || a.id).localeCompare(b.parentMatchId || b.id);
+  });
+};
+
 const findWcGame = (player1: string, player2: string, wcGames: any[]) => {
   if (!player1 || !player2) return null;
   const p1 = normalizeTeamName(player1);
@@ -105,10 +193,10 @@ const getWcScore = (player1: string, game: any) => {
   if (!game) return null;
   const p1 = normalizeTeamName(player1);
   const home = normalizeTeamName(game.home_team_name_en || game.home_team_label || '');
-  
+
   const homeScore = game.home_score;
   const awayScore = game.away_score;
-  
+
   if (home === p1) {
     return `${homeScore} - ${awayScore}`;
   } else {
@@ -320,8 +408,8 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
                 score = wcScore || undefined;
               }
               if (matchedGame && matchedGame.time_elapsed &&
-                  matchedGame.time_elapsed !== 'notstarted' &&
-                  matchedGame.time_elapsed !== 'finished') {
+                matchedGame.time_elapsed !== 'notstarted' &&
+                matchedGame.time_elapsed !== 'finished') {
                 liveMinute = matchedGame.time_elapsed;
               }
             }
@@ -374,36 +462,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         });
 
         // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
-        const sorted = [...parsedMatches].sort((a, b) => {
-          if (a.status !== b.status) {
-            if (a.status === 'live') return -1;
-            if (b.status === 'live') return 1;
-            if (a.status === 'upcoming' && b.status === 'finished') return -1;
-            if (a.status === 'finished' && b.status === 'upcoming') return 1;
-            return 0;
-          }
-
-          const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
-          const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
-          if (dateA !== dateB) {
-            return dateA - dateB;
-          }
-
-          // Group by their base match ID (parentMatchId or id) to keep RTB Go version with its parent match
-          const baseIdA = a.parentMatchId || a.id;
-          const baseIdB = b.parentMatchId || b.id;
-          if (baseIdA !== baseIdB) {
-            return baseIdA.localeCompare(baseIdB);
-          }
-
-          // Put RTB Go version directly after the original match
-          const isRtbA = a.league.name.includes("[RTB Go]");
-          const isRtbB = b.league.name.includes("[RTB Go]");
-          if (isRtbA && !isRtbB) return 1;
-          if (!isRtbA && isRtbB) return -1;
-          return 0;
-        });
-
+        const sorted = sortMatchesNeatly(parsedMatches);
         return sorted;
       }
     } catch (error) {
@@ -475,36 +534,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
           }
         }
       });
-      const sorted = [...parsedMatches].sort((a, b) => {
-        if (a.status !== b.status) {
-          if (a.status === 'live') return -1;
-          if (b.status === 'live') return 1;
-          if (a.status === 'upcoming' && b.status === 'finished') return -1;
-          if (a.status === 'finished' && b.status === 'upcoming') return 1;
-          return 0;
-        }
-
-        const dateA = a.date ? parseJadwal(a.date).getTime() : 0;
-        const dateB = b.date ? parseJadwal(b.date).getTime() : 0;
-        if (dateA !== dateB) {
-          return dateA - dateB;
-        }
-
-        // Group by their base match ID (parentMatchId or id) to keep RTB Go version with its parent match
-        const baseIdA = a.parentMatchId || a.id;
-        const baseIdB = b.parentMatchId || b.id;
-        if (baseIdA !== baseIdB) {
-          return baseIdA.localeCompare(baseIdB);
-        }
-
-        // Put RTB Go version directly after the original match
-        const isRtbA = a.league.name.includes("[RTB Go]");
-        const isRtbB = b.league.name.includes("[RTB Go]");
-        if (isRtbA && !isRtbB) return 1;
-        if (!isRtbA && isRtbB) return -1;
-        return 0;
-      });
-
+      const sorted = sortMatchesNeatly(parsedMatches);
       return sorted;
     } catch (err) {
       console.error('Failed fallback mapping', err);
