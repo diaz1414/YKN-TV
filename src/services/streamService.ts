@@ -12,6 +12,7 @@ export interface StreamServer {
   keyId?: string;
   key?: string;
   keys?: Record<string, string>;
+  forceProxy?: boolean;
 }
 
 export interface PlayableStream {
@@ -76,61 +77,42 @@ export const decryptLicense = (ciphertext: string): string => {
   }
 };
 
-export const buildServers = (urlIptv: string, urlLicense: string | undefined, jenis: string): StreamServer[] => {
-  const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
-  const servers: StreamServer[] = [];
-
-  servers.push({
-    name: 'Server 1',
-    url: urlIptv,
-    type: jenis
-  });
-
-  if (decryptedLicense) {
-    if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
-      const keys: Record<string, string> = {};
-      const pairs = decryptedLicense.split(',');
-      pairs.forEach(pair => {
-        const parts = pair.split(':');
-        if (parts.length === 2) {
-          const [kid, k] = parts;
-          if (kid && k) {
-            keys[kid.trim()] = k.trim();
-          }
-        }
-      });
-      if (Object.keys(keys).length > 0) {
-        servers[0].keys = keys;
-        const firstKeyId = Object.keys(keys)[0];
-        servers[0].keyId = firstKeyId;
-        servers[0].key = keys[firstKeyId];
-      }
-    } else if (decryptedLicense.startsWith('http')) {
-      servers.push({
-        name: 'Server 2 (Alt)',
-        url: decryptedLicense,
-        type: 'hls'
-      });
-    }
-  }
-  return servers;
-};
-
-// Toggle to temporarily enable/disable proxy server. Set to false to disable.
 const ENABLE_PROXY = true;
 
-// Reliable CORS Proxy Helper
-export const getProxiedUrl = (url: string, force = false) => {
-  if (!ENABLE_PROXY) {
-    return url;
-  }
+const PROXY_BACKUP_DOMAINS = [
+  'alkassdigital.net',
+  'shooflive',
+  'shoof.alkass.net',
+  '30a-tv.com',
+  'ok.ru',
+  'streamlock.net',
+  'iptvcat.com',
+  'akamaihd.net',
+  'akamaized.net',
+  'pv-cdn.net'
+];
 
-  // 1. If the URL already contains a proxy prefix, extract the raw target URL to avoid nested proxying
+const DIRECT_SAFE_DOMAINS = [
+  'cloudfront.net',
+  'rtbgo',
+  'amagi.tv',
+  'tvri.go.id',
+  'dens.tv',
+  'medcom.id',
+  'cnbcindonesia.com',
+  'detik.com'
+];
+
+const normalizeStreamUrl = (url: string): string => {
   let cleanTargetUrl = url.trim();
+
+  // If the URL already contains a proxy prefix, extract the raw target URL to avoid nested proxying.
   const proxyPattern = /^(https?:\/\/[^\/]+)?\/api\/proxy\/(https?\/|https?:\/\/)?(.*)$/i;
   const match = cleanTargetUrl.match(proxyPattern);
+
   if (match) {
     const targetPath = match[3];
+
     if (targetPath.startsWith('http/') || targetPath.startsWith('https/')) {
       cleanTargetUrl = targetPath.replace(/^(https?)\//i, '$1://');
     } else if (targetPath.startsWith('http://') || targetPath.startsWith('https://')) {
@@ -140,32 +122,128 @@ export const getProxiedUrl = (url: string, force = false) => {
     }
   }
 
-  // 2. Auto-correct known database input typos for RTB Go
+  // Auto-correct known database input typos for RTB Go.
   if (cleanTargetUrl.includes('d12l1ahplmeugs.cloudfront.net')) {
-    cleanTargetUrl = cleanTargetUrl.replace('d12l1ahplmeugs.cloudfront.net', 'd1211whpimeups.cloudfront.net');
+    cleanTargetUrl = cleanTargetUrl.replace(
+      'd12l1ahplmeugs.cloudfront.net',
+      'd1211whpimeups.cloudfront.net'
+    );
   }
+
   if (cleanTargetUrl.includes('smil:rtbg/')) {
     cleanTargetUrl = cleanTargetUrl.replace('smil:rtbg/', 'smil:rtbgo/');
   }
 
-  const restrictedDomains = ['alkassdigital.net', 'shooflive', 'shoof.alkass.net', '30a-tv.com', 'ok.ru', 'streamlock.net', 'iptvcat.com', 'akamaihd.net', 'akamaized.net', 'pv-cdn.net'];
-  const isCloudfront = cleanTargetUrl.includes('cloudfront.net') || cleanTargetUrl.includes('rtbgo');
+  return cleanTargetUrl;
+};
 
-  // CloudFront streams have CORS enabled and can be played directly by the browser.
-  // Bypassing the proxy completely eliminates Vercel Edge Requests and bandwidth usage.
-  if (isCloudfront && !force) {
+const shouldOfferProxyBackup = (url: string): boolean => {
+  const clean = normalizeStreamUrl(url).toLowerCase();
+
+  // CDN/source yang aman direct tidak perlu ditonjolkan proxy.
+  if (DIRECT_SAFE_DOMAINS.some(domain => clean.includes(domain))) {
+    return false;
+  }
+
+  return PROXY_BACKUP_DOMAINS.some(domain => clean.includes(domain));
+};
+
+export const getProxiedUrl = (url: string, force = false) => {
+  const cleanTargetUrl = normalizeStreamUrl(url);
+
+  // Default sekarang selalu direct.
+  // Proxy hanya dipakai kalau user memilih server backup/proxy secara manual.
+  if (!ENABLE_PROXY || !force) {
     return cleanTargetUrl;
   }
 
-  const needsProxy = force || restrictedDomains.some(domain => cleanTargetUrl.includes(domain));
+  const proxyBase =
+    import.meta.env.VITE_PROXY_BASE_URL ||
+    'https://proxy-ykntv414.ykn.my.id/api/proxy';
 
-  if (needsProxy) {
-    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://proxy-ykntv414.ykn.my.id/api/proxy';
+  const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
+  return `${proxyBase}/${cleanUrl}`;
+};
 
-    const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
-    return `${proxyBase}/${cleanUrl}`;
+const copyDrmKeys = (from: StreamServer, to: StreamServer) => {
+  if (from.keys) to.keys = { ...from.keys };
+  if (from.keyId) to.keyId = from.keyId;
+  if (from.key) to.key = from.key;
+};
+
+export const buildServers = (urlIptv: string, urlLicense: string | undefined, jenis: string): StreamServer[] => {
+  const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
+  const servers: StreamServer[] = [];
+  const rawUrl = normalizeStreamUrl(urlIptv);
+
+  // Server utama: direct CDN/source dulu. Ini yang paling aman saat penonton membeludak.
+  servers.push({
+    name: 'Server 1 (Direct)',
+    url: rawUrl,
+    type: jenis,
+    forceProxy: false
+  });
+
+  // Server proxy hanya jadi backup manual, bukan otomatis.
+  if (shouldOfferProxyBackup(rawUrl)) {
+    servers.push({
+      name: 'Server 2 (Proxy Backup)',
+      url: rawUrl,
+      type: jenis,
+      forceProxy: true
+    });
   }
-  return cleanTargetUrl;
+
+  if (decryptedLicense) {
+    if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
+      const keys: Record<string, string> = {};
+      const pairs = decryptedLicense.split(',');
+
+      pairs.forEach(pair => {
+        const parts = pair.split(':');
+
+        if (parts.length === 2) {
+          const [kid, k] = parts;
+
+          if (kid && k) {
+            keys[kid.trim()] = k.trim();
+          }
+        }
+      });
+
+      if (Object.keys(keys).length > 0) {
+        servers[0].keys = keys;
+        const firstKeyId = Object.keys(keys)[0];
+        servers[0].keyId = firstKeyId;
+        servers[0].key = keys[firstKeyId];
+
+        // Kalau ada proxy backup, DRM key harus ikut supaya server backup tetap bisa play.
+        for (let i = 1; i < servers.length; i++) {
+          copyDrmKeys(servers[0], servers[i]);
+        }
+      }
+    } else if (decryptedLicense.startsWith('http')) {
+      const altUrl = normalizeStreamUrl(decryptedLicense);
+
+      servers.push({
+        name: 'Server Alt (Direct)',
+        url: altUrl,
+        type: 'hls',
+        forceProxy: false
+      });
+
+      if (shouldOfferProxyBackup(altUrl)) {
+        servers.push({
+          name: 'Server Alt (Proxy Backup)',
+          url: altUrl,
+          type: 'hls',
+          forceProxy: true
+        });
+      }
+    }
+  }
+
+  return servers;
 };
 
 // Clean HTML tags and redundant text from match descriptions
@@ -432,7 +510,7 @@ export const getLiveSportsData = async (): Promise<{
         subName: ch.now_playing,
         logo: ch.logo,
         isBase64Logo: false,
-        servers: [{ name: 'Server 1', url: ch.url, type: 'hls' }],
+        servers: [{ name: 'Server 1 (Direct)', url: ch.url, type: 'hls', forceProxy: false }],
         isChannel: true
       };
       if (ch.category.toLowerCase().includes('sports')) {
