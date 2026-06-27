@@ -43,11 +43,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
-  const [showBufferingOverlay, setShowBufferingOverlay] = useState(false);
-  const lastQualityChangeTimeRef = useRef<number>(0);
   const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastTimeRef = useRef<number>(0);
   const stallCountRef = useRef<number>(0);
+  const lastQualityChangeTimeRef = useRef<number>(0);
 
   // Sync current server if servers list changes
   useEffect(() => {
@@ -59,21 +58,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setIsAtLiveEdge(true);
     }
   }, [servers]);
-
-  // Debounce the buffering overlay representation to prevent screen flickering during fast/micro stalls
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    if (isBuffering) {
-      timeoutId = setTimeout(() => {
-        setShowBufferingOverlay(true);
-      }, 700);
-    } else {
-      setShowBufferingOverlay(false);
-    }
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [isBuffering]);
 
   // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
   const getDrmKeys = (server: StreamServer) => {
@@ -296,31 +280,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           const hls = new Hls({
             enableWorker: true,
             lowLatencyMode: false,
-            // liveSyncDurationCount=2: player stays ~2 segments behind live edge
-            // (e.g. if segment is 6s, you're ~12s behind live). Lower = closer to live.
-            liveSyncDurationCount: 2,
-            // liveMaxLatencyDurationCount=5: if delay exceeds 5 segments, player speeds up to catch live
+            // liveSyncDurationCount=3: stay 3 segments behind live edge (e.g. 3 * 6s = 18s).
+            // This is the industry standard sweet spot for standard HLS streaming stability.
+            liveSyncDurationCount: 3,
             liveMaxLatencyDurationCount: 5,
-            maxBufferLength: 20,       // Keep 20s buffer maximum — enough cushion without heavy memory
-            maxMaxBufferLength: 40,
-            maxBufferSize: 40 * 1000 * 1000, // 40 MB
+            maxBufferLength: 30,             // Cushion of up to 30s buffer
+            maxMaxBufferLength: 50,
+            maxBufferSize: 50 * 1000 * 1000, // 50 MB
             startFragPrefetch: true,
-            // Conservative start estimate: ABR measures each user's real bandwidth
-            // and ramps up quality gradually from there.
-            // Don't set this high — it defeats the purpose of ABR.
-            abrEwmaDefaultEstimate: 1_500_000, // 1.5 Mbps starting point
+            // ABR bandwidth estimation starting point (2 Mbps is a stable middle ground)
+            abrEwmaDefaultEstimate: 2_000_000,
+            // Fragment retry on network errors
             fragLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 15000,
-                maxLoadTimeMs: 25000,
+                maxTimeToFirstByteMs: 10000,
+                maxLoadTimeMs: 20000,
                 timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 },
                 errorRetry: { maxNumRetry: 6, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
               }
             },
+            // Manifest retry on network errors
             manifestLoadPolicy: {
               default: {
-                maxTimeToFirstByteMs: 15000,
-                maxLoadTimeMs: 25000,
+                maxTimeToFirstByteMs: 10000,
+                maxLoadTimeMs: 20000,
                 timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 },
                 errorRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
               }
@@ -405,16 +388,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Buffer tuning for live TV:
-          // - rebufferingGoal 4s: resume with enough cushion to avoid yo-yo effect
-          //   (2s was too low → player resumed, buffer immediately drained → stall again)
-          // - bufferingGoal 10s: download 10s ahead max. Was 20s → caused slow startup
-          //   and 20s delay from live edge. 10s is a good balance.
-          // - bufferBehind 15s: don't keep more than 15s behind current position
+          // Buffer targets to optimize live startup and reduce buffering issues
           player.configure({
             streaming: {
-              rebufferingGoal: 4,
-              bufferingGoal: 10,
+              rebufferingGoal: 4,     // Resume play after 4s buffer (avoids yo-yo buffering)
+              bufferingGoal: 10,      // Keep 10s of buffer ahead (avoids live edge starvation)
               bufferBehind: 15,
               retryParameters: {
                 maxAttempts: 6,
@@ -424,14 +402,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               }
             },
             // ABR config:
-            // - defaultBandwidthEstimate 1.5 Mbps: start conservative, measure real bandwidth per user
-            //   and ramp up quality gradually (proper ABR behavior)
-            // - bandwidthUpgradeTarget 0.75: switch UP when we have 75% of next level's bitrate needed
-            //   (less conservative than default 0.85 → upgrades quality reasonably fast)
-            // - switchInterval 3: re-evaluate quality every 3s so upgrades happen quickly
+            // - defaultBandwidthEstimate 2 Mbps: starts at decent quality, then adapts
+            // - bandwidthUpgradeTarget 0.75: upgrades when we have 75% of next level's bitrate
+            // - switchInterval 3: check and upgrade quality every 3s
             abr: {
               enabled: true,
-              defaultBandwidthEstimate: 1_500_000,
+              defaultBandwidthEstimate: 2_000_000,
               bandwidthUpgradeTarget: 0.75,
               switchInterval: 3
             },
@@ -710,32 +686,60 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     lastQualityChangeTimeRef.current = Date.now();
 
     if (hlsRef.current) {
+      const hls = hlsRef.current;
       // -1 = auto ABR mode in Hls.js
-      hlsRef.current.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
-      hlsRef.current.nextLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
+      hls.currentLevel = levelIdx === 'auto' ? -1 : (levelIdx as number);
+      hls.nextLevel    = levelIdx === 'auto' ? -1 : (levelIdx as number);
+
+      // Snap to a safe live position so the viewer gets the freshest content in the new quality immediately
+      // instead of playing out old buffered segments at the previous quality.
+      if (isLive && videoRef.current) {
+        const livePos = hls.liveSyncPosition;
+        if (typeof livePos === 'number' && livePos > 0) {
+          videoRef.current.currentTime = livePos;
+        } else if (videoRef.current.seekable.length > 0) {
+          const liveEdge = videoRef.current.seekable.end(videoRef.current.seekable.length - 1);
+          videoRef.current.currentTime = Math.max(liveEdge - 10, 0);
+        }
+      }
     } else if (playerRef.current) {
       if (levelIdx === 'auto') {
-        // True auto: re-enable ABR and let it manage quality based on real bandwidth
+        // True auto: re-enable ABR, snap to live edge so ABR starts measuring from latest content
         playerRef.current.configure({
-          abr: {
-            enabled: true,
-            switchInterval: 6  // Allow ABR to re-adapt faster when switching back to auto
-          }
+          abr: { enabled: true, switchInterval: 3 }
         });
-        console.log('Quality: Auto ABR enabled');
+
+        // Seek to safe live edge
+        if (isLive) {
+          try {
+            const seekRange = playerRef.current.seekRange();
+            if (seekRange.end > 0 && videoRef.current) {
+              videoRef.current.currentTime = Math.max(seekRange.end - 10, seekRange.start);
+            }
+          } catch (_) { /* non-fatal */ }
+        }
+        console.log('Quality: Auto ABR enabled, jumped to safe live edge');
       } else {
         // Forced quality: lock to exact selected track
         const selectedHeight = levelIdx as number;
         const tracks = playerRef.current.getVariantTracks();
-
-        // Find track that exactly matches selected height
         const matchTrack = tracks.find(t => t.height === selectedHeight);
+
         if (matchTrack) {
           playerRef.current.configure({ abr: { enabled: false } });
-          // clearBuffer=true: flush old segments so there's no mix of old and new quality in the buffer.
-          // Without this, the player freezes/glitches while draining mismatched segments.
+          // clearBuffer=true: flush old segments immediately so the quality changes instantly
           playerRef.current.selectVariantTrack(matchTrack, /* clearBuffer= */ true);
-          console.log(`Quality: Locked to ${selectedHeight}p (buffer cleared, fresh download)`);
+
+          // Snap to safe live edge after buffer clear so new quality starts from the latest content
+          if (isLive) {
+            try {
+              const seekRange = playerRef.current.seekRange();
+              if (seekRange.end > 0 && videoRef.current) {
+                videoRef.current.currentTime = Math.max(seekRange.end - 10, seekRange.start);
+              }
+            } catch (_) { /* non-fatal */ }
+          }
+          console.log(`Quality: Locked to ${selectedHeight}p (clearBuffer=true), jumped to safe live edge`);
         }
       }
     }
@@ -1014,7 +1018,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
 
         {/* Buffering Overlay */}
-        {showBufferingOverlay && !error && (
+        {isBuffering && !error && (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
             <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">Memuat Aliran...</p>
