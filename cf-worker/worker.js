@@ -200,18 +200,57 @@ export default {
     }
 
     // ── MPD (DASH) manifest handling ──────────────────────────────────
-    // Served as-is; Shaka Player keeps fetching segments through this worker
-    // so the worker can inject the correct Origin/Referer headers for Akamai
+    // We inject a <BaseURL> pointing at the actual origin so Shaka Player
+    // fetches all video/audio segments DIRECTLY from the CDN — bypassing this
+    // worker entirely for heavy segment traffic.
+    //
+    // Only the MPD manifest itself goes through the worker (for Referer/Origin
+    // header injection). Segments and init files are served direct-to-origin.
     if (isMPD) {
       const body        = await upstream.text();
+      const finalUrl    = upstream.url || targetUrlStr;
       const contentType = upstream.headers.get('content-type') || 'application/dash+xml';
 
-      const response = new Response(body, {
+      // Build the base URL of the origin (e.g. https://dash2.antik.sk/stream/nvidia_ct_sport/)
+      const originBaseUrl = (() => {
+        try {
+          const u = new URL(finalUrl);
+          // Strip the filename to get the directory path
+          const dir = u.pathname.replace(/\/[^/]+$/, '/');
+          return `${u.origin}${dir}`;
+        } catch {
+          return null;
+        }
+      })();
+
+      let rewrittenBody = body;
+
+      if (originBaseUrl) {
+        // Inject <BaseURL> after the opening <MPD ...> or <Period ...> tag so
+        // Shaka resolves all relative segment URLs directly against the origin.
+        // If BaseURL already present, skip injection to avoid doubling.
+        if (!body.includes('<BaseURL>')) {
+          // Inject after <Period ...> or right after the root <MPD ...> opening tag
+          rewrittenBody = body.replace(
+            /(<Period[^>]*>)/,
+            `$1\n    <BaseURL>${originBaseUrl}</BaseURL>`
+          );
+          // Fallback: inject after the first MPD opening tag if no <Period> yet
+          if (rewrittenBody === body) {
+            rewrittenBody = body.replace(
+              /(<MPD[^>]*>)/,
+              `$1\n  <BaseURL>${originBaseUrl}</BaseURL>`
+            );
+          }
+        }
+      }
+
+      const response = new Response(rewrittenBody, {
         status: upstream.status,
         headers: {
           ...CORS_HEADERS,
           'Content-Type':  contentType,
-          'Cache-Control': 'public, max-age=2, s-maxage=2',
+          'Cache-Control': 'public, max-age=3, s-maxage=3',
           'X-Cache':       'MISS',
         },
       });
