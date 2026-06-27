@@ -160,7 +160,7 @@ export const getProxiedUrl = (url: string, force = false) => {
   const needsProxy = force || restrictedDomains.some(domain => cleanTargetUrl.includes(domain));
 
   if (needsProxy) {
-    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://api.ykn.my.id/api/proxy';
+    const proxyBase = import.meta.env.VITE_PROXY_BASE_URL || 'https://proxy-ykntv414.ykn.my.id/api/proxy';
 
     const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
     return `${proxyBase}/${cleanUrl}`;
