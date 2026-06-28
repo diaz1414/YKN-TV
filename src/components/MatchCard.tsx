@@ -109,9 +109,9 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
   }, [match]);
 
   const handleClick = () => {
-    if (typeof window !== 'undefined' && (window as any).yknAdRedirect) {
+    if (typeof window !== 'undefined' && window.yknAdRedirect) {
       try {
-        (window as any).yknAdRedirect();
+        window.yknAdRedirect();
       } catch (err) {
         console.error('[Ads] Redirect error:', err);
       }

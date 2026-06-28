@@ -28,6 +28,21 @@ const ChannelDetail = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'channels' | 'matches'>('chat');
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
 
+  const [watchAdUnlocked, setWatchAdUnlocked] = useState(false);
+  const [watchGateChecked, setWatchGateChecked] = useState(false);
+
+  useEffect(() => {
+    const canRedirect = window.yknAdCanRedirect?.();
+
+    if (canRedirect === true) {
+      setWatchAdUnlocked(false);
+    } else {
+      setWatchAdUnlocked(true);
+    }
+
+    setWatchGateChecked(true);
+  }, []);
+
   // Socket.io live chat state
   const [socket, setSocket] = useState<any>(null);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
@@ -605,7 +620,37 @@ const ChannelDetail = () => {
             {/* Embedded Player */}
             <div className="overflow-hidden rounded-3xl border border-white/5 shadow-2xl">
               {matchStatus === 'playable' ? (
-                <VideoPlayer servers={stream.servers} />
+                !watchGateChecked ? null : !watchAdUnlocked ? (
+                  <div className="min-h-[60vh] flex items-center justify-center px-4">
+                    <div className="max-w-md w-full rounded-3xl border border-yellow-500/30 bg-black/80 p-6 text-center shadow-2xl backdrop-blur-xl">
+                      <div className="text-4xl mb-4">⚽</div>
+
+                      <h2 className="text-xl font-bold text-white mb-2">
+                        Siaran Siap Dimulai
+                      </h2>
+
+                      <p className="text-sm text-zinc-400 mb-6">
+                        Klik tombol di bawah untuk melanjutkan ke halaman nonton.
+                      </p>
+
+                      <button
+                        onClick={() => {
+                          window.yknAdRedirect?.();
+                          setWatchAdUnlocked(true);
+                        }}
+                        className="w-full rounded-2xl bg-yellow-500 px-5 py-4 font-bold text-black active:scale-95 transition hover:bg-yellow-400 cursor-pointer select-none"
+                      >
+                        Lanjutkan Menonton
+                      </button>
+
+                      <p className="mt-4 text-xs text-zinc-500">
+                        Jika tab iklan terbuka, kembali ke halaman ini untuk menonton.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <VideoPlayer servers={stream.servers} />
+                )
               ) : matchStatus === 'finished' ? (
                 <div className="min-h-[280px] sm:aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-5 sm:p-8 text-center select-none gap-4 shadow-inner relative overflow-hidden">
                   <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
