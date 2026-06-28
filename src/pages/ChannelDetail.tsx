@@ -623,7 +623,9 @@ const ChannelDetail = () => {
                 !watchGateChecked ? null : !watchAdUnlocked ? (
                   <div className="min-h-[60vh] flex items-center justify-center px-4">
                     <div className="max-w-md w-full rounded-3xl border border-yellow-500/30 bg-black/80 p-6 text-center shadow-2xl backdrop-blur-xl">
-                      <div className="text-4xl mb-4">⚽</div>
+                      <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-amber-500/5 border border-yellow-500/30 flex items-center justify-center mb-5 shadow-[0_0_25px_rgba(234,179,8,0.2)]">
+                        <Trophy className="w-8 h-8 text-yellow-500" />
+                      </div>
 
                       <h2 className="text-xl font-bold text-white mb-2">
                         Siaran Siap Dimulai
