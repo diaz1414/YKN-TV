@@ -89,7 +89,10 @@ const PROXY_BACKUP_DOMAINS = [
   'iptvcat.com',
   'akamaihd.net',
   'akamaized.net',
-  'pv-cdn.net'
+  'pv-cdn.net',
+  'aiv-cdn.net',
+  'beetv.kz',
+  'amazon.fastly-edge.com'
 ];
 
 const DIRECT_SAFE_DOMAINS = [
