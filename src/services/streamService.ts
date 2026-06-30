@@ -93,7 +93,8 @@ const PROXY_BACKUP_DOMAINS = [
   'aiv-cdn.net',
   'beetv.kz',
   'amazon.fastly-edge.com',
-  'byteplaycdn.com'
+  'byteplaycdn.com',
+  'tencent-css.byteplaycdn.com'
 ];
 
 const DIRECT_SAFE_DOMAINS = [
