@@ -27,6 +27,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
+  const STARTUP_GRACE_MS = 45000;
+
+  const [isBooting, setIsBooting] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState('Memuat siaran...');
+  const playbackConfirmedRef = useRef(false);
+  const startupErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Custom Controls State
   const [volume, setVolume] = useState(1);
@@ -105,6 +111,46 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   };
 
+  const clearStartupErrorTimer = () => {
+    if (startupErrorTimerRef.current) {
+      clearTimeout(startupErrorTimerRef.current);
+      startupErrorTimerRef.current = null;
+    }
+  };
+
+  const confirmPlaybackReady = () => {
+    playbackConfirmedRef.current = true;
+    clearStartupErrorTimer();
+    setIsBooting(false);
+    setIsBuffering(false);
+    setError(null);
+    setIsPlaying(true);
+  };
+
+  const showStartupErrorWithDelay = (message: string) => {
+    if (playbackConfirmedRef.current) {
+      setIsBooting(false);
+      setIsBuffering(false);
+      setError(message);
+      return;
+    }
+
+    setError(null);
+    setIsBooting(true);
+    setIsBuffering(true);
+    setLoadingMessage('Menyambungkan siaran...');
+
+    clearStartupErrorTimer();
+
+    startupErrorTimerRef.current = setTimeout(() => {
+      if (!playbackConfirmedRef.current) {
+        setIsBooting(false);
+        setIsBuffering(false);
+        setError(message);
+      }
+    }, STARTUP_GRACE_MS);
+  };
+
   useEffect(() => {
     if (!videoRef.current) return;
 
@@ -117,7 +163,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       if (!hlsRef.current) {
         // Only trigger UI error overlay if the error severity is CRITICAL (2)
         if (event.detail && event.detail.severity === 2) {
-          setError(`Stream Error: ${event.detail.code}`);
+          showStartupErrorWithDelay(`Stream Error: ${event.detail.code}`);
         } else {
           console.warn('Recoverable Shaka error ignored in UI:', event.detail.code);
         }
@@ -156,6 +202,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
 
     return () => {
+      clearStartupErrorTimer();
       destroyPlayers();
       if (playerRef.current) {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
@@ -273,8 +320,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
       };
 
+      playbackConfirmedRef.current = false;
+      clearStartupErrorTimer();
+
       setError(null);
+      setIsBooting(true);
       setIsBuffering(true);
+      setLoadingMessage(`Memuat ${currentServer.name}...`);
       setLevels([]);
       setCurrentLevel('auto');
       await destroyPlayers();
@@ -382,19 +434,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                   triedProxy = true;
                   hls.startLoad();
                 } else {
-                  setError('Gagal memuat siaran video (Error Jaringan).');
+                  showStartupErrorWithDelay('Gagal memuat siaran video (Error Jaringan).');
                 }
               } else {
-                setError('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
+                showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
               }
             } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
               try {
                 hls.recoverMediaError();
               } catch (_) {
-                setError(`Playback Error: ${data.details}`);
+                showStartupErrorWithDelay(`Playback Error: ${data.details}`);
               }
             } else {
-              setError(`Playback Error: ${data.details}`);
+              showStartupErrorWithDelay(`Playback Error: ${data.details}`);
             }
           });
 
@@ -462,12 +514,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
         const isNetworkError = [1001, 1002, 1009].includes(e.code);
         if (isNetworkError && currentServer.forceProxy !== true) {
-          setError('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
+          showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
           return;
         }
 
         if (e.code !== 7000) {
-          setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
+          showStartupErrorWithDelay(`Gagal memuat siaran. Kode Internal: ${e.code || 'UNKNOWN'}`);
         }
       }
     };
@@ -826,8 +878,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => setIsBuffering(true)}
-          onPlaying={() => setIsBuffering(false)}
-          onCanPlay={() => setIsBuffering(false)}
+          onPlaying={confirmPlaybackReady}
+          onCanPlay={() => {
+            setLoadingMessage('Siaran hampir siap...');
+          }}
           onSeeked={() => setIsBuffering(false)}
           onStalled={() => setIsBuffering(true)}
           onSeeking={() => setIsBuffering(true)}
@@ -1001,7 +1055,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         </div>
 
         {/* Error State display screen */}
-        {error && (
+        {/* Error State display screen */}
+        {error && !isBooting && (
           <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center select-none animate-in fade-in duration-300">
             <AlertTriangle className="text-netflix-red mb-4 shadow-lg" size={44} />
             <h4 className="text-lg font-black uppercase font-display mb-1.5">Gangguan Koneksi Siaran</h4>
@@ -1019,10 +1074,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
 
         {/* Buffering Overlay */}
-        {isBuffering && !error && (
+        {(isBooting || isBuffering) && !error && (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">Memuat Aliran...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">{loadingMessage || 'Memuat Aliran...'}</p>
           </div>
         )}
 
@@ -1085,7 +1140,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setCurrentServer(server);
                 setIsPlaying(false);
                 setHasStarted(true);
-                setIsBuffering(false);
+                setError(null);
+                setIsBooting(true);
+                setIsBuffering(true);
+                setLoadingMessage(`Memuat ${server.name}...`);
                 setIsAtLiveEdge(true);
               }}
               className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
