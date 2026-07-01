@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import { ChevronLeft, Key, ShieldAlert, RefreshCw, LogOut, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Key, ShieldAlert, RefreshCw, LogOut, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X, ChevronDown, Check } from 'lucide-react';
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import yknwcLogo from '../assets/yknwc-logo.png';
@@ -96,6 +96,193 @@ const getMatchStatus = (ch: PlayableStream) => {
   }
 };
 
+interface SearchableSelectOption {
+  id: string;
+  name: string;
+  subName?: string;
+  category?: 'channel' | 'match' | string;
+  backupCount?: number;
+}
+
+interface SearchableSelectProps {
+  options: SearchableSelectOption[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  showGroups?: boolean;
+  showBackupIndicator?: boolean;
+}
+
+const SearchableSelect = ({
+  options,
+  value,
+  onChange,
+  placeholder,
+  showGroups = false,
+  showBackupIndicator = false,
+}: SearchableSelectProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find((opt) => opt.id === value);
+
+  const filteredOptions = options.filter((opt) => {
+    const term = searchQuery.toLowerCase().trim();
+    if (!term) return true;
+    const nameMatch = opt.name.toLowerCase().includes(term);
+    const subNameMatch = opt.subName ? opt.subName.toLowerCase().includes(term) : false;
+    return nameMatch || subNameMatch;
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('');
+    }
+  }, [isOpen]);
+
+  const handleSelect = (id: string) => {
+    onChange(id);
+    setIsOpen(false);
+  };
+
+  const renderOptionItem = (opt: SearchableSelectOption) => {
+    const isSelected = opt.id === value;
+    return (
+      <button
+        key={opt.id}
+        type="button"
+        onClick={() => handleSelect(opt.id)}
+        className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer select-none ${isSelected
+            ? 'bg-primary text-dark shadow-md'
+            : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+          }`}
+      >
+        <div className="flex-1 min-w-0 pr-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="truncate">{opt.name}</span>
+            {showBackupIndicator && opt.backupCount !== undefined && opt.backupCount > 0 && (
+              <span className={`shrink-0 text-[7px] font-black border px-1.5 py-0.5 rounded uppercase ${isSelected
+                  ? 'bg-dark/10 text-dark border-dark/20'
+                  : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                }`}>
+                {opt.backupCount} Backup
+              </span>
+            )}
+          </div>
+          {opt.subName && (
+            <p className={`text-[9px] font-bold mt-0.5 truncate ${isSelected ? 'text-dark/70' : 'text-zinc-500'}`}>
+              {opt.subName}
+            </p>
+          )}
+        </div>
+        {isSelected && <Check size={12} strokeWidth={3} className={isSelected ? 'text-dark' : 'text-primary'} />}
+      </button>
+    );
+  };
+
+  const channels = filteredOptions.filter(opt => opt.category === 'channel');
+  const matches = filteredOptions.filter(opt => opt.category === 'match');
+
+  return (
+    <div ref={containerRef} className="relative w-full font-sans">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3.5 py-2.5 text-xs font-bold text-white flex items-center justify-between outline-none cursor-pointer text-left focus:border-primary/45 transition-all select-none"
+      >
+        {selectedOption ? (
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="truncate">{selectedOption.name}</span>
+              {showBackupIndicator && selectedOption.backupCount !== undefined && selectedOption.backupCount > 0 && (
+                <span className="shrink-0 text-[7px] font-black bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase">
+                  {selectedOption.backupCount} Backup
+                </span>
+              )}
+            </div>
+            {selectedOption.subName && (
+              <p className="text-[9px] text-zinc-500 font-bold truncate mt-0.5">
+                {selectedOption.subName}
+              </p>
+            )}
+          </div>
+        ) : (
+          <span className="text-zinc-500">{placeholder}</span>
+        )}
+        <ChevronDown size={14} className={`text-zinc-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 left-0 right-0 mt-2 bg-zinc-950/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.7)] p-2.5 space-y-2 select-none">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" size={12} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari..."
+              className="w-full bg-zinc-900 border border-white/5 rounded-xl pl-8 pr-8 py-2 text-xs font-bold text-white focus:outline-none focus:border-primary/30 transition-all placeholder-zinc-600"
+              autoFocus
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white cursor-pointer"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
+          <div className="max-h-[220px] overflow-y-auto pr-1 space-y-1.5 custom-scrollbar">
+            {filteredOptions.length === 0 ? (
+              <p className="text-center py-4 text-[10px] font-black uppercase text-zinc-600 tracking-wider">
+                Tidak ada pilihan ditemukan
+              </p>
+            ) : !showGroups ? (
+              filteredOptions.map((opt) => renderOptionItem(opt))
+            ) : (
+              <>
+                {channels.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="px-2 py-1 text-[8px] font-black text-zinc-500 uppercase tracking-widest bg-white/2 rounded">
+                      📺 TV Channels
+                    </div>
+                    {channels.map((opt) => renderOptionItem(opt))}
+                  </div>
+                )}
+
+                {matches.length > 0 && (
+                  <div className="space-y-1 pt-1.5">
+                    <div className="px-2 py-1 text-[8px] font-black text-zinc-500 uppercase tracking-widest bg-white/2 rounded">
+                      ⚽ Matches / Events
+                    </div>
+                    {matches.map((opt) => renderOptionItem(opt))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -136,6 +323,82 @@ const AdminDashboard = () => {
   const [eventStop, setEventStop] = useState('');
   const [eventSourceChannelId, setEventSourceChannelId] = useState('');
   const [eventInternalNote, setEventInternalNote] = useState('');
+
+  // Wizard states for schedule tab
+  const [scheduleStep, setScheduleStep] = useState<1 | 2 | 3>(1);
+  const [scheduleSearch, setScheduleSearch] = useState('');
+  const [selectedRawEventKey, setSelectedRawEventKey] = useState(''); // id_event of first CH entry
+  const [scheduleChannelMode, setScheduleChannelMode] = useState<'raw' | 'web' | 'manual'>('raw');
+  const [scheduleManualSourceId, setScheduleManualSourceId] = useState('');
+  const [scheduleWebSourceId, setScheduleWebSourceId] = useState('');
+  // Raw event entries grouped: unique matches (by id_event of CH1), all channels per match
+  interface RawEventEntry {
+    id_iptv: string;
+    nama_channel: string;
+    url_iptv: string;
+    url_license?: string;
+    jenis: string;
+    nama_event: string;
+    player_1: string;
+    player_2: string;
+    logo_1?: string;
+    logo_2?: string;
+    jadwal_event?: string;
+    jadwal_stop?: string;
+    deskripsi?: string;
+    deskripsi_en?: string;
+    id_event: string;
+    thumbnail?: string;
+  }
+
+
+  // Remote live events fetch state
+  const [remoteEvents, setRemoteEvents] = useState<RawEventEntry[]>([]);
+  const [remoteEventsLoading, setRemoteEventsLoading] = useState(false);
+  const [remoteEventsFetched, setRemoteEventsFetched] = useState(false);
+
+  const REMOTE_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat';
+
+  const fetchRemoteEvents = async () => {
+    setRemoteEventsLoading(true);
+    try {
+      const res = await fetch(REMOTE_EVENTS_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const parsed = JSON.parse(text) as RawEventEntry[];
+      setRemoteEvents(parsed);
+      setRemoteEventsFetched(true);
+    } catch (err) {
+      console.warn('[Remote Events] gagal fetch:', err);
+      setRemoteEvents([]);
+    } finally {
+      setRemoteEventsLoading(false);
+    }
+  };
+
+  // Derived unique matches from remote events
+  const remoteUniqueMatches: RawEventEntry[] = (() => {
+    const result: RawEventEntry[] = [];
+    const seen = new Set<string>();
+    for (const ev of remoteEvents) {
+      const key = `${ev.player_1}|${ev.player_2}|${ev.jadwal_event || ''}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(ev);
+      }
+    }
+    return result;
+  })();
+
+  const getRemoteChannelsForMatch = (match: RawEventEntry): RawEventEntry[] =>
+    remoteEvents.filter(
+      (ev) =>
+        ev.player_1 === match.player_1 &&
+        ev.player_2 === match.player_2 &&
+        (ev.jadwal_event || '') === (match.jadwal_event || '')
+    );
+
+  const selectedRemoteMatch = remoteUniqueMatches.find((m) => m.id_event === selectedRawEventKey) || null;
 
 
 
@@ -186,16 +449,16 @@ const AdminDashboard = () => {
   const [serverSaving, setServerSaving] = useState(false);
   const [serverMessage, setServerMessage] = useState('');
 
+  // New state variables for copying from existing channels/matches
+  const [serverUrlSource, setServerUrlSource] = useState<'manual' | 'channel'>('manual');
+  const [serverSourceChannelId, setServerSourceChannelId] = useState('');
+  const [serverSourceIndex, setServerSourceIndex] = useState<number | ''>('');
+
   const [eventServers, setEventServers] = useState<EventServerRow[]>([]);
   const [serverListLoading, setServerListLoading] = useState(false);
 
 
   const sourceChannelsForEvent = channels.filter((ch) => ch.isChannel);
-
-  const selectedEventSourceChannel = sourceChannelsForEvent.find(
-    (ch) => ch.id === eventSourceChannelId
-  );
-
   const toWibIso = (value: string) => {
     if (!value) return '';
 
@@ -230,21 +493,34 @@ const AdminDashboard = () => {
       setCustomEventMessage('Isi nama kedua tim dulu.');
       return;
     }
-
     if (!eventStart) {
       setCustomEventMessage('Isi jam mulai pertandingan dulu.');
       return;
     }
-
-    if (!eventSourceChannelId) {
-      setCustomEventMessage('Pilih channel sumber live dulu.');
+    // Resolve source_channel_id from wizard mode
+    let resolvedSourceId = '';
+    if (scheduleChannelMode === 'raw') {
+      resolvedSourceId = eventSourceChannelId;
+    } else if (scheduleChannelMode === 'web') {
+      resolvedSourceId = scheduleWebSourceId;
+    } else {
+      resolvedSourceId = scheduleManualSourceId;
+    }
+    if (!resolvedSourceId.trim()) {
+      setCustomEventMessage('Pilih atau isi channel sumber live dulu.');
       return;
     }
-
     setCustomEventSaving(true);
     setCustomEventMessage('');
-
     try {
+      const sourceLabel =
+        scheduleChannelMode === 'raw'
+          ? (selectedRemoteMatch
+            ? `${selectedRemoteMatch.nama_event} (${resolvedSourceId})`
+            : resolvedSourceId)
+          : scheduleChannelMode === 'web'
+            ? (sourceChannelsForEvent.find((c) => c.id === resolvedSourceId)?.name || resolvedSourceId)
+            : resolvedSourceId;
       await saveCustomEvent({
         nama_event: eventName.trim() || 'Live Event',
         player_1: eventPlayer1.trim(),
@@ -253,19 +529,21 @@ const AdminDashboard = () => {
         logo_2: eventLogo2.trim() || undefined,
         jadwal_event: toWibIso(eventStart),
         jadwal_stop: eventStop ? toWibIso(eventStop) : undefined,
-        source_channel_id: eventSourceChannelId,
+        source_channel_id: resolvedSourceId,
         is_active: active,
-        internal_note:
-          eventInternalNote.trim() ||
-          `Source: ${selectedEventSourceChannel?.name || eventSourceChannelId}`,
+        internal_note: eventInternalNote.trim() || `Source: ${sourceLabel}`,
       });
-
       setCustomEventMessage(
-        active
-          ? 'Jadwal event berhasil dibuat dan aktif.'
-          : 'Jadwal event berhasil disimpan nonaktif.'
+        active ? 'Jadwal event berhasil dibuat dan aktif.' : 'Jadwal event berhasil disimpan nonaktif.'
       );
-
+      // Reset wizard
+      setScheduleStep(1);
+      setSelectedRawEventKey('');
+      setScheduleSearch('');
+      setScheduleChannelMode('raw');
+      setScheduleManualSourceId('');
+      setScheduleWebSourceId('');
+      setEventName('FIFA World Cup');
       setEventPlayer1('');
       setEventPlayer2('');
       setEventLogo1('');
@@ -274,7 +552,6 @@ const AdminDashboard = () => {
       setEventStop('');
       setEventSourceChannelId('');
       setEventInternalNote('');
-
       await loadCustomEvents();
     } catch (err: any) {
       setCustomEventMessage('Gagal simpan jadwal: ' + (err?.message || 'Unknown error'));
@@ -910,6 +1187,37 @@ const AdminDashboard = () => {
     return target?.name || streamId;
   };
 
+  const handleSourceChannelChange = (channelId: string) => {
+    setServerSourceChannelId(channelId);
+    if (!channelId) {
+      setServerSourceIndex('');
+      setServerUrl('');
+      return;
+    }
+    const ch = channels.find((c) => c.id === channelId);
+    if (ch && ch.servers && ch.servers.length > 0) {
+      setServerSourceIndex(0);
+      setServerUrl(ch.servers[0].url);
+      setServerForceProxy(!!ch.servers[0].forceProxy);
+      if (!serverInternalNote.trim()) {
+        setServerInternalNote(`Source: ${ch.name}`);
+      }
+    } else {
+      setServerSourceIndex('');
+      setServerUrl('');
+    }
+  };
+
+  const handleSourceServerChange = (index: number) => {
+    setServerSourceIndex(index);
+    const ch = channels.find((c) => c.id === serverSourceChannelId);
+    if (ch && ch.servers && ch.servers[index]) {
+      const srv = ch.servers[index];
+      setServerUrl(srv.url);
+      setServerForceProxy(!!srv.forceProxy);
+    }
+  };
+
   const handleSaveEventServer = async (active: boolean) => {
     if (!serverStreamId) {
       setServerMessage('Pilih pertandingan/channel dulu.');
@@ -947,6 +1255,9 @@ const AdminDashboard = () => {
       setServerInternalNote('');
       setServerPriority(3);
       setServerForceProxy(false);
+      setServerUrlSource('manual');
+      setServerSourceChannelId('');
+      setServerSourceIndex('');
 
       await loadEventServers();
     } catch (err: any) {
@@ -1651,111 +1962,215 @@ const AdminDashboard = () => {
                       </button>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                        Pilih Target
-                      </label>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                      {/* Left side: Add Server Form (7 columns) */}
+                      <div className="lg:col-span-7 space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                            Pilih Target
+                          </label>
 
-                      <select
-                        value={serverStreamId}
-                        onChange={(e) => setServerStreamId(e.target.value)}
-                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                      >
-                        <option value="">Pilih pertandingan/channel...</option>
+                          <SearchableSelect
+                            options={channels.map((ch) => ({
+                              id: ch.id,
+                              name: ch.name,
+                              subName: ch.subName,
+                              backupCount: serverCountByStream[ch.id] || 0,
+                            }))}
+                            value={serverStreamId}
+                            onChange={(val) => setServerStreamId(val)}
+                            placeholder="Pilih pertandingan/channel..."
+                            showBackupIndicator={true}
+                          />
+                        </div>
 
-                        {channels.map((ch) => {
-                          const backupCount = serverCountByStream[ch.id] || 0;
+                        {/* URL Live Source Selection */}
+                        <div className="space-y-2">
+                          <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                            Sumber URL Live
+                          </label>
+                          <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setServerUrlSource('manual');
+                                setServerSourceChannelId('');
+                                setServerSourceIndex('');
+                                setServerUrl('');
+                              }}
+                              className={`flex-1 py-1.5 text-[8.5px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${serverUrlSource === 'manual'
+                                  ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                                  : 'text-zinc-400 hover:text-white'
+                                }`}
+                            >
+                              Input URL Manual
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setServerUrlSource('channel');
+                              }}
+                              className={`flex-1 py-1.5 text-[8.5px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${serverUrlSource === 'channel'
+                                  ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                                  : 'text-zinc-400 hover:text-white'
+                                }`}
+                            >
+                              Salin dari Channel/Match Web
+                            </button>
+                          </div>
+                        </div>
 
-                          return (
-                            <option key={ch.id} value={ch.id}>
-                              {backupCount > 0 ? `✅ ` : `➕ `}
-                              {ch.name}
-                              {ch.subName ? ` - ${ch.subName}` : ''}
-                              {backupCount > 0 ? ` (${backupCount} backup)` : ' (belum ada backup)'}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                        {/* Source Selection if 'channel' */}
+                        {serverUrlSource === 'channel' && (
+                          <div className="space-y-4 pt-1 bg-zinc-950/20 p-3 rounded-2xl border border-white/5">
+                            <div className="space-y-2">
+                              <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                                Pilih Channel/Match Sumber
+                              </label>
+                              <SearchableSelect
+                                options={channels.map((ch) => ({
+                                  id: ch.id,
+                                  name: `${ch.isChannel ? '📺' : '⚽'} ${ch.name}`,
+                                  subName: ch.subName,
+                                  category: ch.isChannel ? 'channel' : 'match',
+                                }))}
+                                value={serverSourceChannelId}
+                                onChange={(val) => handleSourceChannelChange(val)}
+                                placeholder="Pilih Channel / Pertandingan..."
+                                showGroups={true}
+                              />
+                            </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                        URL Live
-                      </label>
+                            {serverSourceChannelId && (
+                              <div className="space-y-2">
+                                <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                                  Pilih Server Sumber (Klik salah satu)
+                                </label>
+                                <div className="grid grid-cols-1 gap-2 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
+                                  {(() => {
+                                    const ch = channels.find((c) => c.id === serverSourceChannelId);
+                                    if (!ch || !ch.servers || ch.servers.length === 0) {
+                                      return <p className="text-[9px] text-red-400 py-1">Channel ini tidak memiliki server streaming aktif.</p>;
+                                    }
+                                    return ch.servers.map((srv, idx) => {
+                                      const isSelected = serverSourceIndex === idx;
+                                      return (
+                                        <button
+                                          key={idx}
+                                          type="button"
+                                          onClick={() => handleSourceServerChange(idx)}
+                                          className={`w-full text-left p-2.5 rounded-xl border text-[10px] transition-all flex flex-col gap-1 ${isSelected
+                                              ? 'bg-primary/10 text-primary border-primary/30 shadow-lg shadow-primary/5'
+                                              : 'bg-zinc-900/50 text-zinc-300 border-white/5 hover:bg-zinc-800/80 hover:text-white'
+                                            }`}
+                                        >
+                                          <div className="flex items-center justify-between font-black uppercase tracking-wider">
+                                            <span>{srv.name || `Server ${idx + 1}`}</span>
+                                            <span className="text-[7.5px] px-1.5 py-0.5 rounded bg-white/5 border border-white/5 font-mono">
+                                              {srv.type.toUpperCase()}
+                                            </span>
+                                          </div>
+                                          <span className="text-[8.5px] font-mono text-zinc-500 break-all select-all">
+                                            {srv.url}
+                                          </span>
+                                        </button>
+                                      );
+                                    });
+                                  })()}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                      <input
-                        value={serverUrl}
-                        onChange={(e) => setServerUrl(e.target.value)}
-                        placeholder="https://api.ykn.my.id/live/event/index.m3u8"
-                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                      />
-                    </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                              URL Live
+                            </label>
+                            {serverUrlSource === 'channel' && serverUrl && (
+                              <span className="text-[7.5px] text-emerald-400 font-bold uppercase tracking-wider animate-pulse">
+                                ✓ Disalin dari sumber
+                              </span>
+                            )}
+                          </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Urutan Server
-                        </label>
+                          <input
+                            value={serverUrl}
+                            onChange={(e) => setServerUrl(e.target.value)}
+                            placeholder="https://api.ykn.my.id/live/event/index.m3u8"
+                            className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all font-mono"
+                          />
+                        </div>
 
-                        <input
-                          type="number"
-                          value={serverPriority}
-                          onChange={(e) => setServerPriority(Number(e.target.value))}
-                          min={1}
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-2">
+                            <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                              Urutan Server
+                            </label>
+
+                            <input
+                              type="number"
+                              value={serverPriority}
+                              onChange={(e) => setServerPriority(Number(e.target.value))}
+                              min={1}
+                              className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all"
+                            />
+                          </div>
+
+                          <label className="flex items-center gap-3 bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 cursor-pointer hover:bg-zinc-800/50 transition-all select-none self-end h-[38px]">
+                            <input
+                              type="checkbox"
+                              checked={serverForceProxy}
+                              onChange={(e) => setServerForceProxy(e.target.checked)}
+                              className="accent-primary w-3.5 h-3.5"
+                            />
+                            <span className="text-[9px] font-black uppercase tracking-wider text-zinc-300">
+                              Lewat Proxy
+                            </span>
+                          </label>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                            Catatan Internal
+                          </label>
+
+                          <input
+                            value={serverInternalNote}
+                            onChange={(e) => setServerInternalNote(e.target.value)}
+                            placeholder="Catatan admin saja, tidak tampil ke user"
+                            className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all"
+                          />
+                        </div>
+
+                        {serverMessage && (
+                          <p className="text-[10px] text-primary font-black uppercase tracking-wider bg-primary/5 px-3 py-2 rounded-xl border border-primary/10">
+                            {serverMessage}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap gap-3 pt-2">
+                          <button
+                            onClick={() => handleSaveEventServer(true)}
+                            disabled={serverSaving}
+                            className="px-6 py-3 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
+                          >
+                            {serverSaving ? 'Menyimpan...' : 'Aktifkan Server'}
+                          </button>
+
+                          <button
+                            onClick={() => handleSaveEventServer(false)}
+                            disabled={serverSaving}
+                            className="px-6 py-3 bg-white/10 hover:bg-white/15 text-white border border-white/10 font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                          >
+                            Simpan Nonaktif
+                          </button>
+                        </div>
                       </div>
 
-                      <label className="flex items-center gap-3 bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={serverForceProxy}
-                          onChange={(e) => setServerForceProxy(e.target.checked)}
-                          className="accent-primary"
-                        />
-                        <span className="text-[9px] font-black uppercase tracking-wider text-zinc-300">
-                          Lewat Proxy
-                        </span>
-                      </label>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                        Catatan Internal
-                      </label>
-
-                      <input
-                        value={serverInternalNote}
-                        onChange={(e) => setServerInternalNote(e.target.value)}
-                        placeholder="Catatan admin saja, tidak tampil ke user"
-                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                      />
-                    </div>
-
-                    {serverMessage && (
-                      <p className="text-[10px] text-primary font-black uppercase tracking-wider">
-                        {serverMessage}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-3 pt-2">
-                      <button
-                        onClick={() => handleSaveEventServer(true)}
-                        disabled={serverSaving}
-                        className="px-5 py-2.5 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
-                      >
-                        {serverSaving ? 'Menyimpan...' : 'Aktifkan Server'}
-                      </button>
-
-                      <button
-                        onClick={() => handleSaveEventServer(false)}
-                        disabled={serverSaving}
-                        className="px-5 py-2.5 bg-white/10 text-white border border-white/10 font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
-                      >
-                        Simpan Nonaktif
-                      </button>
-
-                      <div className="pt-5 mt-5 border-t border-white/5 space-y-4">
+                      {/* Right side: Backups List Area (5 columns) */}
+                      <div className="lg:col-span-5 border-t border-white/5 pt-6 lg:border-t-0 lg:pt-0 lg:border-l lg:border-white/5 lg:pl-6 space-y-4">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
                             <h4 className="text-xs font-black text-white uppercase tracking-wider">
@@ -1764,15 +2179,15 @@ const AdminDashboard = () => {
 
                             <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
                               {serverStreamId
-                                ? `Menampilkan backup untuk ${selectedServerTarget?.name || serverStreamId}`
-                                : 'Menampilkan semua backup yang sudah dibuat'}
+                                ? `Backup untuk ${selectedServerTarget?.name || serverStreamId}`
+                                : 'Semua backup yang sudah dibuat'}
                             </p>
                           </div>
 
                           <button
                             onClick={loadEventServers}
                             disabled={serverListLoading}
-                            className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
+                            className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-all self-start sm:self-auto"
                           >
                             <RefreshCcw size={12} className={serverListLoading ? 'animate-spin' : ''} />
                             Refresh
@@ -1780,24 +2195,24 @@ const AdminDashboard = () => {
                         </div>
 
                         {serverListLoading ? (
-                          <div className="py-8 flex items-center justify-center">
+                          <div className="py-12 flex items-center justify-center">
                             <div className="w-7 h-7 border-3 border-primary border-t-transparent rounded-full animate-spin" />
                           </div>
                         ) : visibleEventServers.length === 0 ? (
-                          <div className="p-5 bg-zinc-950/50 border border-white/5 rounded-2xl text-center">
+                          <div className="p-8 bg-zinc-950/30 border border-white/5 rounded-2xl text-center">
                             <p className="text-[10px] text-zinc-500 font-black uppercase tracking-wider">
                               Belum ada backup channel untuk target ini.
                             </p>
                           </div>
                         ) : (
-                          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
+                          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                             {visibleEventServers.map((row) => {
                               const targetName = getTargetNameById(row.stream_id);
 
                               return (
                                 <div
                                   key={row.id}
-                                  className="p-4 bg-zinc-950/50 border border-white/5 rounded-2xl space-y-3"
+                                  className="p-4 bg-zinc-950/40 hover:bg-zinc-950/60 border border-white/5 rounded-2xl space-y-3 hover:border-white/10 transition-all"
                                 >
                                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                                     <div className="min-w-0 flex-1">
@@ -1819,7 +2234,7 @@ const AdminDashboard = () => {
                                           {row.force_proxy ? 'Proxy' : 'Direct'}
                                         </span>
 
-                                        <span className="px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest bg-white/5 text-zinc-400 border border-white/5">
+                                        <span className="px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest bg-white/5 text-zinc-400 border border-white/5 font-mono">
                                           {(row.type || 'hls').toUpperCase()}
                                         </span>
                                       </div>
@@ -1834,7 +2249,7 @@ const AdminDashboard = () => {
                                         </p>
                                       )}
 
-                                      <p className="text-[9px] text-zinc-600 font-mono mt-2 break-all">
+                                      <p className="text-[9px] text-zinc-600 font-mono mt-2 break-all select-all bg-zinc-950/40 p-2 rounded-lg border border-white/5">
                                         {row.url}
                                       </p>
                                     </div>
@@ -1842,7 +2257,7 @@ const AdminDashboard = () => {
                                     <div className="flex flex-wrap gap-2 shrink-0">
                                       <button
                                         onClick={() => window.open(row.url, '_blank')}
-                                        className="w-8 h-8 bg-white/5 hover:bg-sky-500/15 text-zinc-400 hover:text-sky-400 border border-white/5 rounded-xl flex items-center justify-center transition-all"
+                                        className="w-8 h-8 bg-white/5 hover:bg-sky-500/15 text-zinc-400 hover:text-sky-400 border border-white/5 rounded-xl flex items-center justify-center transition-all cursor-pointer"
                                         title="Buka URL"
                                       >
                                         <ExternalLink size={13} />
@@ -1851,7 +2266,7 @@ const AdminDashboard = () => {
                                       <button
                                         onClick={() => handleToggleEventServer(row)}
                                         disabled={serverSaving}
-                                        className={`w-8 h-8 border rounded-xl flex items-center justify-center transition-all disabled:opacity-50 ${row.is_active
+                                        className={`w-8 h-8 border rounded-xl flex items-center justify-center transition-all disabled:opacity-50 cursor-pointer ${row.is_active
                                           ? 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border-orange-500/20'
                                           : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/20'
                                           }`}
@@ -1863,7 +2278,7 @@ const AdminDashboard = () => {
                                       <button
                                         onClick={() => handleDeleteEventServer(row)}
                                         disabled={serverSaving}
-                                        className="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
+                                        className="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 cursor-pointer"
                                         title="Hapus"
                                       >
                                         <Trash2 size={13} />
@@ -1878,263 +2293,574 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                   </div>
-                ) : (monitorTab as string) === 'schedule' ? (
-                  <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
-                      <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-wider">
-                          Buat Jadwal Event
-                        </h3>
-                        <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
-                          Buat card pertandingan baru dengan sumber live dari channel yang sudah ada.
-                        </p>
-                      </div>
+                ) : (monitorTab as string) === 'schedule' ? ((() => {
+                  // --- Helper: format jadwal to local readable ---
+                  const formatJadwalShort = (jadwal?: string) => {
+                    if (!jadwal) return '';
+                    try {
+                      const d = new Date(jadwal.replace(' ', 'T'));
+                      return d.toLocaleString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                    } catch { return jadwal; }
+                  };
+
+                  // Filtered unique matches for Step 1
+                  const filteredMatches = remoteUniqueMatches.filter((m) => {
+                    const term = scheduleSearch.toLowerCase().trim();
+                    if (!term) return true;
+                    return (
+                      m.player_1.toLowerCase().includes(term) ||
+                      m.player_2.toLowerCase().includes(term) ||
+                      m.nama_event.toLowerCase().includes(term)
+                    );
+                  });
+
+                  // Step indicator bar
+                  const StepIndicator = () => (
+                    <div className="flex items-center gap-2 mb-6 select-none">
+                      {[
+                        { n: 1, label: 'Pilih Event' },
+                        { n: 2, label: 'Pilih Channel' },
+                        { n: 3, label: 'Simpan' },
+                      ].map(({ n, label }, idx) => (
+                        <div key={n} className="flex items-center gap-2">
+                          <div className={`flex items-center gap-2 transition-all ${scheduleStep >= n ? 'opacity-100' : 'opacity-30'}`}>
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black border transition-all shrink-0 ${scheduleStep > n ? 'bg-emerald-500 border-emerald-500 text-dark'
+                                : scheduleStep === n ? 'bg-primary border-primary text-dark'
+                                  : 'bg-transparent border-zinc-700 text-zinc-500'
+                              }`}>
+                              {scheduleStep > n ? <Check size={10} strokeWidth={3} /> : n}
+                            </div>
+                            <span className={`text-[8.5px] font-black uppercase tracking-widest hidden sm:block ${scheduleStep === n ? 'text-white' : 'text-zinc-500'}`}>{label}</span>
+                          </div>
+                          {idx < 2 && <div className={`flex-1 min-w-[16px] h-px transition-all ${scheduleStep > n ? 'bg-emerald-500/60' : 'bg-white/5'}`} />}
+                        </div>
+                      ))}
                     </div>
+                  );
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Nama Event
-                        </label>
-                        <input
-                          value={eventName}
-                          onChange={(e) => setEventName(e.target.value)}
-                          placeholder="FIFA World Cup"
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Channel Sumber Live
-                        </label>
-                        <select
-                          value={eventSourceChannelId}
-                          onChange={(e) => setEventSourceChannelId(e.target.value)}
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        >
-                          <option value="">Pilih channel...</option>
-                          {sourceChannelsForEvent.map((ch) => (
-                            <option key={ch.id} value={ch.id}>
-                              {ch.name} {ch.subName ? `- ${ch.subName}` : ''}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Tim 1
-                        </label>
-                        <input
-                          value={eventPlayer1}
-                          onChange={(e) => setEventPlayer1(e.target.value)}
-                          placeholder="Argentina"
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Tim 2
-                        </label>
-                        <input
-                          value={eventPlayer2}
-                          onChange={(e) => setEventPlayer2(e.target.value)}
-                          placeholder="Austria"
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Logo Tim 1
-                        </label>
-                        <input
-                          value={eventLogo1}
-                          onChange={(e) => setEventLogo1(e.target.value)}
-                          placeholder="https://flagcdn.com/w80/ar.png"
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Logo Tim 2
-                        </label>
-                        <input
-                          value={eventLogo2}
-                          onChange={(e) => setEventLogo2(e.target.value)}
-                          placeholder="https://flagcdn.com/w80/at.png"
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Mulai
-                        </label>
-                        <input
-                          type="datetime-local"
-                          value={eventStart}
-                          onChange={(e) => setEventStart(e.target.value)}
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                          Selesai
-                        </label>
-                        <input
-                          type="datetime-local"
-                          value={eventStop}
-                          onChange={(e) => setEventStop(e.target.value)}
-                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    {selectedEventSourceChannel && (
-                      <div className="p-3 bg-zinc-950/60 border border-white/5 rounded-xl">
-                        <p className="text-[8px] text-zinc-500 font-black uppercase tracking-wider">
-                          Source yang dipakai:
-                        </p>
-                        <p className="text-xs text-white font-black mt-1">
-                          {selectedEventSourceChannel.name}
-                        </p>
-                        <p className="text-[9px] text-zinc-500 font-mono break-all mt-1">
-                          {selectedEventSourceChannel.servers?.[0]?.url}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
-                        Catatan Internal
-                      </label>
-                      <input
-                        value={eventInternalNote}
-                        onChange={(e) => setEventInternalNote(e.target.value)}
-                        placeholder="Catatan admin, tidak tampil ke user"
-                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
-                      />
-                    </div>
-
-                    {customEventMessage && (
-                      <p className="text-[10px] text-primary font-black uppercase tracking-wider">
-                        {customEventMessage}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-3 pt-2">
-                      <button
-                        onClick={() => handleSaveCustomEvent(true)}
-                        disabled={customEventSaving}
-                        className="px-5 py-2.5 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
-                      >
-                        {customEventSaving ? 'Menyimpan...' : 'Buat & Aktifkan'}
-                      </button>
-
-                      <button
-                        onClick={() => handleSaveCustomEvent(false)}
-                        disabled={customEventSaving}
-                        className="px-5 py-2.5 bg-white/10 text-white border border-white/10 font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
-                      >
-                        Simpan Nonaktif
-                      </button>
-                    </div>
-
-                    <div className="pt-5 mt-5 border-t border-white/5 space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                          Jadwal Buatan Admin
-                        </h4>
-
+                  return (
+                    <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300">
+                      {/* Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+                        <div>
+                          <h3 className="text-sm font-black text-white uppercase tracking-wider">Buat Jadwal Event</h3>
+                          <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
+                            Wizard — data otomatis dari raw event terbaru
+                          </p>
+                        </div>
                         <button
-                          onClick={loadCustomEvents}
-                          disabled={customEventLoading}
-                          className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest disabled:opacity-50"
+                          type="button"
+                          onClick={() => { fetchRemoteEvents(); setScheduleStep(1); setSelectedRawEventKey(''); setScheduleSearch(''); }}
+                          disabled={remoteEventsLoading}
+                          className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-all self-start sm:self-auto shrink-0"
                         >
-                          Refresh
+                          <RefreshCw size={12} className={remoteEventsLoading ? 'animate-spin' : ''} />
+                          {remoteEventsFetched ? 'Refresh Data' : 'Muat Data Live'}
                         </button>
                       </div>
 
-                      {customEventLoading ? (
-                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
-                          Memuat jadwal...
-                        </p>
-                      ) : customEvents.length === 0 ? (
-                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
-                          Belum ada jadwal buatan admin.
-                        </p>
-                      ) : (
-                        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 custom-scrollbar">
-                          {customEvents.map((row) => (
-                            <div
-                              key={row.id}
-                              className="p-4 bg-zinc-950/50 border border-white/5 rounded-2xl space-y-3"
-                            >
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div className="min-w-0">
-                                  <div className="flex flex-wrap gap-2 mb-2">
-                                    <span
-                                      className={`px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest border ${row.is_active
-                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                        : 'bg-zinc-800/60 text-zinc-500 border-white/5'
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        {/* LEFT: Wizard Steps */}
+                        <div className="lg:col-span-7 space-y-4">
+                          <StepIndicator />
+
+                          {/* ─── STEP 1: Pick event from raw ─── */}
+                          {scheduleStep === 1 && (
+                            <div className="space-y-4">
+                              {/* Search */}
+                              <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={13} />
+                                <input
+                                  type="text"
+                                  value={scheduleSearch}
+                                  onChange={(e) => setScheduleSearch(e.target.value)}
+                                  placeholder="Cari pertandingan... (misal: England, Brazil)"
+                                  className="w-full bg-zinc-900 border border-white/5 rounded-xl pl-9 pr-9 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-primary/30 transition-all placeholder-zinc-600"
+                                />
+                                {scheduleSearch && (
+                                  <button type="button" onClick={() => setScheduleSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white cursor-pointer">
+                                    <X size={12} />
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Loading */}
+                              {remoteEventsLoading ? (
+                                <div className="py-16 flex flex-col items-center justify-center gap-3">
+                                  <div className="w-8 h-8 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
+                                  <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Memuat data live...</p>
+                                </div>
+                              ) : filteredMatches.length === 0 ? (
+                                <div className="py-10 text-center">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Tidak ada pertandingan ditemukan</p>
+                                  {!remoteEventsFetched && (
+                                    <button
+                                      type="button"
+                                      onClick={fetchRemoteEvents}
+                                      className="mt-3 px-4 py-2 bg-primary text-dark font-black rounded-xl text-[8.5px] uppercase tracking-widest cursor-pointer hover:scale-105 active:scale-95 transition-all"
+                                    >
+                                      Muat Data dari Server
+                                    </button>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                                  {filteredMatches.map((match) => {
+                                    const rawChs = getRemoteChannelsForMatch(match);
+                                    const isSelected = selectedRawEventKey === match.id_event;
+                                    return (
+                                      <button
+                                        key={`${match.player_1}|${match.player_2}|${match.jadwal_event}`}
+                                        type="button"
+                                        onClick={() => {
+                                          setSelectedRawEventKey(match.id_event);
+                                          // Auto-fill event states from raw
+                                          setEventName(match.nama_event || 'FIFA World Cup');
+                                          setEventPlayer1(match.player_1);
+                                          setEventPlayer2(match.player_2);
+                                          setEventLogo1(match.logo_1 || '');
+                                          setEventLogo2(match.logo_2 || '');
+                                          if (match.jadwal_event) {
+                                            const wib = new Date(match.jadwal_event.replace(' ', 'T'));
+                                            const pad = (n: number) => String(n).padStart(2, '0');
+                                            setEventStart(`${wib.getFullYear()}-${pad(wib.getMonth() + 1)}-${pad(wib.getDate())}T${pad(wib.getHours())}:${pad(wib.getMinutes())}`);
+                                          }
+                                          if (match.jadwal_stop) {
+                                            const wib2 = new Date(match.jadwal_stop.replace(' ', 'T'));
+                                            const pad = (n: number) => String(n).padStart(2, '0');
+                                            setEventStop(`${wib2.getFullYear()}-${pad(wib2.getMonth() + 1)}-${pad(wib2.getDate())}T${pad(wib2.getHours())}:${pad(wib2.getMinutes())}`);
+                                          }
+                                          setScheduleChannelMode('raw');
+                                          setEventSourceChannelId(rawChs[0]?.id_iptv || '');
+                                          setScheduleStep(2);
+                                        }}
+                                        className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-center gap-4 cursor-pointer ${isSelected
+                                            ? 'bg-primary/10 border-primary/30 shadow-lg shadow-primary/5'
+                                            : 'bg-zinc-900/50 border-white/5 hover:bg-zinc-800/60 hover:border-white/10'
+                                          }`}
+                                      >
+                                        {/* Team Logos */}
+                                        <div className="flex items-center gap-2 shrink-0">
+                                          {match.logo_1 ? (
+                                            <img src={match.logo_1} alt={match.player_1} className="w-8 h-8 object-contain rounded-lg bg-white/5 p-0.5" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                          ) : (
+                                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[7px] font-black text-zinc-400">{match.player_1.slice(0, 2).toUpperCase()}</div>
+                                          )}
+                                          <span className="text-[10px] font-black text-zinc-400">vs</span>
+                                          {match.logo_2 ? (
+                                            <img src={match.logo_2} alt={match.player_2} className="w-8 h-8 object-contain rounded-lg bg-white/5 p-0.5" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                          ) : (
+                                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[7px] font-black text-zinc-400">{match.player_2.slice(0, 2).toUpperCase()}</div>
+                                          )}
+                                        </div>
+                                        {/* Info */}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                                            <span className="text-[7.5px] font-black uppercase tracking-widest px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded">
+                                              {match.nama_event}
+                                            </span>
+                                            <span className="text-[7.5px] font-black uppercase tracking-widest px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded">
+                                              {rawChs.length} CH
+                                            </span>
+                                          </div>
+                                          <p className="text-xs font-black text-white truncate">{match.player_1} <span className="text-zinc-500">vs</span> {match.player_2}</p>
+                                          <p className="text-[9px] text-zinc-500 font-mono mt-0.5">📅 {formatJadwalShort(match.jadwal_event)}</p>
+                                        </div>
+                                        <ChevronRight size={14} className="text-zinc-600 shrink-0" />
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+
+                              {/* Manual option */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedRawEventKey('__manual__');
+                                  setEventName('FIFA World Cup');
+                                  setEventPlayer1('');
+                                  setEventPlayer2('');
+                                  setEventLogo1('');
+                                  setEventLogo2('');
+                                  setEventStart('');
+                                  setEventStop('');
+                                  setScheduleChannelMode('manual');
+                                  setEventSourceChannelId('');
+                                  setScheduleStep(2);
+                                }}
+                                className="w-full py-3 bg-white/3 hover:bg-white/5 border border-dashed border-white/10 hover:border-white/20 rounded-2xl text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-300 transition-all cursor-pointer"
+                              >
+                                + Manual / Tidak Ada di List
+                              </button>
+                            </div>
+                          )}
+
+                          {/* ─── STEP 2: Pick Channel Source ─── */}
+                          {scheduleStep === 2 && (
+                            <div className="space-y-4">
+                              {/* Selected event preview */}
+                              {selectedRawEventKey !== '__manual__' && selectedRemoteMatch && (
+                                <div className="p-4 bg-zinc-950/60 border border-white/5 rounded-2xl flex flex-col gap-3">
+                                  <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 shrink-0">
+                                      {selectedRemoteMatch.logo_1 && <img src={selectedRemoteMatch.logo_1} alt="" className="w-7 h-7 object-contain" />}
+                                      <span className="text-[9px] text-zinc-500 font-black">vs</span>
+                                      {selectedRemoteMatch.logo_2 && <img src={selectedRemoteMatch.logo_2} alt="" className="w-7 h-7 object-contain" />}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-xs font-black text-white truncate">{eventPlayer1} <span className="text-zinc-500">vs</span> {eventPlayer2}</p>
+                                      <p className="text-[9px] text-zinc-400 font-mono mt-0.5">📅 {formatJadwalShort(selectedRemoteMatch.jadwal_event)}</p>
+                                    </div>
+                                  </div>
+                                  {/* Kustomisasi Nama Event */}
+                                  <div className="space-y-1.5 border-t border-white/5 pt-2">
+                                    <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Kustomisasi Nama Event</label>
+                                    <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="FIFA World Cup" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Manual event fill — shown if __manual__ selected */}
+                              {selectedRawEventKey === '__manual__' && (
+                                <div className="space-y-3 p-4 bg-zinc-950/40 border border-white/5 rounded-2xl">
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Isi Data Event Manual</p>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Nama Event</label>
+                                      <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="FIFA World Cup" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Mulai</label>
+                                      <input type="datetime-local" value={eventStart} onChange={(e) => setEventStart(e.target.value)} className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Tim 1</label>
+                                      <input value={eventPlayer1} onChange={(e) => setEventPlayer1(e.target.value)} placeholder="Argentina" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Tim 2</label>
+                                      <input value={eventPlayer2} onChange={(e) => setEventPlayer2(e.target.value)} placeholder="Austria" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Logo Tim 1 (URL)</label>
+                                      <input value={eventLogo1} onChange={(e) => setEventLogo1(e.target.value)} placeholder="https://flagcdn.com/w80/ar.png" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Logo Tim 2 (URL)</label>
+                                      <input value={eventLogo2} onChange={(e) => setEventLogo2(e.target.value)} placeholder="https://flagcdn.com/w80/at.png" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                    <div className="sm:col-span-2 space-y-1.5">
+                                      <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Selesai (opsional)</label>
+                                      <input type="datetime-local" value={eventStop} onChange={(e) => setEventStop(e.target.value)} className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Channel mode tabs */}
+                              <div className="space-y-2">
+                                <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Pilih Channel Sumber</label>
+                                <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none">
+                                  {([
+                                    { mode: 'raw', label: '📡 CH dari Raw', show: selectedRawEventKey !== '__manual__' },
+                                    { mode: 'web', label: '📺 iOS / Web', show: true },
+                                    { mode: 'manual', label: '✏️ Manual', show: true },
+                                  ] as const).filter(t => t.show).map(({ mode, label }) => (
+                                    <button
+                                      key={mode}
+                                      type="button"
+                                      onClick={() => { setScheduleChannelMode(mode); }}
+                                      className={`flex-1 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${scheduleChannelMode === mode
+                                          ? 'bg-primary text-dark shadow-lg shadow-primary/10'
+                                          : 'text-zinc-400 hover:text-white'
                                         }`}
                                     >
-                                      {row.is_active ? 'Aktif' : 'Nonaktif'}
-                                    </span>
-
-                                    <span className="px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20">
-                                      {row.nama_event || 'Live Event'}
-                                    </span>
-                                  </div>
-
-                                  <h5 className="text-xs font-black text-white uppercase tracking-wider break-words">
-                                    {row.player_1} vs {row.player_2}
-                                  </h5>
-
-                                  <p className="text-[9px] text-zinc-500 font-mono mt-1">
-                                    {row.jadwal_event}
-                                  </p>
-
-                                  <p className="text-[9px] text-zinc-600 font-mono mt-1 break-all">
-                                    Source: {row.source_channel_id}
-                                  </p>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2">
-                                  <button
-                                    onClick={() => handleToggleCustomEvent(row)}
-                                    disabled={customEventSaving}
-                                    className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest disabled:opacity-50"
-                                  >
-                                    {row.is_active ? 'Nonaktifkan' : 'Aktifkan'}
-                                  </button>
-
-                                  <button
-                                    onClick={() => handleDeleteCustomEvent(row)}
-                                    disabled={customEventSaving}
-                                    className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl text-[8.5px] font-black uppercase tracking-widest disabled:opacity-50"
-                                  >
-                                    Hapus
-                                  </button>
+                                      {label}
+                                    </button>
+                                  ))}
                                 </div>
                               </div>
+
+                              {/* CH from Raw */}
+                              {scheduleChannelMode === 'raw' && selectedRemoteMatch && (
+                                <div className="space-y-2">
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Pilih Channel (dari raw)</p>
+                                  <div className="space-y-2">
+                                    {getRemoteChannelsForMatch(selectedRemoteMatch).map((ch, idx) => {
+                                      const isSelected = eventSourceChannelId === ch.id_iptv;
+                                      return (
+                                        <button
+                                          key={`${ch.id_iptv}-${idx}`}
+                                          type="button"
+                                          onClick={() => setEventSourceChannelId(ch.id_iptv)}
+                                          className={`w-full text-left p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${isSelected
+                                              ? 'bg-primary/10 border-primary/30 text-white'
+                                              : 'bg-zinc-900/50 border-white/5 hover:bg-zinc-800/60 hover:border-white/10 text-zinc-300'
+                                            }`}
+                                        >
+                                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all ${isSelected ? 'bg-primary border-primary' : 'border-zinc-600'}`}>
+                                            {isSelected && <Check size={10} strokeWidth={3} className="text-dark" />}
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] font-black uppercase tracking-wider">{ch.nama_event} — CH {idx + 1}</p>
+                                            <p className="text-[8px] text-zinc-500 font-mono mt-0.5 truncate">{ch.jenis.toUpperCase()} · ID: {ch.id_iptv}</p>
+                                          </div>
+                                          {isSelected && <Check size={13} className="text-primary shrink-0" />}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* iOS / Web channel */}
+                              {scheduleChannelMode === 'web' && (
+                                <div className="space-y-2">
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Pilih channel dari sistem web</p>
+                                  <SearchableSelect
+                                    options={sourceChannelsForEvent.map((ch) => ({
+                                      id: ch.id,
+                                      name: ch.name,
+                                      subName: ch.subName,
+                                    }))}
+                                    value={scheduleWebSourceId}
+                                    onChange={(val) => setScheduleWebSourceId(val)}
+                                    placeholder="Cari channel..."
+                                  />
+                                </div>
+                              )}
+
+                              {/* Manual channel ID */}
+                              {scheduleChannelMode === 'manual' && (
+                                <div className="space-y-2">
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Ketik source_channel_id manual</p>
+                                  <input
+                                    value={scheduleManualSourceId}
+                                    onChange={(e) => setScheduleManualSourceId(e.target.value)}
+                                    placeholder="Contoh: rtbgo, 4228, beinsports1..."
+                                    className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all font-mono"
+                                  />
+                                  <p className="text-[8px] text-zinc-600 font-bold">ID ini harus cocok dengan id_iptv atau id channel yang terdaftar di sistem.</p>
+                                </div>
+                              )}
+
+                              {/* Catatan Internal */}
+                              <div className="space-y-1.5">
+                                <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Catatan Internal (opsional)</label>
+                                <input
+                                  value={eventInternalNote}
+                                  onChange={(e) => setEventInternalNote(e.target.value)}
+                                  placeholder="Catatan admin, tidak tampil ke user"
+                                  className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all"
+                                />
+                              </div>
+
+                              {/* Nav buttons */}
+                              <div className="flex items-center justify-between gap-3 pt-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setScheduleStep(1)}
+                                  className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-black rounded-xl text-[9px] uppercase tracking-widest flex items-center gap-2 cursor-pointer transition-all"
+                                >
+                                  <ChevronLeft size={13} />
+                                  Kembali
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const sid = scheduleChannelMode === 'raw' ? eventSourceChannelId : scheduleChannelMode === 'web' ? scheduleWebSourceId : scheduleManualSourceId;
+                                    if (!eventPlayer1.trim() || !eventPlayer2.trim()) { setCustomEventMessage('Isi nama kedua tim dulu.'); return; }
+                                    if (!eventStart) { setCustomEventMessage('Isi jam mulai dulu.'); return; }
+                                    if (!sid.trim()) { setCustomEventMessage('Pilih atau isi channel sumber dulu.'); return; }
+                                    setCustomEventMessage('');
+                                    setScheduleStep(3);
+                                  }}
+                                  className="px-5 py-2.5 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10"
+                                >
+                                  Lanjut — Preview
+                                  <ChevronRight size={13} />
+                                </button>
+                              </div>
                             </div>
-                          ))}
+                          )}
+
+                          {/* ─── STEP 3: Preview & Save ─── */}
+                          {scheduleStep === 3 && (() => {
+                            const resolvedSid = scheduleChannelMode === 'raw' ? eventSourceChannelId : scheduleChannelMode === 'web' ? scheduleWebSourceId : scheduleManualSourceId;
+                            const channelLabel = scheduleChannelMode === 'raw'
+                              ? `📡 CH Raw (${resolvedSid})`
+                              : scheduleChannelMode === 'web'
+                                ? `📺 ${sourceChannelsForEvent.find((c) => c.id === resolvedSid)?.name || resolvedSid}`
+                                : `✏️ Manual: ${resolvedSid}`;
+                            return (
+                              <div className="space-y-4">
+                                <p className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Preview Card yang Akan Dibuat</p>
+                                {/* Preview Card */}
+                                <div className="p-5 bg-zinc-950/60 border border-white/8 rounded-2xl space-y-4">
+                                  <div className="flex flex-wrap gap-2">
+                                    <span className="text-[7.5px] font-black uppercase tracking-widest px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded">
+                                      {eventName || 'Live Event'}
+                                    </span>
+                                  </div>
+                                  {/* Teams */}
+                                  <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2.5">
+                                      {eventLogo1 ? (
+                                        <img src={eventLogo1} alt={eventPlayer1} className="w-10 h-10 object-contain rounded-xl bg-white/5 p-1" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                      ) : (
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-[10px] font-black text-zinc-400">{eventPlayer1.slice(0, 2).toUpperCase()}</div>
+                                      )}
+                                      <span className="text-sm font-black text-white">{eventPlayer1 || '—'}</span>
+                                    </div>
+                                    <span className="text-[10px] font-black text-zinc-500 uppercase">vs</span>
+                                    <div className="flex items-center gap-2.5">
+                                      {eventLogo2 ? (
+                                        <img src={eventLogo2} alt={eventPlayer2} className="w-10 h-10 object-contain rounded-xl bg-white/5 p-1" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                      ) : (
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-[10px] font-black text-zinc-400">{eventPlayer2.slice(0, 2).toUpperCase()}</div>
+                                      )}
+                                      <span className="text-sm font-black text-white">{eventPlayer2 || '—'}</span>
+                                    </div>
+                                  </div>
+                                  {/* Meta */}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[9px] font-mono">
+                                    <div className="bg-zinc-900/50 rounded-xl p-2.5 border border-white/5">
+                                      <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Mulai</p>
+                                      <p className="text-white">{eventStart ? formatJadwalShort(eventStart) : '—'}</p>
+                                    </div>
+                                    <div className="bg-zinc-900/50 rounded-xl p-2.5 border border-white/5">
+                                      <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Selesai</p>
+                                      <p className="text-white">{eventStop ? formatJadwalShort(eventStop) : 'Tidak diatur'}</p>
+                                    </div>
+                                  </div>
+                                  <div className="bg-zinc-900/50 rounded-xl p-2.5 border border-white/5">
+                                    <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Channel Sumber</p>
+                                    <p className="text-white text-[10px] font-black">{channelLabel}</p>
+                                  </div>
+                                  {eventInternalNote && (
+                                    <div className="bg-zinc-900/50 rounded-xl p-2.5 border border-white/5">
+                                      <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Catatan Internal</p>
+                                      <p className="text-zinc-300 text-[9px]">{eventInternalNote}</p>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {customEventMessage && (
+                                  <p className={`text-[10px] font-black uppercase tracking-wider px-3 py-2 rounded-xl border ${customEventMessage.includes('berhasil') ? 'bg-emerald-500/5 text-emerald-400 border-emerald-500/10' : 'bg-primary/5 text-primary border-primary/10'}`}>
+                                    {customEventMessage}
+                                  </p>
+                                )}
+
+                                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setScheduleStep(2)}
+                                    className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-black rounded-xl text-[9px] uppercase tracking-widest flex items-center gap-2 cursor-pointer transition-all"
+                                  >
+                                    <ChevronLeft size={13} />
+                                    Kembali
+                                  </button>
+                                  <div className="flex gap-3">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSaveCustomEvent(false)}
+                                      disabled={customEventSaving}
+                                      className="px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white border border-white/10 font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50 cursor-pointer transition-all"
+                                    >
+                                      Simpan Nonaktif
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSaveCustomEvent(true)}
+                                      disabled={customEventSaving}
+                                      className="px-5 py-2.5 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/10 cursor-pointer"
+                                    >
+                                      {customEventSaving ? 'Menyimpan...' : '✓ Buat & Aktifkan'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
-                      )}
+
+                        {/* RIGHT: Jadwal Buatan Admin list */}
+                        <div className="lg:col-span-5 border-t border-white/5 pt-6 lg:border-t-0 lg:pt-0 lg:border-l lg:border-white/5 lg:pl-6 space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                              <h4 className="text-xs font-black text-white uppercase tracking-wider">Jadwal Buatan Admin</h4>
+                              <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Daftar jadwal kustom yang aktif</p>
+                            </div>
+                            <button
+                              onClick={loadCustomEvents}
+                              disabled={customEventLoading}
+                              className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 rounded-xl text-[8.5px] font-black uppercase tracking-widest flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-all self-start sm:self-auto"
+                            >
+                              <RefreshCcw size={12} className={customEventLoading ? 'animate-spin' : ''} />
+                              Refresh
+                            </button>
+                          </div>
+
+                          {customEventLoading ? (
+                            <div className="py-12 flex items-center justify-center">
+                              <div className="w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          ) : customEvents.length === 0 ? (
+                            <div className="p-8 bg-zinc-950/30 border border-white/5 rounded-2xl text-center">
+                              <p className="text-[10px] text-zinc-500 font-black uppercase tracking-wider">Belum ada jadwal buatan admin.</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+                              {customEvents.map((row) => (
+                                <div
+                                  key={row.id}
+                                  className="p-4 bg-zinc-950/40 hover:bg-zinc-950/60 border border-white/5 rounded-2xl space-y-3 hover:border-white/10 transition-all"
+                                >
+                                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex flex-wrap gap-2 mb-2">
+                                        <span className={`px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest border ${row.is_active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-zinc-800/60 text-zinc-500 border-white/5'}`}>
+                                          {row.is_active ? 'Aktif' : 'Nonaktif'}
+                                        </span>
+                                        <span className="px-2 py-0.5 rounded-lg text-[7.5px] font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20">
+                                          {row.nama_event || 'Live Event'}
+                                        </span>
+                                      </div>
+                                      <h5 className="text-xs font-black text-white uppercase tracking-wider break-words">{row.player_1} vs {row.player_2}</h5>
+                                      <p className="text-[9px] text-zinc-400 font-mono mt-1 flex items-center gap-1"><span>📅</span> {row.jadwal_event}</p>
+                                      <p className="text-[9px] text-zinc-500 font-mono mt-1 break-all bg-zinc-950/40 p-2 rounded-lg border border-white/5">
+                                        Source ID: {row.source_channel_id}
+                                      </p>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 shrink-0">
+                                      <button
+                                        onClick={() => handleToggleCustomEvent(row)}
+                                        disabled={customEventSaving}
+                                        className={`w-8 h-8 border rounded-xl flex items-center justify-center transition-all disabled:opacity-50 cursor-pointer ${row.is_active ? 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border-orange-500/20' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/20'}`}
+                                        title={row.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                                      >
+                                        {row.is_active ? <PowerOff size={13} /> : <Power size={13} />}
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteCustomEvent(row)}
+                                        disabled={customEventSaving}
+                                        className="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 cursor-pointer"
+                                        title="Hapus"
+                                      >
+                                        <Trash2 size={13} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  );
+                })()
                 ) : (
                   /* Default Monitoring Grid: Channels + Chat */
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">

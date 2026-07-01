@@ -4,6 +4,7 @@ import backupSports from '../data/tv-sports.json';
 import backupLive from '../data/tv-hiburan.json';
 import axios from 'axios';
 import { SHOW_RTB_GO_IN_JADWAL } from './matchService';
+import { getActiveCustomEvents } from './customEventService';
 
 export interface StreamServer {
   name: string;

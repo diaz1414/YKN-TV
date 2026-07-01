@@ -487,6 +487,7 @@ const ChannelDetail = () => {
       } catch (e) {
         console.error('Failed to load other channels:', e);
       }
+
       setLoading(false);
     };
     fetchStreamData();
@@ -628,11 +629,6 @@ const ChannelDetail = () => {
       if (b.matchInfo.status === 'playable') return 1;
       return 0;
     });
-
-
-
-
-
   return (
     <MainLayout>
       <div className="max-w-[1440px] mx-auto w-full space-y-6 md:space-y-8 pb-10 px-2 sm:px-4">
@@ -1386,8 +1382,7 @@ const ChannelDetail = () => {
                             </div>
 
                             <div className="flex-1 min-w-0">
-                              <h5 className={`text-xs font-black transition-colors leading-snug line-clamp-2 lg:line-clamp-1 ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'
-                                }`}>
+                              <h5 className={`text-xs font-black transition-colors leading-snug line-clamp-2 lg:line-clamp-1 ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>
                                 {ch.name}
                               </h5>
                               <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -1418,14 +1413,16 @@ const ChannelDetail = () => {
                           </div>
                         );
                       })
+
                     )
                   )}
                 </div>
               )}
+
             </div>
+
             <SupportCard />
             <BagiBagiLeaderboard />
-
           </div>
         </div>
       </div>

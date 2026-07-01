@@ -1,4 +1,5 @@
 import localEvents from '../data/tv-events.json';
+import { getActiveCustomEvents } from './customEventService';
 
 // Toggle to temporarily show/hide RTB Go matches in the match schedule (set to false to hide)
 export const SHOW_RTB_GO_IN_JADWAL = false;
@@ -119,6 +120,9 @@ const getChannelOrder = (match: Match): number => {
     const num = iosMatch[1] ? Number(iosMatch[1]) : 1;
     return 80 + num;
   }
+
+  // Custom events (non-CH/IOS/RTB brackets) — tampil setelah IOS
+  if (bracket && !bracket.includes('RTB')) return 90;
 
   // RTB paling belakang
   if (bracket.includes('RTB')) return 95;
@@ -462,7 +466,75 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         });
 
         // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
-        const sorted = sortMatchesNeatly(parsedMatches);
+        let finalMatches = parsedMatches;
+
+        // Inject active custom events from Supabase
+        try {
+          const customEvents = await getActiveCustomEvents();
+          customEvents.forEach((ev) => {
+            // Avoid duplicate if already in parsedMatches by id_event
+            if (parsedMatches.some(m => m.id === ev.id_event)) return;
+
+            const parseCustomDate = (s: string | null): Date => {
+              if (!s) return new Date(0);
+              let clean = s.trim().replace(' ', 'T');
+              if (clean.match(/([+-]\d{2})$/)) clean += ':00';
+              return new Date(clean);
+            };
+
+            const start = parseCustomDate(ev.jadwal_event);
+            const stop = ev.jadwal_stop ? parseCustomDate(ev.jadwal_stop) : new Date(start.getTime() + 2 * 60 * 60 * 1000);
+            const nowTime = new Date();
+
+            let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
+            if (nowTime > stop) {
+              status = 'finished';
+            } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
+              status = 'live';
+            }
+
+            const homeFlag = ev.logo_1 || getFlagByName(ev.player_1);
+            const awayFlag = ev.logo_2 || getFlagByName(ev.player_2);
+
+            // Try to find an existing match with the same teams so they sort into the same group
+            const p1 = normalizeTeamName(ev.player_1);
+            const p2 = normalizeTeamName(ev.player_2);
+            const existingMatch = parsedMatches.find(m => {
+              const home = normalizeTeamName(m.homeTeam.name);
+              const away = normalizeTeamName(m.awayTeam.name);
+              return (home === p1 && away === p2) || (home === p2 && away === p1);
+            });
+
+            // Use the existing match's date so getMatchGroupKey produces the same key → grouped together
+            const groupDate = existingMatch ? existingMatch.date : ev.jadwal_event;
+            const groupStatus = existingMatch ? existingMatch.status : status;
+            const groupHomeTeam = existingMatch
+              ? existingMatch.homeTeam
+              : { name: ev.player_1, logo: homeFlag };
+            const groupAwayTeam = existingMatch
+              ? existingMatch.awayTeam
+              : { name: ev.player_2, logo: awayFlag };
+
+            finalMatches.push({
+              id: ev.id_event,
+              parentMatchId: existingMatch?.id,
+              homeTeam: groupHomeTeam,
+              awayTeam: groupAwayTeam,
+              league: { name: ev.nama_event || 'Live Event', logo: '/favicon.svg' },
+              time: existingMatch ? existingMatch.time : formatMatchTime(start),
+              date: groupDate,
+              stopDate: ev.jadwal_stop || undefined,
+              status: groupStatus,
+              score: existingMatch?.score,
+              liveMinute: existingMatch?.liveMinute,
+              channelId: ev.id_event,
+            });
+          });
+        } catch (ceErr) {
+          console.warn('[matchService] Failed to inject custom events:', ceErr);
+        }
+
+        const sorted = sortMatchesNeatly(finalMatches);
         return sorted;
       }
     } catch (error) {
