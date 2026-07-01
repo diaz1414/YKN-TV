@@ -54,15 +54,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const stallCountRef = useRef<number>(0);
   const lastQualityChangeTimeRef = useRef<number>(0);
 
+  const getPublicServerName = (server: any) => {
+    const index = servers.findIndex(s => s.url === server?.url);
+    return `Server ${index >= 0 ? index + 1 : 1}`;
+  };
+  // Sync current server if servers list changes
   // Sync current server if servers list changes
   useEffect(() => {
-    if (servers.length > 0) {
-      setCurrentServer(servers[0]);
-      setIsPlaying(false);
-      setHasStarted(true);
-      setIsBuffering(false);
-      setIsAtLiveEdge(true);
-    }
+    if (!servers || servers.length === 0) return;
+
+    setCurrentServer((prev) => {
+      // Kalau user sudah pilih server, jangan diganti otomatis.
+      // Ini mencegah balik ke Server 1 saat polling extraServers jalan.
+      if (prev?.url) {
+        return prev;
+      }
+
+      // Hanya set Server 1 saat pertama kali player belum punya server.
+      return servers[0];
+    });
   }, [servers]);
 
   // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
@@ -326,7 +336,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setError(null);
       setIsBooting(true);
       setIsBuffering(true);
-      setLoadingMessage(`Memuat ${currentServer.name}...`);
+      setLoadingMessage(`Memuat ${getPublicServerName(currentServer)}...`);
       setLevels([]);
       setCurrentLevel('auto');
       await destroyPlayers();
@@ -525,7 +535,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     };
 
     loadStream();
-  }, [currentServer]);
+  }, [currentServer?.url, currentServer?.forceProxy]);
 
   // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
   // and automatically recovers by skipping forward to a safe live offset (not the extreme edge)
@@ -597,6 +607,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }, 3000);
       }
     };
+
+
 
     const container = containerRef.current;
     if (container) {
@@ -1098,7 +1110,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               <div className="flex items-center gap-2 justify-center text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
                 <span className="px-2 py-0.5 bg-white/5 rounded border border-white/5">{currentServer.type.toUpperCase() || 'DIRECT'}</span>
                 <span>•</span>
-                <span>{currentServer.name}</span>
+                <span>{getPublicServerName(currentServer)}</span>
               </div>
             </div>
           </div>
@@ -1133,9 +1145,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         </div>
 
         <div className="flex flex-wrap gap-2 flex-1">
-          {servers.map((server, idx) => (
+          {servers.map((server, index) => (
             <button
-              key={idx}
+              key={`${server.url}-${index}`}
               onClick={() => {
                 setCurrentServer(server);
                 setIsPlaying(false);
@@ -1143,7 +1155,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 setError(null);
                 setIsBooting(true);
                 setIsBuffering(true);
-                setLoadingMessage(`Memuat ${server.name}...`);
+                setLoadingMessage(`Memuat Server ${index + 1}...`);
                 setIsAtLiveEdge(true);
               }}
               className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
@@ -1152,7 +1164,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 }`}
               tabIndex={0}
             >
-              <span className="relative z-10">{server.name}</span>
+              <span className="relative z-10">Server {index + 1}</span>
+
               {(server.forceProxy || server.keyId || server.keys || server.url.includes('|')) && (
                 <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
               )}

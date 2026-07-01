@@ -11,6 +11,8 @@ import { io } from 'socket.io-client';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
+import { getActiveEventServers } from '../services/eventServerService';
+import type { StreamServer } from '../services/streamService';
 
 
 const ChannelDetail = () => {
@@ -27,9 +29,32 @@ const ChannelDetail = () => {
   const [matches, setMatches] = useState<PlayableStream[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'channels' | 'matches'>('chat');
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
+  const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
 
   const [watchAdUnlocked, setWatchAdUnlocked] = useState(false);
   const [watchGateChecked, setWatchGateChecked] = useState(false);
+
+  useEffect(() => {
+    if (!stream?.id) return;
+
+    const loadExtraServers = async () => {
+      const baseCount = stream.servers?.length || 0;
+      const servers = await getActiveEventServers(stream.id, baseCount);
+
+      console.log('[YKN EVENT SERVER]', {
+        streamId: stream.id,
+        baseCount,
+        extraServers: servers,
+      });
+
+      setExtraServers(servers);
+    };
+
+    loadExtraServers();
+
+    const interval = setInterval(loadExtraServers, 8000);
+    return () => clearInterval(interval);
+  }, [stream?.id, stream?.servers?.length]);
 
   useEffect(() => {
     const canRedirect = window.yknAdCanRedirect?.();
@@ -324,7 +349,7 @@ const ChannelDetail = () => {
         const envVal = import.meta.env.VITE_BOT_API_URL;
         const apiBase = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
         const res = await axios.get<any[]>(`${apiBase}/api/sports/monitoring`);
-        
+
         const mapping: Record<string, number> = {};
         if (Array.isArray(res.data)) {
           res.data.forEach((room: any) => {
@@ -490,6 +515,26 @@ const ChannelDetail = () => {
     setIsShareOpen(true);
   };
 
+  const playerServers = useMemo(() => {
+    if (!stream) return [];
+
+    const baseServers = (stream.servers || []).map((server, index) => ({
+      ...server,
+      name: `Server ${index + 1}`,
+    }));
+
+    const normalizedExtraServers = (extraServers || []).map((server, index) => ({
+      ...server,
+      name: `Server ${baseServers.length + index + 1}`,
+    }));
+
+    return [
+      ...baseServers,
+      ...normalizedExtraServers,
+    ];
+  }, [stream, extraServers]);
+
+
   if (loading) {
     return (
       <MainLayout>
@@ -584,6 +629,10 @@ const ChannelDetail = () => {
       return 0;
     });
 
+
+
+
+
   return (
     <MainLayout>
       <div className="max-w-[1440px] mx-auto w-full space-y-6 md:space-y-8 pb-10 px-2 sm:px-4">
@@ -651,7 +700,7 @@ const ChannelDetail = () => {
                     </div>
                   </div>
                 ) : (
-                  <VideoPlayer servers={stream.servers} />
+                  <VideoPlayer servers={playerServers} />
                 )
               ) : matchStatus === 'finished' ? (
                 <div className="min-h-[280px] sm:aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-5 sm:p-8 text-center select-none gap-4 shadow-inner relative overflow-hidden">

@@ -112,7 +112,9 @@ const AdminDashboard = () => {
   const [monitoringData, setMonitoringData] = useState<Record<string, number>>({});
   const [loadingData, setLoadingData] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [monitorTab, setMonitorTab] = useState<'all' | 'channels' | 'matches' | 'users' | 'announcement'>('all');
+  const [monitorTab, setMonitorTab] = useState<
+    'all' | 'channels' | 'matches' | 'users' | 'announcement' | 'servers'
+  >('all');
 
   // Announcement States
   const [annMessage, setAnnMessage] = useState('');
@@ -134,6 +136,14 @@ const AdminDashboard = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatMonitorRef = useRef<HTMLDivElement>(null);
   const announcementChannelRef = useRef<any>(null);
+
+  const [serverStreamId, setServerStreamId] = useState('');
+  const [serverUrl, setServerUrl] = useState('');
+  const [serverPriority, setServerPriority] = useState(3);
+  const [serverForceProxy, setServerForceProxy] = useState(false);
+  const [serverInternalNote, setServerInternalNote] = useState('');
+  const [serverSaving, setServerSaving] = useState(false);
+  const [serverMessage, setServerMessage] = useState('');
 
   // Scroll to chat monitor on mobile when a channel is selected
   useEffect(() => {
@@ -228,6 +238,8 @@ const AdminDashboard = () => {
     setChatInput('');
   };
 
+
+
   // Fetch list of registered admin users (Developer only)
   const fetchAdminUsers = async () => {
     try {
@@ -286,7 +298,7 @@ const AdminDashboard = () => {
             }
           } else {
             // Invalid token, force logout
-            ['ykn_admin_logged_in','ykn_admin_username','ykn_admin_role','ykn_admin_token','ykn_chat_nickname','ykn_chat_avatar'].forEach(k => {
+            ['ykn_admin_logged_in', 'ykn_admin_username', 'ykn_admin_role', 'ykn_admin_token', 'ykn_chat_nickname', 'ykn_chat_avatar'].forEach(k => {
               localStorage.removeItem(k);
               sessionStorage.removeItem(k);
             });
@@ -395,7 +407,7 @@ const AdminDashboard = () => {
       }
 
       alert('Password berhasil diperbarui!');
-      
+
       if (isSelf) {
         localStorage.setItem('ykn_admin_token', hashedPassword);
       }
@@ -416,7 +428,7 @@ const AdminDashboard = () => {
     const loadInitialData = async () => {
       try {
         const data = await getLiveSportsData();
-        
+
         // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
         // For matches with equal kickoff time, sort [RTB Go] matches to the end
         const sortedMatches = [...data.matches].sort((a, b) => {
@@ -632,7 +644,7 @@ const AdminDashboard = () => {
       storage.setItem('ykn_admin_token', data.password);
       storage.setItem('ykn_chat_nickname', 'YKN TV');
       storage.setItem('ykn_chat_avatar', yknwcLogo);
-      
+
       setIsLoggedIn(true);
       setAdminRole(data.role);
       setAdminUsername(data.username);
@@ -645,7 +657,7 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    const keys = ['ykn_admin_logged_in','ykn_admin_username','ykn_admin_role','ykn_admin_token','ykn_chat_nickname','ykn_chat_avatar'];
+    const keys = ['ykn_admin_logged_in', 'ykn_admin_username', 'ykn_admin_role', 'ykn_admin_token', 'ykn_chat_nickname', 'ykn_chat_avatar'];
     keys.forEach(k => {
       localStorage.removeItem(k);
       sessionStorage.removeItem(k);
@@ -689,6 +701,46 @@ const AdminDashboard = () => {
   const activeRoomsCount = Object.keys(monitoringData).length;
   const totalLiveViewers = Object.values(monitoringData).reduce((sum, val) => sum + val, 0);
 
+  const handleSaveEventServer = async (active: boolean) => {
+    if (!serverStreamId) {
+      setServerMessage('Pilih pertandingan/channel dulu.');
+      return;
+    }
+
+    if (!serverUrl.trim()) {
+      setServerMessage('Isi URL live dulu.');
+      return;
+    }
+
+    setServerSaving(true);
+    setServerMessage('');
+
+    try {
+      const { error } = await supabase
+        .from('ykn_event_servers')
+        .insert({
+          stream_id: serverStreamId,
+          display_name: 'Server',
+          url: serverUrl.trim(),
+          type: serverUrl.includes('.mpd') ? 'dash' : 'hls',
+          force_proxy: serverForceProxy,
+          priority: serverPriority,
+          is_active: active,
+          internal_note: serverInternalNote.trim() || null,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+
+      setServerMessage(active ? 'Server live berhasil diaktifkan.' : 'Server berhasil disimpan nonaktif.');
+      setServerUrl('');
+      setServerInternalNote('');
+    } catch (err: any) {
+      setServerMessage('Gagal simpan server: ' + (err?.message || 'Unknown error'));
+    } finally {
+      setServerSaving(false);
+    }
+  };
   return (
     <MainLayout>
       <div className="max-w-[1200px] mx-auto w-full py-8 px-4 select-none">
@@ -760,13 +812,11 @@ const AdminDashboard = () => {
                     className="sr-only"
                   />
                   <div
-                    className={`relative w-9 h-5 rounded-full transition-all duration-300 flex-shrink-0 ${
-                      rememberMe ? 'bg-primary' : 'bg-zinc-800 border border-white/10'
-                    }`}
+                    className={`relative w-9 h-5 rounded-full transition-all duration-300 flex-shrink-0 ${rememberMe ? 'bg-primary' : 'bg-zinc-800 border border-white/10'
+                      }`}
                   >
-                    <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${
-                      rememberMe ? 'translate-x-4' : 'translate-x-0'
-                    }`} />
+                    <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${rememberMe ? 'translate-x-4' : 'translate-x-0'
+                      }`} />
                   </div>
                   <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-zinc-200 transition-colors">
                     Ingat saya <span className="text-zinc-600 font-bold normal-case tracking-normal">(tetap login setelah browser ditutup)</span>
@@ -807,11 +857,10 @@ const AdminDashboard = () => {
                       <h2 className="text-sm font-black text-white tracking-wide uppercase truncate max-w-[120px] sm:max-w-none">
                         {adminUsername || 'Administrator'}
                       </h2>
-                      <span className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${
-                        adminRole === 'developer'
-                          ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25'
-                          : 'bg-red-500/10 text-red-400 border border-red-500/25'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest ${adminRole === 'developer'
+                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25'
+                        : 'bg-red-500/10 text-red-400 border border-red-500/25'
+                        }`}>
                         {adminRole || 'Staff'}
                       </span>
                     </div>
@@ -995,11 +1044,10 @@ const AdminDashboard = () => {
                               <div>
                                 <div className="flex items-center gap-2">
                                   <p className="text-xs font-black text-white">{user.username}</p>
-                                  <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest ${
-                                    user.role === 'developer'
-                                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                      : 'bg-zinc-800 text-zinc-400'
-                                  }`}>
+                                  <span className={`px-2 py-0.5 rounded text-[7px] font-black uppercase tracking-widest ${user.role === 'developer'
+                                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                    : 'bg-zinc-800 text-zinc-400'
+                                    }`}>
                                     {user.role}
                                   </span>
                                   {isSelf && (
@@ -1089,10 +1137,10 @@ const AdminDashboard = () => {
 
                   {/* Split Grid for Form Controls and Live iOS Preview */}
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                    
+
                     {/* Left side: Controls (7 columns) */}
                     <div className="md:col-span-7 space-y-5">
-                      
+
                       {/* Message Input */}
                       <div className="space-y-1.5">
                         <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Pesan Pengumuman</label>
@@ -1116,11 +1164,10 @@ const AdminDashboard = () => {
                           <button
                             type="button"
                             onClick={() => setAnnType('info')}
-                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                              annType === 'info' 
-                                ? 'bg-blue-500/10 border-blue-500 text-blue-400 font-black shadow-md' 
-                                : 'bg-zinc-900 border-white/5 text-zinc-400'
-                            }`}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${annType === 'info'
+                              ? 'bg-blue-500/10 border-blue-500 text-blue-400 font-black shadow-md'
+                              : 'bg-zinc-900 border-white/5 text-zinc-400'
+                              }`}
                           >
                             <p className="text-[9px] font-black uppercase tracking-wider">Info (Biru)</p>
                           </button>
@@ -1129,11 +1176,10 @@ const AdminDashboard = () => {
                           <button
                             type="button"
                             onClick={() => setAnnType('success')}
-                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                              annType === 'success' 
-                                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-black shadow-md' 
-                                : 'bg-zinc-900 border-white/5 text-zinc-400'
-                            }`}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${annType === 'success'
+                              ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-black shadow-md'
+                              : 'bg-zinc-900 border-white/5 text-zinc-400'
+                              }`}
                           >
                             <p className="text-[9px] font-black uppercase tracking-wider">Sukses (Hijau)</p>
                           </button>
@@ -1142,11 +1188,10 @@ const AdminDashboard = () => {
                           <button
                             type="button"
                             onClick={() => setAnnType('warning')}
-                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                              annType === 'warning' 
-                                ? 'bg-amber-500/10 border-amber-500 text-amber-400 font-black shadow-md' 
-                                : 'bg-zinc-900 border-white/5 text-zinc-400'
-                            }`}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${annType === 'warning'
+                              ? 'bg-amber-500/10 border-amber-500 text-amber-400 font-black shadow-md'
+                              : 'bg-zinc-900 border-white/5 text-zinc-400'
+                              }`}
                           >
                             <p className="text-[9px] font-black uppercase tracking-wider">Warning (Kuning)</p>
                           </button>
@@ -1155,11 +1200,10 @@ const AdminDashboard = () => {
                           <button
                             type="button"
                             onClick={() => setAnnType('alert')}
-                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                              annType === 'alert' 
-                                ? 'bg-red-500/10 border-red-500 text-red-400 font-black shadow-md' 
-                                : 'bg-zinc-900 border-white/5 text-zinc-400'
-                            }`}
+                            className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${annType === 'alert'
+                              ? 'bg-red-500/10 border-red-500 text-red-400 font-black shadow-md'
+                              : 'bg-zinc-900 border-white/5 text-zinc-400'
+                              }`}
                           >
                             <p className="text-[9px] font-black uppercase tracking-wider">Alert (Merah)</p>
                           </button>
@@ -1186,11 +1230,10 @@ const AdminDashboard = () => {
                         {/* Status Info */}
                         <div className="space-y-1.5">
                           <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">Status Saat Ini</label>
-                          <div className={`p-2.5 rounded-xl border font-mono text-center flex items-center justify-center gap-1.5 h-[38px] ${
-                            annIsActive 
-                              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-black animate-pulse' 
-                              : 'bg-zinc-900 border-white/5 text-zinc-500 font-bold'
-                          }`}>
+                          <div className={`p-2.5 rounded-xl border font-mono text-center flex items-center justify-center gap-1.5 h-[38px] ${annIsActive
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-black animate-pulse'
+                            : 'bg-zinc-900 border-white/5 text-zinc-500 font-bold'
+                            }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${annIsActive ? 'bg-emerald-400' : 'bg-zinc-700'}`} />
                             <span className="text-[9px] uppercase tracking-wider">{annIsActive ? 'AKTIF & TAYANG' : 'TIDAK AKTIF / HILANG'}</span>
                           </div>
@@ -1219,7 +1262,7 @@ const AdminDashboard = () => {
                         >
                           {annLoading ? 'Memproses...' : 'Simpan & Siarkan'}
                         </button>
-                        
+
                         <button
                           type="button"
                           onClick={() => handleSaveAnnouncement(false)}
@@ -1236,7 +1279,7 @@ const AdminDashboard = () => {
                     <div className="md:col-span-5 space-y-4">
                       <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400 block">Live Preview (Gaya iOS)</label>
                       <div className="relative h-[220px] rounded-2xl bg-zinc-950/80 border border-white/5 p-4 flex flex-col items-center justify-center overflow-hidden">
-                        
+
                         {/* Fake Page Mockup behind preview */}
                         <div className="absolute inset-0 opacity-20 pointer-events-none p-4 flex flex-col justify-between">
                           <div className="w-12 h-2 bg-zinc-700 rounded" />
@@ -1248,14 +1291,13 @@ const AdminDashboard = () => {
                         </div>
 
                         {/* iOS style preview banner */}
-                        <div 
+                        <div
                           className="relative w-full rounded-2xl bg-zinc-900/95 border border-white/15 shadow-[0_12px_24px_rgba(0,0,0,0.6)] overflow-hidden z-10 transition-all duration-300"
-                          style={{ 
-                            borderLeft: `4px solid ${
-                              annType === 'success' ? '#10b981' : 
-                              annType === 'warning' ? '#f59e0b' : 
-                              annType === 'alert' ? '#ef4444' : '#3b82f6'
-                            }` 
+                          style={{
+                            borderLeft: `4px solid ${annType === 'success' ? '#10b981' :
+                              annType === 'warning' ? '#f59e0b' :
+                                annType === 'alert' ? '#ef4444' : '#3b82f6'
+                              }`
                           }}
                         >
                           <div className="p-3.5 flex items-start gap-2.5 pr-8 relative">
@@ -1275,23 +1317,21 @@ const AdminDashboard = () => {
                                 <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">• Sekarang</span>
                               </div>
                               <div className="flex items-center gap-1.5 flex-wrap">
-                                <span 
+                                <span
                                   className="text-[7.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border font-sans inline-flex items-center gap-1"
-                                  style={{ 
-                                    backgroundColor: `${
-                                      annType === 'success' ? '#10b98115' : 
-                                      annType === 'warning' ? '#f59e0b15' : 
-                                      annType === 'alert' ? '#ef444415' : '#3b82f615'
-                                    }`, 
-                                    borderColor: `${
-                                      annType === 'success' ? '#10b98125' : 
-                                      annType === 'warning' ? '#f59e0b25' : 
-                                      annType === 'alert' ? '#ef444425' : '#3b82f625'
-                                    }`,
-                                    color: 
-                                      annType === 'success' ? '#10b981' : 
-                                      annType === 'warning' ? '#f59e0b' : 
-                                      annType === 'alert' ? '#ef4444' : '#3b82f6'
+                                  style={{
+                                    backgroundColor: `${annType === 'success' ? '#10b98115' :
+                                      annType === 'warning' ? '#f59e0b15' :
+                                        annType === 'alert' ? '#ef444415' : '#3b82f615'
+                                      }`,
+                                    borderColor: `${annType === 'success' ? '#10b98125' :
+                                      annType === 'warning' ? '#f59e0b25' :
+                                        annType === 'alert' ? '#ef444425' : '#3b82f625'
+                                      }`,
+                                    color:
+                                      annType === 'success' ? '#10b981' :
+                                        annType === 'warning' ? '#f59e0b' :
+                                          annType === 'alert' ? '#ef4444' : '#3b82f6'
                                   }}
                                 >
                                   {annType === 'success' && <CheckCircle size={9} strokeWidth={3} />}
@@ -1299,9 +1339,9 @@ const AdminDashboard = () => {
                                   {annType === 'alert' && <ShieldAlert size={9} strokeWidth={3} />}
                                   {annType === 'info' && <Info size={9} strokeWidth={3} />}
                                   {
-                                    annType === 'success' ? 'SUKSES' : 
-                                    annType === 'warning' ? 'PERINGATAN' : 
-                                    annType === 'alert' ? 'PERHATIAN' : 'PENGUMUMAN'
+                                    annType === 'success' ? 'SUKSES' :
+                                      annType === 'warning' ? 'PERINGATAN' :
+                                        annType === 'alert' ? 'PERHATIAN' : 'PENGUMUMAN'
                                   }
                                 </span>
                               </div>
@@ -1319,13 +1359,13 @@ const AdminDashboard = () => {
                           {/* Fake progress bar */}
                           {annDuration > 0 && (
                             <div className="w-full h-[2px] bg-white/5 absolute bottom-0 left-0 overflow-hidden">
-                              <div 
+                              <div
                                 className="h-full w-4/5"
-                                style={{ 
-                                  backgroundColor: 
-                                    annType === 'success' ? '#10b981' : 
-                                    annType === 'warning' ? '#f59e0b' : 
-                                    annType === 'alert' ? '#ef4444' : '#3b82f6'
+                                style={{
+                                  backgroundColor:
+                                    annType === 'success' ? '#10b981' :
+                                      annType === 'warning' ? '#f59e0b' :
+                                        annType === 'alert' ? '#ef4444' : '#3b82f6'
                                 }}
                               />
                             </div>
@@ -1337,330 +1377,457 @@ const AdminDashboard = () => {
 
                   </div>
                 </div>
-              ) : (
-                /* Default Monitoring Grid: Channels + Chat */
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-                  {/* Left Part: Channels List (5 columns or full if no chat open) */}
-                  <div className={`${selectedChannel ? 'md:col-span-6' : 'md:col-span-12'} glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300`}>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              ) :
+                (monitorTab as string) === 'servers' ? (
+                  <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
                       <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-wider">Live Channels Monitor</h3>
-                        <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Daftar pemantauan penonton real-time di setiap saluran</p>
+                        <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                          Server Live Tambahan
+                        </h3>
+                        <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
+                          Tambahkan server ke pertandingan/channel tanpa membuat card baru.
+                        </p>
                       </div>
 
-                      {/* Search Input */}
-                      <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
-                          <Search size={12} />
-                        </span>
-                        <input
-                          type="text"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Cari saluran..."
-                          className="w-full bg-zinc-950/70 border border-white/5 rounded-xl pl-8 pr-4 py-2 text-[10px] font-black text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-700"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Tab Selector for Monitoring */}
-                    <div className="flex flex-row overflow-x-auto bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none w-full custom-scrollbar pb-2 sm:pb-1">
                       <button
                         onClick={() => setMonitorTab('all')}
-                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'all'
-                          ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
-                          : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                          }`}
+                        className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-all group py-2 px-3.5 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[9px] font-black uppercase tracking-widest cursor-pointer select-none self-start sm:self-auto"
                       >
-                        Semua
+                        <ChevronLeft size={12} className="group-hover:-translate-x-0.5 transition-transform text-zinc-400 group-hover:text-white" />
+                        <span>KEMBALI KE MONITOR</span>
                       </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                        Pilih Target
+                      </label>
+
+                      <select
+                        value={serverStreamId}
+                        onChange={(e) => setServerStreamId(e.target.value)}
+                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
+                      >
+                        <option value="">Pilih pertandingan/channel...</option>
+
+                        {channels.map((ch) => (
+                          <option key={ch.id} value={ch.id}>
+                            {ch.name} {ch.subName ? `- ${ch.subName}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                        URL Live
+                      </label>
+
+                      <input
+                        value={serverUrl}
+                        onChange={(e) => setServerUrl(e.target.value)}
+                        placeholder="https://api.ykn.my.id/live/event/index.m3u8"
+                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                          Urutan Server
+                        </label>
+
+                        <input
+                          type="number"
+                          value={serverPriority}
+                          onChange={(e) => setServerPriority(Number(e.target.value))}
+                          min={1}
+                          className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
+                        />
+                      </div>
+
+                      <label className="flex items-center gap-3 bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={serverForceProxy}
+                          onChange={(e) => setServerForceProxy(e.target.checked)}
+                          className="accent-primary"
+                        />
+                        <span className="text-[9px] font-black uppercase tracking-wider text-zinc-300">
+                          Lewat Proxy
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[8.5px] font-black uppercase tracking-wider text-zinc-400">
+                        Catatan Internal
+                      </label>
+
+                      <input
+                        value={serverInternalNote}
+                        onChange={(e) => setServerInternalNote(e.target.value)}
+                        placeholder="Catatan admin saja, tidak tampil ke user"
+                        className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none"
+                      />
+                    </div>
+
+                    {serverMessage && (
+                      <p className="text-[10px] text-primary font-black uppercase tracking-wider">
+                        {serverMessage}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap gap-3 pt-2">
                       <button
-                        onClick={() => setMonitorTab('channels')}
-                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'channels'
-                          ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
-                          : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                          }`}
+                        onClick={() => handleSaveEventServer(true)}
+                        disabled={serverSaving}
+                        className="px-5 py-2.5 bg-primary text-dark font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
                       >
-                        Saluran TV
+                        {serverSaving ? 'Menyimpan...' : 'Aktifkan Server'}
                       </button>
+
                       <button
-                        onClick={() => setMonitorTab('matches')}
-                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'matches'
-                          ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
-                          : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                          }`}
+                        onClick={() => handleSaveEventServer(false)}
+                        disabled={serverSaving}
+                        className="px-5 py-2.5 bg-white/10 text-white border border-white/10 font-black rounded-xl text-[9px] uppercase tracking-widest disabled:opacity-50"
                       >
-                        Jadwal Pertandingan
+                        Simpan Nonaktif
                       </button>
-                      <button
-                        onClick={() => setMonitorTab('announcement')}
-                        className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'announcement'
-                          ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
-                          : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                          }`}
-                      >
-                        Pengumuman
-                      </button>
-                      {adminRole === 'developer' && (
+                    </div>
+                  </div>
+                ) : (
+                  /* Default Monitoring Grid: Channels + Chat */
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    {/* Left Part: Channels List (5 columns or full if no chat open) */}
+                    <div className={`${selectedChannel ? 'md:col-span-6' : 'md:col-span-12'} glass-card rounded-[2rem] p-6 border border-white/5 space-y-5 transition-all duration-300`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <h3 className="text-sm font-black text-white uppercase tracking-wider">Live Channels Monitor</h3>
+                          <p className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Daftar pemantauan penonton real-time di setiap saluran</p>
+                        </div>
+
+                        {/* Search Input */}
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-zinc-500">
+                            <Search size={12} />
+                          </span>
+                          <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Cari saluran..."
+                            className="w-full bg-zinc-950/70 border border-white/5 rounded-xl pl-8 pr-4 py-2 text-[10px] font-black text-white focus:outline-none focus:border-primary/50 transition-all placeholder-zinc-700"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Tab Selector for Monitoring */}
+                      <div className="flex flex-row overflow-x-auto bg-zinc-950/60 p-1 rounded-xl border border-white/5 gap-1 select-none w-full custom-scrollbar pb-2 sm:pb-1">
                         <button
-                          onClick={() => setMonitorTab('users')}
-                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'users'
+                          onClick={() => setMonitorTab('all')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'all'
                             ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
                             : 'text-zinc-400 hover:text-white hover:bg-white/5'
                             }`}
                         >
-                          Kelola Admin
+                          Semua
                         </button>
-                      )}
-                    </div>
-
-                    {loadingData ? (
-                      <div className="flex flex-col items-center justify-center py-16 gap-3">
-                        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Memuat monitoring data...</p>
-                      </div>
-                    ) : filteredChannels.length === 0 ? (
-                      <p className="text-center py-16 text-zinc-600 text-xs font-bold uppercase tracking-wider">Tidak ada saluran ditemukan</p>
-                    ) : (
-                      /* Monitoring List Grid */
-                      <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
-                        {filteredChannels.map(ch => {
-                          const viewers = monitoringData[ch.id] || 0;
-                          const hasActiveViewers = viewers > 0;
-                          const isSelected = selectedChannel?.id === ch.id;
-
-                          return (
-                            <div
-                              key={ch.id}
-                              onClick={() => setSelectedChannel(ch)}
-                              className={`flex flex-col ${selectedChannel ? 'w-full' : 'sm:flex-row sm:items-center'} justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] gap-3 transition-all hover:bg-zinc-900/40 cursor-pointer ${
-                                isSelected 
-                                  ? 'border-primary shadow-lg shadow-primary/10' 
-                                  : hasActiveViewers 
-                                    ? 'border-primary/25 shadow-md shadow-primary/[0.02]' 
-                                    : 'border-white/5'
-                              }`}>
-                              <div className={`flex items-center gap-3.5 min-w-0 ${selectedChannel ? '' : 'sm:pr-4'} flex-1`}>
-                                {/* Logo */}
-                                {!ch.isChannel ? (
-                                  <div className="flex items-center -space-x-3 shrink-0 select-none">
-                                    <div className="h-9 w-9 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md">
-                                      <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
-                                    </div>
-                                    <div className="h-9 w-9 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10">
-                                      <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
-                                    </div>
-                                  </div>
-                                ) : ch.isBase64Logo && ch.logo ? (
-                                  <div className="h-9 w-12 bg-white/5 rounded-xl flex items-center justify-center p-1 border border-white/5 overflow-hidden shrink-0">
-                                    <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain" />
-                                  </div>
-                                ) : (
-                                  <div className="h-9 w-9 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 shrink-0">
-                                    <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain" />
-                                  </div>
-                                )}
-                                {/* Info */}
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="px-1.5 py-0.5 bg-white/5 border border-white/5 rounded-md text-[7.5px] font-black text-zinc-500 uppercase tracking-widest">
-                                      {ch.isChannel ? 'Saluran TV' : 'Live Match'}
-                                    </span>
-                                    {!ch.isChannel && (
-                                      (() => {
-                                        const info = getMatchStatus(ch);
-                                        const isLive = info.status === 'playable';
-                                        const isFinished = info.isFinishedMatch;
-                                        return (
-                                          <span className={`px-1.5 py-0.5 rounded-md text-[7.5px] font-black uppercase tracking-widest ${isLive && !isFinished
-                                            ? 'bg-netflix-red/10 text-netflix-red border border-netflix-red/25 animate-pulse'
-                                            : isFinished
-                                              ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
-                                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                            }`}>
-                                            {isLive && !isFinished ? 'LIVE' : info.timeLeft || 'Upcoming'}
-                                          </span>
-                                        );
-                                      })()
-                                    )}
-                                  </div>
-                                  <h4 className={`text-xs font-black text-white ${selectedChannel ? 'break-words' : 'md:truncate'} mt-1 group-hover:text-primary transition-colors`}>
-                                    {ch.name}
-                                  </h4>
-                                  <div className="flex items-center gap-2 mt-0.5 md:truncate flex-wrap">
-                                    {ch.subName && (
-                                      <p className={`text-[8.5px] text-zinc-500 font-bold ${selectedChannel ? 'break-words' : 'md:truncate'} uppercase tracking-wider`}>
-                                        {ch.subName}
-                                      </p>
-                                    )}
-                                    {!ch.isChannel && ch.jadwal_event && (
-                                      <p className="text-[8.5px] text-zinc-400 font-bold tracking-wider font-mono">
-                                        ⏱️ {formatMatchTime(parseJadwal(ch.jadwal_event))}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Spectator Indicator */}
-                              <div className={`flex items-center gap-3 shrink-0 justify-end w-full ${selectedChannel ? 'w-full border-t border-white/5 pt-2.5' : 'sm:w-auto sm:border-t-0 sm:pt-0'} pt-2.5`}>
-                                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black font-mono tracking-wider transition-all ${viewers > 0
-                                  ? 'bg-primary/10 border-primary/20 text-primary animate-pulse-light'
-                                  : 'bg-zinc-900/50 border-white/5 text-zinc-600'
-                                  }`}>
-                                  <span className={`w-1.5 h-1.5 rounded-full ${viewers > 0 ? 'bg-primary' : 'bg-zinc-700'}`} />
-                                  <span>{viewers} Live</span>
-                                </div>
-
-                                {/* Go to Stream */}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(ch.isChannel ? `/watch/${slugify(ch.name)}` : `/watch/${slugify(ch.name)}-${ch.id}`);
-                                  }}
-                                  className="w-7 h-7 bg-white/5 hover:bg-primary hover:text-dark text-zinc-400 rounded-lg flex items-center justify-center transition-all cursor-pointer border border-white/5"
-                                >
-                                  <ExternalLink size={10} />
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {selectedChannel && (
-                    <div ref={chatMonitorRef} className="md:col-span-6 glass-card rounded-[2rem] p-5 border border-white/5 flex flex-col h-[500px] md:h-[600px] relative overflow-hidden transition-all duration-300">
-                      {/* Chat Header */}
-                      <div className="flex items-center justify-between pb-3 border-b border-white/5 select-none shrink-0">
-                        <div className="truncate pr-2">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <h4 className="text-xs font-black text-white truncate uppercase tracking-wider">
-                              Chat: {selectedChannel.name}
-                            </h4>
-                          </div>
-                          <p className="text-[8.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
-                            {roomViewers} Penonton Aktif
-                          </p>
-                        </div>
-
-                        {/* Close Button */}
                         <button
-                          onClick={() => setSelectedChannel(null)}
-                          className="w-6 h-6 rounded-lg bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                          onClick={() => setMonitorTab('channels')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'channels'
+                            ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
                         >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                          Saluran TV
                         </button>
+                        <button
+                          onClick={() => setMonitorTab('matches')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'matches'
+                            ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                          Jadwal Pertandingan
+                        </button>
+                        <button
+                          onClick={() => setMonitorTab('announcement')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'announcement'
+                            ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                          Pengumuman
+                        </button>
+                        <button
+                          onClick={() => setMonitorTab('servers')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'servers'
+                            ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                          Server Live
+                        </button>
+                        {adminRole === 'developer' && (
+                          <button
+                            onClick={() => setMonitorTab('users')}
+                            className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${monitorTab === 'users'
+                              ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                              }`}
+                          >
+                            Kelola Admin
+                          </button>
+                        )}
                       </div>
 
-                      {/* Message History area */}
-                      <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 my-3 space-y-3 min-h-0">
-                        {chatMessages.length === 0 ? (
-                          <div className="h-full flex flex-col items-center justify-center text-center p-4">
-                            <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-wider">Belum ada obrolan</p>
-                          </div>
-                        ) : (
-                          chatMessages.map((msg) => {
-                            const isMe = msg.username === 'YKN TV' && msg.avatar?.includes('yknwc-logo');
-                            const isSystem = msg.role === 'system';
-
-                            if (isSystem) {
-                              return (
-                                <div key={msg.id} className="text-center py-0.5">
-                                  <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-950/40 px-2.5 py-0.5 rounded-full border border-white/5">
-                                    {msg.message}
-                                  </span>
-                                </div>
-                              );
-                            }
+                      {loadingData ? (
+                        <div className="flex flex-col items-center justify-center py-16 gap-3">
+                          <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+                          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Memuat monitoring data...</p>
+                        </div>
+                      ) : filteredChannels.length === 0 ? (
+                        <p className="text-center py-16 text-zinc-600 text-xs font-bold uppercase tracking-wider">Tidak ada saluran ditemukan</p>
+                      ) : (
+                        /* Monitoring List Grid */
+                        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
+                          {filteredChannels.map(ch => {
+                            const viewers = monitoringData[ch.id] || 0;
+                            const hasActiveViewers = viewers > 0;
+                            const isSelected = selectedChannel?.id === ch.id;
 
                             return (
-                              <div key={msg.id} className="flex flex-col space-y-0.5">
-                                <div className="flex items-center gap-1">
-                                  <span className={`text-[9.5px] font-black ${isMe ? 'text-primary' : 'text-sky-400'}`}>
-                                    {msg.username}
-                                  </span>
-                                  {isMe && (
-                                    <span className="px-1 py-0.2 bg-primary text-dark font-black text-[6px] uppercase tracking-widest rounded">
-                                      HOST
-                                    </span>
+                              <div
+                                key={ch.id}
+                                onClick={() => setSelectedChannel(ch)}
+                                className={`flex flex-col ${selectedChannel ? 'w-full' : 'sm:flex-row sm:items-center'} justify-between p-3.5 bg-zinc-950/40 border rounded-[1.25rem] gap-3 transition-all hover:bg-zinc-900/40 cursor-pointer ${isSelected
+                                  ? 'border-primary shadow-lg shadow-primary/10'
+                                  : hasActiveViewers
+                                    ? 'border-primary/25 shadow-md shadow-primary/[0.02]'
+                                    : 'border-white/5'
+                                  }`}>
+                                <div className={`flex items-center gap-3.5 min-w-0 ${selectedChannel ? '' : 'sm:pr-4'} flex-1`}>
+                                  {/* Logo */}
+                                  {!ch.isChannel ? (
+                                    <div className="flex items-center -space-x-3 shrink-0 select-none">
+                                      <div className="h-9 w-9 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md">
+                                        <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
+                                      </div>
+                                      <div className="h-9 w-9 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10">
+                                        <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
+                                      </div>
+                                    </div>
+                                  ) : ch.isBase64Logo && ch.logo ? (
+                                    <div className="h-9 w-12 bg-white/5 rounded-xl flex items-center justify-center p-1 border border-white/5 overflow-hidden shrink-0">
+                                      <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain" />
+                                    </div>
+                                  ) : (
+                                    <div className="h-9 w-9 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 shrink-0">
+                                      <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain" />
+                                    </div>
                                   )}
-                                  <span className="text-[7.5px] text-zinc-500 font-mono">
-                                    {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                  </span>
+                                  {/* Info */}
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="px-1.5 py-0.5 bg-white/5 border border-white/5 rounded-md text-[7.5px] font-black text-zinc-500 uppercase tracking-widest">
+                                        {ch.isChannel ? 'Saluran TV' : 'Live Match'}
+                                      </span>
+                                      {!ch.isChannel && (
+                                        (() => {
+                                          const info = getMatchStatus(ch);
+                                          const isLive = info.status === 'playable';
+                                          const isFinished = info.isFinishedMatch;
+                                          return (
+                                            <span className={`px-1.5 py-0.5 rounded-md text-[7.5px] font-black uppercase tracking-widest ${isLive && !isFinished
+                                              ? 'bg-netflix-red/10 text-netflix-red border border-netflix-red/25 animate-pulse'
+                                              : isFinished
+                                                ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
+                                                : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                              }`}>
+                                              {isLive && !isFinished ? 'LIVE' : info.timeLeft || 'Upcoming'}
+                                            </span>
+                                          );
+                                        })()
+                                      )}
+                                    </div>
+                                    <h4 className={`text-xs font-black text-white ${selectedChannel ? 'break-words' : 'md:truncate'} mt-1 group-hover:text-primary transition-colors`}>
+                                      {ch.name}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-0.5 md:truncate flex-wrap">
+                                      {ch.subName && (
+                                        <p className={`text-[8.5px] text-zinc-500 font-bold ${selectedChannel ? 'break-words' : 'md:truncate'} uppercase tracking-wider`}>
+                                          {ch.subName}
+                                        </p>
+                                      )}
+                                      {!ch.isChannel && ch.jadwal_event && (
+                                        <p className="text-[8.5px] text-zinc-400 font-bold tracking-wider font-mono">
+                                          ⏱️ {formatMatchTime(parseJadwal(ch.jadwal_event))}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className={`px-2.5 py-1.5 rounded-xl text-xs font-bold leading-relaxed break-words w-fit max-w-[90%] ${
-                                  isMe
-                                    ? 'bg-primary/10 border border-primary/20 text-zinc-100'
-                                    : 'bg-zinc-900/90 border border-white/5 text-zinc-200'
-                                }`}>
-                                  {/* Inline Link Render */}
-                                  {(() => {
-                                    const text = msg.message;
-                                    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
-                                    const parts = text.split(urlRegex);
-                                    if (parts.length === 1) return text;
-                                    return parts.map((part: string, index: number) => {
-                                      if (urlRegex.test(part)) {
-                                        const href = part.startsWith('http') ? part : `https://${part}`;
-                                        return (
-                                          <a
-                                            key={index}
-                                            href={href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-primary hover:underline font-black break-all"
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            {part}
-                                            <ExternalLink size={10} className="inline-block ml-0.5 align-middle shrink-0" />
-                                          </a>
-                                        );
-                                      }
-                                      return part;
-                                    });
-                                  })()}
+
+                                {/* Spectator Indicator */}
+                                <div className={`flex items-center gap-3 shrink-0 justify-end w-full ${selectedChannel ? 'w-full border-t border-white/5 pt-2.5' : 'sm:w-auto sm:border-t-0 sm:pt-0'} pt-2.5`}>
+                                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black font-mono tracking-wider transition-all ${viewers > 0
+                                    ? 'bg-primary/10 border-primary/20 text-primary animate-pulse-light'
+                                    : 'bg-zinc-900/50 border-white/5 text-zinc-600'
+                                    }`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${viewers > 0 ? 'bg-primary' : 'bg-zinc-700'}`} />
+                                    <span>{viewers} Live</span>
+                                  </div>
+
+                                  {/* Go to Stream */}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(ch.isChannel ? `/watch/${slugify(ch.name)}` : `/watch/${slugify(ch.name)}-${ch.id}`);
+                                    }}
+                                    className="w-7 h-7 bg-white/5 hover:bg-primary hover:text-dark text-zinc-400 rounded-lg flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                                  >
+                                    <ExternalLink size={10} />
+                                  </button>
                                 </div>
                               </div>
                             );
-                          })
-                        )}
-                        <div ref={chatEndRef} />
-                      </div>
-
-                      {/* Input Form */}
-                      <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-white/5 shrink-0">
-                        <textarea
-                          value={chatInput}
-                          onChange={(e) => setChatInput(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-                              if (!isMobile) {
-                                e.preventDefault();
-                                handleSendMessage();
-                              }
-                            }
-                          }}
-                          placeholder={connected ? "Ketik balasan..." : "Menghubungkan..."}
-                          disabled={!connected}
-                          rows={1}
-                          className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50 resize-none h-[40px] custom-scrollbar"
-                        />
-                        <button
-                          type="submit"
-                          disabled={!connected || !chatInput.trim()}
-                          className="bg-primary text-dark font-black hover:scale-105 active:scale-95 transition-all text-[9px] uppercase tracking-widest px-4 rounded-xl flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-45 disabled:pointer-events-none"
-                        >
-                          Kirim
-                        </button>
-                      </form>
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              )}
+
+                    {selectedChannel && (
+                      <div ref={chatMonitorRef} className="md:col-span-6 glass-card rounded-[2rem] p-5 border border-white/5 flex flex-col h-[500px] md:h-[600px] relative overflow-hidden transition-all duration-300">
+                        {/* Chat Header */}
+                        <div className="flex items-center justify-between pb-3 border-b border-white/5 select-none shrink-0">
+                          <div className="truncate pr-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                              <h4 className="text-xs font-black text-white truncate uppercase tracking-wider">
+                                Chat: {selectedChannel.name}
+                              </h4>
+                            </div>
+                            <p className="text-[8.5px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">
+                              {roomViewers} Penonton Aktif
+                            </p>
+                          </div>
+
+                          {/* Close Button */}
+                          <button
+                            onClick={() => setSelectedChannel(null)}
+                            className="w-6 h-6 rounded-lg bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-zinc-400 flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                          </button>
+                        </div>
+
+                        {/* Message History area */}
+                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 my-3 space-y-3 min-h-0">
+                          {chatMessages.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-center p-4">
+                              <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-wider">Belum ada obrolan</p>
+                            </div>
+                          ) : (
+                            chatMessages.map((msg) => {
+                              const isMe = msg.username === 'YKN TV' && msg.avatar?.includes('yknwc-logo');
+                              const isSystem = msg.role === 'system';
+
+                              if (isSystem) {
+                                return (
+                                  <div key={msg.id} className="text-center py-0.5">
+                                    <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-950/40 px-2.5 py-0.5 rounded-full border border-white/5">
+                                      {msg.message}
+                                    </span>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <div key={msg.id} className="flex flex-col space-y-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <span className={`text-[9.5px] font-black ${isMe ? 'text-primary' : 'text-sky-400'}`}>
+                                      {msg.username}
+                                    </span>
+                                    {isMe && (
+                                      <span className="px-1 py-0.2 bg-primary text-dark font-black text-[6px] uppercase tracking-widest rounded">
+                                        HOST
+                                      </span>
+                                    )}
+                                    <span className="text-[7.5px] text-zinc-500 font-mono">
+                                      {new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                    </span>
+                                  </div>
+                                  <div className={`px-2.5 py-1.5 rounded-xl text-xs font-bold leading-relaxed break-words w-fit max-w-[90%] ${isMe
+                                    ? 'bg-primary/10 border border-primary/20 text-zinc-100'
+                                    : 'bg-zinc-900/90 border border-white/5 text-zinc-200'
+                                    }`}>
+                                    {/* Inline Link Render */}
+                                    {(() => {
+                                      const text = msg.message;
+                                      const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+                                      const parts = text.split(urlRegex);
+                                      if (parts.length === 1) return text;
+                                      return parts.map((part: string, index: number) => {
+                                        if (urlRegex.test(part)) {
+                                          const href = part.startsWith('http') ? part : `https://${part}`;
+                                          return (
+                                            <a
+                                              key={index}
+                                              href={href}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-primary hover:underline font-black break-all"
+                                              onClick={(e) => e.stopPropagation()}
+                                            >
+                                              {part}
+                                              <ExternalLink size={10} className="inline-block ml-0.5 align-middle shrink-0" />
+                                            </a>
+                                          );
+                                        }
+                                        return part;
+                                      });
+                                    })()}
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                          <div ref={chatEndRef} />
+                        </div>
+
+                        {/* Input Form */}
+                        <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-white/5 shrink-0">
+                          <textarea
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey) {
+                                const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+                                if (!isMobile) {
+                                  e.preventDefault();
+                                  handleSendMessage();
+                                }
+                              }
+                            }}
+                            placeholder={connected ? "Ketik balasan..." : "Menghubungkan..."}
+                            disabled={!connected}
+                            rows={1}
+                            className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50 resize-none h-[40px] custom-scrollbar"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!connected || !chatInput.trim()}
+                            className="bg-primary text-dark font-black hover:scale-105 active:scale-95 transition-all text-[9px] uppercase tracking-widest px-4 rounded-xl flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-45 disabled:pointer-events-none"
+                          >
+                            Kirim
+                          </button>
+                        </form>
+                      </div>
+                    )}
+                  </div>
+                )}
             </div>
 
           </div>
@@ -1668,6 +1835,7 @@ const AdminDashboard = () => {
       </div>
     </MainLayout>
   );
+
 };
 
 export default AdminDashboard;
