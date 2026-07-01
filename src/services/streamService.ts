@@ -59,6 +59,10 @@ interface ChannelEvent {
   tagline?: string;
   premium?: string;
   aktif?: string;
+
+  // tambahan buat channel hasil parser M3U
+  forceProxy?: boolean;
+  force_proxy?: boolean | string;
 }
 
 const XOR_KEY = '90_NiwmsdfhgjQw';
@@ -176,26 +180,32 @@ const copyDrmKeys = (from: StreamServer, to: StreamServer) => {
   if (from.key) to.key = from.key;
 };
 
-export const buildServers = (urlIptv: string, urlLicense: string | undefined, jenis: string): StreamServer[] => {
+export const buildServers = (
+  urlIptv: string,
+  urlLicense: string | undefined,
+  jenis: string,
+  forceProxyFirst = false
+): StreamServer[] => {
   const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
   const servers: StreamServer[] = [];
   const rawUrl = normalizeStreamUrl(urlIptv);
 
-  // Server utama: direct CDN/source dulu. Ini yang paling aman saat penonton membeludak.
+  // Server utama.
+  // Kalau URL http:// dari playlist luar, paksa lewat proxy supaya aman di web HTTPS.
   servers.push({
-    name: 'Server 1 (Direct)',
+    name: forceProxyFirst ? 'Server 1 (Proxy)' : 'Server 1 (Direct)',
     url: rawUrl,
     type: jenis,
-    forceProxy: false
+    forceProxy: forceProxyFirst,
   });
 
-  // Server proxy hanya jadi backup manual, bukan otomatis.
-  if (shouldOfferProxyBackup(rawUrl)) {
+  // Server proxy hanya jadi backup manual kalau server utama direct.
+  if (!forceProxyFirst && shouldOfferProxyBackup(rawUrl)) {
     servers.push({
       name: 'Server 2 (Proxy Backup)',
       url: rawUrl,
       type: jenis,
-      forceProxy: true
+      forceProxy: true,
     });
   }
 
@@ -260,6 +270,105 @@ export const cleanDescription = (desc?: string): string => {
     .replace(/Live broadcast of the match.*?\./gi, '')
     .replace(/di YKN TV/gi, '')
     .trim();
+};
+
+
+const DOMS9_BASE_M3U_URL =
+  'https://raw.githubusercontent.com/doms9/iptv/refs/heads/default/M3U8/base.m3u8';
+
+// const SPORTS_M3U_KEYWORDS = [
+//   'sport',
+//   'sports',
+//   'espn',
+//   'fox sports',
+//   'fs1',
+//   'fs2',
+//   'golazo',
+//   'bein',
+//   'sky sports',
+//   'premier sports',
+//   'directv sports',
+//   'nfl',
+//   'nhl',
+//   'nba',
+//   'mlb',
+//   'sec network',
+//   'acc network',
+//   'nesn',
+//   'marquee sports',
+//   'nbc sports',
+//   'cbs sports',
+// ];
+
+const getM3uAttr = (line: string, key: string): string => {
+  const match = line.match(new RegExp(`${key}="([^"]*)"`, 'i'));
+  return match?.[1]?.trim() || '';
+};
+
+const makeM3uId = (name: string, index: number): string => {
+  const safeName = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return `doms9-${safeName || index}`;
+};
+
+const parseDoms9AllM3u = (m3uText: string): ChannelEvent[] => {
+  const lines = m3uText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const channels: ChannelEvent[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const infoLine = lines[i];
+
+    if (!infoLine.startsWith('#EXTINF')) continue;
+
+    const urlLine = lines[i + 1];
+    if (!urlLine || urlLine.startsWith('#')) continue;
+
+    const url = urlLine.trim();
+    const lowerUrl = url.toLowerCase();
+
+    if (!/^https?:\/\//i.test(url)) continue;
+
+    const tvgName = getM3uAttr(infoLine, 'tvg-name');
+    const tvgLogo = getM3uAttr(infoLine, 'tvg-logo');
+    const tvgChno = getM3uAttr(infoLine, 'tvg-chno');
+    const groupTitle = getM3uAttr(infoLine, 'group-title');
+
+    const fallbackName = infoLine.split(',').pop()?.trim() || '';
+    const name = tvgName || fallbackName;
+
+    if (!name) continue;
+
+    const isM3u8 = lowerUrl.includes('.m3u8');
+    const isTs = lowerUrl.endsWith('.ts') || lowerUrl.includes('/mpegts');
+
+    channels.push({
+      id_iptv: makeM3uId(`${tvgChno}-${name}`, i),
+      nama_channel: name,
+      tagline: groupTitle || 'Live TV',
+      jenis: isM3u8 ? 'hls' : isTs ? 'hls' : 'hls',
+      url_iptv: url,
+      url_license: '',
+      gbr_base64: '',
+      logo: tvgLogo || '',
+
+      // Paksa proxy kalau:
+      // 1. URL masih http
+      // 2. URL bukan .m3u8 standar
+      // 3. URL .ts / mpegts
+      forceProxy: !lowerUrl.startsWith('https://') || !isM3u8 || isTs,
+    });
+  }
+
+  return channels;
 };
 
 // Get channels / events from dynamic Raw configurations
@@ -489,6 +598,31 @@ export const getLiveSportsData = async (): Promise<{
   if (!Array.isArray(sportsData)) sportsData = [];
   if (!Array.isArray(liveData)) liveData = [];
 
+  try {
+    const doms9Res = await axios.get(DOMS9_BASE_M3U_URL, {
+      responseType: 'text',
+      timeout: 8000,
+    });
+
+    const doms9Sports = parseDoms9AllM3u(String(doms9Res.data || ''));
+
+    doms9Sports.forEach((ch) => {
+      const exists = sportsData.some(
+        (existing) =>
+          existing.id_iptv === ch.id_iptv ||
+          existing.nama_channel.toLowerCase().trim() === ch.nama_channel.toLowerCase().trim()
+      );
+
+      if (!exists) {
+        sportsData.push(ch);
+      }
+    });
+
+    console.log(`[Doms9 IPTV] Injected ${doms9Sports.length} sports channels`);
+  } catch (err) {
+    console.warn('[Doms9 IPTV] Failed to fetch/parse base.m3u8:', err);
+  }
+
   customSports.forEach(ch => {
     if (!sportsData.some(existing => existing.id_iptv === ch.id_iptv || existing.nama_channel === ch.nama_channel)) {
       sportsData.push(ch);
@@ -500,6 +634,54 @@ export const getLiveSportsData = async (): Promise<{
       liveData.push(ch);
     }
   });
+
+  try {
+    const customEvents = await getActiveCustomEvents();
+    const allSourceChannels = [...sportsData, ...liveData];
+
+    customEvents.forEach((row) => {
+      const sourceChannel = allSourceChannels.find(
+        (ch) => ch.id_iptv === row.source_channel_id
+      );
+
+      if (!sourceChannel) {
+        console.warn(
+          `[Custom Event] source channel tidak ketemu: ${row.source_channel_id}`
+        );
+        return;
+      }
+
+      const exists = eventsData.some(
+        (event) => event.id_event === row.id_event
+      );
+
+      if (exists) return;
+
+      eventsData.push({
+        id_event: row.id_event,
+        nama_event: row.nama_event || 'Live Event',
+        player_1: row.player_1,
+        player_2: row.player_2,
+        logo_1: row.logo_1 || '',
+        logo_2: row.logo_2 || '',
+        jadwal_event: row.jadwal_event,
+        jadwal_stop: row.jadwal_stop || '',
+        url_iptv: sourceChannel.url_iptv,
+        url_license: sourceChannel.url_license || '',
+        jenis: sourceChannel.jenis || 'hls',
+        deskripsi:
+          row.deskripsi ||
+          `Siaran langsung ${row.player_1} vs ${row.player_2} di YKN TV.`,
+        deskripsi_en:
+          row.deskripsi_en ||
+          `Live broadcast ${row.player_1} vs ${row.player_2} on YKN TV.`,
+      });
+    });
+
+    console.log(`[Custom Event] injected ${customEvents.length} custom events`);
+  } catch (err) {
+    console.warn('[Custom Event] gagal inject custom events:', err);
+  }
 
   // If we couldn't load anything (both APIs and backups empty), use stable channels
   if (eventsData.length === 0 && sportsData.length === 0 && liveData.length === 0) {
@@ -621,7 +803,12 @@ export const getLiveSportsData = async (): Promise<{
       subName: item.tagline || 'Saluran Sports Premium',
       logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
-      servers: buildServers(item.url_iptv, item.url_license, item.jenis),
+      servers: buildServers(
+        item.url_iptv,
+        item.url_license,
+        item.jenis,
+        item.forceProxy === true || item.force_proxy === true || item.force_proxy === 'true'
+      ),
       isChannel: true
     });
   }
