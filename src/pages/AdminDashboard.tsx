@@ -955,7 +955,7 @@ const AdminDashboard = () => {
     }
 
     const channel = supabase.channel('ykn-global-announcements');
-    channel.subscribe((status) => {
+    channel.subscribe((status: any) => {
       console.log('Admin announcement channel subscription status:', status);
     });
     announcementChannelRef.current = channel;

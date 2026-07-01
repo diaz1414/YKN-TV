@@ -59,7 +59,7 @@ export const getActiveEventServers = async (
         return [];
     }
 
-    return (data || []).map((item, index) => ({
+    return (data || []).map((item: any, index: number) => ({
         name: `Server ${baseServerCount + index + 1}`,
         url: item.url,
         type: item.type || 'hls',

@@ -44,19 +44,38 @@ const slugifyMini = (text: string) => {
         .replace(/^-+|-+$/g, '');
 };
 
-export const getActiveCustomEvents = async (): Promise<CustomEventRow[]> => {
-    const { data, error } = await supabase
-        .from('ykn_custom_events')
-        .select('*')
-        .eq('is_active', true)
-        .order('jadwal_event', { ascending: true });
+const withTimeout = <T,>(promise: Promise<T>, ms = 1200): Promise<T> => {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) =>
+            setTimeout(() => reject(new Error('Supabase timeout')), ms)
+        ),
+    ]);
+};
 
-    if (error) {
-        console.warn('[Custom Events] gagal ambil event aktif:', error.message);
+export const getActiveCustomEvents = async (): Promise<CustomEventRow[]> => {
+    try {
+
+
+        const query = supabase
+            .from('ykn_custom_events')
+            .select('*')
+            .eq('is_active', true)
+            .order('jadwal_event', { ascending: true });
+
+        const { data, error } = await withTimeout(query, 1200) as any;
+
+
+        if (error) {
+            console.warn('[Custom Events] gagal ambil event aktif:', error.message);
+            return [];
+        }
+
+        return (data || []) as CustomEventRow[];
+    } catch (err) {
+        console.warn('[Custom Events] skip supaya jadwal tidak loading lama:', err);
         return [];
     }
-
-    return (data || []) as CustomEventRow[];
 };
 
 export const getCustomEventsForAdmin = async (): Promise<CustomEventRow[]> => {

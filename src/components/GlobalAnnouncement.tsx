@@ -22,37 +22,37 @@ interface AnnouncementData {
 // This module-level singleton ensures only ONE real channel exists.
 // All GlobalAnnouncement instances register as in-memory listeners.
 // ─────────────────────────────────────────────────────────────────────────────
-let _sharedChannel: any = null;
-let _channelSubscriberCount = 0;
-const _channelListeners = new Set<(event: string, data: any) => void>();
+// let _sharedChannel: any = null;
+// let _channelSubscriberCount = 0;
+// const _channelListeners = new Set<(event: string, data: any) => void>();
 
-function _registerChannelListener(listener: (event: string, data: any) => void) {
-  _channelListeners.add(listener);
-  _channelSubscriberCount++;
+// function _registerChannelListener(listener: (event: string, data: any) => void) {
+//   _channelListeners.add(listener);
+//   _channelSubscriberCount++;
 
-  if (!_sharedChannel) {
-    _sharedChannel = supabase.channel('ykn-global-announcements');
-    _sharedChannel
-      .on('broadcast', { event: 'new-announcement' }, (payload: any) => {
-        _channelListeners.forEach(cb => cb('new-announcement', payload.payload));
-      })
-      .on('broadcast', { event: 'clear-announcement' }, () => {
-        _channelListeners.forEach(cb => cb('clear-announcement', null));
-      })
-      .subscribe((status: string) => {
-        console.log('GlobalAnnouncement [shared channel]:', status);
-      });
-  }
+//   if (!_sharedChannel) {
+//     _sharedChannel = supabase.channel('ykn-global-announcements');
+//     _sharedChannel
+//       .on('broadcast', { event: 'new-announcement' }, (payload: any) => {
+//         _channelListeners.forEach(cb => cb('new-announcement', payload.payload));
+//       })
+//       .on('broadcast', { event: 'clear-announcement' }, () => {
+//         _channelListeners.forEach(cb => cb('clear-announcement', null));
+//       })
+//       .subscribe((status: string) => {
+//         console.log('GlobalAnnouncement [shared channel]:', status);
+//       });
+//   }
 
-  return () => {
-    _channelListeners.delete(listener);
-    _channelSubscriberCount--;
-    if (_channelSubscriberCount === 0 && _sharedChannel) {
-      _sharedChannel.unsubscribe();
-      _sharedChannel = null;
-    }
-  };
-}
+//   return () => {
+//     _channelListeners.delete(listener);
+//     _channelSubscriberCount--;
+//     if (_channelSubscriberCount === 0 && _sharedChannel) {
+//       _sharedChannel.unsubscribe();
+//       _sharedChannel = null;
+//     }
+//   };
+// }
 // ───────────────────────────────────────────────────────────────────────────── p
 
 
@@ -181,19 +181,19 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
   // 1. Mount-once shared channel listener registration.
   // Uses the module-level singleton so only one real Supabase channel exists
   // across all GlobalAnnouncement instances. Avoids Supabase closing duplicate channels.
-  useEffect(() => {
-    const unregister = _registerChannelListener((event, data) => {
-      if (event === 'new-announcement' && data) {
-        // Use ref to always call the latest non-stale version of checkAndShowAnnouncement
-        checkAndShowRef.current(data as AnnouncementData);
-      } else if (event === 'clear-announcement') {
-        sessionStorage.removeItem('ykn_current_active_announcement');
-        setVisible(false);
-      }
-    });
+  // useEffect(() => {
+  //   const unregister = _registerChannelListener((event, data) => {
+  //     if (event === 'new-announcement' && data) {
+  //       // Use ref to always call the latest non-stale version of checkAndShowAnnouncement
+  //       checkAndShowRef.current(data as AnnouncementData);
+  //     } else if (event === 'clear-announcement') {
+  //       sessionStorage.removeItem('ykn_current_active_announcement');
+  //       setVisible(false);
+  //     }
+  //   });
 
-    return unregister;
-  }, []);
+  //   return unregister;
+  // }, []);
 
   // 2. Active announcement polling and layout dormancy checks.
   // Responds dynamically when toggling between fullscreen and normal modes.

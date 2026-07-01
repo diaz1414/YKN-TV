@@ -274,8 +274,8 @@ export const cleanDescription = (desc?: string): string => {
 };
 
 
-const DOMS9_BASE_M3U_URL =
-  'https://raw.githubusercontent.com/doms9/iptv/refs/heads/default/M3U8/base.m3u8';
+// const DOMS9_BASE_M3U_URL =
+//   'https://raw.githubusercontent.com/doms9/iptv/refs/heads/default/M3U8/base.m3u8';
 
 // const SPORTS_M3U_KEYWORDS = [
 //   'sport',
@@ -301,76 +301,76 @@ const DOMS9_BASE_M3U_URL =
 //   'cbs sports',
 // ];
 
-const getM3uAttr = (line: string, key: string): string => {
-  const match = line.match(new RegExp(`${key}="([^"]*)"`, 'i'));
-  return match?.[1]?.trim() || '';
-};
-
-const makeM3uId = (name: string, index: number): string => {
-  const safeName = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  return `doms9-${safeName || index}`;
-};
-
-const parseDoms9AllM3u = (m3uText: string): ChannelEvent[] => {
-  const lines = m3uText
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  const channels: ChannelEvent[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const infoLine = lines[i];
-
-    if (!infoLine.startsWith('#EXTINF')) continue;
-
-    const urlLine = lines[i + 1];
-    if (!urlLine || urlLine.startsWith('#')) continue;
-
-    const url = urlLine.trim();
-    const lowerUrl = url.toLowerCase();
-
-    if (!/^https?:\/\//i.test(url)) continue;
-
-    const tvgName = getM3uAttr(infoLine, 'tvg-name');
-    const tvgLogo = getM3uAttr(infoLine, 'tvg-logo');
-    const tvgChno = getM3uAttr(infoLine, 'tvg-chno');
-    const groupTitle = getM3uAttr(infoLine, 'group-title');
-
-    const fallbackName = infoLine.split(',').pop()?.trim() || '';
-    const name = tvgName || fallbackName;
-
-    if (!name) continue;
-
-    const isM3u8 = lowerUrl.includes('.m3u8');
-    const isTs = lowerUrl.endsWith('.ts') || lowerUrl.includes('/mpegts');
-
-    channels.push({
-      id_iptv: makeM3uId(`${tvgChno}-${name}`, i),
-      nama_channel: name,
-      tagline: groupTitle || 'Live TV',
-      jenis: isM3u8 ? 'hls' : isTs ? 'hls' : 'hls',
-      url_iptv: url,
-      url_license: '',
-      gbr_base64: '',
-      logo: tvgLogo || '',
-
-      // Paksa proxy kalau:
-      // 1. URL masih http
-      // 2. URL bukan .m3u8 standar
-      // 3. URL .ts / mpegts
-      forceProxy: !lowerUrl.startsWith('https://') || !isM3u8 || isTs,
-    });
-  }
-
-  return channels;
-};
+// const getM3uAttr = (line: string, key: string): string => {
+//   const match = line.match(new RegExp(`${key}="([^"]*)"`, 'i'));
+//   return match?.[1]?.trim() || '';
+// };
+// 
+// const makeM3uId = (name: string, index: number): string => {
+//   const safeName = name
+//     .toLowerCase()
+//     .trim()
+//     .replace(/[^\w\s-]/g, '')
+//     .replace(/[\s_-]+/g, '-')
+//     .replace(/^-+|-+$/g, '');
+// 
+//   return `doms9-${safeName || index}`;
+// };
+// 
+// const parseDoms9AllM3u = (m3uText: string): ChannelEvent[] => {
+//   const lines = m3uText
+//     .split(/\r?\n/)
+//     .map((line) => line.trim())
+//     .filter(Boolean);
+// 
+//   const channels: ChannelEvent[] = [];
+// 
+//   for (let i = 0; i < lines.length; i++) {
+//     const infoLine = lines[i];
+// 
+//     if (!infoLine.startsWith('#EXTINF')) continue;
+// 
+//     const urlLine = lines[i + 1];
+//     if (!urlLine || urlLine.startsWith('#')) continue;
+// 
+//     const url = urlLine.trim();
+//     const lowerUrl = url.toLowerCase();
+// 
+//     if (!/^https?:\/\//i.test(url)) continue;
+// 
+//     const tvgName = getM3uAttr(infoLine, 'tvg-name');
+//     const tvgLogo = getM3uAttr(infoLine, 'tvg-logo');
+//     const tvgChno = getM3uAttr(infoLine, 'tvg-chno');
+//     const groupTitle = getM3uAttr(infoLine, 'group-title');
+// 
+//     const fallbackName = infoLine.split(',').pop()?.trim() || '';
+//     const name = tvgName || fallbackName;
+// 
+//     if (!name) continue;
+// 
+//     const isM3u8 = lowerUrl.includes('.m3u8');
+//     const isTs = lowerUrl.endsWith('.ts') || lowerUrl.includes('/mpegts');
+// 
+//     channels.push({
+//       id_iptv: makeM3uId(`${tvgChno}-${name}`, i),
+//       nama_channel: name,
+//       tagline: groupTitle || 'Live TV',
+//       jenis: isM3u8 ? 'hls' : isTs ? 'hls' : 'hls',
+//       url_iptv: url,
+//       url_license: '',
+//       gbr_base64: '',
+//       logo: tvgLogo || '',
+// 
+//       // Paksa proxy kalau:
+//       // 1. URL masih http
+//       // 2. URL bukan .m3u8 standar
+//       // 3. URL .ts / mpegts
+//       forceProxy: !lowerUrl.startsWith('https://') || !isM3u8 || isTs,
+//     });
+//   }
+// 
+//   return channels;
+// };
 
 // Get channels / events from dynamic Raw configurations
 export const getLiveSportsData = async (): Promise<{
@@ -599,30 +599,31 @@ export const getLiveSportsData = async (): Promise<{
   if (!Array.isArray(sportsData)) sportsData = [];
   if (!Array.isArray(liveData)) liveData = [];
 
-  try {
-    const doms9Res = await axios.get(DOMS9_BASE_M3U_URL, {
-      responseType: 'text',
-      timeout: 8000,
-    });
-
-    const doms9Sports = parseDoms9AllM3u(String(doms9Res.data || ''));
-
-    doms9Sports.forEach((ch) => {
-      const exists = sportsData.some(
-        (existing) =>
-          existing.id_iptv === ch.id_iptv ||
-          existing.nama_channel.toLowerCase().trim() === ch.nama_channel.toLowerCase().trim()
-      );
-
-      if (!exists) {
-        sportsData.push(ch);
-      }
-    });
-
-    console.log(`[Doms9 IPTV] Injected ${doms9Sports.length} sports channels`);
-  } catch (err) {
-    console.warn('[Doms9 IPTV] Failed to fetch/parse base.m3u8:', err);
-  }
+  // Commented out to fix slow loading and UI freezing due to large M3U list parsing
+  // try {
+  //   const doms9Res = await axios.get(DOMS9_BASE_M3U_URL, {
+  //     responseType: 'text',
+  //     timeout: 4000,
+  //   });
+  // 
+  //   const doms9Sports = parseDoms9AllM3u(String(doms9Res.data || ''));
+  // 
+  //   doms9Sports.forEach((ch) => {
+  //     const exists = sportsData.some(
+  //       (existing) =>
+  //         existing.id_iptv === ch.id_iptv ||
+  //         existing.nama_channel.toLowerCase().trim() === ch.nama_channel.toLowerCase().trim()
+  //     );
+  // 
+  //     if (!exists) {
+  //       sportsData.push(ch);
+  //     }
+  //   });
+  // 
+  //   console.log(`[Doms9 IPTV] Injected ${doms9Sports.length} sports channels`);
+  // } catch (err) {
+  //   console.warn('[Doms9 IPTV] Failed to fetch/parse base.m3u8:', err);
+  // }
 
   customSports.forEach(ch => {
     if (!sportsData.some(existing => existing.id_iptv === ch.id_iptv || existing.nama_channel === ch.nama_channel)) {

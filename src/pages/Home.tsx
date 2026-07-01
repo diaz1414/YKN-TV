@@ -206,7 +206,7 @@ const Home = () => {
 
         setViewerCounts(counts);
       })
-      .subscribe(async (status) => {
+      .subscribe(async (status: any) => {
         if (status === 'SUBSCRIBED') {
           await channel.track({ watching: 'home', joined_at: new Date().toISOString() });
         }
