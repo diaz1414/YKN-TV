@@ -562,11 +562,11 @@ const ChannelDetail = () => {
     );
   }
 
-  const otherChannels = [...sportsTv, ...liveTv];
+  const otherChannels = [...sportsTv, ...liveTv].filter(c => !c.id.startsWith('doms9-'));
   const filteredOtherChannels = channelSubTab === 'sports'
-    ? sportsTv
+    ? sportsTv.filter(c => !c.id.startsWith('doms9-'))
     : channelSubTab === 'general'
-      ? liveTv
+      ? liveTv.filter(c => !c.id.startsWith('doms9-'))
       : otherChannels;
 
   const getMatchStatus = (ch: PlayableStream) => {

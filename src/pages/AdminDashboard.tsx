@@ -458,7 +458,7 @@ const AdminDashboard = () => {
   const [serverListLoading, setServerListLoading] = useState(false);
 
 
-  const sourceChannelsForEvent = channels.filter((ch) => ch.isChannel);
+  const sourceChannelsForEvent = channels.filter((ch) => ch.isChannel && !ch.id.startsWith('doms9-'));
   const toWibIso = (value: string) => {
     if (!value) return '';
 
@@ -918,10 +918,10 @@ const AdminDashboard = () => {
           return 0;
         });
 
-        // Combine all channels and matches
+        // Combine all channels and matches — exclude Doms9 IPTV channels from admin monitor
         const allChannels = [
-          ...data.sportsTv.map(c => ({ ...c, isChannel: true })),
-          ...data.liveTv.map(c => ({ ...c, isChannel: true })),
+          ...data.sportsTv.filter(c => !c.id.startsWith('doms9-')).map(c => ({ ...c, isChannel: true })),
+          ...data.liveTv.filter(c => !c.id.startsWith('doms9-')).map(c => ({ ...c, isChannel: true })),
           ...sortedMatches.map(m => ({ ...m, isChannel: false }))
         ];
         setChannels(allChannels);
@@ -2009,7 +2009,7 @@ const AdminDashboard = () => {
                           </label>
 
                           <SearchableSelect
-                            options={channels.map((ch) => ({
+                            options={channels.filter(ch => !ch.id.startsWith('doms9-')).map((ch) => ({
                               id: ch.id,
                               name: ch.name,
                               subName: ch.subName,
