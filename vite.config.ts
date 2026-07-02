@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import axios from 'axios'
 import { URL } from 'url'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 // A local development CORS proxy helper to mirror Vercel Serverless Function behavior (path-based)
 const dynamicCorsProxyPlugin = () => ({
   name: 'dynamic-cors-proxy',
@@ -189,9 +191,5 @@ async function handleRequest(url: string, host: string, req: any, res: any) {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    dynamicCorsProxyPlugin(),
-  ],
+  plugins: [react(), tailwindcss(), dynamicCorsProxyPlugin(), cloudflare()],
 })
