@@ -36,7 +36,7 @@ const BackupSiteNotice = ({ variant = 'home' }: BackupSiteNoticeProps) => {
                         </div>
 
                         <h3 className="mt-1 text-sm md:text-base font-black text-white uppercase tracking-tight">
-                            {isWatch ? 'Player gangguan? Buka server backup.' : 'Kalau website utama gangguan, pakai backup ini.'}
+                            {isWatch ? 'Player gangguan? Buka website backup.' : 'Kalau website utama gangguan, pakai website backup.'}
                         </h3>
 
                         <p className="mt-1 text-[11px] md:text-xs text-zinc-400 font-semibold leading-relaxed">
