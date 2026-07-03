@@ -508,7 +508,7 @@ export const getLiveSportsData = async (): Promise<{
       url_iptv: "https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8",
       gbr_base64: "",
       logo: "https://www.rtbgo.bn/assets/favicon/favicon-96x96.png",
-      url_license: ""
+      url_license: "",
     }
   ];
 
