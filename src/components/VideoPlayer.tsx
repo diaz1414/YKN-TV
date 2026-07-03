@@ -307,113 +307,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       }
 
-      const isProxyablePlayerError = (err: any) => {
-        const code = Number(err?.code || 0);
-        const dataText = JSON.stringify(err?.data || err || '').toLowerCase();
-
-        return (
-          code === 1001 || // BAD_HTTP_STATUS Shaka
-          code === 1002 || // HTTP_ERROR Shaka
-          dataText.includes('403') ||
-          dataText.includes('forbidden') ||
-          dataText.includes('failed to load')
-        );
-      };
-
       const onShakaLoadSuccess = (playerInstance: shaka.Player) => {
-        const tracks = playerInstance.getVariantTracks();
+        console.log('Stream loaded successfully with Shaka Player:', currentServer.name);
+        setError(null);
 
-        const uniqueHeights = Array.from(
-          new Set(
-            tracks
-              .map((track) => track.height)
-              .filter((height): height is number => typeof height === 'number' && height > 0)
-          )
-        ).sort((a, b) => a - b);
-
-        const qualityLevels: QualityOption[] = uniqueHeights.map((height) => ({
-          index: height,
-          label: `${height}p`,
-        }));
-
-        setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
-
-        const activeTrack = tracks.find((track) => track.active);
-        if (activeTrack?.height) {
+        const activeTrack = playerInstance.getVariantTracks().find(t => t.active);
+        if (activeTrack && activeTrack.height) {
           setActiveHeight(activeTrack.height);
         }
 
-        setCurrentLevel('auto');
-        setLoadingMessage('Siaran tersambung...');
+        videoRef.current?.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => console.warn(err));
 
-        videoRef.current
-          ?.play()
-          .then(() => {
-            setIsPlaying(true);
-            confirmPlaybackReady();
-          })
-          .catch((err) => {
-            console.warn('Autoplay prevented:', err);
-            setIsBooting(false);
-            setIsBuffering(false);
-          });
+        const tracks = playerInstance.getVariantTracks();
+        const uniqueHeights = Array.from(new Set(tracks.map(t => t.height).filter(Boolean)));
+        uniqueHeights.sort((a, b) => (b ?? 0) - (a ?? 0));
+        const qualityLevels: QualityOption[] = uniqueHeights.map(height => ({
+          index: height as number,
+          label: `${height}p`
+        }));
+        setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
       };
 
-      const loadWithShaka = async (url: string) => {
-        if (!playerRef.current || !videoRef.current) {
-          throw new Error('Player belum siap');
-        }
-
-        const player = playerRef.current;
-
-        await player.attach(videoRef.current);
-        player.getNetworkingEngine()?.clearAllRequestFilters();
-
-        if (keys) {
-          player.configure({
-            drm: {
-              clearKeys: keys,
-            },
-          });
-        } else {
-          player.configure({
-            drm: {
-              clearKeys: {},
-            },
-          });
-        }
-
-        player.configure({
-          abr: {
-            defaultBandwidthEstimate: 2_500_000,
-            bandwidthUpgradeTarget: 0.85,
-            bandwidthDowngradeTarget: 0.95,
-            switchInterval: 8,
-          },
-          streaming: {
-            rebufferingGoal: 8,
-            bufferingGoal: 30,
-            bufferBehind: 30,
-            retryParameters: {
-              maxAttempts: 3,
-              baseDelay: 600,
-              backoffFactor: 2,
-              timeout: 12000,
-            },
-          },
-          manifest: {
-            retryParameters: {
-              maxAttempts: 3,
-              baseDelay: 500,
-              backoffFactor: 2,
-              timeout: 10000,
-            },
-          },
-        });
-
-        await player.load(url);
-        onShakaLoadSuccess(player);
-      };
       playbackConfirmedRef.current = false;
       clearStartupErrorTimer();
 
@@ -552,82 +468,68 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }).catch(e => console.warn(e));
         } else if (playerRef.current) {
           console.log('Using Shaka Player:', streamUrl);
-          await loadWithShaka(streamUrl);
+          const player = playerRef.current;
+          await player.attach(videoRef.current);
+
+          player.getNetworkingEngine()?.clearAllRequestFilters();
+
+          // Jangan set Origin/Referer dari browser: header ini sering ditolak browser/CDN dan bisa memicu fallback/proxy.
+          // Origin/Referer khusus upstream cukup diatur di proxy Node.js lewat env SOURCE_ORIGIN/SOURCE_REFERER.
+
+          if (keys) {
+            player.configure({
+              drm: { clearKeys: keys }
+            });
+          } else {
+            player.configure({ drm: { clearKeys: {} } });
+          }
+
+          // Konfigurasi Shaka dibuat stabil untuk live stream/proxy: jangan terlalu agresif naik kualitas.
+          player.configure({
+            abr: {
+              defaultBandwidthEstimate: 2_500_000,
+              bandwidthUpgradeTarget: 0.85,
+              bandwidthDowngradeTarget: 0.95,
+              switchInterval: 8
+            },
+            streaming: {
+              rebufferingGoal: 8,
+              bufferingGoal: 30,
+              bufferBehind: 30,
+              retryParameters: {
+                maxAttempts: 5,
+                baseDelay: 700,
+                backoffFactor: 2,
+                timeout: 15000
+              }
+            },
+            manifest: {
+              retryParameters: {
+                maxAttempts: 4,
+                baseDelay: 500,
+                backoffFactor: 2,
+                timeout: 10000
+              }
+            }
+          });
+
+          await player.load(streamUrl);
+          onShakaLoadSuccess(player);
         } else {
           setError('Format siaran tidak didukung di peramban ini.');
         }
       } catch (e: any) {
         console.error('Player Load/Attach Error:', e);
 
-        const shouldRetryProxy =
-          isProxyablePlayerError(e) &&
-          currentServer.forceProxy !== true;
-
-        if (shouldRetryProxy) {
-          const proxyRetryUrl = getProxiedUrl(rawUrl, true);
-
-          if (proxyRetryUrl && proxyRetryUrl !== streamUrl) {
-            try {
-              console.warn('[YKN PLAYER] Direct gagal, auto retry lewat proxy:', proxyRetryUrl);
-
-              setError(null);
-              setIsBuffering(true);
-
-              await destroyPlayers();
-
-              const retryIsHls =
-                proxyRetryUrl.includes('.m3u8') ||
-                proxyRetryUrl.includes('m3u8');
-
-              if (retryIsHls && Hls.isSupported() && !keys) {
-                const hls = new Hls({
-                  enableWorker: true,
-                  lowLatencyMode: false,
-                  liveSyncDurationCount: 5,
-                  liveMaxLatencyDurationCount: 10,
-                  maxBufferLength: 45,
-                  maxMaxBufferLength: 90,
-                  backBufferLength: 30,
-                  startFragPrefetch: true,
-                  testBandwidth: true,
-                  abrEwmaDefaultEstimate: 2_500_000,
-                });
-
-                hlsRef.current = hls;
-                hls.loadSource(proxyRetryUrl);
-                hls.attachMedia(videoRef.current);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                  const qualityLevels: QualityOption[] = hls.levels.map((level, idx) => ({
-                    index: idx,
-                    label: level.height ? `${level.height}p` : `${Math.round(level.bitrate / 1000)}k`,
-                  }));
-
-                  setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
-
-                  videoRef.current?.play()
-                    .then(() => setIsPlaying(true))
-                    .catch((err) => console.warn('Autoplay prevented:', err));
-                });
-
-                return;
-              }
-
-              if (playerRef.current) {
-                await loadWithShaka(proxyRetryUrl);
-                return;
-              }
-            } catch (proxyErr: any) {
-              console.error('[YKN PLAYER] Proxy retry juga gagal:', proxyErr);
-            }
-          }
-
-          setError('Server direct dan proxy gagal dimuat. Coba Server 2 / Server Alt.');
+        // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
+        const isNetworkError = [1001, 1002, 1009].includes(e.code);
+        if (isNetworkError && currentServer.forceProxy !== true) {
+          showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
           return;
         }
 
         if (e.code !== 7000) {
-          setError(`Gagal memuat siaran. (Kode Internal: ${e.code || 'UNKNOWN'})`);
+          showStartupErrorWithDelay(`Gagal memuat siaran. Kode Internal: ${e.code || 'UNKNOWN'}`);
         }
       }
     };
