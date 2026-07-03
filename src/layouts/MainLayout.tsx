@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../services/supabase';
 import GlobalAnnouncement from '../components/GlobalAnnouncement';
 import { useTvNavigation } from '../hooks/useTvNavigation';
+import BackupSiteNotice from '../components/BackupSiteNotice';
 
 // Set true to show mobile burger menu, false to hide it
 const SHOW_BURGER_MENU = false;
@@ -434,6 +435,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           )}
         </div>
       </header>
+
+      {(location.pathname === '/' || location.pathname.startsWith('/watch/')) && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="px-4 md:px-8 pt-3 md:pt-4"
+        >
+          <BackupSiteNotice
+            variant={location.pathname.startsWith('/watch/') ? 'watch' : 'home'}
+          />
+        </div>
+      )}
 
       {/* Dropdown Menu Tirai untuk Layar Mobile (md:hidden) */}
       {SHOW_BURGER_MENU && (
