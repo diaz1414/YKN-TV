@@ -31,8 +31,18 @@ export const normalizeJadwalInput = (dateStr?: string): string => {
   if (!dateStr) return '';
 
   let clean = dateStr.trim().replace(/\s+/, 'T');
-  clean = clean.replace(/([+-]\d{2})(\d{2})$/, '$1:$2');
-  clean = clean.replace(/([+-]\d{2})$/, '$1:00');
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
+    return `${clean}T00:00:00+07:00`;
+  }
+
+  if (/T.*[+-]\d{2}\d{2}$/.test(clean)) {
+    clean = clean.replace(/([+-]\d{2})(\d{2})$/, '$1:$2');
+  }
+
+  if (/T.*[+-]\d{2}$/.test(clean)) {
+    clean = clean.replace(/([+-]\d{2})$/, '$1:00');
+  }
 
   const hasTimeZone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(clean);
   return hasTimeZone ? clean : `${clean}+07:00`;
