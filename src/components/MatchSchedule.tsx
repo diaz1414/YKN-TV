@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, startTransition } from 'react';
 import { getTodayMatches, type Match } from '../services/matchService';
 import MatchCard from './MatchCard';
 import { useNavigate } from 'react-router-dom';
@@ -10,23 +10,52 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const lastSignatureRef = useRef<string>('');
+
   useEffect(() => {
     let mounted = true;
 
-    const fetchMatches = async (force = false) => {
-      setLoading(true);
+    const getSignature = (data: Match[]) => {
       try {
-        const data = await getTodayMatches(force);
-        if (mounted) setMatches(data);
-      } finally {
-        if (mounted) setLoading(false);
+        return JSON.stringify(data);
+      } catch {
+        return String(Date.now());
       }
     };
 
-    // load pertama
-    fetchMatches(true);
+    const applyMatchesSmooth = (data: Match[]) => {
+      const nextSignature = getSignature(data);
 
-    // refresh otomatis tiap 20 detik
+      // Kalau data sama, jangan setMatches lagi biar card nggak rerender/kedip
+      if (nextSignature === lastSignatureRef.current) return;
+
+      lastSignatureRef.current = nextSignature;
+
+      startTransition(() => {
+        if (mounted) setMatches(data);
+      });
+    };
+
+    const fetchMatches = async (silent = false) => {
+      if (!silent) setLoading(true);
+
+      try {
+        const data = await getTodayMatches(true);
+
+        if (!mounted) return;
+
+        applyMatchesSmooth(data);
+      } catch (err) {
+        console.warn('[MatchSchedule] Gagal refresh jadwal:', err);
+      } finally {
+        if (mounted && !silent) setLoading(false);
+      }
+    };
+
+    // Load pertama: tampilkan loading seperti biasa
+    fetchMatches(false);
+
+    // Refresh otomatis tiap 20 detik: background saja, tanpa loading/kedip
     const interval = setInterval(() => {
       fetchMatches(true);
     }, 20000);
