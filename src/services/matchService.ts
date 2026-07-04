@@ -368,12 +368,16 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
 
           const start = parseJadwal(event.jadwal_event);
           const stop = parseJadwal(event.jadwal_stop);
+          const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
+          const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
+
           const nowTime = new Date();
 
           let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-          if (nowTime > stop) {
+
+          if (nowTime > playableEnd) {
             status = 'finished';
-          } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
+          } else if (nowTime >= playableStart) {
             status = 'live';
           }
 
