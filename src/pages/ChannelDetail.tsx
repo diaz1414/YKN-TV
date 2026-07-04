@@ -437,7 +437,7 @@ const ChannelDetail = () => {
     const start = parseJadwal(stream.jadwal_event);
     const stop = parseJadwal(stream.jadwal_stop);
     const playableStart = new Date(start.getTime() - 30 * 60 * 1000); // 30 minutes before kickoff
-    const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000); // 30 minutes after stop
+    const playableEnd = new Date(stop.getTime() + 90 * 60 * 1000); // 1 jam 30 menit setelah stop
 
     const checkTime = () => {
       const now = new Date();

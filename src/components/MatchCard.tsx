@@ -84,18 +84,24 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
 
     const parseJadwalDate = (dateStr?: string): Date => {
       if (!dateStr) return new Date();
+
       let clean = dateStr.trim();
+
       if (clean.includes(' ')) {
         clean = clean.replace(' ', 'T');
       }
+
       const tzMatch = clean.match(/([+-]\d{2})$/);
       if (tzMatch) {
         clean += ':00';
       }
+
       return new Date(clean);
     };
 
     const stop = parseJadwalDate(match.stopDate);
+
+    // Card tetap dianggap LIVE selama 30 menit setelah jadwal_stop
     const graceEnd = new Date(stop.getTime() + 30 * 60 * 1000);
 
     const updateGrace = () => {
@@ -104,9 +110,11 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
     };
 
     updateGrace();
+
     const interval = setInterval(updateGrace, 10000);
+
     return () => clearInterval(interval);
-  }, [match]);
+  }, [match.status, match.stopDate]);
 
   const handleClick = () => {
     if (typeof window !== 'undefined' && window.yknAdRedirect) {
@@ -123,15 +131,14 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       onClick={handleClick}
-      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 tv-focusable ${
-        isLive 
-          ? 'border-primary/45 shadow-lg shadow-primary/5' 
-          : isStartingSoon
-            ? 'border-amber-500/40 shadow-lg shadow-amber-500/5'
-            : isFinished
-              ? (isGracePeriod ? 'border-primary/20 hover:border-primary/40 opacity-90' : 'border-white/5 opacity-80')
-              : 'border-white/10 hover:border-white/20'
-      }`}
+      className={`relative overflow-hidden rounded-[2rem] p-6 cursor-pointer border transition-all duration-300 backdrop-blur-2xl bg-[#090909]/98 tv-focusable ${isLive
+        ? 'border-primary/45 shadow-lg shadow-primary/5'
+        : isStartingSoon
+          ? 'border-amber-500/40 shadow-lg shadow-amber-500/5'
+          : isFinished
+            ? (isGracePeriod ? 'border-primary/20 hover:border-primary/40 opacity-90' : 'border-white/5 opacity-80')
+            : 'border-white/10 hover:border-white/20'
+        }`}
       tabIndex={0}
     >
       {/* Accent Glow for Live / Starting Soon */}
@@ -196,19 +203,18 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
       {/* Action Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-white/5">
         <div className="text-[9px] font-black text-zinc-500 uppercase tracking-widest select-none">
-          {isLive 
-            ? 'Tonton Langsung' 
+          {isLive
+            ? 'Tonton Langsung'
             : isStartingSoon
               ? timeLeftStr
-              : isFinished 
+              : isFinished
                 ? (isGracePeriod ? 'Tonton Siaran' : 'Pertandingan Selesai')
                 : timeLeftStr || 'Akan Datang'}
         </div>
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow ${
-          isLive || (isFinished && isGracePeriod)
-            ? 'bg-primary text-dark font-black hover:scale-105' 
-            : 'bg-white/5 text-zinc-500 border border-white/5'
-        }`}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shadow ${isLive || (isFinished && isGracePeriod)
+          ? 'bg-primary text-dark font-black hover:scale-105'
+          : 'bg-white/5 text-zinc-500 border border-white/5'
+          }`}>
           <Play size={12} fill={isLive || (isFinished && isGracePeriod) ? "currentColor" : "none"} className={isLive || (isFinished && isGracePeriod) ? "ml-0.5" : "opacity-30"} />
         </div>
       </div>
