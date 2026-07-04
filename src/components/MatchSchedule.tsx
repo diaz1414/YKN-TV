@@ -11,13 +11,30 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMatches = async () => {
+    let mounted = true;
+
+    const fetchMatches = async (force = false) => {
       setLoading(true);
-      const data = await getTodayMatches();
-      setMatches(data);
-      setLoading(false);
+      try {
+        const data = await getTodayMatches(force);
+        if (mounted) setMatches(data);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
-    fetchMatches();
+
+    // load pertama
+    fetchMatches(true);
+
+    // refresh otomatis tiap 20 detik
+    const interval = setInterval(() => {
+      fetchMatches(true);
+    }, 20000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   const handleMatchClick = (match: Match) => {
@@ -47,17 +64,17 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
       ) : matches.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {matches.map((match) => (
-            <MatchCard 
-              key={match.id} 
-              match={match} 
-              onClick={() => handleMatchClick(match)} 
+            <MatchCard
+              key={match.id}
+              match={match}
+              onClick={() => handleMatchClick(match)}
               viewerCount={viewerCounts[match.id]}
             />
           ))}
         </div>
       ) : (
         <div className="py-16 text-center bg-white/[0.01] border border-white/5 rounded-[2rem]">
-           <p className="text-zinc-500 font-black uppercase tracking-wider text-xs">Tidak ada siaran jadwal pertandingan saat ini.</p>
+          <p className="text-zinc-500 font-black uppercase tracking-wider text-xs">Tidak ada siaran jadwal pertandingan saat ini.</p>
         </div>
       )}
     </section>
