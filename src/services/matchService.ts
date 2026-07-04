@@ -1,5 +1,6 @@
 import localEvents from '../data/tv-events.json';
 import { getActiveCustomEvents } from './customEventService';
+import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 
 // Toggle to temporarily show/hide RTB Go matches in the match schedule (set to false to hide)
 export const SHOW_RTB_GO_IN_JADWAL = false;
@@ -51,34 +52,8 @@ const getFlagByName = (name: string): string => {
   return 'https://flagcdn.com/w80/un.png';
 };
 
-const parseJadwal = (dateStr?: string): Date => {
-  if (!dateStr) return new Date();
-  let clean = dateStr.trim();
-  if (clean.includes(' ')) {
-    clean = clean.replace(' ', 'T');
-  }
-  const tzMatch = clean.match(/([+-]\d{2})$/);
-  if (tzMatch) {
-    clean += ':00';
-  }
-  return new Date(clean);
-};
-
-const formatMatchTime = (date: Date): string => {
-  if (isNaN(date.getTime())) return '';
-  const now = new Date();
-  const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-  const timeStr = date.toLocaleTimeString('id-ID', optionsTime);
-
-  // Check if it's the same calendar day
-  if (date.toDateString() === now.toDateString()) {
-    return timeStr;
-  } else {
-    const optionsDate: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
-    const dateStr = date.toLocaleDateString('id-ID', optionsDate);
-    return `${dateStr} - ${timeStr}`;
-  }
-};
+const parseJadwal = parseJadwalDate;
+const formatMatchTime = formatMatchTimeForUserZone;
 
 const normalizeTeamName = (name: string): string => {
   let lower = name.toLowerCase().trim();

@@ -29,6 +29,12 @@ import {
   deleteCustomEvent,
   type CustomEventRow,
 } from '../services/customEventService';
+import {
+  formatDateTimeLocalInWib,
+  formatJadwalDateTimeForUserZone,
+  formatMatchTimeForUserZone,
+  parseJadwalDate,
+} from '../utils/indonesiaTime';
 
 interface MonitorRoom {
   roomId: string;
@@ -38,33 +44,8 @@ interface MonitorRoom {
 
 
 // Helper functions for match schedules and statuses
-const parseJadwal = (dateStr?: string): Date => {
-  if (!dateStr) return new Date();
-  let clean = dateStr.trim();
-  if (clean.includes(' ')) {
-    clean = clean.replace(' ', 'T');
-  }
-  const tzMatch = clean.match(/([+-]\d{2})$/);
-  if (tzMatch) {
-    clean += ':00';
-  }
-  return new Date(clean);
-};
-
-const formatMatchTime = (date: Date): string => {
-  if (isNaN(date.getTime())) return '';
-  const now = new Date();
-  const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-  const timeStr = date.toLocaleTimeString('id-ID', optionsTime);
-
-  if (date.toDateString() === now.toDateString()) {
-    return timeStr;
-  } else {
-    const optionsDate: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
-    const dateStr = date.toLocaleDateString('id-ID', optionsDate);
-    return `${dateStr} - ${timeStr}`;
-  }
-};
+const parseJadwal = parseJadwalDate;
+const formatMatchTime = formatMatchTimeForUserZone;
 
 const getMatchStatus = (ch: PlayableStream) => {
   if (!ch.jadwal_event) return { status: 'playable' as const, timeLeft: '', isFinishedMatch: false };
@@ -2332,13 +2313,8 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 ) : (monitorTab as string) === 'schedule' ? ((() => {
-                  // --- Helper: format jadwal to local readable ---
                   const formatJadwalShort = (jadwal?: string) => {
-                    if (!jadwal) return '';
-                    try {
-                      const d = new Date(jadwal.replace(' ', 'T'));
-                      return d.toLocaleString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-                    } catch { return jadwal; }
+                    return formatJadwalDateTimeForUserZone(jadwal);
                   };
 
                   // Filtered unique matches for Step 1
@@ -2459,14 +2435,10 @@ const AdminDashboard = () => {
                                           setEventLogo1(match.logo_1 || '');
                                           setEventLogo2(match.logo_2 || '');
                                           if (match.jadwal_event) {
-                                            const wib = new Date(match.jadwal_event.replace(' ', 'T'));
-                                            const pad = (n: number) => String(n).padStart(2, '0');
-                                            setEventStart(`${wib.getFullYear()}-${pad(wib.getMonth() + 1)}-${pad(wib.getDate())}T${pad(wib.getHours())}:${pad(wib.getMinutes())}`);
+                                            setEventStart(formatDateTimeLocalInWib(parseJadwal(match.jadwal_event)));
                                           }
                                           if (match.jadwal_stop) {
-                                            const wib2 = new Date(match.jadwal_stop.replace(' ', 'T'));
-                                            const pad = (n: number) => String(n).padStart(2, '0');
-                                            setEventStop(`${wib2.getFullYear()}-${pad(wib2.getMonth() + 1)}-${pad(wib2.getDate())}T${pad(wib2.getHours())}:${pad(wib2.getMinutes())}`);
+                                            setEventStop(formatDateTimeLocalInWib(parseJadwal(match.jadwal_stop)));
                                           }
                                           setScheduleChannelMode('raw');
                                           setEventSourceChannelId(rawChs[0]?.id_iptv || '');
@@ -2866,7 +2838,16 @@ const AdminDashboard = () => {
                                         </span>
                                       </div>
                                       <h5 className="text-xs font-black text-white uppercase tracking-wider break-words">{row.player_1} vs {row.player_2}</h5>
-                                      <p className="text-[9px] text-zinc-400 font-mono mt-1 flex items-center gap-1"><span>📅</span> {row.jadwal_event}</p>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-[9px] font-mono">
+                                        <div className="bg-zinc-950/40 p-2 rounded-lg border border-white/5">
+                                          <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Mulai</p>
+                                          <p className="text-zinc-300">{formatJadwalShort(row.jadwal_event)}</p>
+                                        </div>
+                                        <div className="bg-zinc-950/40 p-2 rounded-lg border border-white/5">
+                                          <p className="text-zinc-500 font-black uppercase text-[7px] tracking-wider mb-1">Selesai</p>
+                                          <p className="text-zinc-300">{row.jadwal_stop ? formatJadwalShort(row.jadwal_stop) : 'Tidak diatur'}</p>
+                                        </div>
+                                      </div>
                                       <p className="text-[9px] text-zinc-500 font-mono mt-1 break-all bg-zinc-950/40 p-2 rounded-lg border border-white/5">
                                         Source ID: {row.source_channel_id}
                                       </p>

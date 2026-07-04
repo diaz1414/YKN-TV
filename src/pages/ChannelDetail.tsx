@@ -13,6 +13,7 @@ import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
 import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
+import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 
 
 const ChannelDetail = () => {
@@ -400,33 +401,8 @@ const ChannelDetail = () => {
     return count.toString();
   };
 
-  const parseJadwal = (dateStr?: string): Date => {
-    if (!dateStr) return new Date();
-    let clean = dateStr.trim();
-    if (clean.includes(' ')) {
-      clean = clean.replace(' ', 'T');
-    }
-    const tzMatch = clean.match(/([+-]\d{2})$/);
-    if (tzMatch) {
-      clean += ':00';
-    }
-    return new Date(clean);
-  };
-
-  const formatMatchTime = (date: Date): string => {
-    if (isNaN(date.getTime())) return '';
-    const now = new Date();
-    const optionsTime: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-    const timeStr = date.toLocaleTimeString('id-ID', optionsTime);
-
-    if (date.toDateString() === now.toDateString()) {
-      return timeStr;
-    } else {
-      const optionsDate: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
-      const dateStr = date.toLocaleDateString('id-ID', optionsDate);
-      return `${dateStr} - ${timeStr}`;
-    }
-  };
+  const parseJadwal = parseJadwalDate;
+  const formatMatchTime = formatMatchTimeForUserZone;
 
   useEffect(() => {
     if (!stream || stream.isChannel || !stream.jadwal_event) {
