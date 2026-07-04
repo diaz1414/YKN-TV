@@ -347,10 +347,10 @@
         return hasDesktopPointer || !isMobile;
       }
 
-      function redirectInspectAttempt() {
+      function redirectInspectAttempt(forceRedirect) {
         if (!isDesktopLikeDevice()) return;
         if (typeof window.yknAdRedirect === 'function') {
-          window.yknAdRedirect();
+          window.yknAdRedirect(forceRedirect === true);
         }
       }
 
@@ -358,7 +358,7 @@
       document.addEventListener('contextmenu', function (e) {
         if (isDevBypassed()) return;
         e.preventDefault();
-        redirectInspectAttempt();
+        redirectInspectAttempt(true);
         return false;
       });
 
@@ -495,14 +495,19 @@
         }
       };
 
-      window.yknAdRedirect = function () {
-        if (!window.yknAdCanRedirect()) {
+      window.yknAdRedirect = function (forceRedirect) {
+        if (isBypassed()) {
+          return false;
+        }
+        if (!forceRedirect && !window.yknAdCanRedirect()) {
           return false;
         }
         try {
           var randomUrl = Math.random() < 0.1 ? AD_REDIRECT_URLS[0] : AD_REDIRECT_URLS[1];
-          var now = Date.now();
-          localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
+          if (!forceRedirect) {
+            var now = Date.now();
+            localStorage.setItem('ykn_last_ad_redirect_time', now.toString());
+          }
           window.open(randomUrl, '_blank', 'noopener,noreferrer');
           return true;
         } catch (e) {
