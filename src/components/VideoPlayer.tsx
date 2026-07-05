@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -360,14 +360,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             maxBufferHole: 0.5,
             startFragPrefetch: true,
 
-            // ABR dibuat lebih konservatif. 10 Mbps terlalu agresif dan sering mulai dari 1080p lalu buffering.
-            startLevel: -1,
+            // ABR selalu mulai dari level terendah (startLevel: 0), baru naik bertahap sesuai bandwidth.
+            // abrEwmaDefaultEstimate dikecilkan ke 500 kbps biar estimasi awal konservatif.
+            // abrBandWidthUpFactor dikecilkan ke 0.5 biar naik lebih hati-hati, tidak langsung lompat tinggi.
+            startLevel: 0,
             testBandwidth: true,
-            abrEwmaDefaultEstimate: 2_500_000,
+            abrEwmaDefaultEstimate: 500_000,
             abrEwmaFastLive: 3,
             abrEwmaSlowLive: 9,
-            abrBandWidthFactor: 0.8,
-            abrBandWidthUpFactor: 0.65,
+            abrBandWidthFactor: 0.85,
+            abrBandWidthUpFactor: 0.5,
             abrMaxWithRealBitrate: true,
             maxStarvationDelay: 4,
             maxLoadingDelay: 4,
@@ -484,13 +486,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             player.configure({ drm: { clearKeys: {} } });
           }
 
-          // Konfigurasi Shaka dibuat stabil untuk live stream/proxy: jangan terlalu agresif naik kualitas.
+          // Shaka: mulai dari resolusi terendah, naikkan bertahap.
+          // defaultBandwidthEstimate dikecilkan ke 300 kbps biar Shaka pilih track paling rendah dulu.
+          // restrictions.maxHeight diset ke 240 saat awal, lalu dilepas setelah 8 detik playback berjalan.
           player.configure({
             abr: {
-              defaultBandwidthEstimate: 2_500_000,
-              bandwidthUpgradeTarget: 0.85,
+              defaultBandwidthEstimate: 300_000,
+              bandwidthUpgradeTarget: 0.7,
               bandwidthDowngradeTarget: 0.95,
-              switchInterval: 8
+              switchInterval: 8,
+              restrictions: { maxHeight: 240 }
             },
             streaming: {
               rebufferingGoal: 8,
@@ -515,6 +520,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           await player.load(streamUrl);
           onShakaLoadSuccess(player);
+
+          // Setelah 8 detik playback berjalan, lepas batasan resolusi biar ABR bisa naik bebas.
+          setTimeout(() => {
+            if (playerRef.current === player) {
+              player.configure({ abr: { restrictions: { maxHeight: Infinity } } });
+              console.log('Shaka ABR: resolusi restriction dilepas, siap naik kualitas.');
+            }
+          }, 8000);
+
         } else {
           setError('Format siaran tidak didukung di peramban ini.');
         }

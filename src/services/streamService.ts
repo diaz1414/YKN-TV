@@ -84,34 +84,24 @@ export const decryptLicense = (ciphertext: string): string => {
 
 const ENABLE_PROXY = true;
 
-const PROXY_BACKUP_DOMAINS = [
-  'alkassdigital.net',
-  'shooflive',
-  'shoof.alkass.net',
-  '30a-tv.com',
-  'ok.ru',
-  'streamlock.net',
-  'iptvcat.com',
-  'akamaihd.net',
-  'akamaized.net',
-  'pv-cdn.net',
-  'aiv-cdn.net',
-  'beetv.kz',
-  'amazon.fastly-edge.com',
-  'byteplaycdn.com',
-  'tencent-css.byteplaycdn.com'
-];
+// const PROXY_BACKUP_DOMAINS = [
+//   'alkassdigital.net',
+//   'shooflive',
+//   'shoof.alkass.net',
+//   '30a-tv.com',
+//   'ok.ru',
+//   'streamlock.net',
+//   'iptvcat.com',
+//   'akamaihd.net',
+//   'akamaized.net',
+//   'pv-cdn.net',
+//   'aiv-cdn.net',
+//   'beetv.kz',
+//   'amazon.fastly-edge.com',
+//   'byteplaycdn.com',
+//   'tencent-css.byteplaycdn.com'
+// ];
 
-const DIRECT_SAFE_DOMAINS = [
-  'cloudfront.net',
-  'rtbgo',
-  'amagi.tv',
-  'tvri.go.id',
-  'dens.tv',
-  'medcom.id',
-  'cnbcindonesia.com',
-  'detik.com'
-];
 
 const normalizeStreamUrl = (url: string): string => {
   let cleanTargetUrl = url.trim();
@@ -147,16 +137,6 @@ const normalizeStreamUrl = (url: string): string => {
   return cleanTargetUrl;
 };
 
-const shouldOfferProxyBackup = (url: string): boolean => {
-  const clean = normalizeStreamUrl(url).toLowerCase();
-
-  // CDN/source yang aman direct tidak perlu ditonjolkan proxy.
-  if (DIRECT_SAFE_DOMAINS.some(domain => clean.includes(domain))) {
-    return false;
-  }
-
-  return PROXY_BACKUP_DOMAINS.some(domain => clean.includes(domain));
-};
 
 export const getProxiedUrl = (url: string, force = false) => {
   const cleanTargetUrl = normalizeStreamUrl(url);
@@ -175,40 +155,34 @@ export const getProxiedUrl = (url: string, force = false) => {
   return `${proxyBase}/${cleanUrl}`;
 };
 
-const copyDrmKeys = (from: StreamServer, to: StreamServer) => {
-  if (from.keys) to.keys = { ...from.keys };
-  if (from.keyId) to.keyId = from.keyId;
-  if (from.key) to.key = from.key;
-};
 
 export const buildServers = (
   urlIptv: string,
   urlLicense: string | undefined,
   jenis: string,
-  forceProxyFirst = false
+  _forceProxyFirst = false  // tidak lagi dipakai — Server 1 selalu direct
 ): StreamServer[] => {
   const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
   const servers: StreamServer[] = [];
   const rawUrl = normalizeStreamUrl(urlIptv);
 
-  // Server utama.
-  // Kalau URL http:// dari playlist luar, paksa lewat proxy supaya aman di web HTTPS.
+  // Server 1: selalu direct CDN — sama seperti backup HTML.
+  // Kalau CORS gagal atau http:// blocked, user tinggal switch ke Server 2.
   servers.push({
-    name: forceProxyFirst ? 'Server 1 (Proxy)' : 'Server 1 (Direct)',
+    name: 'Server 1 (Direct)',
     url: rawUrl,
     type: jenis,
-    forceProxy: forceProxyFirst,
+    forceProxy: false,
   });
 
-  // Server proxy hanya jadi backup manual kalau server utama direct.
-  if (!forceProxyFirst && shouldOfferProxyBackup(rawUrl)) {
-    servers.push({
-      name: 'Server 2 (Proxy Backup)',
-      url: rawUrl,
-      type: jenis,
-      forceProxy: true,
-    });
-  }
+  // Server 2: selalu proxy — sama seperti backup HTML yang always provide proxy untuk semua channel.
+  // Tidak perlu whitelist domain lagi.
+  servers.push({
+    name: 'Server 2 (Proxy)',
+    url: rawUrl,
+    type: jenis,
+    forceProxy: true,
+  });
 
   if (decryptedLicense) {
     if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
@@ -228,34 +202,31 @@ export const buildServers = (
       });
 
       if (Object.keys(keys).length > 0) {
-        servers[0].keys = keys;
-        const firstKeyId = Object.keys(keys)[0];
-        servers[0].keyId = firstKeyId;
-        servers[0].key = keys[firstKeyId];
-
-        // Kalau ada proxy backup, DRM key harus ikut supaya server backup tetap bisa play.
-        for (let i = 1; i < servers.length; i++) {
-          copyDrmKeys(servers[0], servers[i]);
-        }
+        // DRM key dipasang ke Server 1 dan Server 2 supaya keduanya bisa play.
+        servers.forEach(s => {
+          s.keys = keys;
+          const firstKeyId = Object.keys(keys)[0];
+          s.keyId = firstKeyId;
+          s.key = keys[firstKeyId];
+        });
       }
     } else if (decryptedLicense.startsWith('http')) {
       const altUrl = normalizeStreamUrl(decryptedLicense);
 
+      // Server Alt selalu direct + proxy, konsisten dengan pola di atas.
       servers.push({
-        name: 'Server Alt (Direct)',
+        name: 'Server 3 (Alt Direct)',
         url: altUrl,
         type: 'hls',
         forceProxy: false
       });
 
-      if (shouldOfferProxyBackup(altUrl)) {
-        servers.push({
-          name: 'Server Alt (Proxy Backup)',
-          url: altUrl,
-          type: 'hls',
-          forceProxy: true
-        });
-      }
+      servers.push({
+        name: 'Server 4 (Alt Proxy)',
+        url: altUrl,
+        type: 'hls',
+        forceProxy: true
+      });
     }
   }
 
