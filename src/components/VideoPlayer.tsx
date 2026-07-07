@@ -457,22 +457,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           console.log('Using iOS native video player:', streamUrl);
 
-          try {
-            video.pause();
-            video.removeAttribute('src');
-            video.load();
-          } catch (e) {
-            console.warn('Reset native video failed:', e);
-          }
-
           video.controls = true;
           video.playsInline = true;
           video.setAttribute('playsinline', 'true');
           video.setAttribute('webkit-playsinline', 'true');
-          if (video.src !== streamUrl) {
-            video.src = streamUrl;
-            video.load();
-          }
 
           setLevels([]);
           setCurrentLevel('auto');
