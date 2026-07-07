@@ -19,13 +19,15 @@ interface MainLayoutProps {
   searchPlaceholder?: string;
   onSearchChange?: (val: string) => void;
   searchValue?: string;
+  disableLiveBadge?: boolean;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({
   children,
   searchPlaceholder = "Cari saluran...",
   onSearchChange,
-  searchValue = ""
+  searchValue = "",
+  disableLiveBadge = false
 }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -48,6 +50,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const [adminRole, setAdminRole] = useState<string | null>(null);
 
   useEffect(() => {
+    if (disableLiveBadge) {
+      setActiveMatch(null);
+      return;
+    }
+
     const fetchLiveMatch = async () => {
       try {
         const matches = await getTodayMatches(true); // force refresh for real-time scores
@@ -75,7 +82,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     fetchLiveMatch();
     const interval = setInterval(fetchLiveMatch, MATCH_SCHEDULE_REFRESH_MS);
     return () => clearInterval(interval);
-  }, []);
+  }, [disableLiveBadge]);
 
   // Menutup burger menu secara otomatis jika tab navigasi berubah
   useEffect(() => {

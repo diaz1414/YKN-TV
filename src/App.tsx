@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Home from './pages/Home';
 import ChannelDetail from './pages/ChannelDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import StatusPage from './pages/StatusPage';
 
 // Komponen pengontrol pemuatan dan pembersihan iklan secara dinamis
 function AdsController() {
@@ -50,6 +51,7 @@ function App() {
       <div className="min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/status" element={<StatusPage />} />
           <Route path="/watch/:id" element={<ChannelDetail />} />
           <Route path="/ykn-c0ntr0l-hq" element={<AdminDashboard />} />
           <Route path="/ykn-c0ntr0l-hq/dashboard" element={<AdminDashboard />} />
