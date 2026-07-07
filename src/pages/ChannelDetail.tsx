@@ -45,6 +45,11 @@ const hasHlsServer = (stream: PlayableStream) => (
   (stream.servers || []).some(isHlsServer)
 );
 
+const getIosPrimaryHlsServer = (servers: StreamServer[]) => {
+  const hlsServers = servers.filter(isHlsServer);
+  return hlsServers.find((server) => server.forceProxy !== true) || hlsServers[0] || null;
+};
+
 const isIosStreamLabel = (stream: PlayableStream) => (
   /\[\s*ios/i.test(stream.subName || '')
 );
@@ -570,6 +575,13 @@ const ChannelDetail = () => {
 
       return stream;
     })();
+
+    if (isIOSRuntime) {
+      const iosServer = getIosPrimaryHlsServer(effectiveStream.servers || []);
+      if (iosServer) {
+        return [{ ...iosServer, name: 'Server 1' }];
+      }
+    }
 
     const baseServers = (effectiveStream.servers || []).map((server, index) => ({
       ...server,
