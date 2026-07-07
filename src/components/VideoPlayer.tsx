@@ -35,7 +35,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
 
-  const useIOSNativePlayer = useMemo(() => isIOSDevice(), []);
+  const isIOSRuntime = useMemo(() => isIOSDevice(), []);
+  const hlsJsSupported = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return Hls.isSupported();
+  }, []);
+  const useIOSNativePlayer = isIOSRuntime && !hlsJsSupported;
 
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -146,7 +151,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const code = nativeError?.code;
     const activeServerName = currentServer ? getPublicServerName(currentServer) : 'server ini';
     const proxyHint = useIOSNativePlayer
-      ? 'Khusus iOS diprioritaskan pakai HLS .m3u8 direct di Server 1. Kalau masih gagal, source iOS ini perlu diganti.'
+      ? 'Browser iOS ini tidak support player HLS JS, jadi fallback ke native Safari. Kalau masih gagal, source iOS ini perlu diganti.'
       : currentServer?.forceProxy
       ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
       : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
@@ -455,7 +460,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             return;
           }
 
-          console.log('Using iOS native video player:', streamUrl);
+          console.log('Using iOS native video player fallback:', streamUrl);
 
           video.controls = true;
           video.playsInline = true;
@@ -1310,7 +1315,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
       </div>
 
-      {!useIOSNativePlayer && (
+      {!useIOSNativePlayer && servers.length > 1 && (
         <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
           <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
             <Server size={16} className="text-primary" />
