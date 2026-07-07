@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -17,11 +17,25 @@ interface QualityOption {
   label: string;
 }
 
+const isIOSDevice = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+
+  return (
+    /iPhone|iPad|iPod/i.test(ua) ||
+    (platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+};
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+
+  const useIOSNativePlayer = useMemo(() => isIOSDevice(), []);
 
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -58,7 +72,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const index = servers.findIndex(s => s.url === server?.url);
     return `Server ${index >= 0 ? index + 1 : 1}`;
   };
-  // Sync current server if servers list changes
+
   // Sync current server if servers list changes
   useEffect(() => {
     if (!servers || servers.length === 0) return;
@@ -181,7 +195,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     });
 
     player.addEventListener('buffering', (event: any) => {
-      setIsBuffering(event.buffering);
+      if (!useIOSNativePlayer) {
+        setIsBuffering(event.buffering);
+      }
     });
 
     player.addEventListener('adaptation', () => {
@@ -278,8 +294,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
       // Client-side parser for IPTV playlist containers (e.g. IPTVCat lists)
-      // Jangan biarkan pre-fetch manifest menggantung lama, karena bisa kelihatan seperti buffering.
-      if (isHls) {
+      // Khusus iOS native jangan paksa fetch manifest dari JS, biar Safari handle langsung.
+      // iOS paling aman pakai URL HLS .m3u8 asli/non-DRM.
+      if (isHls && !useIOSNativePlayer) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 7000);
         try {
@@ -342,6 +359,63 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       await destroyPlayers();
 
       try {
+        if (useIOSNativePlayer) {
+          const video = videoRef.current;
+          if (!video) return;
+
+          if (keys) {
+            setIsBooting(false);
+            setIsBuffering(false);
+            setError('Server ini memakai DRM/ClearKey dan tidak cocok untuk iPhone. Coba pilih Server iOS / HLS biasa.');
+            return;
+          }
+
+          if (!isHls) {
+            setIsBooting(false);
+            setIsBuffering(false);
+            setError('Format server ini tidak cocok untuk iPhone. iOS paling aman pakai server HLS .m3u8.');
+            return;
+          }
+
+          console.log('Using iOS native video player:', streamUrl);
+
+          try {
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+          } catch (e) {
+            console.warn('Reset native video failed:', e);
+          }
+
+          video.controls = true;
+          video.playsInline = true;
+          video.setAttribute('playsinline', 'true');
+          video.setAttribute('webkit-playsinline', 'true');
+          video.src = streamUrl;
+          video.load();
+
+          setLevels([]);
+          setCurrentLevel('auto');
+          setShowQualityMenu(false);
+          setShowControls(false);
+          setIsBooting(false);
+          setIsBuffering(false);
+          setError(null);
+          setHasStarted(true);
+
+          video.play().then(() => {
+            setIsPlaying(true);
+            setHasStarted(true);
+          }).catch((err) => {
+            // iOS sering butuh tap manual dari user.
+            console.warn('iOS native autoplay prevented:', err);
+            setIsPlaying(false);
+            setHasStarted(true);
+          });
+
+          return;
+        }
+
         if (isHls && Hls.isSupported() && !keys) {
           console.log('Using Hls.js to play HLS stream:', streamUrl);
           const hls = new Hls({
@@ -549,11 +623,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     };
 
     loadStream();
-  }, [currentServer?.url, currentServer?.forceProxy]);
+  }, [currentServer?.url, currentServer?.forceProxy, useIOSNativePlayer]);
 
   // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
   // and automatically recovers by skipping forward to a safe live offset (not the extreme edge)
   useEffect(() => {
+    if (useIOSNativePlayer) return;
+
     const startWatchdog = () => {
       if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
       stallWatchdogRef.current = setInterval(() => {
@@ -606,10 +682,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return () => {
       if (stallWatchdogRef.current) clearInterval(stallWatchdogRef.current);
     };
-  }, [isPlaying, isBuffering, error, isLive]);
+  }, [isPlaying, isBuffering, error, isLive, useIOSNativePlayer]);
 
   // Autohide Controls
   useEffect(() => {
+    if (useIOSNativePlayer) return;
+
     let timeoutId: ReturnType<typeof setTimeout>;
     const handleMouseMove = () => {
       setShowControls(true);
@@ -622,8 +700,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     };
 
-
-
     const container = containerRef.current;
     if (container) {
       container.addEventListener('mousemove', handleMouseMove);
@@ -634,7 +710,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
       clearTimeout(timeoutId);
     };
-  }, [isPlaying]);
+  }, [isPlaying, useIOSNativePlayer]);
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -830,9 +906,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
           ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
-          } ${showControls ? '' : 'cursor-none'}`}
+          } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
         tabIndex={0}
         onKeyDown={(e) => {
+          if (useIOSNativePlayer) return;
+
           // Only trigger if TV mode is active (body class exists)
           if (!document.body.classList.contains('tv-mode-active')) return;
 
@@ -896,191 +974,266 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       >
         <video
           ref={videoRef}
-          className={`w-full h-full object-contain ${showControls ? 'cursor-pointer' : 'cursor-none'}`}
+          className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
           playsInline
+          controls={useIOSNativePlayer}
           onPlay={() => {
             setIsPlaying(true);
             setHasStarted(true);
           }}
           onPause={() => setIsPlaying(false)}
-          onWaiting={() => setIsBuffering(true)}
+          onWaiting={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
           onPlaying={confirmPlaybackReady}
           onCanPlay={() => {
             setLoadingMessage('Siaran hampir siap...');
+            if (useIOSNativePlayer) {
+              setIsBooting(false);
+              setIsBuffering(false);
+            }
           }}
           onSeeked={() => setIsBuffering(false)}
-          onStalled={() => setIsBuffering(true)}
-          onSeeking={() => setIsBuffering(true)}
-          onLoadStart={() => setIsBuffering(true)}
+          onStalled={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
+          onSeeking={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
+          onLoadStart={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
           onTimeUpdate={handleTimeUpdate}
         />
 
-        {/* Global iOS Style Announcement Banner for Fullscreen Mode */}
-        <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
+        {!useIOSNativePlayer && (
+          <>
+            {/* Global iOS Style Announcement Banner for Fullscreen Mode */}
+            <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
-        {/* YKN TV Watermark Logo - top right, follows control visibility */}
-        <div
-          className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-30 pointer-events-none select-none transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
-            }`}
-        >
-          <div className="flex items-baseline gap-[3px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-            <span
-              className="text-white font-black tracking-tight leading-none"
-              style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", letterSpacing: '-0.5px' }}
-            >
-              YKN
-            </span>
-            <span
-              className="font-black leading-none"
-              style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", color: '#D4AF37', letterSpacing: '-0.5px' }}
-            >
-              TV
-            </span>
-          </div>
-        </div>
-
-        {/* Custom Controls Panel */}
-        <div
-          className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/60 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-            }`}
-        >
-          {/* Timeline Seek bar for VOD */}
-          {!isLive && (
+            {/* YKN TV Watermark Logo - top right, follows control visibility */}
             <div
-              onClick={handleSeek}
-              className="w-full h-1 bg-white/10 rounded-full mb-2.5 cursor-pointer relative group/progress transition-all hover:h-1.5"
+              className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-30 pointer-events-none select-none transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
+                }`}
             >
-              <div
-                className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(212,175,55,0.6)]"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
-              >
-                <div className="w-2.5 h-2.5 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+              <div className="flex items-baseline gap-[3px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                <span
+                  className="text-white font-black tracking-tight leading-none"
+                  style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", letterSpacing: '-0.5px' }}
+                >
+                  YKN
+                </span>
+                <span
+                  className="font-black leading-none"
+                  style={{ fontSize: 'clamp(18px, 3.5vw, 30px)', fontFamily: "'Arial Black', Arial, sans-serif", color: '#D4AF37', letterSpacing: '-0.5px' }}
+                >
+                  TV
+                </span>
               </div>
             </div>
-          )}
 
-          {/* Control Actions row */}
-          <div className="flex items-center justify-between gap-2 select-none">
-            <div className="flex items-center gap-2 sm:gap-3.5">
-              {/* Play / Pause */}
-              <button
-                onClick={() => togglePlay()}
-                className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0 tv-focusable"
-                tabIndex={0}
-              >
-                {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
-              </button>
-
-              {/* Volume Controller */}
-              <div className="flex items-center gap-1 group/volume relative">
-                <button
-                  onClick={toggleMute}
-                  className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
-                  tabIndex={0}
+            {/* Custom Controls Panel */}
+            <div
+              className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/60 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+                }`}
+            >
+              {/* Timeline Seek bar for VOD */}
+              {!isLive && (
+                <div
+                  onClick={handleSeek}
+                  className="w-full h-1 bg-white/10 rounded-full mb-2.5 cursor-pointer relative group/progress transition-all hover:h-1.5"
                 >
-                  {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                </button>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
-                />
-              </div>
-
-              {/* Live Status indicator / Catch up button */}
-              {isLive ? (
-                <button
-                  onClick={seekToLiveEdge}
-                  className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer tv-focusable ${isAtLiveEdge
-                    ? 'bg-red-500/20 border border-red-400/50 text-red-400 shadow-[0_0_10px_rgba(248,113,113,0.35)] animate-pulse'
-                    : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-400 hover:border-red-400/40'
-                    }`}
-                  title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
-                  tabIndex={0}
-                >
-                  <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-400' : 'bg-zinc-500'}`} />
-                  {isAtLiveEdge ? 'LIVE' : 'LIVE (SYNC)'}
-                </button>
-              ) : (
-                <div className="text-[10px] sm:text-[11px] font-mono font-bold text-zinc-400 select-none">
-                  {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
+                  <div
+                    className="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(212,175,55,0.6)]"
+                    style={{ width: `${(currentTime / duration) * 100}%` }}
+                  >
+                    <div className="w-2.5 h-2.5 bg-white border-2 border-primary rounded-full absolute right-0 top-1/2 -translate-y-1/2 scale-0 group-hover/progress:scale-100 transition-transform shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+                  </div>
                 </div>
               )}
-            </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2.5">
-              {/* Picture-in-Picture toggle */}
-              {document.pictureInPictureEnabled && (
-                <button
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (!videoRef.current) return;
-                    try {
-                      if (document.pictureInPictureElement) {
-                        await document.exitPictureInPicture();
-                      } else {
-                        await videoRef.current.requestPictureInPicture();
-                      }
-                    } catch (err) {
-                      console.warn('PiP failed:', err);
-                    }
-                  }}
-                  className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer tv-focusable"
-                  title="Picture-in-Picture"
-                  tabIndex={0}
-                >
-                  <PictureInPicture2 size={14} />
-                </button>
-              )}
-
-              {/* Video Resolution list */}
-              {levels.length > 1 && (
-                <div className="relative">
+              {/* Control Actions row */}
+              <div className="flex items-center justify-between gap-2 select-none">
+                <div className="flex items-center gap-2 sm:gap-3.5">
+                  {/* Play / Pause */}
                   <button
-                    onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
-                    className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer tv-focusable"
+                    onClick={() => togglePlay()}
+                    className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0 tv-focusable"
                     tabIndex={0}
                   >
-                    <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
-                    {currentLevel === 'auto' ? `Auto ${activeHeight ? `(${activeHeight}p)` : ''}` : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                    {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
                   </button>
-                  {showQualityMenu && (
-                    <div className="absolute bottom-9 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-xl p-1 w-20 sm:w-24 shadow-2xl flex flex-col gap-0.5 z-50">
-                      {levels.map((level) => (
-                        <button
-                          key={level.index}
-                          onClick={() => handleLevelChange(level.index)}
-                          className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentLevel === level.index
-                            ? 'bg-primary text-dark font-black shadow-md'
-                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                            }`}
-                          tabIndex={0}
-                        >
-                          {level.label}
-                        </button>
-                      ))}
+
+                  {/* Volume Controller */}
+                  <div className="flex items-center gap-1 group/volume relative">
+                    <button
+                      onClick={toggleMute}
+                      className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
+                      tabIndex={0}
+                    >
+                      {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
+                    />
+                  </div>
+
+                  {/* Live Status indicator / Catch up button */}
+                  {isLive ? (
+                    <button
+                      onClick={seekToLiveEdge}
+                      className={`flex items-center gap-1 py-0.5 px-2 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-wider select-none transition-all cursor-pointer tv-focusable ${isAtLiveEdge
+                        ? 'bg-red-500/20 border border-red-400/50 text-red-400 shadow-[0_0_10px_rgba(248,113,113,0.35)] animate-pulse'
+                        : 'bg-zinc-800/80 border border-zinc-700 text-zinc-400 hover:bg-red-500/15 hover:text-red-400 hover:border-red-400/40'
+                        }`}
+                      title={isAtLiveEdge ? "Siaran sinkron dengan Live" : "Siaran tertunda. Klik untuk sinkronisasi ulang ke Live"}
+                      tabIndex={0}
+                    >
+                      <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isAtLiveEdge ? 'bg-red-400' : 'bg-zinc-500'}`} />
+                      {isAtLiveEdge ? 'LIVE' : 'LIVE (SYNC)'}
+                    </button>
+                  ) : (
+                    <div className="text-[10px] sm:text-[11px] font-mono font-bold text-zinc-400 select-none">
+                      {formatTime(currentTime)} <span className="text-white/25">/</span> {formatTime(duration)}
                     </div>
                   )}
                 </div>
-              )}
 
-              {/* Fullscreen view toggle */}
-              <button
-                onClick={toggleFullscreen}
-                className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none tv-focusable rounded-lg"
-                tabIndex={0}
-              >
-                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-              </button>
+                <div className="flex items-center gap-1.5 sm:gap-2.5">
+                  {/* Picture-in-Picture toggle */}
+                  {document.pictureInPictureEnabled && (
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!videoRef.current) return;
+                        try {
+                          if (document.pictureInPictureElement) {
+                            await document.exitPictureInPicture();
+                          } else {
+                            await videoRef.current.requestPictureInPicture();
+                          }
+                        } catch (err) {
+                          console.warn('PiP failed:', err);
+                        }
+                      }}
+                      className="p-1 text-zinc-400 hover:text-white transition-all hover:bg-white/5 rounded-lg border border-white/5 cursor-pointer tv-focusable"
+                      title="Picture-in-Picture"
+                      tabIndex={0}
+                    >
+                      <PictureInPicture2 size={14} />
+                    </button>
+                  )}
+
+                  {/* Video Resolution list */}
+                  {levels.length > 1 && (
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowQualityMenu(!showQualityMenu); }}
+                        className="flex items-center gap-0.5 px-2 py-0.5 sm:py-1 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 rounded-lg text-[9px] sm:text-[10px] font-black text-zinc-300 hover:text-white transition-all cursor-pointer tv-focusable"
+                        tabIndex={0}
+                      >
+                        <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
+                        {currentLevel === 'auto' ? `Auto ${activeHeight ? `(${activeHeight}p)` : ''}` : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                      </button>
+                      {showQualityMenu && (
+                        <div className="absolute bottom-9 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-xl p-1 w-20 sm:w-24 shadow-2xl flex flex-col gap-0.5 z-50">
+                          {levels.map((level) => (
+                            <button
+                              key={level.index}
+                              onClick={() => handleLevelChange(level.index)}
+                              className={`w-full py-1 px-1.5 text-left rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentLevel === level.index
+                                ? 'bg-primary text-dark font-black shadow-md'
+                                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                                }`}
+                              tabIndex={0}
+                            >
+                              {level.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Fullscreen view toggle */}
+                  <button
+                    onClick={toggleFullscreen}
+                    className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none tv-focusable rounded-lg"
+                    tabIndex={0}
+                  >
+                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Error State display screen */}
+            {/* Buffering Overlay */}
+            {(isBooting || isBuffering) && !error && (
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">{loadingMessage || 'Memuat Aliran...'}</p>
+              </div>
+            )}
+
+            {/* Solid Play button display before start */}
+            {!hasStarted && !error && (
+              <div className="absolute inset-0 bg-[#090909] flex flex-col items-center justify-center gap-6 z-20 select-none">
+                <div
+                  className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black hover:scale-105 transition-all cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]"
+                  onClick={(e) => {
+                    setHasStarted(true);
+                    togglePlay(e);
+                  }}
+                >
+                  <Play fill="currentColor" size={24} className="ml-1" />
+                </div>
+                <div className="text-center">
+                  <h4 className="text-base font-black uppercase font-display tracking-wider mb-1 text-white">Mulai Siaran Langsung</h4>
+                  <div className="flex items-center gap-2 justify-center text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-2 py-0.5 bg-white/5 rounded border border-white/5">{currentServer.type.toUpperCase() || 'DIRECT'}</span>
+                    <span>•</span>
+                    <span>{getPublicServerName(currentServer)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Dim overlay when paused to block other interactions and allow click-to-play */}
+            {hasStarted && !isPlaying && !error && !isBuffering && (
+              <div
+                className="absolute inset-0 bg-black/40 z-10 cursor-pointer"
+                onClick={togglePlay}
+              />
+            )}
+
+            {/* Center Play/Pause button when cursor moves (or when paused) */}
+            {hasStarted && showControls && !error && !isBuffering && (
+              <div className="absolute inset-0 flex items-center justify-center z-25 select-none pointer-events-none">
+                <button
+                  onClick={togglePlay}
+                  className="text-white hover:text-primary transition-all duration-300 scale-100 hover:scale-110 active:scale-90 pointer-events-auto filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]"
+                >
+                  {isPlaying ? <Pause size={48} fill="currentColor" /> : <Play size={48} fill="currentColor" className="ml-1.5" />}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
         {/* Error State display screen */}
         {error && !isBooting && (
           <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center select-none animate-in fade-in duration-300">
@@ -1093,59 +1246,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             >
               <RefreshCcw size={14} />
               Segarkan Koneksi
-            </button>
-          </div>
-        )}
-
-
-
-        {/* Buffering Overlay */}
-        {(isBooting || isBuffering) && !error && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">{loadingMessage || 'Memuat Aliran...'}</p>
-          </div>
-        )}
-
-        {/* Solid Play button display before start */}
-        {!hasStarted && !error && (
-          <div className="absolute inset-0 bg-[#090909] flex flex-col items-center justify-center gap-6 z-20 select-none">
-            <div
-              className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black hover:scale-105 transition-all cursor-pointer shadow-[0_0_35px_rgba(212,175,55,0.4)]"
-              onClick={(e) => {
-                setHasStarted(true);
-                togglePlay(e);
-              }}
-            >
-              <Play fill="currentColor" size={24} className="ml-1" />
-            </div>
-            <div className="text-center">
-              <h4 className="text-base font-black uppercase font-display tracking-wider mb-1 text-white">Mulai Siaran Langsung</h4>
-              <div className="flex items-center gap-2 justify-center text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
-                <span className="px-2 py-0.5 bg-white/5 rounded border border-white/5">{currentServer.type.toUpperCase() || 'DIRECT'}</span>
-                <span>•</span>
-                <span>{getPublicServerName(currentServer)}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Dim overlay when paused to block other interactions and allow click-to-play */}
-        {hasStarted && !isPlaying && !error && !isBuffering && (
-          <div
-            className="absolute inset-0 bg-black/40 z-10 cursor-pointer"
-            onClick={togglePlay}
-          />
-        )}
-
-        {/* Center Play/Pause button when cursor moves (or when paused) */}
-        {hasStarted && showControls && !error && !isBuffering && (
-          <div className="absolute inset-0 flex items-center justify-center z-25 select-none pointer-events-none">
-            <button
-              onClick={togglePlay}
-              className="text-white hover:text-primary transition-all duration-300 scale-100 hover:scale-110 active:scale-90 pointer-events-auto filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]"
-            >
-              {isPlaying ? <Pause size={48} fill="currentColor" /> : <Play size={48} fill="currentColor" className="ml-1.5" />}
             </button>
           </div>
         )}
