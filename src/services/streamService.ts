@@ -3,7 +3,7 @@ import backupEvents from '../data/tv-events.json';
 import backupSports from '../data/tv-sports.json';
 import backupLive from '../data/tv-hiburan.json';
 import axios from 'axios';
-import { SHOW_RTB_GO_IN_JADWAL } from './matchService';
+import { getRawEventsUrl, SHOW_RTB_GO_IN_JADWAL } from './matchService';
 import { getActiveCustomEvents } from './customEventService';
 
 export interface StreamServer {
@@ -366,7 +366,7 @@ export const getLiveSportsData = async (): Promise<{
   try {
     // 1. Primary Source: Fetch from GitHub raw (CDN global, tahan beban banyak user)
     const [eventsRes, sportsRes, liveRes] = await Promise.all([
-      axios.get<MatchEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat'),
+      axios.get<MatchEvent[]>(getRawEventsUrl()),
       axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat'),
       axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat')
     ]);
@@ -476,7 +476,7 @@ export const getLiveSportsData = async (): Promise<{
       nama_channel: "RTB Go",
       tagline: "Live Streaming RTB Go",
       jenis: "hls",
-      url_iptv: "https://d1211whpimeups.cloudfront.net/smil:rtbgo/playlist.m3u8",
+      url_iptv: "https://liveplay-srs.voc.com.cn/hls/tv/134_180adf.m3u8",
       gbr_base64: "",
       logo: "https://www.rtbgo.bn/assets/favicon/favicon-96x96.png",
       url_license: "",

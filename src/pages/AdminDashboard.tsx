@@ -339,11 +339,16 @@ const AdminDashboard = () => {
   const [remoteEventsFetched, setRemoteEventsFetched] = useState(false);
 
   const REMOTE_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat';
+  const REMOTE_EVENTS_CACHE_BUST_MS = 5000;
+  const getRemoteEventsUrl = () => {
+    const bucket = Math.floor(Date.now() / REMOTE_EVENTS_CACHE_BUST_MS);
+    return `${REMOTE_EVENTS_URL}?t=${bucket}`;
+  };
 
   const fetchRemoteEvents = async () => {
     setRemoteEventsLoading(true);
     try {
-      const res = await fetch(REMOTE_EVENTS_URL);
+      const res = await fetch(getRemoteEventsUrl(), { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       const parsed = JSON.parse(text) as RawEventEntry[];

@@ -52,6 +52,15 @@ const getFlagByName = (name: string): string => {
   return 'https://flagcdn.com/w80/un.png';
 };
 
+const RAW_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat';
+const RAW_EVENTS_CACHE_BUST_MS = 5000;
+export const MATCH_SCHEDULE_REFRESH_MS = 5000;
+
+export const getRawEventsUrl = () => {
+  const bucket = Math.floor(Date.now() / RAW_EVENTS_CACHE_BUST_MS);
+  return `${RAW_EVENTS_URL}?t=${bucket}`;
+};
+
 const parseJadwal = parseJadwalDate;
 const formatMatchTime = formatMatchTimeForUserZone;
 
@@ -185,7 +194,7 @@ const getWcScore = (player1: string, game: any) => {
 
 let cachedMatches: Match[] | null = null;
 let cacheTime = 0;
-const CACHE_EXPIRY = 20000; // 20 seconds cache for faster live score updates
+const CACHE_EXPIRY = MATCH_SCHEDULE_REFRESH_MS;
 
 const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs = 3500) => {
   const controller = new AbortController();
@@ -270,7 +279,7 @@ export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> =>
         (async () => {
           // 1. Primary: GitHub raw CDN (tahan beban banyak user)
           try {
-            const res = await fetchWithTimeout('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat', {}, 3000);
+            const res = await fetchWithTimeout(getRawEventsUrl(), { cache: 'no-store' }, 3000);
             return await res.json();
           } catch (githubErr) {
             // 2. Fallback: Bot API

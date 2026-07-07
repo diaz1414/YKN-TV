@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, startTransition } from 'react';
-import { getTodayMatches, type Match } from '../services/matchService';
+import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
 import MatchCard from './MatchCard';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Loader2 } from 'lucide-react';
@@ -55,10 +55,10 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     // Load pertama: tampilkan loading seperti biasa
     fetchMatches(false);
 
-    // Refresh otomatis tiap 20 detik: background saja, tanpa loading/kedip
+    // Refresh otomatis background saja, tanpa loading/kedip
     const interval = setInterval(() => {
       fetchMatches(true);
-    }, 20000);
+    }, MATCH_SCHEDULE_REFRESH_MS);
 
     return () => {
       mounted = false;

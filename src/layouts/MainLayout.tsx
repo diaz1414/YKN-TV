@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Tv, Home, Award, Calendar, Menu, X, Coffee } from 'lucide-react';
-import { getTodayMatches, type Match } from '../services/matchService';
+import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import { slugify } from '../services/streamService';
 import { SupportModal } from '../components/SupportDeveloper';
@@ -73,7 +73,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     };
 
     fetchLiveMatch();
-    const interval = setInterval(fetchLiveMatch, 20000); // poll every 20s for live score updates
+    const interval = setInterval(fetchLiveMatch, MATCH_SCHEDULE_REFRESH_MS);
     return () => clearInterval(interval);
   }, []);
 
