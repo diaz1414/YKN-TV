@@ -69,7 +69,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const lastQualityChangeTimeRef = useRef<number>(0);
 
   const getPublicServerName = (server: any) => {
-    const index = servers.findIndex(s => s.url === server?.url);
+    const index = servers.findIndex(s => s.url === server?.url && s.forceProxy === server?.forceProxy);
     return `Server ${index >= 0 ? index + 1 : 1}`;
   };
 
@@ -80,7 +80,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setCurrentServer((prev) => {
       // Kalau user sudah pilih server, jangan diganti otomatis.
       // Ini mencegah balik ke Server 1 saat polling extraServers jalan.
-      if (prev?.url) {
+      if (prev?.url && servers.some(s => s.url === prev.url && s.forceProxy === prev.forceProxy)) {
         return prev;
       }
 
@@ -119,6 +119,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   const cleanStreamUrl = (url: string): string => {
     return url.split('|')[0].trim();
+  };
+
+  const getProxyFallbackServer = () => {
+    if (!currentServer || currentServer.forceProxy) return null;
+
+    const currentRawUrl = cleanStreamUrl(currentServer.url);
+    return servers.find((server) => (
+      server.forceProxy === true && cleanStreamUrl(server.url) === currentRawUrl
+    )) || null;
+  };
+
+  const selectServer = (server: StreamServer) => {
+    setCurrentServer(server);
+    setIsPlaying(false);
+    setHasStarted(true);
+    setError(null);
+    setIsBooting(true);
+    setIsBuffering(true);
+    setLoadingMessage(`Memuat ${getPublicServerName(server)}...`);
+    setIsAtLiveEdge(true);
   };
 
   const getNativeVideoErrorMessage = (video: HTMLVideoElement): string => {
@@ -955,6 +975,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (!currentServer) return null;
 
+  const proxyFallbackServer = getProxyFallbackServer();
+
   return (
     <div className="space-y-6">
       <div
@@ -1281,13 +1303,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             <AlertTriangle className="text-netflix-red mb-4 shadow-lg" size={44} />
             <h4 className="text-lg font-black uppercase font-display mb-1.5">Gangguan Koneksi Siaran</h4>
             <p className="text-zinc-500 text-xs font-bold mb-6 max-w-xs leading-relaxed">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-primary text-dark font-black rounded-xl flex items-center gap-2 hover:scale-102 transition-transform cursor-pointer text-xs uppercase tracking-wider shadow"
-            >
-              <RefreshCcw size={14} />
-              Segarkan Koneksi
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+              {proxyFallbackServer && (
+                <button
+                  onClick={() => selectServer(proxyFallbackServer)}
+                  className="px-5 py-3 bg-primary text-dark font-black rounded-xl flex items-center gap-2 hover:scale-102 transition-transform cursor-pointer text-xs uppercase tracking-wider shadow"
+                >
+                  <Server size={14} />
+                  Coba Server Proxy
+                </button>
+              )}
+              <button
+                onClick={() => window.location.reload()}
+                className="px-5 py-3 bg-white/10 text-white font-black rounded-xl flex items-center gap-2 hover:bg-white/15 transition-colors cursor-pointer text-xs uppercase tracking-wider shadow"
+              >
+                <RefreshCcw size={14} />
+                Segarkan Koneksi
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -1302,16 +1335,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           {servers.map((server, index) => (
             <button
               key={`${server.url}-${index}`}
-              onClick={() => {
-                setCurrentServer(server);
-                setIsPlaying(false);
-                setHasStarted(true);
-                setError(null);
-                setIsBooting(true);
-                setIsBuffering(true);
-                setLoadingMessage(`Memuat Server ${index + 1}...`);
-                setIsAtLiveEdge(true);
-              }}
+              onClick={() => selectServer(server)}
               className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
                 ? 'bg-primary text-dark shadow-md'
                 : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'

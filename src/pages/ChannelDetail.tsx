@@ -15,6 +15,61 @@ import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 
+const isIOSDevice = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+
+  const ua = navigator.userAgent || '';
+  const platform = navigator.platform || '';
+
+  return (
+    /iPhone|iPad|iPod/i.test(ua) ||
+    (platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+};
+
+const normalizeMatchText = (value?: string) => (
+  (value || '').toLowerCase().replace(/\s+/g, ' ').trim()
+);
+
+const getMatchPairKey = (stream: PlayableStream) => (
+  [stream.player1, stream.player2].map(normalizeMatchText).sort().join('|')
+);
+
+const isHlsServer = (server: StreamServer) => {
+  const type = (server.type || '').toLowerCase();
+  const url = (server.url || '').toLowerCase();
+  return type.includes('hls') || url.includes('.m3u8');
+};
+
+const hasHlsServer = (stream: PlayableStream) => (
+  (stream.servers || []).some(isHlsServer)
+);
+
+const isIosStreamLabel = (stream: PlayableStream) => (
+  /\[\s*ios/i.test(stream.subName || '')
+);
+
+const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[]) => {
+  const pairKey = getMatchPairKey(stream);
+  const sameSchedule = (candidate: PlayableStream) => (
+    !stream.jadwal_event ||
+    !candidate.jadwal_event ||
+    candidate.jadwal_event === stream.jadwal_event
+  );
+
+  const sameMatch = (candidate: PlayableStream) => (
+    candidate.id !== stream.id &&
+    !candidate.isChannel &&
+    getMatchPairKey(candidate) === pairKey &&
+    sameSchedule(candidate) &&
+    hasHlsServer(candidate)
+  );
+
+  return matches.find((candidate) => sameMatch(candidate) && isIosStreamLabel(candidate))
+    || matches.find(sameMatch)
+    || null;
+};
+
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -31,6 +86,7 @@ const ChannelDetail = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'channels' | 'matches'>('chat');
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
+  const isIOSRuntime = useMemo(() => isIOSDevice(), []);
 
   const [watchAdUnlocked, setWatchAdUnlocked] = useState(false);
   const [watchGateChecked, setWatchGateChecked] = useState(false);
@@ -495,12 +551,29 @@ const ChannelDetail = () => {
   const playerServers = useMemo(() => {
     if (!stream) return [];
 
-    const baseServers = (stream.servers || []).map((server, index) => ({
+    const effectiveStream = (() => {
+      if (!isIOSRuntime || stream.isChannel || hasHlsServer(stream)) return stream;
+
+      const iosSibling = findIosSiblingStream(stream, matches);
+      if (iosSibling) {
+        console.log('[YKN iOS HLS fallback]', {
+          from: stream.id,
+          to: iosSibling.id,
+          source: iosSibling.subName,
+        });
+        return iosSibling;
+      }
+
+      return stream;
+    })();
+
+    const baseServers = (effectiveStream.servers || []).map((server, index) => ({
       ...server,
       name: `Server ${index + 1}`,
     }));
 
-    const normalizedExtraServers = (extraServers || []).map((server, index) => ({
+    const activeExtraServers = effectiveStream.id === stream.id ? extraServers : [];
+    const normalizedExtraServers = (activeExtraServers || []).map((server, index) => ({
       ...server,
       name: `Server ${baseServers.length + index + 1}`,
     }));
@@ -509,7 +582,7 @@ const ChannelDetail = () => {
       ...baseServers,
       ...normalizedExtraServers,
     ];
-  }, [stream, extraServers]);
+  }, [stream, extraServers, matches, isIOSRuntime]);
 
 
   if (loading) {
