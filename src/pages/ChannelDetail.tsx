@@ -551,6 +551,10 @@ const ChannelDetail = () => {
   const playerServers = useMemo(() => {
     if (!stream) return [];
 
+    if (isIOSRuntime && !stream.isChannel && !hasHlsServer(stream) && matches.length === 0) {
+      return [];
+    }
+
     const effectiveStream = (() => {
       if (!isIOSRuntime || stream.isChannel || hasHlsServer(stream)) return stream;
 
