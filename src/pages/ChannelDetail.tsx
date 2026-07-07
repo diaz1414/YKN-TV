@@ -45,7 +45,6 @@ const hasHlsServer = (stream: PlayableStream) => (
   (stream.servers || []).some(isHlsServer)
 );
 
-
 const isIosStreamLabel = (stream: PlayableStream) => (
   /\[\s*ios/i.test(stream.subName || '')
 );
