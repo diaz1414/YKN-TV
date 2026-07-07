@@ -467,6 +467,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           video.setAttribute('playsinline', 'true');
           video.setAttribute('webkit-playsinline', 'true');
 
+          // Explicitly assign source and load to ensure Safari reacts to the source change
+          video.src = streamUrl;
+          video.load();
+
           setLevels([]);
           setCurrentLevel('auto');
           setShowQualityMenu(false);
@@ -475,6 +479,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           setIsBuffering(false);
           setError(null);
           setHasStarted(true);
+
+          // Autoplay on iOS is strict. Attempt to play and catch any rejection.
+          video.play().then(() => {
+            confirmPlaybackReady();
+          }).catch(err => {
+            console.warn('iOS autoplay prevented:', err);
+            clearStartupErrorTimer();
+            setIsPlaying(false);
+          });
 
           return;
         }
@@ -962,8 +975,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (!currentServer) return null;
 
-  const proxyFallbackServer = useIOSNativePlayer ? null : getProxyFallbackServer();
-  const iosNativeSrc = useIOSNativePlayer ? cleanStreamUrl(currentServer.url) : undefined;
+  const proxyFallbackServer = getProxyFallbackServer();
+  const iosNativeSrc = useMemo(() => {
+    if (!useIOSNativePlayer || !currentServer) return undefined;
+    const rawUrl = cleanStreamUrl(currentServer.url);
+    return getProxiedUrl(rawUrl, currentServer.forceProxy === true);
+  }, [useIOSNativePlayer, currentServer]);
 
   return (
     <div className="space-y-6">
@@ -1315,7 +1332,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
       </div>
 
-      {!useIOSNativePlayer && servers.length > 1 && (
+      {servers.length > 1 && (
         <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
           <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
             <Server size={16} className="text-primary" />
