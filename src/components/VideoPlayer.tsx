@@ -469,8 +469,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           video.playsInline = true;
           video.setAttribute('playsinline', 'true');
           video.setAttribute('webkit-playsinline', 'true');
-          video.src = streamUrl;
-          video.load();
+          if (video.src !== streamUrl) {
+            video.src = streamUrl;
+            video.load();
+          }
 
           setLevels([]);
           setCurrentLevel('auto');
@@ -480,16 +482,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           setIsBuffering(false);
           setError(null);
           setHasStarted(true);
-
-          video.play().then(() => {
-            setIsPlaying(true);
-            setHasStarted(true);
-          }).catch((err) => {
-            // iOS sering butuh tap manual dari user.
-            console.warn('iOS native autoplay prevented:', err);
-            setIsPlaying(false);
-            setHasStarted(true);
-          });
 
           return;
         }
@@ -978,6 +970,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   if (!currentServer) return null;
 
   const proxyFallbackServer = useIOSNativePlayer ? null : getProxyFallbackServer();
+  const iosNativeSrc = useIOSNativePlayer ? cleanStreamUrl(currentServer.url) : undefined;
 
   return (
     <div className="space-y-6">
@@ -1055,6 +1048,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         <video
           ref={videoRef}
           className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
+          src={iosNativeSrc}
+          preload={useIOSNativePlayer ? 'auto' : 'metadata'}
           playsInline
           controls={useIOSNativePlayer}
           onPlay={() => {
@@ -1327,32 +1322,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
-        <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
-          <Server size={16} className="text-primary" />
-          <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
-        </div>
+      {!useIOSNativePlayer && (
+        <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
+          <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
+            <Server size={16} className="text-primary" />
+            <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
+          </div>
 
-        <div className="flex flex-wrap gap-2 flex-1">
-          {servers.map((server, index) => (
-            <button
-              key={`${server.url}-${index}`}
-              onClick={() => selectServer(server)}
-              className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
-                ? 'bg-primary text-dark shadow-md'
-                : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
-                }`}
-              tabIndex={0}
-            >
-              <span className="relative z-10">Server {index + 1}</span>
+          <div className="flex flex-wrap gap-2 flex-1">
+            {servers.map((server, index) => (
+              <button
+                key={`${server.url}-${index}`}
+                onClick={() => selectServer(server)}
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
+                  ? 'bg-primary text-dark shadow-md'
+                  : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
+                  }`}
+                tabIndex={0}
+              >
+                <span className="relative z-10">Server {index + 1}</span>
 
-              {(server.forceProxy || server.keyId || server.keys || server.url.includes('|')) && (
-                <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
-              )}
-            </button>
-          ))}
+                {(server.forceProxy || server.keyId || server.keys || server.url.includes('|')) && (
+                  <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
