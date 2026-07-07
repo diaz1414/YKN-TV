@@ -165,6 +165,9 @@ export const buildServers = (
   const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
   const servers: StreamServer[] = [];
   const rawUrl = normalizeStreamUrl(urlIptv);
+  const lowerJenis = (jenis || '').toLowerCase();
+  const lowerRawUrl = rawUrl.toLowerCase();
+  const isHlsStream = lowerJenis.includes('hls') || lowerRawUrl.includes('.m3u8');
 
   // Server 1: selalu direct CDN — sama seperti backup HTML.
   // Kalau CORS gagal atau http:// blocked, user tinggal switch ke Server 2.
@@ -185,7 +188,7 @@ export const buildServers = (
   });
 
   if (decryptedLicense) {
-    if (decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
+    if (!isHlsStream && decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
       const keys: Record<string, string> = {};
       const pairs = decryptedLicense.split(',');
 
