@@ -145,7 +145,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const nativeError = video.error;
     const code = nativeError?.code;
     const activeServerName = currentServer ? getPublicServerName(currentServer) : 'server ini';
-    const proxyHint = currentServer?.forceProxy
+    const proxyHint = useIOSNativePlayer
+      ? 'Khusus iOS diprioritaskan pakai HLS .m3u8 direct di Server 1. Kalau masih gagal, source iOS ini perlu diganti.'
+      : currentServer?.forceProxy
       ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
       : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
 
@@ -975,7 +977,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (!currentServer) return null;
 
-  const proxyFallbackServer = getProxyFallbackServer();
+  const proxyFallbackServer = useIOSNativePlayer ? null : getProxyFallbackServer();
 
   return (
     <div className="space-y-6">
