@@ -121,6 +121,52 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return url.split('|')[0].trim();
   };
 
+  const getNativeVideoErrorMessage = (video: HTMLVideoElement): string => {
+    const nativeError = video.error;
+    const code = nativeError?.code;
+    const activeServerName = currentServer ? getPublicServerName(currentServer) : 'server ini';
+    const proxyHint = currentServer?.forceProxy
+      ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
+      : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
+
+    if (code === 2) {
+      return `iOS gagal mengambil playlist/segment HLS dari ${activeServerName}. ${proxyHint}`;
+    }
+
+    if (code === 3) {
+      return 'Stream terbaca, tapi iOS gagal decode video/audio. Kemungkinan codec HLS tidak cocok untuk Safari iPhone.';
+    }
+
+    if (code === 4) {
+      return `iOS menolak source HLS dari ${activeServerName}. Biasanya karena playlist tidak kompatibel, redirect/token bermasalah, atau codec tidak didukung. ${proxyHint}`;
+    }
+
+    return `iOS native player gagal memuat siaran dari ${activeServerName}. ${proxyHint}`;
+  };
+
+  const handleNativeVideoError = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const nativeError = video.error;
+    if (nativeError?.code === 1) {
+      return;
+    }
+
+    console.warn('Native video error:', {
+      code: nativeError?.code,
+      message: nativeError?.message,
+      src: video.currentSrc || video.src,
+      server: currentServer,
+    });
+
+    clearStartupErrorTimer();
+    setIsBooting(false);
+    setIsBuffering(false);
+    setIsPlaying(false);
+    setError(getNativeVideoErrorMessage(video));
+  };
+
   const destroyPlayers = async () => {
     if (hlsRef.current) {
       hlsRef.current.destroy();
@@ -1021,6 +1067,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               setIsBuffering(true);
             }
           }}
+          onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
         />
 
