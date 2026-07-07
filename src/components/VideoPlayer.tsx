@@ -293,10 +293,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       let streamUrl = autoProxiedUrl;
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
+      const lowerStreamUrl = streamUrl.toLowerCase();
+
+      const shouldResolvePlaylistContainer =
+        lowerStreamUrl.endsWith('.m3u') ||
+        lowerStreamUrl.includes('/base.m3u') ||
+        lowerStreamUrl.includes('githubusercontent') ||
+        lowerStreamUrl.includes('iptvcat') ||
+        lowerStreamUrl.includes('playlist');
+
       // Client-side parser for IPTV playlist containers (e.g. IPTVCat lists)
       // Khusus iOS native jangan paksa fetch manifest dari JS, biar Safari handle langsung.
       // iOS paling aman pakai URL HLS .m3u8 asli/non-DRM.
-      if (isHls && !useIOSNativePlayer) {
+      // Catatan: .m3u8 asli jangan di-fetch manual supaya tidak double request manifest.
+      if (isHls && !useIOSNativePlayer && shouldResolvePlaylistContainer) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 7000);
         try {
@@ -1016,10 +1026,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
         {!useIOSNativePlayer && (
           <>
-            {/* Global iOS Style Announcement Banner for Fullscreen Mode */}
             <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
-            {/* YKN TV Watermark Logo - top right, follows control visibility */}
             <div
               className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-30 pointer-events-none select-none transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
                 }`}
@@ -1040,12 +1048,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               </div>
             </div>
 
-            {/* Custom Controls Panel */}
             <div
               className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-black/60 backdrop-blur-md border border-white/10 flex flex-col justify-end p-2.5 sm:p-3.5 rounded-2xl sm:rounded-[1.5rem] transition-all duration-300 z-30 shadow-2xl ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
                 }`}
             >
-              {/* Timeline Seek bar for VOD */}
               {!isLive && (
                 <div
                   onClick={handleSeek}
@@ -1060,10 +1066,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 </div>
               )}
 
-              {/* Control Actions row */}
               <div className="flex items-center justify-between gap-2 select-none">
                 <div className="flex items-center gap-2 sm:gap-3.5">
-                  {/* Play / Pause */}
                   <button
                     onClick={() => togglePlay()}
                     className="w-7.5 h-7.5 sm:w-8 sm:h-8 bg-primary hover:bg-primary/95 text-black rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/10 cursor-pointer shrink-0 tv-focusable"
@@ -1072,7 +1076,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
                   </button>
 
-                  {/* Volume Controller */}
                   <div className="flex items-center gap-1 group/volume relative">
                     <button
                       onClick={toggleMute}
@@ -1092,7 +1095,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     />
                   </div>
 
-                  {/* Live Status indicator / Catch up button */}
                   {isLive ? (
                     <button
                       onClick={seekToLiveEdge}
@@ -1114,7 +1116,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2.5">
-                  {/* Picture-in-Picture toggle */}
                   {document.pictureInPictureEnabled && (
                     <button
                       onClick={async (e) => {
@@ -1138,7 +1139,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     </button>
                   )}
 
-                  {/* Video Resolution list */}
                   {levels.length > 1 && (
                     <div className="relative">
                       <button
@@ -1169,7 +1169,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     </div>
                   )}
 
-                  {/* Fullscreen view toggle */}
                   <button
                     onClick={toggleFullscreen}
                     className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer animate-none tv-focusable rounded-lg"
@@ -1181,7 +1180,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               </div>
             </div>
 
-            {/* Buffering Overlay */}
             {(isBooting || isBuffering) && !error && (
               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20 select-none pointer-events-none">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
@@ -1189,7 +1187,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               </div>
             )}
 
-            {/* Solid Play button display before start */}
             {!hasStarted && !error && (
               <div className="absolute inset-0 bg-[#090909] flex flex-col items-center justify-center gap-6 z-20 select-none">
                 <div
@@ -1212,7 +1209,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               </div>
             )}
 
-            {/* Dim overlay when paused to block other interactions and allow click-to-play */}
             {hasStarted && !isPlaying && !error && !isBuffering && (
               <div
                 className="absolute inset-0 bg-black/40 z-10 cursor-pointer"
@@ -1220,7 +1216,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               />
             )}
 
-            {/* Center Play/Pause button when cursor moves (or when paused) */}
             {hasStarted && showControls && !error && !isBuffering && (
               <div className="absolute inset-0 flex items-center justify-center z-25 select-none pointer-events-none">
                 <button
@@ -1234,7 +1229,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           </>
         )}
 
-        {/* Error State display screen */}
         {error && !isBooting && (
           <div className="absolute inset-0 bg-[#020202]/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-8 text-center select-none animate-in fade-in duration-300">
             <AlertTriangle className="text-netflix-red mb-4 shadow-lg" size={44} />
@@ -1251,7 +1245,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         )}
       </div>
 
-      {/* Server options grid switcher bar */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
         <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
           <Server size={16} className="text-primary" />
