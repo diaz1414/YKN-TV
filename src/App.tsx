@@ -61,6 +61,29 @@ function AdsController() {
 
 function DevToolsGuard() {
   useEffect(() => {
+    let lastConsoleWarningAt = 0;
+
+    const showDevToolsWarning = (force = false) => {
+      const now = Date.now();
+      if (!force && now - lastConsoleWarningAt < 1500) return;
+
+      lastConsoleWarningAt = now;
+
+      try {
+        console.clear();
+        console.warn(
+          '%cHayoo mau ngapain kamu ya?',
+          'font-size: 28px; font-weight: 900; color: #facc15; background: #09090b; padding: 10px 14px; border-radius: 8px;'
+        );
+        console.warn(
+          '%cConsole dan Network cuma buat admin/developer.',
+          'font-size: 13px; font-weight: 700; color: #f4f4f5; background: #18181b; padding: 6px 10px; border-radius: 6px;'
+        );
+      } catch {
+        // Ignore console API overrides.
+      }
+    };
+
     const forceDebuggerPause = () => {
       try {
         Function('debugger')();
@@ -71,6 +94,7 @@ function DevToolsGuard() {
 
     const lockPublicView = () => {
       if (isPrivilegedAdminSession()) return;
+      showDevToolsWarning(true);
       pausePageMedia();
       forceDebuggerPause();
     };
@@ -103,12 +127,18 @@ function DevToolsGuard() {
         window.outerWidth - window.innerWidth > 160 ||
         window.outerHeight - window.innerHeight > 160;
 
+      if (sizeGapOpen) {
+        showDevToolsWarning();
+      }
+
       const start = performance.now();
       forceDebuggerPause();
       const debuggerPaused = performance.now() - start > 120;
 
       if (sizeGapOpen || debuggerPaused) {
+        showDevToolsWarning(true);
         pausePageMedia();
+        forceDebuggerPause();
       }
     }, 700);
 
