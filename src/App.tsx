@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import ChannelDetail from './pages/ChannelDetail';
-import AdminDashboard from './pages/AdminDashboard';
 import StatusPage from './pages/StatusPage';
+
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // Komponen pengontrol pemuatan dan pembersihan iklan secara dinamis
 function AdsController() {
@@ -45,6 +46,12 @@ function AdsController() {
 }
 
 function App() {
+  const adminDashboard = (
+    <Suspense fallback={null}>
+      <AdminDashboard />
+    </Suspense>
+  );
+
   return (
     <Router>
       <AdsController />
@@ -53,8 +60,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/status" element={<StatusPage />} />
           <Route path="/watch/:id" element={<ChannelDetail />} />
-          <Route path="/ykn-c0ntr0l-hq" element={<AdminDashboard />} />
-          <Route path="/ykn-c0ntr0l-hq/dashboard" element={<AdminDashboard />} />
+          <Route path="/ykn-c0ntr0l-hq" element={adminDashboard} />
+          <Route path="/ykn-c0ntr0l-hq/dashboard" element={adminDashboard} />
         </Routes>
       </div>
     </Router>

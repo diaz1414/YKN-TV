@@ -7,13 +7,13 @@ import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '
 import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink, Film } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
-import { io } from 'socket.io-client';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
 import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
+import { PUBLIC_LIVE_CHAT_ENABLED } from '../config/features';
 
 const isIOSDevice = (): boolean => {
   if (typeof navigator === 'undefined') return false;
@@ -83,7 +83,9 @@ const ChannelDetail = () => {
   const [kickoffSecondsLeft, setKickoffSecondsLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [matches, setMatches] = useState<PlayableStream[]>([]);
-  const [activeTab, setActiveTab] = useState<'chat' | 'channels' | 'matches'>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'channels' | 'matches'>(
+    PUBLIC_LIVE_CHAT_ENABLED ? 'chat' : 'channels'
+  );
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
@@ -176,7 +178,7 @@ const ChannelDetail = () => {
   useEffect(() => {
     if (stream) {
       // Default to live chat if playable, else default to scheduling/channels
-      if (matchStatus === 'playable') {
+      if (PUBLIC_LIVE_CHAT_ENABLED && matchStatus === 'playable') {
         setActiveTab('chat');
       } else {
         setActiveTab(stream.isChannel ? 'channels' : 'matches');
@@ -185,7 +187,14 @@ const ChannelDetail = () => {
   }, [stream, matchStatus]);
 
   useEffect(() => {
-    if (!stream) return;
+    if (!stream || !PUBLIC_LIVE_CHAT_ENABLED) {
+      setSocket(null);
+      setChatMessages([]);
+      setConnected(false);
+      setParticipantsCount(1);
+      setShowJoinModal(false);
+      return;
+    }
 
     const savedNickname = localStorage.getItem('ykn_chat_nickname') || sessionStorage.getItem('ykn_chat_nickname');
     const savedAvatar = localStorage.getItem('ykn_chat_avatar') || sessionStorage.getItem('ykn_chat_avatar');
@@ -210,88 +219,107 @@ const ChannelDetail = () => {
 
     const envVal = import.meta.env.VITE_BOT_API_URL;
     const socketUrl = envVal === '/api' ? window.location.origin : (envVal || 'https://api.ykn.my.id');
-    const newSocket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 5,
-      reconnectionDelay: 2000
-    });
+    let isDisposed = false;
+    let activeSocket: any = null;
 
-    newSocket.on('connect', () => {
-      console.log('[Socket] Connected!');
-      setConnected(true);
+    const connectSocket = async () => {
+      const { io } = await import('socket.io-client');
+      if (isDisposed) return;
 
-      if (savedNickname) {
-        newSocket.emit('join_room', {
-          roomId: stream.id,
-          username: savedNickname,
-          avatar: savedNickname === 'YKN TV'
-            ? '/yknwc-logo.png'
-            : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`),
-          role: 'user',
-          userId: savedUserId
+      const newSocket = io(socketUrl, {
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 5,
+        reconnectionDelay: 2000
+      });
+
+      activeSocket = newSocket;
+
+      newSocket.on('connect', () => {
+        console.log('[Socket] Connected!');
+        setConnected(true);
+
+        if (savedNickname) {
+          newSocket.emit('join_room', {
+            roomId: stream.id,
+            username: savedNickname,
+            avatar: savedNickname === 'YKN TV'
+              ? '/yknwc-logo.png'
+              : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`),
+            role: 'user',
+            userId: savedUserId
+          });
+        } else {
+          // Connect in read-only mode first to view messages
+          newSocket.emit('join_room', {
+            roomId: stream.id,
+            username: 'Penonton',
+            avatar: '',
+            role: 'reader',
+            userId: savedUserId
+          });
+        }
+      });
+
+      newSocket.on('disconnect', () => {
+        console.log('[Socket] Disconnected');
+        setConnected(false);
+      });
+
+      newSocket.on('chat_history', (history: any[]) => {
+        setChatMessages(history);
+      });
+
+      newSocket.on('receive_message', (msgObj: any) => {
+        setChatMessages(prev => {
+          if (prev.some(m => m.id === msgObj.id)) return prev;
+          const next = [...prev, msgObj];
+          if (next.length > 50) next.shift();
+          return next;
         });
-      } else {
-        // Connect in read-only mode first to view messages
-        newSocket.emit('join_room', {
-          roomId: stream.id,
-          username: 'Penonton',
-          avatar: '',
-          role: 'reader',
-          userId: savedUserId
-        });
+      });
+
+      newSocket.on('room_participants_count', (count: number) => {
+        setParticipantsCount(count);
+      });
+
+      newSocket.on('join_success', ({ username, avatar }: { username: string; avatar: string }) => {
+        setNickname(username);
+        setChatAvatar(avatar);
+        setIsJoined(true);
+        setShowJoinModal(false);
+        setJoinError('');
+        localStorage.setItem('ykn_chat_nickname', username);
+        localStorage.setItem('ykn_chat_avatar', avatar);
+      });
+
+      newSocket.on('join_error', ({ message }: { message: string }) => {
+        setJoinError(message);
+        setIsJoined(false);
+        localStorage.removeItem('ykn_chat_nickname');
+        localStorage.removeItem('ykn_chat_avatar');
+        sessionStorage.removeItem('ykn_chat_nickname');
+        sessionStorage.removeItem('ykn_chat_avatar');
+        setShowJoinModal(true);
+      });
+
+      setSocket(newSocket);
+    };
+
+    connectSocket().catch((err) => {
+      if (!isDisposed) {
+        console.error('[Socket] Failed to load live chat client:', err);
+        setConnected(false);
       }
     });
 
-    newSocket.on('disconnect', () => {
-      console.log('[Socket] Disconnected');
-      setConnected(false);
-    });
-
-    newSocket.on('chat_history', (history: any[]) => {
-      setChatMessages(history);
-    });
-
-    newSocket.on('receive_message', (msgObj: any) => {
-      setChatMessages(prev => {
-        if (prev.some(m => m.id === msgObj.id)) return prev;
-        const next = [...prev, msgObj];
-        if (next.length > 50) next.shift();
-        return next;
-      });
-    });
-
-    newSocket.on('room_participants_count', (count: number) => {
-      setParticipantsCount(count);
-    });
-
-    newSocket.on('join_success', ({ username, avatar }: { username: string; avatar: string }) => {
-      setNickname(username);
-      setChatAvatar(avatar);
-      setIsJoined(true);
-      setShowJoinModal(false);
-      setJoinError('');
-      localStorage.setItem('ykn_chat_nickname', username);
-      localStorage.setItem('ykn_chat_avatar', avatar);
-    });
-
-    newSocket.on('join_error', ({ message }: { message: string }) => {
-      setJoinError(message);
-      setIsJoined(false);
-      localStorage.removeItem('ykn_chat_nickname');
-      localStorage.removeItem('ykn_chat_avatar');
-      sessionStorage.removeItem('ykn_chat_nickname');
-      sessionStorage.removeItem('ykn_chat_avatar');
-      setShowJoinModal(true);
-    });
-
-    setSocket(newSocket);
-
     return () => {
-      newSocket.disconnect();
+      isDisposed = true;
+      activeSocket?.disconnect();
     };
   }, [stream?.id]);
 
   const handleConfirmJoin = (newNick: string) => {
+    if (!PUBLIC_LIVE_CHAT_ENABLED) return;
     if (!newNick.trim()) return;
     let cleanNick = newNick.trim().substring(0, 25);
     let avatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(cleanNick)}`;
@@ -323,6 +351,7 @@ const ChannelDetail = () => {
 
   const handleSendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (!PUBLIC_LIVE_CHAT_ENABLED) return;
     if (!chatInput.trim() || !socket || !connected || !stream || !isJoined) return;
 
     socket.emit('send_message', {
@@ -337,6 +366,7 @@ const ChannelDetail = () => {
   };
 
   const handleSendReaction = (emoji: string) => {
+    if (!PUBLIC_LIVE_CHAT_ENABLED) return;
     if (!socket || !connected || !stream || !isJoined) return;
     socket.emit('send_message', {
       roomId: stream.id,
@@ -980,20 +1010,22 @@ const ChannelDetail = () => {
             <div className="glass-card rounded-[2rem] p-4 sm:p-6 flex flex-col h-[480px] sm:h-[520px] lg:h-[620px] relative overflow-hidden">
               {/* Tab Selector Segment Control */}
               <div className="flex bg-zinc-950/60 p-1 rounded-[1.25rem] border border-white/5 gap-1 select-none mb-4 shrink-0">
-                <button
-                  onClick={() => setActiveTab('chat')}
-                  tabIndex={0}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'chat'
-                    ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                    }`}
-                >
-                  <span>Chat</span>
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
-                    <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${connected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                  </span>
-                </button>
+                {PUBLIC_LIVE_CHAT_ENABLED && (
+                  <button
+                    onClick={() => setActiveTab('chat')}
+                    tabIndex={0}
+                    className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'chat'
+                      ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                      }`}
+                  >
+                    <span>Chat</span>
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
+                      <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${connected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                    </span>
+                  </button>
+                )}
                 <button
                   onClick={() => setActiveTab('channels')}
                   tabIndex={0}
@@ -1044,7 +1076,7 @@ const ChannelDetail = () => {
               )}
 
               {/* Tab Contents */}
-              {activeTab === 'chat' && (
+              {PUBLIC_LIVE_CHAT_ENABLED && activeTab === 'chat' && (
                 <div className="flex-1 flex flex-col overflow-hidden min-h-0 relative">
                   {/* Chat Stats Header */}
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5 select-none shrink-0">
@@ -1359,7 +1391,7 @@ const ChannelDetail = () => {
                 </div>
               )}
 
-              {activeTab !== 'chat' && (
+              {(!PUBLIC_LIVE_CHAT_ENABLED || activeTab !== 'chat') && (
                 <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1 min-h-0">
                   {activeTab === 'channels' ? (
                     filteredOtherChannels.length === 0 ? (
