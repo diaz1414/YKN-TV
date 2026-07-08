@@ -149,8 +149,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const proxyHint = useIOSNativePlayer
       ? 'Browser iOS ini tidak support player HLS JS, jadi fallback ke native Safari. Kalau masih gagal, source iOS ini perlu diganti.'
       : currentServer?.forceProxy
-      ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
-      : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
+        ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
+        : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
 
     if (code === 2) {
       return `iOS gagal mengambil playlist/segment HLS dari ${activeServerName}. ${proxyHint}`;
@@ -757,11 +757,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     };
   }, [isPlaying, isBuffering, error, isLive, useIOSNativePlayer]);
 
-  // Autohide Controls (mouse + touch)
+  // Autohide Controls
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
+    if (useIOSNativePlayer) return;
 
-    const showAndScheduleHide = () => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const handleMouseMove = () => {
       setShowControls(true);
       clearTimeout(timeoutId);
       if (isPlaying) {
@@ -772,29 +773,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     };
 
-    const handleTouchStart = () => {
-      if (!showControls) {
-        showAndScheduleHide();
-      } else {
-        clearTimeout(timeoutId);
-        setShowControls(false);
-        setShowQualityMenu(false);
-      }
-    };
-
     const container = containerRef.current;
     if (container) {
-      container.addEventListener('mousemove', showAndScheduleHide);
-      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('mousemove', handleMouseMove);
     }
     return () => {
       if (container) {
-        container.removeEventListener('mousemove', showAndScheduleHide);
-        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('mousemove', handleMouseMove);
       }
       clearTimeout(timeoutId);
     };
-  }, [isPlaying, showControls]);
+  }, [isPlaying, useIOSNativePlayer]);
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -995,7 +984,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         <AlertTriangle className="text-netflix-red" size={44} />
         <h4 className="text-sm sm:text-base font-black uppercase font-display text-white">Siaran Tidak Didukung di iOS</h4>
         <p className="text-zinc-400 text-[10px] sm:text-xs font-bold max-w-xs sm:max-w-sm leading-relaxed">
-          Pertandingan ini hanya tersedia dalam format DASH/DRM yang tidak didukung oleh perangkat Apple iOS (Safari). 
+          Pertandingan ini hanya tersedia dalam format DASH/DRM yang tidak didukung oleh perangkat Apple iOS (Safari).
           Silakan coba tonton menggunakan perangkat Android atau Laptop/PC.
         </p>
       </div>
@@ -1019,9 +1008,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
           ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
-          } ${!showControls ? 'cursor-none' : ''}`}
+          } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
         tabIndex={0}
         onKeyDown={(e) => {
+          if (useIOSNativePlayer) return;
 
           // Only trigger if TV mode is active (body class exists)
           if (!document.body.classList.contains('tv-mode-active')) return;
@@ -1086,34 +1076,50 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       >
         <video
           ref={videoRef}
-          className={`w-full h-full object-contain ${showControls ? 'cursor-pointer' : 'cursor-none'}`}
+          className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
           src={iosNativeSrc}
-          preload="auto"
+          preload={useIOSNativePlayer ? 'auto' : 'metadata'}
           playsInline
-          controls={false}
+          controls={useIOSNativePlayer}
           onPlay={() => {
             setIsPlaying(true);
             setHasStarted(true);
           }}
           onPause={() => setIsPlaying(false)}
-          onWaiting={() => setIsBuffering(true)}
+          onWaiting={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
           onPlaying={confirmPlaybackReady}
           onCanPlay={() => {
             setLoadingMessage('Siaran hampir siap...');
-            setIsBooting(false);
-            setIsBuffering(false);
+            if (useIOSNativePlayer) {
+              setIsBooting(false);
+              setIsBuffering(false);
+            }
           }}
           onSeeked={() => setIsBuffering(false)}
-          onStalled={() => setIsBuffering(true)}
-          onSeeking={() => setIsBuffering(true)}
+          onStalled={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
+          onSeeking={() => {
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
+          }}
           onLoadStart={() => {
-            setIsBuffering(true);
+            if (!useIOSNativePlayer) {
+              setIsBuffering(true);
+            }
           }}
           onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
         />
 
-        {(
+        {!useIOSNativePlayer && (
           <>
             <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
@@ -1165,26 +1171,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
                   </button>
 
-                  {!isIOSRuntime && (
-                    <div className="flex items-center gap-1 group/volume relative">
-                      <button
-                        onClick={toggleMute}
-                        className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
-                        tabIndex={0}
-                      >
-                        {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                      </button>
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.05"
-                        value={isMuted ? 0 : volume}
-                        onChange={handleVolumeChange}
-                        className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
-                      />
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1 group/volume relative">
+                    <button
+                      onClick={toggleMute}
+                      className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
+                      tabIndex={0}
+                    >
+                      {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
+                    />
+                  </div>
 
                   {isLive ? (
                     <button
