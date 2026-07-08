@@ -898,6 +898,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     if (videoRef.current) {
       const cur = videoRef.current.currentTime;
       setCurrentTime(cur);
+
+      // Auto-clear loading overlays when time starts advancing
+      if (!videoRef.current.paused) {
+        if (isBooting) setIsBooting(false);
+        if (isBuffering) setIsBuffering(false);
+      }
+
       const dur = videoRef.current.duration;
       if (dur === Infinity || isNaN(dur) || dur <= 0) {
         setIsLive(true);
