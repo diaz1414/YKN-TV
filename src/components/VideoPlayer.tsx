@@ -362,7 +362,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const rawUrl = cleanStreamUrl(currentServer.url);
       const keys = getDrmKeys(currentServer);
 
-      const autoProxiedUrl = getProxiedUrl(rawUrl, currentServer.forceProxy === true);
+      const forceProxy = currentServer.forceProxy === true || rawUrl.startsWith('http://');
+      const autoProxiedUrl = getProxiedUrl(rawUrl, forceProxy);
       let streamUrl = autoProxiedUrl;
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
@@ -973,13 +974,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   };
 
+  if (servers.length === 0) {
+    return (
+      <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-4 relative overflow-hidden">
+        <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-netflix-red/5 rounded-full blur-3xl pointer-events-none" />
+        <AlertTriangle className="text-netflix-red" size={44} />
+        <h4 className="text-sm sm:text-base font-black uppercase font-display text-white">Siaran Tidak Didukung di iOS</h4>
+        <p className="text-zinc-400 text-[10px] sm:text-xs font-bold max-w-xs sm:max-w-sm leading-relaxed">
+          Pertandingan ini hanya tersedia dalam format DASH/DRM yang tidak didukung oleh perangkat Apple iOS (Safari). 
+          Silakan coba tonton menggunakan perangkat Android atau Laptop/PC.
+        </p>
+      </div>
+    );
+  }
+
   if (!currentServer) return null;
 
   const proxyFallbackServer = getProxyFallbackServer();
   const iosNativeSrc = useMemo(() => {
     if (!useIOSNativePlayer || !currentServer) return undefined;
     const rawUrl = cleanStreamUrl(currentServer.url);
-    return getProxiedUrl(rawUrl, currentServer.forceProxy === true);
+    const forceProxy = currentServer.forceProxy === true || rawUrl.startsWith('http://');
+    return getProxiedUrl(rawUrl, forceProxy);
   }, [useIOSNativePlayer, currentServer]);
 
   return (
