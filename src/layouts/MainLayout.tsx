@@ -555,10 +555,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               </span>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:justify-end">
               <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Jadwal</span>
               <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Saluran TV</span>
               <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Klasemen</span>
+              <span onClick={() => navigate('/about')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Tentang</span>
               <span onClick={() => setIsSupportOpen(true)} className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer flex items-center gap-1 select-none tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>
                 <Coffee size={12} className="fill-amber-400/10" />
                 Traktir Kopi

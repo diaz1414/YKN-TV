@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import ChannelDetail from './pages/ChannelDetail';
 import StatusPage from './pages/StatusPage';
 import NotFound from './pages/NotFound';
+import About from './pages/About';
 
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
@@ -170,6 +171,7 @@ function App() {
       <div className="min-h-screen">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/status" element={<StatusPage />} />
           <Route path="/watch/:id" element={<ChannelDetail />} />
           <Route path="/ykn-c0ntr0l-hq" element={adminDashboard} />
