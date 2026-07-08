@@ -36,11 +36,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const hlsRef = useRef<Hls | null>(null);
 
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
-  const hlsJsSupported = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return Hls.isSupported();
-  }, []);
-  const useIOSNativePlayer = isIOSRuntime && !hlsJsSupported;
+  const useIOSNativePlayer = isIOSRuntime;
 
   const [currentServer, setCurrentServer] = useState(servers[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
