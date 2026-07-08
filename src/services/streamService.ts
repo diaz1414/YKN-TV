@@ -1007,10 +1007,7 @@ export const slugify = (text: string): string => {
     .replace(/^-+|-+$/g, '');
 };
 
-export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | undefined> => {
-  const data = await getLiveSportsData();
-  const allStreams = [...data.matches, ...data.sportsTv, ...data.liveTv];
-
+export const findStreamByIdInList = (idOrSlug: string, allStreams: PlayableStream[]): PlayableStream | undefined => {
   // 1. Direct ID match
   let found = allStreams.find(s => s.id === idOrSlug);
   if (found) return found;
@@ -1039,4 +1036,10 @@ export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | 
   if (found) return found;
 
   return undefined;
+};
+
+export const getStreamById = async (idOrSlug: string): Promise<PlayableStream | undefined> => {
+  const data = await getLiveSportsData();
+  const allStreams = [...data.matches, ...data.sportsTv, ...data.liveTv];
+  return findStreamByIdInList(idOrSlug, allStreams);
 };

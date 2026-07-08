@@ -3,13 +3,14 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
-import { getStreamById, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
+import { findStreamByIdInList, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink, Film } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
+import EmptyWatchState from '../components/EmptyWatchState';
 import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
@@ -541,22 +542,24 @@ const ChannelDetail = () => {
   useEffect(() => {
     const fetchStreamData = async () => {
       setLoading(true);
-      if (id) {
-        const foundStream = await getStreamById(id);
-        if (foundStream) {
-          setStream(foundStream);
-        }
-      }
+      setStream(null);
       try {
         const list = await getLiveSportsData();
+        const allStreams = [...list.matches, ...list.sportsTv, ...list.liveTv];
+
+        if (id) {
+          const foundStream = findStreamByIdInList(id, allStreams);
+          setStream(foundStream || null);
+        }
+
         setSportsTv(list.sportsTv);
         setLiveTv(list.liveTv);
         setMatches(list.matches);
       } catch (e) {
         console.error('Failed to load other channels:', e);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
     fetchStreamData();
   }, [id]);
@@ -640,17 +643,15 @@ const ChannelDetail = () => {
   }
 
   if (!stream) {
+    const emptyStateRecommendations = [...matches, ...sportsTv, ...liveTv];
+
     return (
       <MainLayout>
-        <div className="text-center py-20">
-          <h2 className="text-2xl md:text-3xl font-black mb-4 text-netflix-red uppercase tracking-wider font-display">Saluran Tidak Ditemukan</h2>
-          <button
-            onClick={() => navigate('/')}
-            className="px-6 py-2.5 bg-primary text-dark font-black rounded-xl hover:scale-105 transition-all uppercase text-xs tracking-wider cursor-pointer"
-          >
-            Kembali ke Beranda
-          </button>
-        </div>
+        <EmptyWatchState
+          variant="channel"
+          requestedLabel={`/watch/${id || ''}`}
+          recommendations={emptyStateRecommendations}
+        />
       </MainLayout>
     );
   }

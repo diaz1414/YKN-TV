@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Home from './pages/Home';
 import ChannelDetail from './pages/ChannelDetail';
 import StatusPage from './pages/StatusPage';
+import NotFound from './pages/NotFound';
 
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
@@ -173,6 +174,7 @@ function App() {
           <Route path="/watch/:id" element={<ChannelDetail />} />
           <Route path="/ykn-c0ntr0l-hq" element={adminDashboard} />
           <Route path="/ykn-c0ntr0l-hq/dashboard" element={adminDashboard} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>
