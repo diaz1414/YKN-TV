@@ -187,7 +187,7 @@ const ChannelDetail = () => {
   }, [stream, matchStatus]);
 
   useEffect(() => {
-    if (!stream || !PUBLIC_LIVE_CHAT_ENABLED) {
+    if (!stream) {
       setSocket(null);
       setChatMessages([]);
       setConnected(false);
@@ -204,7 +204,7 @@ const ChannelDetail = () => {
       localStorage.setItem('ykn_chat_user_id', savedUserId);
     }
 
-    if (savedNickname) {
+    if (PUBLIC_LIVE_CHAT_ENABLED && savedNickname) {
       setNickname(savedNickname);
       const computedAvatar = savedNickname === 'YKN TV'
         ? '/yknwc-logo.png'
@@ -215,6 +215,8 @@ const ChannelDetail = () => {
       const suggestion = generateRandomNickname();
       setTempNickname(suggestion);
       setIsJoined(false);
+      setShowJoinModal(false);
+      setJoinError('');
     }
 
     const envVal = import.meta.env.VITE_BOT_API_URL;
@@ -238,7 +240,7 @@ const ChannelDetail = () => {
         console.log('[Socket] Connected!');
         setConnected(true);
 
-        if (savedNickname) {
+        if (PUBLIC_LIVE_CHAT_ENABLED && savedNickname) {
           newSocket.emit('join_room', {
             roomId: stream.id,
             username: savedNickname,
@@ -249,7 +251,7 @@ const ChannelDetail = () => {
             userId: savedUserId
           });
         } else {
-          // Connect in read-only mode first to view messages
+          // Reader mode keeps WebSocket watching counts alive without enabling public chat.
           newSocket.emit('join_room', {
             roomId: stream.id,
             username: 'Penonton',
@@ -265,42 +267,46 @@ const ChannelDetail = () => {
         setConnected(false);
       });
 
-      newSocket.on('chat_history', (history: any[]) => {
-        setChatMessages(history);
-      });
-
-      newSocket.on('receive_message', (msgObj: any) => {
-        setChatMessages(prev => {
-          if (prev.some(m => m.id === msgObj.id)) return prev;
-          const next = [...prev, msgObj];
-          if (next.length > 50) next.shift();
-          return next;
+      if (PUBLIC_LIVE_CHAT_ENABLED) {
+        newSocket.on('chat_history', (history: any[]) => {
+          setChatMessages(history);
         });
-      });
+
+        newSocket.on('receive_message', (msgObj: any) => {
+          setChatMessages(prev => {
+            if (prev.some(m => m.id === msgObj.id)) return prev;
+            const next = [...prev, msgObj];
+            if (next.length > 50) next.shift();
+            return next;
+          });
+        });
+      }
 
       newSocket.on('room_participants_count', (count: number) => {
         setParticipantsCount(count);
       });
 
-      newSocket.on('join_success', ({ username, avatar }: { username: string; avatar: string }) => {
-        setNickname(username);
-        setChatAvatar(avatar);
-        setIsJoined(true);
-        setShowJoinModal(false);
-        setJoinError('');
-        localStorage.setItem('ykn_chat_nickname', username);
-        localStorage.setItem('ykn_chat_avatar', avatar);
-      });
+      if (PUBLIC_LIVE_CHAT_ENABLED) {
+        newSocket.on('join_success', ({ username, avatar }: { username: string; avatar: string }) => {
+          setNickname(username);
+          setChatAvatar(avatar);
+          setIsJoined(true);
+          setShowJoinModal(false);
+          setJoinError('');
+          localStorage.setItem('ykn_chat_nickname', username);
+          localStorage.setItem('ykn_chat_avatar', avatar);
+        });
 
-      newSocket.on('join_error', ({ message }: { message: string }) => {
-        setJoinError(message);
-        setIsJoined(false);
-        localStorage.removeItem('ykn_chat_nickname');
-        localStorage.removeItem('ykn_chat_avatar');
-        sessionStorage.removeItem('ykn_chat_nickname');
-        sessionStorage.removeItem('ykn_chat_avatar');
-        setShowJoinModal(true);
-      });
+        newSocket.on('join_error', ({ message }: { message: string }) => {
+          setJoinError(message);
+          setIsJoined(false);
+          localStorage.removeItem('ykn_chat_nickname');
+          localStorage.removeItem('ykn_chat_avatar');
+          sessionStorage.removeItem('ykn_chat_nickname');
+          sessionStorage.removeItem('ykn_chat_avatar');
+          setShowJoinModal(true);
+        });
+      }
 
       setSocket(newSocket);
     };
