@@ -757,12 +757,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     };
   }, [isPlaying, isBuffering, error, isLive, useIOSNativePlayer]);
 
-  // Autohide Controls
+  // Autohide Controls (mouse + touch)
   useEffect(() => {
-    if (useIOSNativePlayer) return;
-
     let timeoutId: ReturnType<typeof setTimeout>;
-    const handleMouseMove = () => {
+
+    const showAndScheduleHide = () => {
       setShowControls(true);
       clearTimeout(timeoutId);
       if (isPlaying) {
@@ -773,17 +772,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     };
 
+    const handleTouchStart = () => {
+      if (!showControls) {
+        showAndScheduleHide();
+      } else {
+        clearTimeout(timeoutId);
+        setShowControls(false);
+        setShowQualityMenu(false);
+      }
+    };
+
     const container = containerRef.current;
     if (container) {
-      container.addEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mousemove', showAndScheduleHide);
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
     }
     return () => {
       if (container) {
-        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener('mousemove', showAndScheduleHide);
+        container.removeEventListener('touchstart', handleTouchStart);
       }
       clearTimeout(timeoutId);
     };
-  }, [isPlaying, useIOSNativePlayer]);
+  }, [isPlaying, showControls]);
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -1008,10 +1019,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
           ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
-          } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
+          } ${!showControls ? 'cursor-none' : ''}`}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (useIOSNativePlayer) return;
 
           // Only trigger if TV mode is active (body class exists)
           if (!document.body.classList.contains('tv-mode-active')) return;
@@ -1076,50 +1086,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       >
         <video
           ref={videoRef}
-          className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
+          className={`w-full h-full object-contain ${showControls ? 'cursor-pointer' : 'cursor-none'}`}
           src={iosNativeSrc}
-          preload={useIOSNativePlayer ? 'auto' : 'metadata'}
+          preload="auto"
           playsInline
-          controls={useIOSNativePlayer}
+          controls={false}
           onPlay={() => {
             setIsPlaying(true);
             setHasStarted(true);
           }}
           onPause={() => setIsPlaying(false)}
-          onWaiting={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
-          }}
+          onWaiting={() => setIsBuffering(true)}
           onPlaying={confirmPlaybackReady}
           onCanPlay={() => {
             setLoadingMessage('Siaran hampir siap...');
-            if (useIOSNativePlayer) {
-              setIsBooting(false);
-              setIsBuffering(false);
-            }
+            setIsBooting(false);
+            setIsBuffering(false);
           }}
           onSeeked={() => setIsBuffering(false)}
-          onStalled={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
-          }}
-          onSeeking={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
-          }}
+          onStalled={() => setIsBuffering(true)}
+          onSeeking={() => setIsBuffering(true)}
           onLoadStart={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
+            setIsBuffering(true);
           }}
           onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
         />
 
-        {!useIOSNativePlayer && (
+        {(
           <>
             <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
@@ -1171,24 +1165,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                     {isPlaying ? <Pause size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" className="ml-0.5" />}
                   </button>
 
-                  <div className="flex items-center gap-1 group/volume relative">
-                    <button
-                      onClick={toggleMute}
-                      className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
-                      tabIndex={0}
-                    >
-                      {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                    </button>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.05"
-                      value={isMuted ? 0 : volume}
-                      onChange={handleVolumeChange}
-                      className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
-                    />
-                  </div>
+                  {!isIOSRuntime && (
+                    <div className="flex items-center gap-1 group/volume relative">
+                      <button
+                        onClick={toggleMute}
+                        className="p-1 text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0 tv-focusable rounded-lg"
+                        tabIndex={0}
+                      >
+                        {isMuted || volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                      </button>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={isMuted ? 0 : volume}
+                        onChange={handleVolumeChange}
+                        className="w-0 opacity-0 group-hover/volume:w-16 md:group-hover/volume:w-20 group-hover/volume:opacity-100 transition-all duration-300 origin-left accent-primary h-1 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer hidden sm:block"
+                      />
+                    </div>
+                  )}
 
                   {isLive ? (
                     <button
