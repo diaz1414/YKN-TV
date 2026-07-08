@@ -756,7 +756,7 @@ const ChannelDetail = () => {
           <div className="lg:col-span-8 space-y-6 md:space-y-8">
 
             {/* Embedded Player */}
-            <div className="overflow-hidden rounded-3xl border border-white/5 shadow-2xl">
+            <div className="-mx-6 overflow-hidden rounded-[1.5rem] border border-white/5 shadow-2xl sm:mx-0 sm:rounded-3xl">
               {matchStatus === 'playable' ? (
                 !watchGateChecked ? null : !watchAdUnlocked ? (
                   <div className="min-h-[60vh] flex items-center justify-center px-4">
@@ -792,7 +792,7 @@ const ChannelDetail = () => {
                   <VideoPlayer servers={playerServers} />
                 )
               ) : matchStatus === 'finished' ? (
-                <div className="min-h-[280px] sm:aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-5 sm:p-8 text-center select-none gap-4 shadow-inner relative overflow-hidden">
+                <div className="min-h-[280px] sm:aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-[1.5rem] sm:rounded-3xl flex flex-col items-center justify-center p-5 sm:p-8 text-center select-none gap-4 shadow-inner relative overflow-hidden">
                   <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center text-zinc-400 shrink-0">
                     <Lock size={20} />
@@ -815,7 +815,7 @@ const ChannelDetail = () => {
                   </button>
                 </div>
               ) : (
-                <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-5 sm:space-y-6 shadow-inner relative overflow-hidden">
+                <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-[1.5rem] sm:rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-5 sm:space-y-6 shadow-inner relative overflow-hidden">
                   <div className="absolute -top-20 -right-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
 
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full text-[9px] font-black uppercase tracking-widest">

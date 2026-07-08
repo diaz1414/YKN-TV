@@ -1034,7 +1034,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (servers.length === 0) {
     return (
-      <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-4 relative overflow-hidden">
+      <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-[1.5rem] sm:rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-4 relative overflow-hidden">
         <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-netflix-red/5 rounded-full blur-3xl pointer-events-none" />
         <AlertTriangle className="text-netflix-red" size={44} />
         <h4 className="text-sm sm:text-base font-black uppercase font-display text-white">Siaran Tidak Didukung di iOS</h4>
@@ -1062,7 +1062,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
           ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
-          : 'aspect-video rounded-[2rem] ring-1 ring-white/5 border border-white/5'
+          : 'aspect-video rounded-[1.5rem] border border-white/5 ring-1 ring-white/5 sm:rounded-[2rem]'
           } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
         tabIndex={0}
         onKeyDown={(e) => {
@@ -1407,7 +1407,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       </div>
 
       {servers.length > 1 && (
-        <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl">
+        <div className="mx-4 flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl sm:mx-0">
           <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
             <Server size={16} className="text-primary" />
             <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
