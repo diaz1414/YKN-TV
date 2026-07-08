@@ -16,7 +16,7 @@ const dynamicCorsProxyPlugin = () => ({
         const urlObj = new URL(req.url || '', `http://${host}`);
         if (urlObj.pathname === '/api/proxy' && urlObj.searchParams.get('url')) {
           res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
           res.setHeader('Access-Control-Allow-Headers', '*');
           if (req.method === 'OPTIONS') {
             res.statusCode = 200;
@@ -31,7 +31,7 @@ const dynamicCorsProxyPlugin = () => ({
       }
 
       res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', '*');
 
       if (req.method === 'OPTIONS') {
@@ -69,9 +69,25 @@ const dynamicCorsProxyPlugin = () => ({
   }
 });
 
+const readRequestBody = (req: any): Promise<Buffer | undefined> => {
+  const method = (req.method || 'GET').toUpperCase();
+  if (!['POST', 'PUT', 'PATCH'].includes(method)) {
+    return Promise.resolve(undefined);
+  }
+
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on('data', (chunk: Buffer) => chunks.push(Buffer.from(chunk)));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+};
+
 async function handleRequest(url: string, host: string, req: any, res: any) {
   try {
     const targetUrl = new URL(url);
+    const method = (req.method || 'GET').toUpperCase();
+    const requestBody = await readRequestBody(req);
     
     let referer = targetUrl.origin;
     let origin = targetUrl.origin;
@@ -91,12 +107,21 @@ async function handleRequest(url: string, host: string, req: any, res: any) {
     if (req.headers['range']) {
       headers['Range'] = req.headers['range'];
     }
+    if (req.headers['content-type']) {
+      headers['Content-Type'] = req.headers['content-type'];
+    }
+    if (req.headers['accept']) {
+      headers['Accept'] = req.headers['accept'];
+    }
 
     const isM3U8 = targetUrl.pathname.endsWith('.m3u8') || url.includes('m3u8');
 
     if (isM3U8) {
-      const response = await axios.get(url, {
+      const response = await axios.request({
+        method,
+        url,
         headers,
+        data: requestBody,
         responseType: 'text',
         timeout: 10000,
         validateStatus: () => true
@@ -151,8 +176,11 @@ async function handleRequest(url: string, host: string, req: any, res: any) {
       res.statusCode = response.status;
       res.end(rewrittenLines.join('\n'));
     } else {
-      const response = await axios.get(url, {
+      const response = await axios.request({
+        method,
+        url,
         headers,
+        data: requestBody,
         responseType: 'stream',
         timeout: 15000,
         validateStatus: () => true

@@ -14,6 +14,9 @@ export interface StreamServer {
   key?: string;
   keys?: Record<string, string>;
   forceProxy?: boolean;
+  tokenChannelId?: string;
+  tokenEndpoint?: string;
+  tokenBaseUrl?: string;
 }
 
 export interface PlayableStream {
@@ -66,6 +69,22 @@ interface ChannelEvent {
   force_proxy?: boolean | string;
 }
 
+interface TvstreamChannelRow {
+  id: string;
+  name: string;
+  slug?: string;
+  logo_url?: string;
+  stream_url?: string;
+  category_id?: string;
+  status?: string;
+  http_referrer?: string;
+}
+
+interface TvstreamDbQueryResponse {
+  data?: TvstreamChannelRow[];
+  error?: unknown;
+}
+
 const XOR_KEY = '90_NiwmsdfhgjQw';
 
 export const decryptLicense = (ciphertext: string): string => {
@@ -83,6 +102,33 @@ export const decryptLicense = (ciphertext: string): string => {
 };
 
 const ENABLE_PROXY = true;
+
+const TVSTREAM_ORIGIN = 'https://tvstreamindonesia.my.id';
+const TVSTREAM_PLAY_TOKEN_ENDPOINT = `${TVSTREAM_ORIGIN}/api/play-token`;
+const TVSTREAM_CHANNEL_TOKEN_PREFIX = 'ykn-play-token:tvstreamindonesia:';
+const SBS_LOGO_URL =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/SBS_Logo.svg/512px-SBS_Logo.svg.png';
+
+const TVSTREAM_SBS_FALLBACKS: TvstreamChannelRow[] = [
+  {
+    id: '57150501-00c0-f07c-df37-cdb32c0b0200',
+    name: 'SBS HD',
+    slug: 'sbs-hd-aus',
+    status: 'ONLINE',
+  },
+  {
+    id: '52d4b5ad-ab6a-5a96-6519-862188e2f8fe',
+    name: 'SBS VICELAND HD',
+    slug: 'sbs-viceland-hd-aus',
+    status: 'ONLINE',
+  },
+  {
+    id: 'e2b8ee7b-def7-3d8f-2308-020080e0f8fe',
+    name: 'SBS ON DEMAND',
+    slug: 'sbs-on-demand-aus',
+    status: 'ONLINE',
+  },
+];
 
 // const PROXY_BACKUP_DOMAINS = [
 //   'alkassdigital.net',
@@ -155,6 +201,43 @@ export const getProxiedUrl = (url: string, force = false) => {
   return `${proxyBase}/${cleanUrl}`;
 };
 
+const makeTvstreamTokenUrl = (channelId: string) => (
+  `${TVSTREAM_CHANNEL_TOKEN_PREFIX}${channelId}`
+);
+
+const getTvstreamTokenChannelId = (url: string) => (
+  url.startsWith(TVSTREAM_CHANNEL_TOKEN_PREFIX)
+    ? url.slice(TVSTREAM_CHANNEL_TOKEN_PREFIX.length)
+    : ''
+);
+
+const buildTvstreamTokenServers = (tokenUrl: string, jenis: string): StreamServer[] => {
+  const tokenChannelId = getTvstreamTokenChannelId(tokenUrl);
+
+  if (!tokenChannelId) return [];
+
+  return [
+    {
+      name: 'Server 1 (SBS Token)',
+      url: tokenUrl,
+      type: jenis || 'hls',
+      forceProxy: false,
+      tokenChannelId,
+      tokenEndpoint: TVSTREAM_PLAY_TOKEN_ENDPOINT,
+      tokenBaseUrl: TVSTREAM_ORIGIN,
+    },
+    {
+      name: 'Server 2 (SBS Proxy)',
+      url: tokenUrl,
+      type: jenis || 'hls',
+      forceProxy: true,
+      tokenChannelId,
+      tokenEndpoint: TVSTREAM_PLAY_TOKEN_ENDPOINT,
+      tokenBaseUrl: TVSTREAM_ORIGIN,
+    },
+  ];
+};
+
 
 export const buildServers = (
   urlIptv: string,
@@ -168,6 +251,10 @@ export const buildServers = (
   const lowerJenis = (jenis || '').toLowerCase();
   const lowerRawUrl = rawUrl.toLowerCase();
   const isHlsStream = lowerJenis.includes('hls') || lowerRawUrl.includes('.m3u8');
+
+  if (rawUrl.startsWith(TVSTREAM_CHANNEL_TOKEN_PREFIX)) {
+    return buildTvstreamTokenServers(rawUrl, jenis);
+  }
 
   // Server 1: selalu direct CDN — sama seperti backup HTML.
   // Kalau CORS gagal atau http:// blocked, user tinggal switch ke Server 2.
@@ -250,6 +337,82 @@ export const cleanDescription = (desc?: string): string => {
 
 const DOMS9_BASE_M3U_URL =
   'https://raw.githubusercontent.com/doms9/iptv/refs/heads/default/M3U8/base.m3u8';
+
+const makeTvstreamChannelsQueryUrl = () => {
+  const params = new URLSearchParams({
+    tableName: 'channels',
+    selects: 'id,name,slug,stream_url,logo_url,category_id,status,http_referrer',
+    wheres: '[]',
+    orders: JSON.stringify([{ col: 'created_at', ascending: false }]),
+    isSingle: 'false',
+    isCount: 'false',
+    isHead: 'false',
+    limitVal: '300',
+  });
+
+  return `${TVSTREAM_ORIGIN}/api/db-query?${params.toString()}`;
+};
+
+const isSbsTvstreamRow = (row: TvstreamChannelRow) => {
+  const text = `${row.name || ''} ${row.slug || ''} ${row.stream_url || ''}`.toLowerCase();
+  return text.includes('sbs');
+};
+
+const getSbsSortRank = (row: TvstreamChannelRow) => {
+  const slug = (row.slug || '').toLowerCase();
+  const name = (row.name || '').toLowerCase();
+
+  if (slug.includes('sbs-hd') || name === 'sbs hd') return 0;
+  if (slug.includes('viceland') || name.includes('viceland')) return 1;
+  if (slug.includes('on-demand') || name.includes('on demand')) return 2;
+  return 10;
+};
+
+const toSbsChannelEvent = (row: TvstreamChannelRow): ChannelEvent => ({
+  id_iptv: row.slug || `sbs-${row.id}`,
+  nama_channel: row.name || 'SBS',
+  tagline: 'SBS Australia',
+  jenis: 'hls',
+  url_iptv: makeTvstreamTokenUrl(row.id),
+  url_license: '',
+  gbr_base64: '',
+  logo: row.logo_url || SBS_LOGO_URL,
+  aktif: row.status || 'ONLINE',
+});
+
+const getTvstreamSbsChannels = async (): Promise<ChannelEvent[]> => {
+  try {
+    const res = await axios.get<TvstreamDbQueryResponse | TvstreamChannelRow[]>(
+      getProxiedUrl(makeTvstreamChannelsQueryUrl(), true),
+      {
+        timeout: 6000,
+      }
+    );
+
+    const payload = res.data;
+    const rows = Array.isArray(payload)
+      ? payload
+      : Array.isArray((payload as TvstreamDbQueryResponse).data)
+        ? (payload as TvstreamDbQueryResponse).data || []
+        : [];
+
+    const sbsRows = rows
+      .filter((row) => row?.id && isSbsTvstreamRow(row))
+      .sort((a, b) => {
+        const rankDiff = getSbsSortRank(a) - getSbsSortRank(b);
+        return rankDiff || (a.name || '').localeCompare(b.name || '');
+      });
+
+    if (sbsRows.length > 0) {
+      console.log(`[SBS Auto] Loaded ${sbsRows.length} SBS channels from tvstreamindonesia`);
+      return sbsRows.map(toSbsChannelEvent);
+    }
+  } catch (err) {
+    console.warn('[SBS Auto] Failed to load SBS channel list, using fallback IDs:', err);
+  }
+
+  return TVSTREAM_SBS_FALLBACKS.map(toSbsChannelEvent);
+};
 
 /*
 const SPORTS_M3U_KEYWORDS = [
@@ -401,9 +564,11 @@ export const getLiveSportsData = async (): Promise<{
     }
   }
 
-  // Inject custom channels that should always be present
+  const tvstreamSbsChannels = await getTvstreamSbsChannels();
+
   // Inject custom channels that should always be present
   const customSports: ChannelEvent[] = [
+    ...tvstreamSbsChannels,
     {
       id_iptv: "custom-bein-sports-xtra",
       nama_channel: "beIN SPORTS XTRA",

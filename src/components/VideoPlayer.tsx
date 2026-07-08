@@ -122,6 +122,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     return url.split('|')[0].trim();
   };
 
+  const resolveDynamicStreamUrl = async (server: StreamServer): Promise<string> => {
+    const rawUrl = cleanStreamUrl(server.url);
+
+    if (!server.tokenChannelId || !server.tokenEndpoint) {
+      return rawUrl;
+    }
+
+    const tokenRes = await fetch(getProxiedUrl(server.tokenEndpoint, true), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ channelId: server.tokenChannelId }),
+      cache: 'no-store',
+    });
+
+    if (!tokenRes.ok) {
+      throw new Error(`SBS token request failed: ${tokenRes.status}`);
+    }
+
+    const tokenData = await tokenRes.json() as { playUrl?: string };
+
+    if (!tokenData.playUrl) {
+      throw new Error('SBS token response missing playUrl');
+    }
+
+    return new URL(tokenData.playUrl, server.tokenBaseUrl || window.location.origin).toString();
+  };
+
   const getProxyFallbackServer = () => {
     if (!currentServer || currentServer.forceProxy) return null;
 
@@ -355,8 +385,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
 
-      const rawUrl = cleanStreamUrl(currentServer.url);
+      let rawUrl = cleanStreamUrl(currentServer.url);
       const keys = getDrmKeys(currentServer);
+
+      if (currentServer.tokenChannelId) {
+        setError(null);
+        setIsBooting(true);
+        setIsBuffering(true);
+        setLoadingMessage('Mengambil token SBS...');
+
+        try {
+          rawUrl = await resolveDynamicStreamUrl(currentServer);
+        } catch (e) {
+          console.error('SBS token resolver failed:', e);
+          setIsBooting(false);
+          setIsBuffering(false);
+          setIsPlaying(false);
+          setError('Gagal mengambil token SBS terbaru. Coba segarkan koneksi atau pilih server lain.');
+          return;
+        }
+      }
 
       const forceProxy = currentServer.forceProxy === true || rawUrl.startsWith('http://');
       const autoProxiedUrl = getProxiedUrl(rawUrl, forceProxy);
@@ -696,7 +744,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     };
 
     loadStream();
-  }, [currentServer?.url, currentServer?.forceProxy, useIOSNativePlayer]);
+  }, [
+    currentServer?.url,
+    currentServer?.forceProxy,
+    currentServer?.tokenChannelId,
+    currentServer?.tokenEndpoint,
+    currentServer?.tokenBaseUrl,
+    useIOSNativePlayer,
+  ]);
 
   // Stall Watchdog: detects when video freezes silently (no error, no buffering event)
   // and automatically recovers by skipping forward to a safe live offset (not the extreme edge)
