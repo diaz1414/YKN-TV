@@ -564,7 +564,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             abrEwmaFastLive: 3,
             abrEwmaSlowLive: 9,
             abrBandWidthFactor: 0.85,
-            abrBandWidthUpFactor: 0.5,
+            abrBandWidthUpFactor: 0.35,  // Naik kualitas lebih pelan — cegah overshoot → rebuffer
             abrMaxWithRealBitrate: true,
             maxStarvationDelay: 4,
             maxLoadingDelay: 4,
@@ -621,13 +621,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             if (!data.fatal) {
               if (
                 data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR ||
-                data.details === Hls.ErrorDetails.BUFFER_NUDGE_ON_STALL ||
-                data.details === Hls.ErrorDetails.BUFFER_SEEK_OVER_HOLE
+                data.details === Hls.ErrorDetails.BUFFER_NUDGE_ON_STALL
               ) {
+                // Biarkan hls.js recover sendiri lewat nudge mechanism-nya.
+                // Jangan langsung seek — itu malah bikin segment di-request ulang dari awal dan re-stall.
+                hls.startLoad();
+              } else if (data.details === Hls.ErrorDetails.BUFFER_SEEK_OVER_HOLE) {
+                // Ada gap/hole di buffer — seek ke posisi aman yang jauh dari live edge.
                 const video = videoRef.current;
                 if (video && isLive && video.seekable && video.seekable.length > 0) {
                   const liveEdge = video.seekable.end(video.seekable.length - 1);
-                  video.currentTime = Math.max(liveEdge - 12, video.seekable.start(0));
+                  video.currentTime = Math.max(liveEdge - 18, video.seekable.start(0));
                 }
                 hls.startLoad();
               }
@@ -783,8 +787,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           if (stallCountRef.current >= 3) {
             if (isLive && video.seekable && video.seekable.length > 0) {
               const liveEdge = video.seekable.end(video.seekable.length - 1);
-              // Seek to a safe position 10s behind the live edge to avoid instant re-stalls
-              const targetSeek = Math.max(liveEdge - 10, video.seekable.start(0));
+              // Seek ke posisi 15s di belakang live edge — cukup jauh agar CDN sudah siapkan segment
+              const targetSeek = Math.max(liveEdge - 15, video.seekable.start(0));
               console.log(`Stall recovery: seeking to safe live offset ${targetSeek} (liveEdge: ${liveEdge})`);
               video.currentTime = targetSeek;
             } else {
