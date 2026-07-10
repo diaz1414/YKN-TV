@@ -618,7 +618,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.log('Using iOS native video player fallback:', streamUrl);
 
           iosMasterUrlRef.current = streamUrl;
-          video.controls = true;
+          video.controls = false;
           video.playsInline = true;
           video.setAttribute('playsinline', 'true');
           video.setAttribute('webkit-playsinline', 'true');
@@ -629,7 +629,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           setCurrentLevel('auto');
           setShowQualityMenu(false);
-          setShowControls(false);
+          setShowControls(true);
           setIsBooting(false);
           setIsBuffering(false);
           setError(null);
@@ -643,6 +643,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             console.warn('iOS autoplay prevented:', err);
             clearStartupErrorTimer();
             setIsPlaying(false);
+            setShowControls(true);
           });
 
           return;
@@ -929,13 +930,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // Autohide Controls
   useEffect(() => {
-    if (useIOSNativePlayer) return;
-
     let timeoutId: ReturnType<typeof setTimeout>;
-    const handleMouseMove = () => {
-      setShowControls(true);
+
+    const scheduleHide = () => {
       clearTimeout(timeoutId);
-      if (isPlaying) {
+      if (isPlaying && !showQualityMenu) {
         timeoutId = setTimeout(() => {
           setShowControls(false);
           setShowQualityMenu(false);
@@ -943,17 +942,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     };
 
+    const revealControls = () => {
+      setShowControls(true);
+      scheduleHide();
+    };
+
     const container = containerRef.current;
     if (container) {
-      container.addEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mousemove', revealControls);
+      container.addEventListener('pointerdown', revealControls);
+      container.addEventListener('touchstart', revealControls);
     }
+
+    scheduleHide();
+
     return () => {
       if (container) {
-        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener('mousemove', revealControls);
+        container.removeEventListener('pointerdown', revealControls);
+        container.removeEventListener('touchstart', revealControls);
       }
       clearTimeout(timeoutId);
     };
-  }, [isPlaying, useIOSNativePlayer]);
+  }, [isPlaying, showQualityMenu]);
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -1000,6 +1011,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     e.stopPropagation();
     const container = containerRef.current;
     if (!container) return;
+
+    if (useIOSNativePlayer) {
+      setShowControls(true);
+      setShowQualityMenu(false);
+      setIsFullscreen((prev) => !prev);
+      setTimeout(() => container.focus(), 0);
+      return;
+    }
 
     if (!isFullscreen) {
       // Enter Fullscreen (handles browser compatibility and fallbacks)
@@ -1211,13 +1230,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   if (!currentServer) return null;
 
   const proxyFallbackServer = getProxyFallbackServer();
+  const currentQualityLabel = currentLevel === 'auto'
+    ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
+    : levels.find(level => level.index === currentLevel)?.label || 'Auto';
 
   return (
     <div className="space-y-6">
       <div
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
-          ? 'fixed inset-0 w-screen h-screen rounded-none ring-0 border-none z-[99999]'
+          ? 'fixed inset-0 w-screen h-screen h-[100dvh] rounded-none ring-0 border-none z-[99999]'
           : 'aspect-video rounded-[1.5rem] border border-white/5 ring-1 ring-white/5 sm:rounded-[2rem]'
           } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
         tabIndex={0}
@@ -1287,19 +1309,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       >
         <video
           ref={videoRef}
-          className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
+          className={`w-full h-full object-contain ${useIOSNativePlayer || showControls ? 'cursor-pointer' : 'cursor-none'}`}
           preload={useIOSNativePlayer ? 'auto' : 'metadata'}
           playsInline
-          controls={useIOSNativePlayer}
+          controls={false}
           onPlay={() => {
             setIsPlaying(true);
             setHasStarted(true);
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
+            setIsBuffering(true);
           }}
           onPlaying={confirmPlaybackReady}
           onCanPlay={() => {
@@ -1314,56 +1334,163 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }}
           onSeeked={() => setIsBuffering(false)}
           onStalled={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
+            setIsBuffering(true);
           }}
           onSeeking={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
+            setIsBuffering(true);
           }}
           onLoadStart={() => {
-            if (!useIOSNativePlayer) {
-              setIsBuffering(true);
-            }
+            setIsBuffering(true);
           }}
           onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
         />
 
-        {useIOSNativePlayer && levels.length > 1 && !error && (
-          <div
-            className="absolute top-3 right-3 z-30 flex flex-col items-end gap-1.5 select-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowQualityMenu(!showQualityMenu)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/65 border border-white/15 backdrop-blur-md rounded-lg text-[10px] font-black text-white shadow-xl active:scale-95 transition-all"
-            >
-              <Settings size={12} className={showQualityMenu ? 'rotate-45 transition-transform' : 'transition-transform'} />
-              {currentLevel === 'auto'
-                ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
-                : levels.find(level => level.index === currentLevel)?.label || 'Auto'}
-            </button>
+        {useIOSNativePlayer && (
+          <>
+            <GlobalAnnouncement onlyShowWhenFullscreen={true} isFullscreen={isFullscreen} />
 
-            {showQualityMenu && (
-              <div className="w-24 bg-[#080808]/95 border border-white/15 backdrop-blur-md rounded-lg p-1 shadow-2xl flex flex-col gap-0.5">
-                {levels.map((level) => (
-                  <button
-                    key={level.index}
-                    onClick={() => handleLevelChange(level.index)}
-                    className={`w-full py-1.5 px-2 text-left rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${currentLevel === level.index
-                      ? 'bg-primary text-dark'
-                      : 'text-zinc-300 hover:bg-white/10 hover:text-white'
-                      }`}
-                  >
-                    {level.label}
-                  </button>
-                ))}
+            <div
+              className={`absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/55 transition-opacity duration-300 ${showControls || showQualityMenu || !isPlaying ? 'opacity-100' : 'opacity-0'
+                }`}
+            />
+
+            <div
+              className={`absolute inset-x-0 top-0 z-30 px-3 pt-[calc(env(safe-area-inset-top)+12px)] sm:px-5 sm:pt-5 transition-all duration-300 select-none ${showControls || showQualityMenu || !isPlaying
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 -translate-y-2 pointer-events-none'
+                }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0 flex items-center gap-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
+                  <div className="flex items-baseline gap-[2px] shrink-0">
+                    <span className="text-lg sm:text-xl font-black leading-none text-white font-display">YKN</span>
+                    <span className="text-lg sm:text-xl font-black leading-none text-primary font-display">TV</span>
+                  </div>
+                  <span className="h-4 w-px bg-white/25 shrink-0" />
+                  <span className="truncate text-[10px] sm:text-xs font-black uppercase tracking-wider text-white/85">
+                    {getPublicServerName(currentServer)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {(isBooting || isBuffering) && !error && (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/25 pointer-events-none select-none">
+                <div className="w-11 h-11 border-[3px] border-white/80 border-t-transparent rounded-full animate-spin" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/85">{loadingMessage || 'Memuat siaran...'}</p>
               </div>
             )}
-          </div>
+
+            {(!isPlaying || showControls) && !isBuffering && !error && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none select-none">
+                <button
+                  onClick={togglePlay}
+                  className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-black/55 border border-white/20 backdrop-blur-md text-white flex items-center justify-center shadow-2xl active:scale-95 transition-transform pointer-events-auto"
+                >
+                  {isPlaying ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" className="ml-1" />}
+                </button>
+              </div>
+            )}
+
+            <div
+              className={`absolute inset-x-0 bottom-0 z-30 px-3 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-16 sm:px-5 sm:pb-5 bg-gradient-to-t from-black/90 via-black/45 to-transparent transition-all duration-300 select-none ${showControls || showQualityMenu || !isPlaying
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-2 pointer-events-none'
+                }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {!isLive ? (
+                <div
+                  onClick={handleSeek}
+                  className="w-full h-6 flex items-center cursor-pointer group/progress"
+                >
+                  <div className="w-full h-1 bg-white/25 rounded-full relative overflow-hidden group-active/progress:h-1.5 transition-all">
+                    <div
+                      className="h-full bg-red-600 rounded-full"
+                      style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-6 flex items-center">
+                  <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                    <div className={`h-full ${isAtLiveEdge ? 'bg-red-600' : 'bg-white/45'} rounded-full`} style={{ width: '100%' }} />
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <button
+                    onClick={togglePlay}
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white bg-white/10 active:bg-white/20 transition-colors shrink-0"
+                  >
+                    {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
+                  </button>
+
+                  {isLive ? (
+                    <button
+                      onClick={seekToLiveEdge}
+                      className={`h-8 px-2.5 rounded-full flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider transition-colors shrink-0 ${isAtLiveEdge
+                        ? 'text-white bg-red-600'
+                        : 'text-zinc-200 bg-white/10 active:bg-white/20'
+                        }`}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      {isAtLiveEdge ? 'LIVE' : 'SYNC'}
+                    </button>
+                  ) : (
+                    <div className="text-[11px] sm:text-xs font-bold text-white/85 font-mono whitespace-nowrap">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {levels.length > 1 && (
+                    <div className="relative">
+                      <button
+                        onClick={() => {
+                          setShowControls(true);
+                          setShowQualityMenu(!showQualityMenu);
+                        }}
+                        className="h-9 px-2.5 rounded-full bg-white/10 active:bg-white/20 text-white flex items-center gap-1.5 text-[10px] font-black transition-colors"
+                      >
+                        <Settings size={15} className={showQualityMenu ? 'rotate-45 transition-transform' : 'transition-transform'} />
+                        <span className="max-w-16 truncate">{currentQualityLabel}</span>
+                      </button>
+
+                      {showQualityMenu && (
+                        <div className="absolute bottom-11 right-0 w-28 bg-[#080808]/95 border border-white/15 backdrop-blur-md rounded-lg p-1 shadow-2xl flex flex-col gap-0.5">
+                          {levels.map((level) => (
+                            <button
+                              key={level.index}
+                              onClick={() => handleLevelChange(level.index)}
+                              className={`w-full py-2 px-2 text-left rounded-md text-[10px] font-black uppercase tracking-wider transition-colors ${currentLevel === level.index
+                                ? 'bg-white text-black'
+                                : 'text-zinc-300 active:bg-white/15'
+                                }`}
+                            >
+                              {level.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={toggleFullscreen}
+                    className="w-9 h-9 rounded-full bg-white/10 active:bg-white/20 text-white flex items-center justify-center transition-colors"
+                  >
+                    {isFullscreen ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {!useIOSNativePlayer && (
@@ -1489,7 +1616,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                         tabIndex={0}
                       >
                         <Settings size={10} className={showQualityMenu ? 'rotate-45' : ''} />
-                        {currentLevel === 'auto' ? `Auto ${activeHeight ? `(${activeHeight}p)` : ''}` : levels.find(l => l.index === currentLevel)?.label || 'Auto'}
+                        {currentQualityLabel}
                       </button>
                       {showQualityMenu && (
                         <div className="absolute bottom-9 right-0 bg-[#080808]/95 backdrop-blur-md border border-white/10 rounded-xl p-1 w-20 sm:w-24 shadow-2xl flex flex-col gap-0.5 z-50">
