@@ -20,6 +20,27 @@ interface QualityOption {
   bandwidth?: number;
 }
 
+interface IOSFullscreenViewport {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+}
+
+const getIOSFullscreenViewport = (): IOSFullscreenViewport => {
+  if (typeof window === 'undefined') {
+    return { width: 0, height: 0, top: 0, left: 0 };
+  }
+
+  const viewport = window.visualViewport;
+  return {
+    width: Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth),
+    height: Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight),
+    top: Math.round(viewport?.offsetTop || 0),
+    left: Math.round(viewport?.offsetLeft || 0),
+  };
+};
+
 const isIOSDevice = (): boolean => {
   if (typeof navigator === 'undefined') return false;
 
@@ -110,6 +131,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const hlsRef = useRef<Hls | null>(null);
   const iosMasterUrlRef = useRef<string | null>(null);
   const streamLoadIdRef = useRef(0);
+  const iosFullscreenScrollYRef = useRef(0);
+  const iosBodyStyleRef = useRef<{
+    position: string;
+    top: string;
+    left: string;
+    right: string;
+    width: string;
+    height: string;
+    overflow: string;
+    overscrollBehavior: string;
+    touchAction: string;
+  } | null>(null);
+  const iosHtmlStyleRef = useRef<{
+    overflow: string;
+    height: string;
+    overscrollBehavior: string;
+    touchAction: string;
+  } | null>(null);
 
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
   const useIOSNativePlayer = isIOSRuntime;
@@ -129,6 +168,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [iosFullscreenViewport, setIOSFullscreenViewport] = useState<IOSFullscreenViewport>(() => (
+    getIOSFullscreenViewport()
+  ));
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLive, setIsLive] = useState(true);
@@ -420,6 +462,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // Manage body scroll and orientation lock dynamically when isFullscreen changes
   useEffect(() => {
+    if (useIOSNativePlayer) return;
+
     if (isFullscreen) {
       document.body.classList.add('ykn-fullscreen-active');
       document.body.style.overflow = 'hidden';
@@ -444,7 +488,99 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }
       }
     }
-  }, [isFullscreen]);
+  }, [isFullscreen, useIOSNativePlayer]);
+
+  useEffect(() => {
+    if (!useIOSNativePlayer || !isFullscreen) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+
+    iosFullscreenScrollYRef.current = window.scrollY || html.scrollTop || 0;
+    iosBodyStyleRef.current = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      height: body.style.height,
+      overflow: body.style.overflow,
+      overscrollBehavior: body.style.overscrollBehavior,
+      touchAction: body.style.touchAction,
+    };
+    iosHtmlStyleRef.current = {
+      overflow: html.style.overflow,
+      height: html.style.height,
+      overscrollBehavior: html.style.overscrollBehavior,
+      touchAction: html.style.touchAction,
+    };
+
+    const syncIOSViewport = () => {
+      setIOSFullscreenViewport(getIOSFullscreenViewport());
+    };
+
+    syncIOSViewport();
+    const rafId = window.requestAnimationFrame(syncIOSViewport);
+    const settleTimer = window.setTimeout(syncIOSViewport, 350);
+
+    html.classList.add('ykn-ios-video-fullscreen');
+    body.classList.add('ykn-fullscreen-active', 'ykn-ios-video-fullscreen');
+
+    html.style.overflow = 'hidden';
+    html.style.height = '100%';
+    html.style.overscrollBehavior = 'none';
+    html.style.touchAction = 'none';
+
+    body.style.position = 'fixed';
+    body.style.top = `-${iosFullscreenScrollYRef.current}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
+    body.style.height = '100%';
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'none';
+    body.style.touchAction = 'none';
+
+    window.visualViewport?.addEventListener('resize', syncIOSViewport);
+    window.visualViewport?.addEventListener('scroll', syncIOSViewport);
+    window.addEventListener('resize', syncIOSViewport);
+    window.addEventListener('orientationchange', syncIOSViewport);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(settleTimer);
+      window.visualViewport?.removeEventListener('resize', syncIOSViewport);
+      window.visualViewport?.removeEventListener('scroll', syncIOSViewport);
+      window.removeEventListener('resize', syncIOSViewport);
+      window.removeEventListener('orientationchange', syncIOSViewport);
+
+      html.classList.remove('ykn-ios-video-fullscreen');
+      body.classList.remove('ykn-fullscreen-active', 'ykn-ios-video-fullscreen');
+
+      const htmlStyle = iosHtmlStyleRef.current;
+      if (htmlStyle) {
+        html.style.overflow = htmlStyle.overflow;
+        html.style.height = htmlStyle.height;
+        html.style.overscrollBehavior = htmlStyle.overscrollBehavior;
+        html.style.touchAction = htmlStyle.touchAction;
+      }
+
+      const bodyStyle = iosBodyStyleRef.current;
+      if (bodyStyle) {
+        body.style.position = bodyStyle.position;
+        body.style.top = bodyStyle.top;
+        body.style.left = bodyStyle.left;
+        body.style.right = bodyStyle.right;
+        body.style.width = bodyStyle.width;
+        body.style.height = bodyStyle.height;
+        body.style.overflow = bodyStyle.overflow;
+        body.style.overscrollBehavior = bodyStyle.overscrollBehavior;
+        body.style.touchAction = bodyStyle.touchAction;
+      }
+
+      window.scrollTo(0, iosFullscreenScrollYRef.current);
+    };
+  }, [isFullscreen, useIOSNativePlayer]);
 
   // Pause playback and stop audio when a connection error screen is displayed
   useEffect(() => {
@@ -1015,8 +1151,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     if (useIOSNativePlayer) {
       setShowControls(true);
       setShowQualityMenu(false);
+      setIOSFullscreenViewport(getIOSFullscreenViewport());
       setIsFullscreen((prev) => !prev);
-      setTimeout(() => container.focus(), 0);
+      window.requestAnimationFrame(() => {
+        setIOSFullscreenViewport(getIOSFullscreenViewport());
+        container.focus();
+      });
       return;
     }
 
@@ -1233,15 +1373,33 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const currentQualityLabel = currentLevel === 'auto'
     ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
     : levels.find(level => level.index === currentLevel)?.label || 'Auto';
+  const iosFullscreenStyle: React.CSSProperties | undefined = useIOSNativePlayer && isFullscreen
+    ? {
+      position: 'fixed',
+      top: `${iosFullscreenViewport.top}px`,
+      left: `${iosFullscreenViewport.left}px`,
+      width: iosFullscreenViewport.width ? `${iosFullscreenViewport.width}px` : '100vw',
+      height: iosFullscreenViewport.height ? `${iosFullscreenViewport.height}px` : '100dvh',
+      maxWidth: 'none',
+      maxHeight: 'none',
+      borderRadius: 0,
+      zIndex: 2147483647,
+      backgroundColor: '#000',
+      transform: 'translate3d(0, 0, 0)',
+      WebkitTransform: 'translate3d(0, 0, 0)',
+      touchAction: 'none',
+    }
+    : undefined;
 
   return (
     <div className="space-y-6">
       <div
         ref={containerRef}
         className={`relative bg-black group shadow-2xl flex items-center justify-center overflow-hidden transition-all duration-300 tv-focusable ${isFullscreen
-          ? 'fixed inset-0 w-screen h-screen h-[100dvh] rounded-none ring-0 border-none z-[99999]'
+          ? 'fixed inset-0 w-screen h-screen h-[100dvh] rounded-none ring-0 border-none z-[2147483647]'
           : 'aspect-video rounded-[1.5rem] border border-white/5 ring-1 ring-white/5 sm:rounded-[2rem]'
           } ${!useIOSNativePlayer && !showControls ? 'cursor-none' : ''}`}
+        style={iosFullscreenStyle}
         tabIndex={0}
         onKeyDown={(e) => {
           if (useIOSNativePlayer) return;

@@ -57,6 +57,18 @@
     height: 100vh !important;
   }
 
+  html.ykn-ios-video-fullscreen,
+  body.ykn-ios-video-fullscreen {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+
+  body.ykn-ios-video-fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
   body::before {
     content: "";
     position: fixed;
