@@ -188,6 +188,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const lastTimeRef = useRef<number>(0);
   const stallCountRef = useRef<number>(0);
   const lastQualityChangeTimeRef = useRef<number>(0);
+  const bufferingDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getPublicServerName = (server: any) => {
     const index = servers.findIndex(s => s.url === server?.url && s.forceProxy === server?.forceProxy);
@@ -293,6 +294,41 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setActiveHeight(null);
   };
 
+  const clearBufferingDelayTimer = () => {
+    if (bufferingDelayTimerRef.current) {
+      clearTimeout(bufferingDelayTimerRef.current);
+      bufferingDelayTimerRef.current = null;
+    }
+  };
+
+  const showBufferingImmediately = () => {
+    clearBufferingDelayTimer();
+    setIsBuffering(true);
+  };
+
+  const hideBuffering = () => {
+    clearBufferingDelayTimer();
+    setIsBuffering(false);
+  };
+
+  const showBufferingWithDelay = () => {
+    clearBufferingDelayTimer();
+
+    const video = videoRef.current;
+    if (!video || video.paused || video.ended || error) return;
+
+    bufferingDelayTimerRef.current = setTimeout(() => {
+      const latestVideo = videoRef.current;
+      if (!latestVideo || latestVideo.paused || latestVideo.ended || error) return;
+
+      if (latestVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+        return;
+      }
+
+      setIsBuffering(true);
+    }, useIOSNativePlayer ? 900 : 300);
+  };
+
   const getNativeVideoErrorMessage = (video: HTMLVideoElement): string => {
     const nativeError = video.error;
     const code = nativeError?.code;
@@ -336,7 +372,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
     clearStartupErrorTimer();
     setIsBooting(false);
-    setIsBuffering(false);
+    hideBuffering();
     setIsPlaying(false);
     setError(getNativeVideoErrorMessage(video));
   };
@@ -366,7 +402,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     playbackConfirmedRef.current = true;
     clearStartupErrorTimer();
     setIsBooting(false);
-    setIsBuffering(false);
+    hideBuffering();
     setError(null);
     setIsPlaying(true);
   };
@@ -374,14 +410,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const showStartupErrorWithDelay = (message: string) => {
     if (playbackConfirmedRef.current) {
       setIsBooting(false);
-      setIsBuffering(false);
+      hideBuffering();
       setError(message);
       return;
     }
 
     setError(null);
     setIsBooting(true);
-    setIsBuffering(true);
+    showBufferingImmediately();
     setLoadingMessage('Menyambungkan siaran...');
 
     clearStartupErrorTimer();
@@ -389,7 +425,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     startupErrorTimerRef.current = setTimeout(() => {
       if (!playbackConfirmedRef.current) {
         setIsBooting(false);
-        setIsBuffering(false);
+        hideBuffering();
         setError(message);
       }
     }, STARTUP_GRACE_MS);
@@ -416,7 +452,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
     player.addEventListener('buffering', (event: any) => {
       if (!useIOSNativePlayer) {
-        setIsBuffering(event.buffering);
+        if (event.buffering) {
+          showBufferingWithDelay();
+        } else {
+          hideBuffering();
+        }
       }
     });
 
@@ -461,6 +501,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
     return () => {
       clearStartupErrorTimer();
+      clearBufferingDelayTimer();
       destroyPlayers();
       if (playerRef.current) {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
@@ -650,7 +691,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       if (currentServer.tokenChannelId) {
         setError(null);
         setIsBooting(true);
-        setIsBuffering(true);
+        showBufferingImmediately();
         setLoadingMessage('Mengambil token SBS...');
 
         try {
@@ -658,7 +699,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         } catch (e) {
           console.error('SBS token resolver failed:', e);
           setIsBooting(false);
-          setIsBuffering(false);
+          hideBuffering();
           setIsPlaying(false);
           setError('Gagal mengambil token SBS terbaru. Coba segarkan koneksi atau pilih server lain.');
           return;
@@ -739,7 +780,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       setError(null);
       setIsBooting(true);
-      setIsBuffering(true);
+      showBufferingImmediately();
       setLoadingMessage(`Memuat ${getPublicServerName(currentServer)}...`);
       setLevels([]);
       setCurrentLevel('auto');
@@ -753,14 +794,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           if (keys) {
             setIsBooting(false);
-            setIsBuffering(false);
+            hideBuffering();
             setError('Server ini memakai DRM/ClearKey dan tidak cocok untuk iPhone. Coba pilih Server iOS / HLS biasa.');
             return;
           }
 
           if (!isHls) {
             setIsBooting(false);
-            setIsBuffering(false);
+            hideBuffering();
             setError('Format server ini tidak cocok untuk iPhone. iOS paling aman pakai server HLS .m3u8.');
             return;
           }
@@ -781,7 +822,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           setShowQualityMenu(false);
           setShowControls(true);
           setIsBooting(false);
-          setIsBuffering(false);
+          hideBuffering();
           setError(null);
           setHasStarted(true);
           void loadIOSNativeQualityLevels(streamUrl, rawUrl, loadId);
@@ -1353,7 +1394,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       // Auto-clear loading overlays when time starts advancing
       if (!videoRef.current.paused) {
         if (isBooting) setIsBooting(false);
-        if (isBuffering) setIsBuffering(false);
+        if (isBuffering || bufferingDelayTimerRef.current) {
+          hideBuffering();
+        }
       }
 
       const dur = videoRef.current.duration;
@@ -1412,7 +1455,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const shouldRestoreTime = !isLive && Number.isFinite(resumeTime) && resumeTime > 0;
 
       setError(null);
-      setIsBuffering(true);
+      showBufferingImmediately();
       setLoadingMessage('Mengganti resolusi...');
       setActiveHeight(selectedLevel?.height || null);
 
@@ -1435,7 +1478,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         }).catch(err => {
           console.warn('iOS quality switch play failed:', err);
           setIsPlaying(false);
-          setIsBuffering(false);
+          hideBuffering();
         });
       }
 
@@ -1604,28 +1647,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           }}
           onPause={() => setIsPlaying(false)}
           onWaiting={() => {
-            setIsBuffering(true);
+            showBufferingWithDelay();
           }}
           onPlaying={confirmPlaybackReady}
           onCanPlay={() => {
             setLoadingMessage('Siaran hampir siap...');
+            hideBuffering();
             if (useIOSNativePlayer) {
               setIsBooting(false);
-              setIsBuffering(false);
               if (videoRef.current?.videoHeight) {
                 setActiveHeight(videoRef.current.videoHeight);
               }
             }
           }}
-          onSeeked={() => setIsBuffering(false)}
+          onSeeked={hideBuffering}
           onStalled={() => {
-            setIsBuffering(true);
+            showBufferingWithDelay();
           }}
           onSeeking={() => {
-            setIsBuffering(true);
+            showBufferingWithDelay();
           }}
           onLoadStart={() => {
-            setIsBuffering(true);
+            if (isBooting || !playbackConfirmedRef.current) {
+              showBufferingImmediately();
+            } else {
+              showBufferingWithDelay();
+            }
           }}
           onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
