@@ -15,6 +15,9 @@ interface VideoPlayerProps {
 interface QualityOption {
   index: number | 'auto';
   label: string;
+  src?: string;
+  height?: number;
+  bandwidth?: number;
 }
 
 const isIOSDevice = (): boolean => {
@@ -29,11 +32,84 @@ const isIOSDevice = (): boolean => {
   );
 };
 
+const fetchManifestText = async (url: string): Promise<{ text: string; finalUrl: string }> => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 7000);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Manifest request failed: ${response.status}`);
+    }
+
+    return {
+      text: await response.text(),
+      finalUrl: response.url || url,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+const parseNativeHlsQualityOptions = (playlistText: string, playlistUrl: string): QualityOption[] => {
+  if (!playlistText.includes('#EXT-X-STREAM-INF')) return [];
+
+  const lines = playlistText.split('\n');
+  const variants: QualityOption[] = [];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i].trim();
+    if (!line.startsWith('#EXT-X-STREAM-INF')) continue;
+
+    const resolutionMatch = line.match(/RESOLUTION=\d+x(\d+)/i);
+    const bandwidthMatch = line.match(/BANDWIDTH=(\d+)/i);
+    const height = resolutionMatch ? Number(resolutionMatch[1]) : undefined;
+    const bandwidth = bandwidthMatch ? Number(bandwidthMatch[1]) : undefined;
+
+    let uri = '';
+    for (let next = i + 1; next < lines.length; next += 1) {
+      const candidate = lines[next].trim();
+      if (!candidate) continue;
+      if (candidate.startsWith('#')) break;
+      uri = candidate;
+      break;
+    }
+
+    if (!uri) continue;
+
+    const src = new URL(uri, playlistUrl).toString();
+    const fallbackIndex = 100000 + variants.length;
+    variants.push({
+      index: height || fallbackIndex,
+      label: height ? `${height}p` : bandwidth ? `${Math.round(bandwidth / 1000)}k` : `Level ${variants.length + 1}`,
+      src,
+      height,
+      bandwidth,
+    });
+  }
+
+  const bestByLabel = new Map<string, QualityOption>();
+  variants.forEach((variant) => {
+    const key = variant.height ? `h-${variant.height}` : variant.label;
+    const existing = bestByLabel.get(key);
+    if (!existing || (variant.bandwidth || 0) > (existing.bandwidth || 0)) {
+      bestByLabel.set(key, variant);
+    }
+  });
+
+  return Array.from(bestByLabel.values()).sort((a, b) => (
+    (b.height || 0) - (a.height || 0) ||
+    (b.bandwidth || 0) - (a.bandwidth || 0)
+  ));
+};
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const iosMasterUrlRef = useRef<string | null>(null);
+  const streamLoadIdRef = useRef(0);
 
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
   const useIOSNativePlayer = isIOSRuntime;
@@ -170,6 +246,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setIsBuffering(true);
     setLoadingMessage(`Memuat ${getPublicServerName(server)}...`);
     setIsAtLiveEdge(true);
+    setActiveHeight(null);
   };
 
   const getNativeVideoErrorMessage = (video: HTMLVideoElement): string => {
@@ -381,9 +458,41 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   }, [error]);
 
+  const loadIOSNativeQualityLevels = async (
+    streamUrl: string,
+    rawUrl: string,
+    loadId: number
+  ) => {
+    const manifestUrls = [streamUrl];
+    const forcedProxyUrl = getProxiedUrl(rawUrl, true);
+
+    if (forcedProxyUrl !== streamUrl) {
+      manifestUrls.push(forcedProxyUrl);
+    }
+
+    for (const manifestUrl of manifestUrls) {
+      try {
+        const { text, finalUrl } = await fetchManifestText(manifestUrl);
+        const qualityLevels = parseNativeHlsQualityOptions(text, finalUrl);
+
+        if (streamLoadIdRef.current !== loadId) return;
+
+        if (qualityLevels.length > 0) {
+          setLevels([{ index: 'auto', label: 'Auto' }, ...qualityLevels]);
+        }
+        return;
+      } catch (err) {
+        console.warn('iOS quality manifest fetch failed:', manifestUrl, err);
+      }
+    }
+  };
+
   useEffect(() => {
     const loadStream = async () => {
       if (!currentServer || !videoRef.current) return;
+
+      const loadId = streamLoadIdRef.current + 1;
+      streamLoadIdRef.current = loadId;
 
       let rawUrl = cleanStreamUrl(currentServer.url);
       const keys = getDrmKeys(currentServer);
@@ -484,6 +593,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setLoadingMessage(`Memuat ${getPublicServerName(currentServer)}...`);
       setLevels([]);
       setCurrentLevel('auto');
+      setActiveHeight(null);
       await destroyPlayers();
 
       try {
@@ -507,6 +617,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
           console.log('Using iOS native video player fallback:', streamUrl);
 
+          iosMasterUrlRef.current = streamUrl;
           video.controls = true;
           video.playsInline = true;
           video.setAttribute('playsinline', 'true');
@@ -516,7 +627,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           video.src = streamUrl;
           video.load();
 
-          setLevels([]);
           setCurrentLevel('auto');
           setShowQualityMenu(false);
           setShowControls(false);
@@ -524,6 +634,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           setIsBuffering(false);
           setError(null);
           setHasStarted(true);
+          void loadIOSNativeQualityLevels(streamUrl, rawUrl, loadId);
 
           // Autoplay on iOS is strict. Attempt to play and catch any rejection.
           video.play().then(() => {
@@ -999,6 +1110,53 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setCurrentLevel(levelIdx);
     setShowQualityMenu(false);
 
+    if (useIOSNativePlayer) {
+      const video = videoRef.current;
+      const selectedLevel = levels.find(level => level.index === levelIdx);
+      const nextSrc = levelIdx === 'auto' ? iosMasterUrlRef.current : selectedLevel?.src;
+
+      if (!video || !nextSrc) return;
+
+      if ((video.currentSrc || video.src) === nextSrc) {
+        setActiveHeight(selectedLevel?.height || null);
+        return;
+      }
+
+      const wasPlaying = !video.paused;
+      const resumeTime = video.currentTime;
+      const shouldRestoreTime = !isLive && Number.isFinite(resumeTime) && resumeTime > 0;
+
+      setError(null);
+      setIsBuffering(true);
+      setLoadingMessage('Mengganti resolusi...');
+      setActiveHeight(selectedLevel?.height || null);
+
+      if (shouldRestoreTime) {
+        video.addEventListener('loadedmetadata', () => {
+          try {
+            video.currentTime = resumeTime;
+          } catch (err) {
+            console.warn('Failed to restore playback position after quality switch:', err);
+          }
+        }, { once: true });
+      }
+
+      video.src = nextSrc;
+      video.load();
+
+      if (wasPlaying) {
+        video.play().then(() => {
+          setIsPlaying(true);
+        }).catch(err => {
+          console.warn('iOS quality switch play failed:', err);
+          setIsPlaying(false);
+          setIsBuffering(false);
+        });
+      }
+
+      return;
+    }
+
     if (hlsRef.current) {
       // -1 = auto ABR mode in Hls.js
       if (levelIdx === 'auto') {
@@ -1053,12 +1211,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   if (!currentServer) return null;
 
   const proxyFallbackServer = getProxyFallbackServer();
-  const iosNativeSrc = useMemo(() => {
-    if (!useIOSNativePlayer || !currentServer) return undefined;
-    const rawUrl = cleanStreamUrl(currentServer.url);
-    const forceProxy = currentServer.forceProxy === true || rawUrl.startsWith('http://');
-    return getProxiedUrl(rawUrl, forceProxy);
-  }, [useIOSNativePlayer, currentServer]);
 
   return (
     <div className="space-y-6">
@@ -1136,7 +1288,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         <video
           ref={videoRef}
           className={`w-full h-full object-contain ${useIOSNativePlayer ? 'cursor-auto' : showControls ? 'cursor-pointer' : 'cursor-none'}`}
-          src={iosNativeSrc}
           preload={useIOSNativePlayer ? 'auto' : 'metadata'}
           playsInline
           controls={useIOSNativePlayer}
@@ -1156,6 +1307,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
             if (useIOSNativePlayer) {
               setIsBooting(false);
               setIsBuffering(false);
+              if (videoRef.current?.videoHeight) {
+                setActiveHeight(videoRef.current.videoHeight);
+              }
             }
           }}
           onSeeked={() => setIsBuffering(false)}
@@ -1177,6 +1331,40 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           onError={handleNativeVideoError}
           onTimeUpdate={handleTimeUpdate}
         />
+
+        {useIOSNativePlayer && levels.length > 1 && !error && (
+          <div
+            className="absolute top-3 right-3 z-30 flex flex-col items-end gap-1.5 select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowQualityMenu(!showQualityMenu)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/65 border border-white/15 backdrop-blur-md rounded-lg text-[10px] font-black text-white shadow-xl active:scale-95 transition-all"
+            >
+              <Settings size={12} className={showQualityMenu ? 'rotate-45 transition-transform' : 'transition-transform'} />
+              {currentLevel === 'auto'
+                ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
+                : levels.find(level => level.index === currentLevel)?.label || 'Auto'}
+            </button>
+
+            {showQualityMenu && (
+              <div className="w-24 bg-[#080808]/95 border border-white/15 backdrop-blur-md rounded-lg p-1 shadow-2xl flex flex-col gap-0.5">
+                {levels.map((level) => (
+                  <button
+                    key={level.index}
+                    onClick={() => handleLevelChange(level.index)}
+                    className={`w-full py-1.5 px-2 text-left rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${currentLevel === level.index
+                      ? 'bg-primary text-dark'
+                      : 'text-zinc-300 hover:bg-white/10 hover:text-white'
+                      }`}
+                  >
+                    {level.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {!useIOSNativePlayer && (
           <>
