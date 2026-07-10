@@ -169,6 +169,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isIOSNativeFullscreen, setIsIOSNativeFullscreen] = useState(false);
+  const [isIOSCssFullscreenFallback, setIsIOSCssFullscreenFallback] = useState(false);
   const [iosFullscreenViewport, setIOSFullscreenViewport] = useState<IOSFullscreenViewport>(() => (
     getIOSFullscreenViewport()
   ));
@@ -431,6 +432,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       setIsFullscreen(isFs);
       if (!isFs) {
         setIsIOSNativeFullscreen(false);
+        setIsIOSCssFullscreenFallback(false);
       }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -503,7 +505,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   }, [isFullscreen, useIOSNativePlayer]);
 
   useEffect(() => {
-    if (!useIOSNativePlayer || !isFullscreen || isIOSNativeFullscreen) return;
+    if (!useIOSNativePlayer || !isIOSCssFullscreenFallback || isIOSNativeFullscreen) return;
 
     const html = document.documentElement;
     const body = document.body;
@@ -592,7 +594,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       window.scrollTo(0, iosFullscreenScrollYRef.current);
     };
-  }, [isFullscreen, useIOSNativePlayer, isIOSNativeFullscreen]);
+  }, [isIOSCssFullscreenFallback, useIOSNativePlayer, isIOSNativeFullscreen]);
 
   // Pause playback and stop audio when a connection error screen is displayed
   useEffect(() => {
@@ -1155,7 +1157,51 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   };
 
-  const toggleFullscreen = (e: React.MouseEvent) => {
+  const lockLandscapeIfPossible = async () => {
+    try {
+      const orientation = screen.orientation as any;
+      if (orientation && typeof orientation.lock === 'function') {
+        await orientation.lock('landscape');
+      }
+    } catch (err) {
+      console.warn('Orientation lock failed:', err);
+    }
+  };
+
+  const unlockOrientationIfPossible = () => {
+    try {
+      const orientation = screen.orientation as any;
+      if (orientation && typeof orientation.unlock === 'function') {
+        orientation.unlock();
+      }
+    } catch (err) {
+      console.warn('Orientation unlock failed:', err);
+    }
+  };
+
+  const enterIOSCssFullscreenFallback = () => {
+    setIsIOSNativeFullscreen(false);
+    setIsIOSCssFullscreenFallback(true);
+    setIOSFullscreenViewport(getIOSFullscreenViewport());
+    setIsFullscreen(true);
+    setShowControls(true);
+    setShowQualityMenu(false);
+    window.requestAnimationFrame(() => {
+      setIOSFullscreenViewport(getIOSFullscreenViewport());
+      containerRef.current?.focus();
+    });
+    void lockLandscapeIfPossible();
+  };
+
+  const exitIOSCssFullscreenFallback = () => {
+    setIsIOSCssFullscreenFallback(false);
+    setIsFullscreen(false);
+    setShowControls(true);
+    setShowQualityMenu(false);
+    unlockOrientationIfPossible();
+  };
+
+  const toggleFullscreen = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const container = containerRef.current;
     if (!container) return;
@@ -1164,11 +1210,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       const video = videoRef.current;
       if (!video) return;
 
+      const docFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
+
+      if (docFullscreen) {
+        try {
+          if (document.exitFullscreen) {
+            await document.exitFullscreen();
+          } else if ((document as any).webkitExitFullscreen) {
+            (document as any).webkitExitFullscreen();
+          }
+        } catch (err) {
+          console.warn('Exit fullscreen failed:', err);
+        }
+        setIsFullscreen(false);
+        setIsIOSCssFullscreenFallback(false);
+        setIsIOSNativeFullscreen(false);
+        setShowControls(true);
+        unlockOrientationIfPossible();
+        return;
+      }
+
+      if (isIOSCssFullscreenFallback) {
+        exitIOSCssFullscreenFallback();
+        return;
+      }
+
       setShowQualityMenu(false);
-      setShowControls(false);
+      setShowControls(true);
+      setIsIOSNativeFullscreen(false);
 
       try {
-        video.controls = true;
         const iosVideo = video as HTMLVideoElement & {
           webkitEnterFullscreen?: () => void;
           webkitEnterFullScreen?: () => void;
@@ -1178,23 +1249,38 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
         if (iosVideo.webkitDisplayingFullscreen && iosVideo.webkitExitFullscreen) {
           iosVideo.webkitExitFullscreen();
+          setIsIOSNativeFullscreen(false);
+          setIsFullscreen(false);
+          setShowControls(true);
           return;
         }
 
-        if (iosVideo.webkitEnterFullscreen) {
+        if (container.requestFullscreen) {
+          await container.requestFullscreen();
+          setIsFullscreen(true);
+          setIsIOSCssFullscreenFallback(false);
+          await lockLandscapeIfPossible();
+        } else if ((container as any).webkitRequestFullscreen) {
+          (container as any).webkitRequestFullscreen();
+          setIsFullscreen(true);
+          setIsIOSCssFullscreenFallback(false);
+          await lockLandscapeIfPossible();
+        } else if (iosVideo.webkitEnterFullscreen) {
+          video.controls = true;
+          setShowControls(false);
+          setIsIOSNativeFullscreen(true);
           iosVideo.webkitEnterFullscreen();
         } else if (iosVideo.webkitEnterFullScreen) {
+          video.controls = true;
+          setShowControls(false);
+          setIsIOSNativeFullscreen(true);
           iosVideo.webkitEnterFullScreen();
-        } else if (video.requestFullscreen) {
-          video.requestFullscreen();
         } else {
-          video.controls = false;
-          setShowControls(true);
+          enterIOSCssFullscreenFallback();
         }
       } catch (err) {
-        video.controls = false;
-        setShowControls(true);
-        console.warn('iOS native fullscreen failed:', err);
+        console.warn('iOS fullscreen failed, using CSS fallback:', err);
+        enterIOSCssFullscreenFallback();
       }
 
       return;
@@ -1413,8 +1499,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const currentQualityLabel = currentLevel === 'auto'
     ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
     : levels.find(level => level.index === currentLevel)?.label || 'Auto';
-  const usesCSSFullscreen = isFullscreen && !(useIOSNativePlayer && isIOSNativeFullscreen);
-  const iosFullscreenStyle: React.CSSProperties | undefined = useIOSNativePlayer && usesCSSFullscreen
+  const usesCSSFullscreen = (!useIOSNativePlayer && isFullscreen) || isIOSCssFullscreenFallback;
+  const iosFullscreenStyle: React.CSSProperties | undefined = useIOSNativePlayer && isIOSCssFullscreenFallback
     ? {
       position: 'fixed',
       top: `${iosFullscreenViewport.top}px`,
