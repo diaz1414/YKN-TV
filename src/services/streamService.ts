@@ -2,6 +2,7 @@ import stableChannels from '../data/stable_channels.json';
 import backupEvents from '../data/tv-events.json';
 import backupSports from '../data/tv-sports.json';
 import backupLive from '../data/tv-hiburan.json';
+import xoilacEventsBackup from '../data/xoilac-events.json';
 import axios from 'axios';
 import { getRawEventsUrl, SHOW_RTB_GO_IN_JADWAL } from './matchService';
 import { getActiveCustomEvents } from './customEventService';
@@ -258,6 +259,20 @@ export const buildServers = (
 
   // Server 1: selalu direct CDN — sama seperti backup HTML.
   // Kalau CORS gagal atau http:// blocked, user tinggal switch ke Server 2.
+  // Handle iframe / xoilac type — embed as an iframe player
+  if (lowerJenis === 'iframe' || lowerJenis === 'xoilac') {
+    if (rawUrl) {
+      servers.push({
+        name: 'Server 1 (Xoilac)',
+        url: rawUrl,
+        type: 'iframe',
+        forceProxy: false,
+      });
+    }
+    // Also add the xoilac watch page as fallback iframe
+    return servers;
+  }
+
   servers.push({
     name: 'Server 1 (Direct)',
     url: rawUrl,
@@ -954,6 +969,47 @@ export const getLiveSportsData = async (): Promise<{
     }
   }
 
+  // ── Inject Xoilac multi-sport events (so watch page can find them) ──────
+  try {
+    const xoilacRaw = xoilacEventsBackup as any[];
+    for (const item of xoilacRaw) {
+      const key = item.id_event;
+      if (!key || seenEvents.has(key)) continue;
+      seenEvents.add(key);
+
+      const servers = buildServers(item.url_iptv || '', item.url_license || '', item.jenis || 'xoilac');
+
+      // If no stream URL yet, add xoilac watch page as iframe fallback
+      if (servers.length === 0 && item.xoilac_url) {
+        servers.push({
+          name: 'Server 1 (Xoilac)',
+          url: item.xoilac_url,
+          type: 'iframe',
+          forceProxy: false,
+        });
+      }
+
+      mappedEvents.push({
+        id: item.id_event,
+        name: `${item.player_1} vs ${item.player_2}`,
+        subName: item.nama_event,
+        logo: item.logo_1 || '',
+        logo2: item.logo_2 || '',
+        isBase64Logo: false,
+        servers,
+        isChannel: false,
+        player1: item.player_1,
+        player2: item.player_2,
+        jadwal_event: item.jadwal_event,
+        jadwal_stop: item.jadwal_stop,
+        deskripsi: item.deskripsi || '',
+        deskripsi_en: item.deskripsi_en || '',
+      });
+    }
+  } catch (xErr) {
+    console.warn('[streamService] Failed to inject xoilac events:', xErr);
+  }
+
   // Process Sports TV
   const seenSports = new Set<string>();
   const mappedSports: PlayableStream[] = [];
@@ -1023,12 +1079,24 @@ export const findStreamByIdInList = (idOrSlug: string, allStreams: PlayableStrea
   if (found) return found;
 
   // 2. Extract ID from the end of the slug (e.g. spain-vs-cabo-verde-1234 -> ID is 1234)
+  // Also check if idOrSlug contains or ends with any stream ID directly, particularly for prefixed IDs like xoilac-
+  const xoilacIdx = idOrSlug.indexOf('xoilac-');
+  if (xoilacIdx !== -1) {
+    const potentialId = idOrSlug.substring(xoilacIdx);
+    found = allStreams.find(s => s.id === potentialId);
+    if (found) return found;
+  }
+
   const lastDashIndex = idOrSlug.lastIndexOf('-');
   if (lastDashIndex !== -1) {
     const potentialId = idOrSlug.substring(lastDashIndex + 1);
     found = allStreams.find(s => s.id === potentialId);
     if (found) return found;
   }
+
+  // Check if idOrSlug ends with any stream ID
+  found = allStreams.find(s => idOrSlug.endsWith(s.id));
+  if (found) return found;
 
   // 3. Slugified name match
   const targetSlug = idOrSlug.toLowerCase().trim();

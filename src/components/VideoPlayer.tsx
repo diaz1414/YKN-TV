@@ -1538,6 +1538,53 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (!currentServer) return null;
 
+  // ── Iframe mode (Xoilac / embedded player) ─────────────────────────────
+  if (currentServer.type === 'iframe') {
+    return (
+      <div className="flex flex-col gap-3 w-full">
+        <div
+          className="relative w-full overflow-hidden rounded-2xl bg-black"
+          style={{ aspectRatio: '16/9' }}
+        >
+          <iframe
+            key={currentServer.url}
+            src={currentServer.url}
+            className="absolute inset-0 w-full h-full border-0"
+            allowFullScreen
+            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            scrolling="no"
+            title="YKN TV Live Stream"
+          />
+        </div>
+
+        {servers.length > 1 && (
+          <div className="mx-4 flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl sm:mx-0">
+            <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
+              <Server size={16} className="text-primary" />
+              <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
+            </div>
+            <div className="flex flex-wrap gap-2 flex-1">
+              {servers.map((server, index) => (
+                <button
+                  key={`${server.url}-${index}`}
+                  onClick={() => setCurrentServer(server)}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${
+                    currentServer.url === server.url
+                      ? 'bg-primary text-dark shadow-md'
+                      : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
+                  }`}
+                  tabIndex={0}
+                >
+                  Server {index + 1}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const proxyFallbackServer = getProxyFallbackServer();
   const currentQualityLabel = currentLevel === 'auto'
     ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
