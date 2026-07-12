@@ -7,7 +7,7 @@ import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
 // ─── Sport Category Tabs ─────────────────────────────────────────────────
-type SportTab = 'all' | 'wc' | XoilacSport;
+type SportTab = 'wc' | XoilacSport;
 
 interface TabDef {
   id: SportTab;
@@ -17,7 +17,6 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  // { id: 'all',        label: 'Semua',         icon: '📅', color: '#3b82f6' },
   { id: 'wc', label: 'Jadwal Utama', icon: '🏆', color: '#f59e0b' },
   { id: 'football', label: 'Sepak Bola', icon: '⚽', color: '#22c55e' },
   { id: 'basketball', label: 'Bola Basket', icon: '🏀', color: '#f97316' },
@@ -29,7 +28,7 @@ const TABS: TabDef[] = [
 
 // ─── Component ────────────────────────────────────────────────────────────
 const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, number> }) => {
-  const [activeTab, setActiveTab] = useState<SportTab>('all');
+  const [activeTab, setActiveTab] = useState<SportTab>('wc');
   const [wcMatches, setWcMatches] = useState<Match[]>([]);
   const [xoilacMatches, setXoilacMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,9 +103,6 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
 
   // ── Displayed matches for current tab ─────────────────────────────────
   const displayedMatches: Match[] = (() => {
-    if (activeTab === 'all') {
-      return [...wcMatches, ...xoilacMatches];
-    }
     if (activeTab === 'wc') return wcMatches;
 
     const sport = activeTab as XoilacSport;
@@ -125,7 +121,6 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
 
   // ── Live counts per tab ───────────────────────────────────────────────
   const liveCounts: Record<SportTab, number> = {
-    all: wcMatches.filter(m => m.status === 'live').length + xoilacMatches.filter(m => m.status === 'live').length,
     wc: wcMatches.filter(m => m.status === 'live').length,
     football: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Sepak Bola')).length,
     basketball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Basket')).length,

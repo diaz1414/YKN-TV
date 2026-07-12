@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -170,6 +170,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isIOSNativeFullscreen, setIsIOSNativeFullscreen] = useState(false);
   const [isIOSCssFullscreenFallback, setIsIOSCssFullscreenFallback] = useState(false);
+  const [isIframeCssFullscreen, setIsIframeCssFullscreen] = useState(false);
   const [iosFullscreenViewport, setIOSFullscreenViewport] = useState<IOSFullscreenViewport>(() => (
     getIOSFullscreenViewport()
   ));
@@ -180,11 +181,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [levels, setLevels] = useState<QualityOption[]>([]);
   const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
   const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [showIframeChrome, setShowIframeChrome] = useState(true);
   const [hasStarted, setHasStarted] = useState(true);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
   const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const iframeChromeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTimeRef = useRef<number>(0);
   const stallCountRef = useRef<number>(0);
   const lastQualityChangeTimeRef = useRef<number>(0);
@@ -432,6 +435,51 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   };
 
   useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
+      setIsFullscreen(isFs);
+      if (!isFs) {
+        setIsIOSNativeFullscreen(false);
+        setIsIOSCssFullscreenFallback(false);
+        setIsIframeCssFullscreen(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (iframeChromeTimerRef.current) {
+      clearTimeout(iframeChromeTimerRef.current);
+      iframeChromeTimerRef.current = null;
+    }
+
+    if (currentServer?.type !== 'iframe' || (!isFullscreen && !isIframeCssFullscreen)) {
+      setShowIframeChrome(true);
+      return;
+    }
+
+    setShowIframeChrome(true);
+    iframeChromeTimerRef.current = setTimeout(() => {
+      setShowIframeChrome(false);
+      iframeChromeTimerRef.current = null;
+    }, 2400);
+
+    return () => {
+      if (iframeChromeTimerRef.current) {
+        clearTimeout(iframeChromeTimerRef.current);
+        iframeChromeTimerRef.current = null;
+      }
+    };
+  }, [currentServer?.type, isFullscreen, isIframeCssFullscreen]);
+
+  useEffect(() => {
     if (!videoRef.current) return;
 
     shaka.polyfill.installAll();
@@ -467,17 +515,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
     });
 
-    const handleFullscreenChange = () => {
-      const isFs = !!(document.fullscreenElement || (document as any).webkitFullscreenElement);
-      setIsFullscreen(isFs);
-      if (!isFs) {
-        setIsIOSNativeFullscreen(false);
-        setIsIOSCssFullscreenFallback(false);
-      }
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
     const videoEl = videoRef.current;
     const handleWebkitBeginFullscreen = () => {
       setIsIOSNativeFullscreen(true);
@@ -506,8 +543,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       if (playerRef.current) {
         playerRef.current.destroy().catch(e => console.error("Player destroy error:", e));
       }
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       if (videoEl) {
         videoEl.removeEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen);
         videoEl.removeEventListener('webkitendfullscreen', handleWebkitEndFullscreen);
@@ -517,7 +552,22 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // Manage body scroll and orientation lock dynamically when isFullscreen changes
   useEffect(() => {
-    if (useIOSNativePlayer) return;
+    const shouldManageBodyFullscreen = !useIOSNativePlayer || isIframeCssFullscreen;
+    if (!shouldManageBodyFullscreen) return;
+
+    const releaseBodyFullscreen = () => {
+      document.body.classList.remove('ykn-fullscreen-active');
+      document.body.style.overflow = '';
+
+      const orientation = screen.orientation as any;
+      if (orientation && typeof orientation.unlock === 'function') {
+        try {
+          orientation.unlock();
+        } catch (e) {
+          console.warn('Orientation unlock failed:', e);
+        }
+      }
+    };
 
     if (isFullscreen) {
       document.body.classList.add('ykn-fullscreen-active');
@@ -530,20 +580,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           console.warn('Orientation lock failed:', err);
         });
       }
-    } else {
-      document.body.classList.remove('ykn-fullscreen-active');
-      document.body.style.overflow = '';
 
-      const orientation = screen.orientation as any;
-      if (orientation && typeof orientation.unlock === 'function') {
-        try {
-          orientation.unlock();
-        } catch (e) {
-          console.warn('Orientation unlock failed:', e);
-        }
-      }
+      return releaseBodyFullscreen;
     }
-  }, [isFullscreen, useIOSNativePlayer]);
+
+    releaseBodyFullscreen();
+  }, [isFullscreen, useIOSNativePlayer, isIframeCssFullscreen]);
 
   useEffect(() => {
     if (!useIOSNativePlayer || !isIOSCssFullscreenFallback || isIOSNativeFullscreen) return;
@@ -1357,6 +1399,108 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   };
 
+  const enterIframeCssFullscreen = () => {
+    setIsIframeCssFullscreen(true);
+    setIsFullscreen(true);
+    setShowQualityMenu(false);
+    window.requestAnimationFrame(() => {
+      containerRef.current?.focus();
+    });
+    void lockLandscapeIfPossible();
+  };
+
+  const exitIframeFullscreen = async () => {
+    const docFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
+
+    if (docFullscreen) {
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      } catch (err) {
+        console.warn('Exit iframe fullscreen failed:', err);
+      }
+    }
+
+    setIsIframeCssFullscreen(false);
+    setIsFullscreen(false);
+    unlockOrientationIfPossible();
+  };
+
+  const toggleIframeFullscreen = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const container = containerRef.current;
+    if (!container) return;
+
+    const docFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
+    if (docFullscreen || isIframeCssFullscreen) {
+      await exitIframeFullscreen();
+      return;
+    }
+
+    setShowQualityMenu(false);
+
+    try {
+      if (container.requestFullscreen) {
+        await container.requestFullscreen();
+        setIsFullscreen(true);
+        setIsIframeCssFullscreen(false);
+        await lockLandscapeIfPossible();
+      } else if ((container as any).webkitRequestFullscreen) {
+        (container as any).webkitRequestFullscreen();
+        setIsFullscreen(true);
+        setIsIframeCssFullscreen(false);
+        await lockLandscapeIfPossible();
+      } else {
+        enterIframeCssFullscreen();
+      }
+    } catch (err) {
+      console.warn('Iframe fullscreen failed, using CSS fallback:', err);
+      enterIframeCssFullscreen();
+    }
+  };
+
+  const revealIframeChrome = () => {
+    setShowIframeChrome(true);
+
+    if (iframeChromeTimerRef.current) {
+      clearTimeout(iframeChromeTimerRef.current);
+      iframeChromeTimerRef.current = null;
+    }
+
+    if (currentServer?.type === 'iframe' && (isFullscreen || isIframeCssFullscreen)) {
+      iframeChromeTimerRef.current = setTimeout(() => {
+        setShowIframeChrome(false);
+        iframeChromeTimerRef.current = null;
+      }, 2400);
+    }
+  };
+
+  useEffect(() => {
+    if (!isIframeCssFullscreen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      setIsIframeCssFullscreen(false);
+      setIsFullscreen(false);
+
+      try {
+        const orientation = screen.orientation as any;
+        if (orientation && typeof orientation.unlock === 'function') {
+          orientation.unlock();
+        }
+      } catch (err) {
+        console.warn('Orientation unlock failed:', err);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isIframeCssFullscreen]);
+
   const formatTime = (secs: number) => {
     if (isNaN(secs) || !isFinite(secs)) return '0:00';
     const m = Math.floor(secs / 60);
@@ -1540,21 +1684,75 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // ── Iframe mode (Xoilac / embedded player) ─────────────────────────────
   if (currentServer.type === 'iframe') {
+    const iframeIsFullscreen = isFullscreen || isIframeCssFullscreen;
+    const iframeContainerStyle: React.CSSProperties = isIframeCssFullscreen
+      ? {
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100dvh',
+        maxWidth: 'none',
+        maxHeight: 'none',
+        borderRadius: 0,
+        zIndex: 2147483647,
+        backgroundColor: '#000',
+      }
+      : { aspectRatio: '16/9' };
+    const iframeChromeClass = !iframeIsFullscreen || showIframeChrome
+      ? 'opacity-100 translate-y-0'
+      : 'opacity-0 translate-y-1';
+
     return (
       <div className="flex flex-col gap-3 w-full">
         <div
-          className="relative w-full overflow-hidden rounded-2xl bg-black"
-          style={{ aspectRatio: '16/9' }}
+          ref={containerRef}
+          className={`relative w-full overflow-hidden bg-black ${iframeIsFullscreen ? 'rounded-none' : 'rounded-2xl'}`}
+          style={iframeContainerStyle}
+          tabIndex={0}
+          onMouseMove={revealIframeChrome}
+          onTouchStart={revealIframeChrome}
+          onFocus={revealIframeChrome}
         >
           <iframe
             key={currentServer.url}
             src={currentServer.url}
             className="absolute inset-0 w-full h-full border-0"
-            allowFullScreen
-            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+            referrerPolicy="no-referrer"
             scrolling="no"
             title="YKN TV Live Stream"
           />
+
+          <div
+            className={`absolute top-3 right-3 z-20 pointer-events-none select-none transition-all duration-300 ${iframeChromeClass}`}
+          >
+            <div className="flex items-baseline gap-[3px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              <span
+                className="text-xl font-black leading-none text-white sm:text-3xl"
+                style={{ fontFamily: "'Arial Black', Arial, sans-serif", letterSpacing: 0 }}
+              >
+                YKN
+              </span>
+              <span
+                className="text-xl font-black leading-none sm:text-3xl"
+                style={{ fontFamily: "'Arial Black', Arial, sans-serif", color: '#D4AF37', letterSpacing: 0 }}
+              >
+                TV
+              </span>
+            </div>
+          </div>
+
+          <button
+            onMouseMove={revealIframeChrome}
+            onTouchStart={revealIframeChrome}
+            onClick={toggleIframeFullscreen}
+            className={`absolute bottom-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/65 text-white shadow-2xl backdrop-blur-md transition-all duration-300 hover:bg-white/15 active:scale-95 tv-focusable ${iframeChromeClass}`}
+            title={iframeIsFullscreen ? 'Keluar fullscreen YKN TV' : 'Fullscreen YKN TV'}
+            tabIndex={0}
+          >
+            {iframeIsFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
         </div>
 
         {servers.length > 1 && (
@@ -1568,11 +1766,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                 <button
                   key={`${server.url}-${index}`}
                   onClick={() => setCurrentServer(server)}
-                  className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${
-                    currentServer.url === server.url
-                      ? 'bg-primary text-dark shadow-md'
-                      : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
-                  }`}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentServer.url === server.url
+                    ? 'bg-primary text-dark shadow-md'
+                    : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
+                    }`}
                   tabIndex={0}
                 >
                   Server {index + 1}

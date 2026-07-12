@@ -73,7 +73,6 @@ const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[])
 
 
 const MATCH_TABS = [
-  // { id: 'all',        label: 'Semua',         icon: '📅' },
   { id: 'wc', label: 'Utama', icon: '🏆' },
   { id: 'football', label: 'Sepak Bola', icon: '⚽' },
   { id: 'basketball', label: 'Bola Basket', icon: '🏀' },
@@ -99,7 +98,7 @@ const ChannelDetail = () => {
     PUBLIC_LIVE_CHAT_ENABLED ? 'chat' : 'channels'
   );
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
-  const [matchSportTab, setMatchSportTab] = useState<'all' | 'wc' | 'football' | 'basketball' | 'tennis' | 'badminton' | 'volleyball' | 'esports'>('all');
+  const [matchSportTab, setMatchSportTab] = useState<'wc' | 'football' | 'basketball' | 'tennis' | 'badminton' | 'volleyball' | 'esports'>('wc');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
 
@@ -712,7 +711,6 @@ const ChannelDetail = () => {
     })
     .filter(ch => ch.matchInfo.status !== 'finished')
     .filter(ch => {
-      if (matchSportTab === 'all') return true;
       if (matchSportTab === 'wc') return !ch.id.includes('xoilac-');
       return ch.id.includes(`xoilac-${matchSportTab}-`);
     })
