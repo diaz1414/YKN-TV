@@ -22,15 +22,7 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 const SITE_NAME = 'xoilacz';
 const BASE_URL = 'https://fameandpartners.com';
-
-const SPORT_APIS = {
-  football:   'https://data-api.sportflowlivez.com',
-  basketball: 'https://data-api.sportflowlivez.com',
-  tennis:     'https://data-api.sportflowlivez.com',
-  badminton:  'https://data-api.sportflowlivez.com',
-  volleyball: 'https://data-api.sportflowlivez.com',
-  esports:    'https://data-api.sportflowlivez.com',
-};
+const DATA_API = 'https://data-api.sportflowlivez.com';
 
 const SPORT_LABELS = {
   football:   'Sepak Bola',
@@ -40,6 +32,10 @@ const SPORT_LABELS = {
   volleyball: 'Bola Voli',
   esports:    'Esports',
 };
+
+// Esports sub-types (lol=6, dota2=7, csgo=8) — fetched with their own sport key
+// but all mapped to sport_type='esports' in the output
+const ESPORTS_SUBTYPES = ['lol', 'csgo', 'dota2'];
 
 const FETCH_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
@@ -103,13 +99,39 @@ function tsToJadwal(ts) {
   return `${ict.getUTCFullYear()}-${pad(ict.getUTCMonth() + 1)}-${pad(ict.getUTCDate())} ${pad(ict.getUTCHours())}:${pad(ict.getUTCMinutes())}+07`;
 }
 
-// ─── MAIN SCRAPER ──────────────────────────────────────────────────────────
+// ─── REGULAR SPORTS FETCH ──────────────────────────────────────────────────
+/**
+ * Fetch regular sport live data — response wrapped in {code, message, data: {...}}
+ * Returns the inner data object (with .matches, .teams, .competitions)
+ */
 async function fetchSportLive(sport) {
   console.log(`[SCRAPER] Fetching ${sport} live matches...`);
-  const url = `${SPORT_APIS[sport]}/v1/${sport}/${SITE_NAME}/match/live`;
-  const data = await safeFetch(url);
-  if (!data) return null;
-  return data;
+  const url = `${DATA_API}/v1/${sport}/${SITE_NAME}/match/live`;
+  const raw = await safeFetch(url);
+  if (!raw) return null;
+  // Regular sports: {code: 0, message: 'success', data: {matches, teams, competitions}}
+  if (raw.data && Array.isArray(raw.data.matches)) return raw.data;
+  // Fallback: response might be direct (like esports subtypes)
+  if (Array.isArray(raw.matches)) return raw;
+  return null;
+}
+
+// ─── ESPORTS FETCH ─────────────────────────────────────────────────────────
+/**
+ * Fetch esports live data per sub-type (lol, csgo, dota2).
+ * Response is direct: {matches: [...], teams: {...}, competitions: {...}, sites: [...]}
+ * Returns the data object directly.
+ */
+async function fetchEsportsSubtype(subtype) {
+  console.log(`[SCRAPER] Fetching esports/${subtype} live matches...`);
+  const url = `${DATA_API}/v1/${subtype}/${SITE_NAME}/match/live`;
+  const raw = await safeFetch(url);
+  if (!raw) return null;
+  // Esports API returns data directly without {code, data} wrapper
+  if (Array.isArray(raw.matches)) return raw;
+  // Fallback: might have data wrapper
+  if (raw.data && Array.isArray(raw.data.matches)) return raw.data;
+  return null;
 }
 
 /**
@@ -129,11 +151,19 @@ async function fetchMatchStreams(matchSlug) {
 function mapSportEvents(data, sport, streamMap) {
   if (!data || !Array.isArray(data.matches)) return [];
 
-  // Build ID-indexed maps from the array-like objects
+  // Build ID-indexed maps — handle both array format (esports) and object format (other sports)
   const teamsMap = {};
   const compsMap = {};
-  Object.values(data.teams || {}).forEach(t => { if (t && t.id) teamsMap[t.id] = t; });
-  Object.values(data.competitions || {}).forEach(c => { if (c && c.id) compsMap[c.id] = c; });
+
+  const teamsSource = data.teams || {};
+  const compsSource = data.competitions || {};
+
+  // Normalize: if it's an array, index by .id; if it's an object, use Object.values
+  const teamsArr = Array.isArray(teamsSource) ? teamsSource : Object.values(teamsSource);
+  const compsArr = Array.isArray(compsSource) ? compsSource : Object.values(compsSource);
+
+  teamsArr.forEach(t => { if (t && t.id) teamsMap[t.id] = t; });
+  compsArr.forEach(c => { if (c && c.id) compsMap[c.id] = c; });
 
   const events = [];
 
@@ -154,7 +184,7 @@ function mapSportEvents(data, sport, streamMap) {
     const streams     = streamMap[matchSlug] || [];
     const primaryStream = streams[0] || '';
 
-    // Logos: Xoilac uses a CDN for team logos
+    // Logos: Xoilac uses a CDN for team logos (same CDN for all sports including esports)
     const logoBase = 'https://imgts.sportpulseapiz.com/images/football/teams';
     const homeLogo = homeTeam.id ? `${logoBase}/${homeTeam.id}.png` : '';
     const awayLogo = awayTeam.id ? `${logoBase}/${awayTeam.id}.png` : '';
@@ -195,9 +225,6 @@ async function run() {
   console.log('[XOILAC SCRAPER] Starting scrape for all sports...');
   const allEvents = [];
 
-  // Determine which matches are live/hot (status_id for playing) to fetch stream pages
-  // We'll do this per-sport
-  const SPORTS = ['football', 'basketball', 'tennis', 'badminton', 'volleyball', 'esports'];
   const LIVE_STATUS_IDS = {
     football:   new Set([2, 3, 4, 5, 6, 7]),
     basketball: new Set([2, 3, 4, 5, 6, 7, 8, 9]),
@@ -207,7 +234,10 @@ async function run() {
     esports:    new Set([2]),
   };
 
-  for (const sport of SPORTS) {
+  // ── Regular sports ─────────────────────────────────────────────────────
+  const REGULAR_SPORTS = ['football', 'basketball', 'tennis', 'badminton', 'volleyball'];
+
+  for (const sport of REGULAR_SPORTS) {
     const data = await fetchSportLive(sport);
     if (!data) {
       console.warn(`[SCRAPER] No data for ${sport}, skipping.`);
@@ -225,7 +255,6 @@ async function run() {
     console.log(`[SCRAPER] ${sport}: ${liveMatches.length} live/hot matches — fetching stream pages...`);
 
     const streamMap = {};
-    // Batch: max 5 at a time to avoid hammering server
     const BATCH = 5;
     for (let i = 0; i < liveMatches.length; i += BATCH) {
       const batch = liveMatches.slice(i, i + BATCH);
@@ -244,6 +273,80 @@ async function run() {
     console.log(`[SCRAPER] ${sport}: mapped ${events.length} events`);
 
     await sleep(500);
+  }
+
+  // ── Esports — fetch each sub-type (lol, csgo, dota2) separately ────────
+  console.log('[SCRAPER] Fetching esports (lol, csgo, dota2)...');
+
+  // Use flat arrays instead of objects to avoid Object.assign breaking array merges
+  const esportsCombined = {
+    matches: [],
+    teamsArr: [],   // flat array of team objects
+    compsArr: [],   // flat array of competition objects
+  };
+
+  for (const subtype of ESPORTS_SUBTYPES) {
+    const data = await fetchEsportsSubtype(subtype);
+    if (!data) {
+      console.warn(`[SCRAPER] No data for esports/${subtype}, skipping.`);
+      continue;
+    }
+
+    const matches = data.matches || [];
+    console.log(`[SCRAPER] esports/${subtype}: ${matches.length} matches found`);
+
+    esportsCombined.matches.push(...matches);
+
+    // teams and competitions are arrays — just push them in
+    const teamsRaw = data.teams || [];
+    const compsRaw = data.competitions || [];
+    const teamsArr = Array.isArray(teamsRaw) ? teamsRaw : Object.values(teamsRaw);
+    const compsArr = Array.isArray(compsRaw) ? compsRaw : Object.values(compsRaw);
+    esportsCombined.teamsArr.push(...teamsArr);
+    esportsCombined.compsArr.push(...compsArr);
+
+    await sleep(300);
+  }
+
+  if (esportsCombined.matches.length > 0) {
+    // Deduplicate teams and competitions by ID, then build a fake {matches, teams: {}, competitions: {}}
+    // shape compatible with mapSportEvents
+    const teamsById = {};
+    esportsCombined.teamsArr.forEach(t => { if (t && t.id) teamsById[t.id] = t; });
+    const compsById = {};
+    esportsCombined.compsArr.forEach(c => { if (c && c.id) compsById[c.id] = c; });
+
+    const esportsData = {
+      matches: esportsCombined.matches,
+      teams:   Object.values(teamsById),   // pass as array (mapSportEvents handles both)
+      competitions: Object.values(compsById),
+    };
+
+    console.log(`[SCRAPER] esports total: ${esportsData.matches.length} matches, ${Object.keys(teamsById).length} unique teams — fetching stream pages...`);
+
+    // Fetch streams for live/hot esports matches
+    const liveEsports = esportsData.matches.filter(m =>
+      (LIVE_STATUS_IDS.esports?.has(m.status_id) || m.is_hot === 1) && m.name
+    );
+
+    console.log(`[SCRAPER] esports: ${liveEsports.length} live/hot matches`);
+    const streamMap = {};
+    const BATCH = 5;
+    for (let i = 0; i < liveEsports.length; i += BATCH) {
+      const batch = liveEsports.slice(i, i + BATCH);
+      await Promise.all(batch.map(async m => {
+        const streams = await fetchMatchStreams(m.name);
+        if (streams.length > 0) {
+          streamMap[m.name] = streams;
+          console.log(`  [+] ${m.name}: ${streams.length} streams`);
+        }
+      }));
+      if (i + BATCH < liveEsports.length) await sleep(300);
+    }
+
+    const esportsEvents = mapSportEvents(esportsData, 'esports', streamMap);
+    allEvents.push(...esportsEvents);
+    console.log(`[SCRAPER] esports: mapped ${esportsEvents.length} events`);
   }
 
   // Save to file
