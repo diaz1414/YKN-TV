@@ -32,11 +32,11 @@ interface XoilacEvent {
 
 // Sport categories & display names (match Xoilac's sport_list)
 export const XOILAC_SPORTS = {
-  football: { label: 'Bóng Đá', icon: '⚽', color: '#22c55e' },
-  basketball: { label: 'Bóng Rổ', icon: '🏀', color: '#f97316' },
-  tennis: { label: 'Tennis', icon: '🎾', color: '#eab308' },
-  badminton: { label: 'Cầu Lông', icon: '🏸', color: '#a855f7' },
-  volleyball: { label: 'Bóng Chuyền', icon: '🏐', color: '#06b6d4' },
+  football: { label: 'Sepak Bola', icon: '⚽', color: '#22c55e' },
+  basketball: { label: 'Bola Basket', icon: '🏀', color: '#f97316' },
+  tennis: { label: 'Tenis', icon: '🎾', color: '#eab308' },
+  badminton: { label: 'Bulu Tangkis', icon: '🏸', color: '#a855f7' },
+  volleyball: { label: 'Bola Voli', icon: '🏐', color: '#06b6d4' },
   esports: { label: 'Esports', icon: '🎮', color: '#8b5cf6' },
 } as const;
 

@@ -18,12 +18,12 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   { id: 'wc',         label: 'Jadwal Utama',  icon: '🏆', color: '#f59e0b' },
-  { id: 'football',   label: 'Bóng Đá',       icon: '⚽', color: '#22c55e' },
-  { id: 'basketball', label: 'Bóng Rổ',       icon: '🏀', color: '#f97316' },
-  { id: 'tennis',     label: 'Tennis',         icon: '🎾', color: '#eab308' },
-  { id: 'badminton',  label: 'Cầu Lông',      icon: '🏸', color: '#a855f7' },
-  { id: 'volleyball', label: 'Bóng Chuyền',   icon: '🏐', color: '#06b6d4' },
-  { id: 'esports',    label: 'Esports',        icon: '🎮', color: '#8b5cf6' },
+  { id: 'football',   label: 'Sepak Bola',    icon: '⚽', color: '#22c55e' },
+  { id: 'basketball', label: 'Bola Basket',   icon: '🏀', color: '#f97316' },
+  { id: 'tennis',     label: 'Tenis',         icon: '🎾', color: '#eab308' },
+  { id: 'badminton',  label: 'Bulu Tangkis',  icon: '🏸', color: '#a855f7' },
+  { id: 'volleyball', label: 'Bola Voli',     icon: '🏐', color: '#06b6d4' },
+  { id: 'esports',    label: 'Esports',       icon: '🎮', color: '#8b5cf6' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────
@@ -122,11 +122,11 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   // ── Live counts per tab ───────────────────────────────────────────────
   const liveCounts: Record<SportTab, number> = {
     wc:         wcMatches.filter(m => m.status === 'live').length,
-    football:   xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bóng Đá')).length,
-    basketball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bóng Rổ')).length,
-    tennis:     xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Tennis')).length,
-    badminton:  xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Cầu Lông')).length,
-    volleyball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bóng Chuyền')).length,
+    football:   xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Sepak Bola')).length,
+    basketball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Basket')).length,
+    tennis:     xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Tenis')).length,
+    badminton:  xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bulu Tangkis')).length,
+    volleyball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Voli')).length,
     esports:    xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Esports')).length,
   };
 

@@ -72,6 +72,17 @@ const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[])
 };
 
 
+const MATCH_TABS = [
+  { id: 'all',        label: 'Semua',         icon: '📅' },
+  { id: 'wc',         label: 'Utama',         icon: '🏆' },
+  { id: 'football',   label: 'Sepak Bola',    icon: '⚽' },
+  { id: 'basketball', label: 'Bola Basket',   icon: '🏀' },
+  { id: 'tennis',     label: 'Tenis',         icon: '🎾' },
+  { id: 'badminton',  label: 'Bulu Tangkis',  icon: '🏸' },
+  { id: 'volleyball', label: 'Bola Voli',     icon: '🏐' },
+  { id: 'esports',    label: 'Esports',       icon: '🎮' },
+] as const;
+
 const ChannelDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,6 +99,7 @@ const ChannelDetail = () => {
     PUBLIC_LIVE_CHAT_ENABLED ? 'chat' : 'channels'
   );
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
+  const [matchSportTab, setMatchSportTab] = useState<'all' | 'wc' | 'football' | 'basketball' | 'tennis' | 'badminton' | 'volleyball' | 'esports'>('all');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
 
@@ -699,6 +711,11 @@ const ChannelDetail = () => {
       return { ...ch, matchInfo: info };
     })
     .filter(ch => ch.matchInfo.status !== 'finished')
+    .filter(ch => {
+      if (matchSportTab === 'all') return true;
+      if (matchSportTab === 'wc') return !ch.id.includes('xoilac-');
+      return ch.id.includes(`xoilac-${matchSportTab}-`);
+    })
     .sort((a, b) => {
       const aFinished = a.matchInfo.isFinishedMatch;
       const bFinished = b.matchInfo.isFinishedMatch;
@@ -1399,8 +1416,31 @@ const ChannelDetail = () => {
               )}
 
               {(!PUBLIC_LIVE_CHAT_ENABLED || activeTab !== 'chat') && (
-                <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1 min-h-0">
-                  {activeTab === 'channels' ? (
+                <>
+                  {activeTab === 'matches' && (
+                    <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2 select-none scrollbar-hide border-b border-white/5 shrink-0">
+                      {MATCH_TABS.map(tab => {
+                        const isActive = matchSportTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => setMatchSportTab(tab.id)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                              isActive
+                                ? 'bg-primary text-dark font-black shadow-md scale-105'
+                                : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5'
+                            }`}
+                          >
+                            <span>{tab.icon}</span>
+                            <span>{tab.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1 min-h-0">
+                    {activeTab === 'channels' ? (
                     filteredOtherChannels.length === 0 ? (
                       <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran</p>
                     ) : (
@@ -1512,7 +1552,8 @@ const ChannelDetail = () => {
 
                     )
                   )}
-                </div>
+                  </div>
+                </>
               )}
 
             </div>

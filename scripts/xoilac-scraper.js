@@ -33,11 +33,11 @@ const SPORT_APIS = {
 };
 
 const SPORT_LABELS = {
-  football:   'Bóng Đá',
-  basketball: 'Bóng Rổ',
-  tennis:     'Tennis',
-  badminton:  'Cầu Lông',
-  volleyball: 'Bóng Chuyền',
+  football:   'Sepak Bola',
+  basketball: 'Bola Basket',
+  tennis:     'Tenis',
+  badminton:  'Bulu Tangkis',
+  volleyball: 'Bola Voli',
   esports:    'Esports',
 };
 
