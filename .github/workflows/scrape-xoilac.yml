@@ -22,18 +22,19 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run Scraper
+      - name: Run Scrapers
         run: |
           node scripts/xoilac-scraper.js
+          node scripts/leaderboard-scraper.js
 
       - name: Copy Scraped Data to Src
         run: |
           cp data/xoilac-events.json src/data/xoilac-events.json
+          cp data/ykn-leaderboard.json src/data/ykn-leaderboard.json
 
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/xoilac-events.json src/data/xoilac-events.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update xoilac matches schedule" && git push)
+          git add data/xoilac-events.json src/data/xoilac-events.json data/ykn-leaderboard.json src/data/ykn-leaderboard.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update schedules and leaderboard" && git push)
