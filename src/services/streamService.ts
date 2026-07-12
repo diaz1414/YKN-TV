@@ -569,6 +569,16 @@ export const getLiveSportsData = async (): Promise<{
   // Inject custom channels that should always be present
   const customSports: ChannelEvent[] = [
     ...tvstreamSbsChannels,
+{
+      id_iptv: "custom-bein-sports-xtra",
+      nama_channel: "beIN SPORTS XTRA",
+      tagline: "Live Sports & Action",
+      jenis: "hls",
+      url_iptv: "https://iframe.st/rampages/ufc-329-mcgregor-vs-holloway-2",
+      gbr_base64: "",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Bein_sport_logo.png",
+      url_license: ""
+    },
     {
       id_iptv: "custom-bein-sports-xtra",
       nama_channel: "beIN SPORTS XTRA",
