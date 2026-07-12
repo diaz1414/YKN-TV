@@ -22,12 +22,18 @@ const BagiBagiLeaderboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
     setError(null);
 
-    const loadData = async () => {
+    const loadData = async (isSilent = false) => {
+      if (!isSilent) {
+        setLoading(true);
+      }
+      setError(null);
+
       // 1. Try fetching from the raw GitHub JSON (updates via cron)
       try {
         const bucket = Math.floor(Date.now() / 30000); // 30s cache bust
@@ -60,30 +66,6 @@ const BagiBagiLeaderboard: React.FC = () => {
         console.error('[Leaderboard] Local JSON fallback failed:', localErr.message);
       }
 
-      // 3. Last fallback: Direct proxy fetch from Saweria
-      try {
-        const url = import.meta.env.VITE_LEADERBOARD_API_URL || 
-          `/api/proxy/https/backend.saweria.co/widgets/leaderboard?stream_key=404af2c94a1776c1acb47060b881adf4`;
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          if (data && Array.isArray(data.data)) {
-            const mappedData = data.data.map((item: any) => ({
-              name: item.donator || 'Anonymous',
-              amount: Number(item.amount) || 0,
-              isVerified: item.is_user || false
-            }));
-            if (isMounted) {
-              setDonors(mappedData);
-              setLoading(false);
-              return;
-            }
-          }
-        }
-      } catch (directErr: any) {
-        console.error('[Leaderboard] Saweria API direct fetch fallback failed:', directErr.message);
-      }
-
       if (isMounted) {
         setError('Gagal memuat leaderboard donatur');
         setLoading(false);
@@ -92,12 +74,16 @@ const BagiBagiLeaderboard: React.FC = () => {
 
     loadData();
 
+    // Auto refresh every 60 seconds
+    const interval = setInterval(() => {
+      loadData(true);
+    }, 60000);
+
     return () => {
       isMounted = false;
+      clearInterval(interval);
     };
   }, [retryCount]);
-
-  // Format number with Indonesian dot separators
   const formatNumber = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
       minimumFractionDigits: 0,

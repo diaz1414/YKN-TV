@@ -7,7 +7,7 @@ import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
 // ─── Sport Category Tabs ─────────────────────────────────────────────────
-type SportTab = 'wc' | XoilacSport;
+type SportTab = 'all' | 'wc' | XoilacSport;
 
 interface TabDef {
   id: SportTab;
@@ -17,24 +17,25 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { id: 'wc',         label: 'Jadwal Utama',  icon: '🏆', color: '#f59e0b' },
-  { id: 'football',   label: 'Sepak Bola',    icon: '⚽', color: '#22c55e' },
-  { id: 'basketball', label: 'Bola Basket',   icon: '🏀', color: '#f97316' },
-  { id: 'tennis',     label: 'Tenis',         icon: '🎾', color: '#eab308' },
-  { id: 'badminton',  label: 'Bulu Tangkis',  icon: '🏸', color: '#a855f7' },
-  { id: 'volleyball', label: 'Bola Voli',     icon: '🏐', color: '#06b6d4' },
-  { id: 'esports',    label: 'Esports',       icon: '🎮', color: '#8b5cf6' },
+  // { id: 'all',        label: 'Semua',         icon: '📅', color: '#3b82f6' },
+  { id: 'wc', label: 'Jadwal Utama', icon: '🏆', color: '#f59e0b' },
+  { id: 'football', label: 'Sepak Bola', icon: '⚽', color: '#22c55e' },
+  { id: 'basketball', label: 'Bola Basket', icon: '🏀', color: '#f97316' },
+  { id: 'tennis', label: 'Tenis', icon: '🎾', color: '#eab308' },
+  { id: 'badminton', label: 'Bulu Tangkis', icon: '🏸', color: '#a855f7' },
+  { id: 'volleyball', label: 'Bola Voli', icon: '🏐', color: '#06b6d4' },
+  { id: 'esports', label: 'Esports', icon: '🎮', color: '#8b5cf6' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────
 const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, number> }) => {
-  const [activeTab, setActiveTab]     = useState<SportTab>('wc');
-  const [wcMatches, setWcMatches]     = useState<Match[]>([]);
+  const [activeTab, setActiveTab] = useState<SportTab>('all');
+  const [wcMatches, setWcMatches] = useState<Match[]>([]);
   const [xoilacMatches, setXoilacMatches] = useState<Match[]>([]);
-  const [loading, setLoading]         = useState(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const lastWcSig     = useRef<string>('');
+  const lastWcSig = useRef<string>('');
   const lastXoilacSig = useRef<string>('');
 
   // ── Fetch helpers ──────────────────────────────────────────────────────
@@ -42,7 +43,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     if (!silent) setLoading(true);
     try {
       const data = await getTodayMatches(true);
-      const sig  = JSON.stringify(data);
+      const sig = JSON.stringify(data);
       if (sig !== lastWcSig.current) {
         lastWcSig.current = sig;
         startTransition(() => setWcMatches(data));
@@ -58,7 +59,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     if (!silent && activeTab !== 'wc') setLoading(true);
     try {
       const data = await getXoilacMatches(true);
-      const sig  = JSON.stringify(data);
+      const sig = JSON.stringify(data);
       if (sig !== lastXoilacSig.current) {
         lastXoilacSig.current = sig;
         startTransition(() => setXoilacMatches(data));
@@ -91,7 +92,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
       mounted = false;
       clearInterval(interval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Loading trigger when tab switches ─────────────────────────────────
@@ -103,6 +104,9 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
 
   // ── Displayed matches for current tab ─────────────────────────────────
   const displayedMatches: Match[] = (() => {
+    if (activeTab === 'all') {
+      return [...wcMatches, ...xoilacMatches];
+    }
     if (activeTab === 'wc') return wcMatches;
 
     const sport = activeTab as XoilacSport;
@@ -121,13 +125,14 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
 
   // ── Live counts per tab ───────────────────────────────────────────────
   const liveCounts: Record<SportTab, number> = {
-    wc:         wcMatches.filter(m => m.status === 'live').length,
-    football:   xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Sepak Bola')).length,
+    all: wcMatches.filter(m => m.status === 'live').length + xoilacMatches.filter(m => m.status === 'live').length,
+    wc: wcMatches.filter(m => m.status === 'live').length,
+    football: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Sepak Bola')).length,
     basketball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Basket')).length,
-    tennis:     xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Tenis')).length,
-    badminton:  xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bulu Tangkis')).length,
+    tennis: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Tenis')).length,
+    badminton: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bulu Tangkis')).length,
     volleyball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Voli')).length,
-    esports:    xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Esports')).length,
+    esports: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Esports')).length,
   };
 
   // ── Render ─────────────────────────────────────────────────────────────
