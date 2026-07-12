@@ -73,14 +73,14 @@ const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[])
 
 
 const MATCH_TABS = [
-  { id: 'all',        label: 'Semua',         icon: '📅' },
-  { id: 'wc',         label: 'Utama',         icon: '🏆' },
-  { id: 'football',   label: 'Sepak Bola',    icon: '⚽' },
-  { id: 'basketball', label: 'Bola Basket',   icon: '🏀' },
-  { id: 'tennis',     label: 'Tenis',         icon: '🎾' },
-  { id: 'badminton',  label: 'Bulu Tangkis',  icon: '🏸' },
-  { id: 'volleyball', label: 'Bola Voli',     icon: '🏐' },
-  { id: 'esports',    label: 'Esports',       icon: '🎮' },
+  // { id: 'all',        label: 'Semua',         icon: '📅' },
+  { id: 'wc', label: 'Utama', icon: '🏆' },
+  { id: 'football', label: 'Sepak Bola', icon: '⚽' },
+  { id: 'basketball', label: 'Bola Basket', icon: '🏀' },
+  { id: 'tennis', label: 'Tenis', icon: '🎾' },
+  { id: 'badminton', label: 'Bulu Tangkis', icon: '🏸' },
+  { id: 'volleyball', label: 'Bola Voli', icon: '🏐' },
+  { id: 'esports', label: 'Esports', icon: '🎮' },
 ] as const;
 
 const ChannelDetail = () => {
@@ -1425,11 +1425,10 @@ const ChannelDetail = () => {
                           <button
                             key={tab.id}
                             onClick={() => setMatchSportTab(tab.id)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                              isActive
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 cursor-pointer ${isActive
                                 ? 'bg-primary text-dark font-black shadow-md scale-105'
                                 : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5'
-                            }`}
+                              }`}
                           >
                             <span>{tab.icon}</span>
                             <span>{tab.label}</span>
@@ -1441,117 +1440,117 @@ const ChannelDetail = () => {
 
                   <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1 min-h-0">
                     {activeTab === 'channels' ? (
-                    filteredOtherChannels.length === 0 ? (
-                      <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran</p>
-                    ) : (
-                      filteredOtherChannels.map((ch) => {
-                        const isActive = ch.id === stream.id;
-                        return (
-                          <div
-                            key={ch.id}
-                            onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}`); } }}
-                            tabIndex={0}
-                            role="button"
-                            className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
-                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                              : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
-                              }`}
-                          >
-                            <div className="flex items-center gap-3.5 truncate">
-                              {ch.isBase64Logo && ch.logo ? (
-                                <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300">
-                                  <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
-                                </div>
-                              ) : (
-                                <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300">
-                                  <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
-                                </div>
-                              )}
-                              <div className="truncate">
-                                <h5 className={`text-xs sm:text-sm font-black transition-colors truncate ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>{ch.name}</h5>
-                                <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">{ch.subName}</p>
-                              </div>
-                            </div>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive
-                              ? 'bg-primary text-dark scale-105'
-                              : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
-                              }`}>
-                              <Play size={12} fill={isActive ? 'currentColor' : 'none'} className="ml-0.5" />
-                            </div>
-                          </div>
-                        );
-                      })
-                    )
-                  ) : (
-                    otherMatches.length === 0 ? (
-                      <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada jadwal pertandingan</p>
-                    ) : (
-                      otherMatches.map((ch) => {
-                        const isLive = ch.matchInfo.status === 'playable';
-                        const isSoon = ch.matchInfo.isStartingSoon;
-                        const isActive = ch.id === stream.id;
-                        const isFinished = ch.matchInfo.isFinishedMatch;
-                        return (
-                          <div
-                            key={ch.id}
-                            onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}-${ch.id}`); } }}
-                            tabIndex={0}
-                            role="button"
-                            className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
-                              ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                              : isLive && !isFinished
-                                ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
-                                : isSoon
-                                  ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
-                                  : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
-                              }`}
-                          >
-                            <div className="flex items-center -space-x-3 shrink-0 select-none">
-                              <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md group-hover:border-primary/20 transition-all">
-                                <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
-                              </div>
-                              <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10 group-hover:border-primary/20 transition-all">
-                                <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
-                              </div>
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                              <h5 className={`text-xs font-black transition-colors leading-snug line-clamp-2 lg:line-clamp-1 ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>
-                                {ch.name}
-                              </h5>
-                              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">{ch.subName}</p>
-                                {isLive && !isFinished ? (
-                                  <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
-                                    LIVE
-                                  </span>
+                      filteredOtherChannels.length === 0 ? (
+                        <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada saluran</p>
+                      ) : (
+                        filteredOtherChannels.map((ch) => {
+                          const isActive = ch.id === stream.id;
+                          return (
+                            <div
+                              key={ch.id}
+                              onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}`); } }}
+                              tabIndex={0}
+                              role="button"
+                              className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
+                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                                : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
+                                }`}
+                            >
+                              <div className="flex items-center gap-3.5 truncate">
+                                {ch.isBase64Logo && ch.logo ? (
+                                  <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                    <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
+                                  </div>
                                 ) : (
-                                  <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${isFinished
-                                    ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
-                                    : isSoon
-                                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                      : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
-                                    }`}>
-                                    {ch.matchInfo.timeLeft}
-                                  </span>
+                                  <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                    <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
+                                  </div>
                                 )}
+                                <div className="truncate">
+                                  <h5 className={`text-xs sm:text-sm font-black transition-colors truncate ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>{ch.name}</h5>
+                                  <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">{ch.subName}</p>
+                                </div>
+                              </div>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive
+                                ? 'bg-primary text-dark scale-105'
+                                : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
+                                }`}>
+                                <Play size={12} fill={isActive ? 'currentColor' : 'none'} className="ml-0.5" />
                               </div>
                             </div>
+                          );
+                        })
+                      )
+                    ) : (
+                      otherMatches.length === 0 ? (
+                        <p className="text-zinc-600 text-xs font-bold text-center py-10 uppercase tracking-wider select-none">Tidak ada jadwal pertandingan</p>
+                      ) : (
+                        otherMatches.map((ch) => {
+                          const isLive = ch.matchInfo.status === 'playable';
+                          const isSoon = ch.matchInfo.isStartingSoon;
+                          const isActive = ch.id === stream.id;
+                          const isFinished = ch.matchInfo.isFinishedMatch;
+                          return (
+                            <div
+                              key={ch.id}
+                              onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}-${ch.id}`); } }}
+                              tabIndex={0}
+                              role="button"
+                              className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
+                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                                : isLive && !isFinished
+                                  ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
+                                  : isSoon
+                                    ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
+                                    : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
+                                }`}
+                            >
+                              <div className="flex items-center -space-x-3 shrink-0 select-none">
+                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md group-hover:border-primary/20 transition-all">
+                                  <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
+                                </div>
+                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10 group-hover:border-primary/20 transition-all">
+                                  <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
+                                </div>
+                              </div>
 
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive || (isLive && !isFinished)
-                              ? 'bg-primary text-dark group-hover:scale-105'
-                              : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
-                              }`}>
-                              <Play size={12} className="ml-0.5" fill={isActive || (isLive && !isFinished) ? 'currentColor' : 'none'} />
+                              <div className="flex-1 min-w-0">
+                                <h5 className={`text-xs font-black transition-colors leading-snug line-clamp-2 lg:line-clamp-1 ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>
+                                  {ch.name}
+                                </h5>
+                                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">{ch.subName}</p>
+                                  {isLive && !isFinished ? (
+                                    <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
+                                      LIVE
+                                    </span>
+                                  ) : (
+                                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${isFinished
+                                      ? 'bg-zinc-800/30 text-zinc-500 border border-zinc-700/10'
+                                      : isSoon
+                                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                        : 'bg-zinc-900/50 text-zinc-400 border border-zinc-800/35'
+                                      }`}>
+                                      {ch.matchInfo.timeLeft}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive || (isLive && !isFinished)
+                                ? 'bg-primary text-dark group-hover:scale-105'
+                                : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
+                                }`}>
+                                <Play size={12} className="ml-0.5" fill={isActive || (isLive && !isFinished) ? 'currentColor' : 'none'} />
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })
+                          );
+                        })
 
-                    )
-                  )}
+                      )
+                    )}
                   </div>
                 </>
               )}
