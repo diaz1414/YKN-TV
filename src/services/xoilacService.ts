@@ -32,41 +32,41 @@ interface XoilacEvent {
 
 // Sport categories & display names (match Xoilac's sport_list)
 export const XOILAC_SPORTS = {
-  football:   { label: 'Bóng Đá',    icon: '⚽', color: '#22c55e' },
-  basketball: { label: 'Bóng Rổ',    icon: '🏀', color: '#f97316' },
-  tennis:     { label: 'Tennis',      icon: '🎾', color: '#eab308' },
-  badminton:  { label: 'Cầu Lông',   icon: '🏸', color: '#a855f7' },
-  volleyball: { label: 'Bóng Chuyền',icon: '🏐', color: '#06b6d4' },
-  esports:    { label: 'Esports',     icon: '🎮', color: '#8b5cf6' },
+  football: { label: 'Bóng Đá', icon: '⚽', color: '#22c55e' },
+  basketball: { label: 'Bóng Rổ', icon: '🏀', color: '#f97316' },
+  tennis: { label: 'Tennis', icon: '🎾', color: '#eab308' },
+  badminton: { label: 'Cầu Lông', icon: '🏸', color: '#a855f7' },
+  volleyball: { label: 'Bóng Chuyền', icon: '🏐', color: '#06b6d4' },
+  esports: { label: 'Esports', icon: '🎮', color: '#8b5cf6' },
 } as const;
 
 export type XoilacSport = keyof typeof XOILAC_SPORTS;
 
 // Status IDs considered "live" per sport
 const LIVE_STATUS_IDS: Record<string, Set<number>> = {
-  football:   new Set([2, 3, 4, 5, 6, 7]),
+  football: new Set([2, 3, 4, 5, 6, 7]),
   basketball: new Set([2, 3, 4, 5, 6, 7, 8, 9]),
-  tennis:     new Set([3, 51, 52, 53, 54, 55]),
-  badminton:  new Set([3, 51, 331, 52, 332, 53, 333, 54, 334, 55]),
+  tennis: new Set([3, 51, 52, 53, 54, 55]),
+  badminton: new Set([3, 51, 331, 52, 332, 53, 333, 54, 334, 55]),
   volleyball: new Set([3, 432, 434, 436, 438, 440]),
-  esports:    new Set([2]),
+  esports: new Set([2]),
 };
 
 // Status IDs considered "finished" per sport
 const FINISHED_STATUS_IDS: Record<string, Set<number>> = {
-  football:   new Set([8, 10, 11, 12]),
+  football: new Set([8, 10, 11, 12]),
   basketball: new Set([10, 11, 12, 13, 14]),
-  tennis:     new Set([16, 100, 20, 21]),
-  badminton:  new Set([16, 100, 20, 21]),
+  tennis: new Set([16, 100, 20, 21]),
+  badminton: new Set([16, 100, 20, 21]),
   volleyball: new Set([16, 100]),
-  esports:    new Set([3, 12]),
+  esports: new Set([3, 12]),
 };
 
 const parseJadwal = parseJadwalDate;
 const formatMatchTime = formatMatchTimeForUserZone;
 
 // ─── RAW CDN URL (mirrors of xoilac-events.json pushed to GitHub) ──────────
-const RAW_XOILAC_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/xoilac-events.dat';
+const RAW_XOILAC_URL = 'https://raw.githubusercontent.com/diaz1414/YKN-TV/main/data/xoilac-events.json';
 
 async function fetchXoilacEventsRemote(): Promise<XoilacEvent[] | null> {
   try {
@@ -83,11 +83,11 @@ async function fetchXoilacEventsRemote(): Promise<XoilacEvent[] | null> {
 
 function mapEventToMatch(ev: XoilacEvent): Match {
   const start = parseJadwal(ev.jadwal_event);
-  const stop  = parseJadwal(ev.jadwal_stop);
-  const now   = new Date();
+  const stop = parseJadwal(ev.jadwal_stop);
+  const now = new Date();
 
   const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
-  const playableEnd   = new Date(stop.getTime() + 30 * 60 * 1000);
+  const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
 
   let status: Match['status'] = 'upcoming';
 
