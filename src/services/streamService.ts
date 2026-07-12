@@ -269,7 +269,6 @@ export const buildServers = (
         forceProxy: false,
       });
     }
-    // Also add the xoilac watch page as fallback iframe
     return servers;
   }
 
@@ -969,7 +968,7 @@ export const getLiveSportsData = async (): Promise<{
     }
   }
 
-  // ── Inject Xoilac multi-sport events (so watch page can find them) ──────
+  // ── Inject Xoilac multi-sport events (so YKN watch routes can find them) ──────
   try {
     const xoilacRaw = xoilacEventsBackup as any[];
     for (const item of xoilacRaw) {
@@ -978,16 +977,6 @@ export const getLiveSportsData = async (): Promise<{
       seenEvents.add(key);
 
       const servers = buildServers(item.url_iptv || '', item.url_license || '', item.jenis || 'xoilac');
-
-      // If no stream URL yet, add xoilac watch page as iframe fallback
-      if (servers.length === 0 && item.xoilac_url) {
-        servers.push({
-          name: 'Server 1 (Xoilac)',
-          url: item.xoilac_url,
-          type: 'iframe',
-          forceProxy: false,
-        });
-      }
 
       mappedEvents.push({
         id: item.id_event,

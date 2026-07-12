@@ -1671,10 +1671,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       <div className="aspect-video bg-zinc-950/85 backdrop-blur-xl border border-white/5 rounded-[1.5rem] sm:rounded-3xl flex flex-col items-center justify-center p-6 text-center select-none space-y-4 relative overflow-hidden">
         <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-netflix-red/5 rounded-full blur-3xl pointer-events-none" />
         <AlertTriangle className="text-netflix-red" size={44} />
-        <h4 className="text-sm sm:text-base font-black uppercase font-display text-white">Siaran Tidak Didukung di iOS</h4>
+        <h4 className="text-sm sm:text-base font-black uppercase font-display text-white">Siaran Belum Tersedia</h4>
         <p className="text-zinc-400 text-[10px] sm:text-xs font-bold max-w-xs sm:max-w-sm leading-relaxed">
-          Pertandingan ini hanya tersedia dalam format DASH/DRM yang tidak didukung oleh perangkat Apple iOS (Safari).
-          Silakan coba tonton menggunakan perangkat Android atau Laptop/PC.
+          Server streaming bersih untuk pertandingan ini belum tersedia. Coba pilih jadwal lain atau cek lagi beberapa saat.
         </p>
       </div>
     );
