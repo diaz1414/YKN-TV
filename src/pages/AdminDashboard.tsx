@@ -4,6 +4,7 @@ import MainLayout from '../layouts/MainLayout';
 import { ChevronLeft, ChevronRight, Key, ShieldAlert, RefreshCw, LogOut, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X, ChevronDown, Check } from 'lucide-react';
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
+import { XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
 import yknwcLogo from '../assets/yknwc-logo.png';
 import { io } from 'socket.io-client';
 import { supabase } from '../services/supabase';
@@ -75,6 +76,44 @@ const getMatchStatus = (ch: PlayableStream) => {
     }
     return { status: 'playable' as const, timeLeft: 'LIVE', isFinishedMatch: false };
   }
+};
+
+type MatchCategoryTab = 'all' | 'main' | XoilacSport;
+
+const MATCH_CATEGORY_TABS: Array<{
+  id: MatchCategoryTab;
+  label: string;
+  icon: string;
+  color: string;
+}> = [
+    { id: 'all', label: 'Semua', icon: '•', color: '#eab308' },
+    { id: 'main', label: 'Utama', icon: '🏆', color: '#f59e0b' },
+    ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
+      id: id as XoilacSport,
+      label: meta.label,
+      icon: meta.icon,
+      color: meta.color,
+    })),
+  ];
+
+const isExternalScheduleMatch = (streamId?: string) => (
+  (streamId || '').includes('esportex-') || (streamId || '').includes('xoilac-')
+);
+
+const matchBelongsToCategory = (match: PlayableStream, category: MatchCategoryTab): boolean => {
+  if (category === 'all') return true;
+  if (category === 'main') return !isExternalScheduleMatch(match.id);
+
+  const sport = XOILAC_SPORTS[category];
+  const label = sport?.label.toLowerCase() ?? category.toLowerCase();
+  const text = `${match.id} ${match.name} ${match.subName || ''}`.toLowerCase();
+
+  return (
+    text.includes(`esportex-${category}-`) ||
+    text.includes(`xoilac-${category}-`) ||
+    text.includes(label) ||
+    text.includes(category.toLowerCase())
+  );
 };
 
 interface SearchableSelectOption {
@@ -405,6 +444,7 @@ const AdminDashboard = () => {
   const [monitorTab, setMonitorTab] = useState<
     'all' | 'channels' | 'matches' | 'users' | 'announcement' | 'servers' | 'schedule'
   >('all');
+  const [matchCategoryTab, setMatchCategoryTab] = useState<MatchCategoryTab>('all');
 
   // Announcement States
   const [annMessage, setAnnMessage] = useState('');
@@ -1165,12 +1205,22 @@ const AdminDashboard = () => {
   const filteredChannels = channels.filter(ch => {
     if (monitorTab === 'channels' && !ch.isChannel) return false;
     if (monitorTab === 'matches' && ch.isChannel) return false;
+    if (monitorTab === 'matches' && !matchBelongsToCategory(ch, matchCategoryTab)) return false;
 
     return (
       ch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (ch.subName && ch.subName.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   });
+
+  const matchCategoryCounts = MATCH_CATEGORY_TABS.reduce<Record<MatchCategoryTab, number>>((acc, tab) => {
+    acc[tab.id] = channels.filter(ch => !ch.isChannel && matchBelongsToCategory(ch, tab.id)).length;
+    return acc;
+  }, {} as Record<MatchCategoryTab, number>);
+
+  const visibleMatchCategoryTabs = MATCH_CATEGORY_TABS.filter(tab => (
+    tab.id === 'all' || tab.id === 'main' || matchCategoryCounts[tab.id] > 0
+  ));
 
   // Total active rooms and viewers sum
   const activeRoomsCount = Object.keys(monitoringData).length;
@@ -2979,6 +3029,39 @@ const AdminDashboard = () => {
                           </button>
                         )}
                       </div>
+
+                      {monitorTab === 'matches' && (
+                        <div className="flex flex-row overflow-x-auto bg-zinc-950/40 p-1.5 rounded-xl border border-white/5 gap-1.5 select-none w-full custom-scrollbar pb-2 sm:pb-1">
+                          {visibleMatchCategoryTabs.map((tab) => {
+                            const isActive = matchCategoryTab === tab.id;
+                            const count = matchCategoryCounts[tab.id] || 0;
+
+                            return (
+                              <button
+                                key={tab.id}
+                                onClick={() => {
+                                  setMatchCategoryTab(tab.id);
+                                  setSelectedChannel(null);
+                                }}
+                                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-[8.5px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer border ${isActive
+                                  ? 'text-dark border-transparent shadow-lg'
+                                  : 'text-zinc-400 hover:text-white hover:bg-white/5 border-white/5'
+                                  }`}
+                                style={isActive ? { background: tab.color, boxShadow: `0 0 14px ${tab.color}22` } : undefined}
+                              >
+                                <span>{tab.icon}</span>
+                                <span>{tab.label}</span>
+                                <span className={`rounded-full px-1.5 py-0.5 text-[7px] font-black ${isActive
+                                  ? 'bg-black/20 text-dark'
+                                  : 'bg-white/5 text-zinc-500'
+                                  }`}>
+                                  {count}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
 
                       {loadingData ? (
                         <div className="flex flex-col items-center justify-center py-16 gap-3">
