@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
-// ─── Sport Category Tabs ─────────────────────────────────────────────────
 type SportTab = 'wc' | XoilacSport;
 
 interface TabDef {
@@ -18,15 +17,24 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   { id: 'wc', label: 'Jadwal Utama', icon: '🏆', color: '#f59e0b' },
-  { id: 'football', label: 'Sepak Bola', icon: '⚽', color: '#22c55e' },
-  { id: 'basketball', label: 'Bola Basket', icon: '🏀', color: '#f97316' },
-  { id: 'tennis', label: 'Tenis', icon: '🎾', color: '#eab308' },
-  { id: 'badminton', label: 'Bulu Tangkis', icon: '🏸', color: '#a855f7' },
-  { id: 'volleyball', label: 'Bola Voli', icon: '🏐', color: '#06b6d4' },
-  { id: 'esports', label: 'Esports', icon: '🎮', color: '#8b5cf6' },
+  ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
+    id: id as XoilacSport,
+    label: meta.label,
+    icon: meta.icon,
+    color: meta.color,
+  })),
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────
+const matchBelongsToSport = (match: Match, sport: XoilacSport): boolean => {
+  const sportLabel = XOILAC_SPORTS[sport]?.label.toLowerCase() ?? sport.toLowerCase();
+  const providerPrefixes = [`esportex-${sport}-`, `xoilac-${sport}-`];
+
+  return (
+    providerPrefixes.some((prefix) => match.id.includes(prefix)) ||
+    match.league.name.toLowerCase().includes(sportLabel)
+  );
+};
+
 const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, number> }) => {
   const [activeTab, setActiveTab] = useState<SportTab>('wc');
   const [wcMatches, setWcMatches] = useState<Match[]>([]);
@@ -37,7 +45,6 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   const lastWcSig = useRef<string>('');
   const lastXoilacSig = useRef<string>('');
 
-  // ── Fetch helpers ──────────────────────────────────────────────────────
   const fetchWc = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
@@ -64,13 +71,12 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         startTransition(() => setXoilacMatches(data));
       }
     } catch (err) {
-      console.warn('[MatchSchedule] Failed to refresh Xoilac matches:', err);
+      console.warn('[MatchSchedule] Failed to refresh Esportex matches:', err);
     } finally {
       if (!silent && activeTab !== 'wc') setLoading(false);
     }
   };
 
-  // ── Initial + interval refresh ─────────────────────────────────────────
   useEffect(() => {
     let mounted = true;
 
@@ -94,46 +100,39 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Loading trigger when tab switches ─────────────────────────────────
   useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(t);
   }, [activeTab]);
 
-  // ── Displayed matches for current tab ─────────────────────────────────
   const displayedMatches: Match[] = (() => {
     if (activeTab === 'wc') return wcMatches;
 
     const sport = activeTab as XoilacSport;
-    const sportLabel = XOILAC_SPORTS[sport]?.label ?? sport;
-
-    return xoilacMatches.filter(m =>
-      m.league.name.toLowerCase().includes(sportLabel.toLowerCase())
-    );
+    return xoilacMatches.filter(m => matchBelongsToSport(m, sport));
   })();
 
-  // ── Navigation ────────────────────────────────────────────────────────
   const handleMatchClick = (match: Match) => {
     const slugName = `${match.homeTeam.name} vs ${match.awayTeam.name}`;
     navigate(`/watch/${slugify(slugName)}-${match.id}`);
   };
 
-  // ── Live counts per tab ───────────────────────────────────────────────
-  const liveCounts: Record<SportTab, number> = {
-    wc: wcMatches.filter(m => m.status === 'live').length,
-    football: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Sepak Bola')).length,
-    basketball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Basket')).length,
-    tennis: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Tenis')).length,
-    badminton: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bulu Tangkis')).length,
-    volleyball: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Bola Voli')).length,
-    esports: xoilacMatches.filter(m => m.status === 'live' && m.league.name.includes('Esports')).length,
-  };
+  const liveCounts = TABS.reduce<Record<SportTab, number>>((counts, tab) => {
+    if (tab.id === 'wc') {
+      counts[tab.id] = wcMatches.filter(m => m.status === 'live').length;
+      return counts;
+    }
 
-  // ── Render ─────────────────────────────────────────────────────────────
+    counts[tab.id] = xoilacMatches.filter(m => (
+      m.status === 'live' && matchBelongsToSport(m, tab.id as XoilacSport)
+    )).length;
+
+    return counts;
+  }, {} as Record<SportTab, number>);
+
   return (
     <section className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5 shadow-md">
@@ -150,7 +149,6 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         </div>
       </div>
 
-      {/* Sport Category Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
         {TABS.map(tab => {
           const isActive = activeTab === tab.id;
@@ -186,7 +184,6 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         })}
       </div>
 
-      {/* Match Grid */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4 bg-zinc-950/40 border border-white/5 rounded-[2rem] animate-pulse">
           <Loader2 className="text-primary animate-spin" size={36} />

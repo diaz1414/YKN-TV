@@ -1,15 +1,35 @@
 /**
  * xoilacService.ts
- * Fetches and maps multi-sport match schedules scraped from Xoilacz (fameandpartners.com)
- * into the Match interface used by matchService.
+ * Legacy service name kept for existing imports, but the data source is now
+ * EmbedSportex: https://api.esportex.site/api/streams
  */
 
-import localXoilacEvents from '../data/xoilac-events.json';
 import { type Match } from './matchService';
 import { parseJadwalDate, formatMatchTimeForUserZone } from '../utils/indonesiaTime';
 
-// ─── Raw event shape from xoilac-events.json ──────────────────────────────
-interface XoilacEvent {
+interface EsportexIframe {
+  server?: string;
+  url?: string;
+}
+
+interface EsportexMatch {
+  slug?: string;
+  tag?: string;
+  kickoff?: string;
+  endTime?: string;
+  poster?: string | null;
+  iframes?: EsportexIframe[];
+  league?: string;
+}
+
+interface EsportexStreamsResponse {
+  success?: boolean;
+  timestamp?: number;
+  READ_ME?: string;
+  [key: string]: unknown;
+}
+
+export interface EsportexEvent {
   id_event: string;
   nama_event: string;
   player_1: string;
@@ -19,180 +39,325 @@ interface XoilacEvent {
   jadwal_event: string;
   jadwal_stop: string;
   url_iptv: string;
-  jenis: string;
-  sport_type: string;
-  xoilac_slug?: string;
-  xoilac_url?: string;
-  home_scores?: number[];
-  away_scores?: number[];
-  status_id?: number;
-  is_hot?: number;
-  streams_all?: string[];
+  url_license?: string;
+  jenis: 'iframe';
+  sport_type: XoilacSport;
+  poster?: string;
+  esportex_slug?: string;
+  deskripsi?: string;
+  deskripsi_en?: string;
+  streams_all: Array<{
+    server: string;
+    url: string;
+  }>;
 }
 
-// Sport categories & display names (match Xoilac's sport_list)
+interface SportMeta {
+  label: string;
+  icon: string;
+  color: string;
+}
+
+// Export name kept for UI compatibility. Keys mirror EmbedSportex categories.
 export const XOILAC_SPORTS = {
   football: { label: 'Sepak Bola', icon: '⚽', color: '#22c55e' },
   basketball: { label: 'Bola Basket', icon: '🏀', color: '#f97316' },
-  tennis: { label: 'Tenis', icon: '🎾', color: '#eab308' },
+  amfootball: { label: 'American Football', icon: '🏈', color: '#84cc16' },
+  baseball: { label: 'Baseball', icon: '⚾', color: '#ef4444' },
   badminton: { label: 'Bulu Tangkis', icon: '🏸', color: '#a855f7' },
   volleyball: { label: 'Bola Voli', icon: '🏐', color: '#06b6d4' },
-  esports: { label: 'Esports', icon: '🎮', color: '#8b5cf6' },
-} as const;
+  tennis: { label: 'Tenis', icon: '🎾', color: '#eab308' },
+  race: { label: 'Balapan', icon: '🏁', color: '#64748b' },
+  fight: { label: 'Combat', icon: '🥊', color: '#f43f5e' },
+  hockey: { label: 'Hockey', icon: '🏒', color: '#38bdf8' },
+  rugby: { label: 'Rugby', icon: '🏉', color: '#14b8a6' },
+  cricket: { label: 'Cricket', icon: '🏏', color: '#10b981' },
+  other: { label: 'Lainnya', icon: '🎯', color: '#f59e0b' },
+} as const satisfies Record<string, SportMeta>;
 
 export type XoilacSport = keyof typeof XOILAC_SPORTS;
 
-// Status IDs considered "live" per sport
-const LIVE_STATUS_IDS: Record<string, Set<number>> = {
-  football: new Set([2, 3, 4, 5, 6, 7]),
-  basketball: new Set([2, 3, 4, 5, 6, 7, 8, 9]),
-  tennis: new Set([3, 51, 52, 53, 54, 55]),
-  badminton: new Set([3, 51, 331, 52, 332, 53, 333, 54, 334, 55]),
-  volleyball: new Set([3, 432, 434, 436, 438, 440]),
-  esports: new Set([2]),
-};
+export const ESPORTEX_STREAMS_URL = 'https://api.esportex.site/api/streams';
 
-// Status IDs considered "finished" per sport
-const FINISHED_STATUS_IDS: Record<string, Set<number>> = {
-  football: new Set([8, 10, 11, 12]),
-  basketball: new Set([10, 11, 12, 13, 14]),
-  tennis: new Set([16, 100, 20, 21]),
-  badminton: new Set([16, 100, 20, 21]),
-  volleyball: new Set([16, 100]),
-  esports: new Set([3, 12]),
-};
+const ESPORTEX_SPORT_KEYS = Object.keys(XOILAC_SPORTS) as XoilacSport[];
+const CACHE_TTL = 30_000;
+const FETCH_TIMEOUT_MS = 8_000;
+const DEFAULT_EVENT_DURATION_MS = 3 * 60 * 60 * 1000;
+const FALLBACK_LOGO = '/favicon.svg';
 
 const parseJadwal = parseJadwalDate;
 const formatMatchTime = formatMatchTimeForUserZone;
 
-// ─── RAW CDN URL (mirrors of xoilac-events.json pushed to GitHub) ──────────
-const RAW_XOILAC_URL = 'https://raw.githubusercontent.com/diaz1414/YKN-TV/main/data/xoilac-events.json';
+let cachedEsportexEvents: EsportexEvent[] | null = null;
+let esportexCacheTime = 0;
+let esportexInFlight: Promise<EsportexEvent[]> | null = null;
+let cachedXoilacMatches: Match[] | null = null;
+let xoilacCacheTime = 0;
 
-async function fetchXoilacEventsRemote(): Promise<XoilacEvent[] | null> {
-  try {
-    const bucket = Math.floor(Date.now() / 30000); // cache bust every 30s
-    const res = await fetch(`${RAW_XOILAC_URL}?t=${bucket}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (Array.isArray(data)) return data as XoilacEvent[];
-  } catch (err) {
-    console.warn('[XoilacService] Remote fetch failed, using local data:', err);
+const cleanText = (value?: string | null): string => (
+  (value || '').replace(/\s+/g, ' ').trim()
+);
+
+const makeSafeSlug = (value: string): string => (
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+);
+
+const formatDateTimeInWib = (date: Date): string => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day} ${byType.hour}:${byType.minute}`;
+};
+
+const getEndTime = (match: EsportexMatch): string => {
+  const explicitEnd = cleanText(match.endTime);
+  if (explicitEnd) return explicitEnd;
+
+  const start = parseJadwal(match.kickoff);
+  if (isNaN(start.getTime())) return '';
+
+  return formatDateTimeInWib(new Date(start.getTime() + DEFAULT_EVENT_DURATION_MS));
+};
+
+const splitMatchTitle = (
+  title: string,
+  fallbackLeague: string,
+  fallbackSportLabel: string
+): { home: string; away: string } => {
+  const cleanTitle = cleanText(title);
+  const separators = [/\s+vs\.?\s+/i, /\s+v\.?\s+/i, /\s+@\s+/i];
+
+  for (const separator of separators) {
+    const parts = cleanTitle.split(separator).map(cleanText).filter(Boolean);
+    if (parts.length === 2) {
+      return { home: parts[0], away: parts[1] };
+    }
   }
-  return null;
+
+  return {
+    home: cleanTitle || 'Live Event',
+    away: fallbackLeague || fallbackSportLabel || 'Live Event',
+  };
+};
+
+const getLeagueName = (match: EsportexMatch, sport: XoilacSport): string => {
+  const sportLabel = XOILAC_SPORTS[sport].label;
+  const league = cleanText(match.league) || sportLabel;
+
+  return league.toLowerCase().includes(sportLabel.toLowerCase())
+    ? league
+    : `${sportLabel} - ${league}`;
+};
+
+const toStreams = (iframes?: EsportexIframe[]): EsportexEvent['streams_all'] => (
+  (iframes || [])
+    .map((iframe, index) => ({
+      server: cleanText(iframe.server) || `Server ${index + 1}`,
+      url: cleanText(iframe.url),
+    }))
+    .filter((iframe) => iframe.url.length > 0)
+);
+
+const toEsportexEvent = (
+  match: EsportexMatch,
+  sport: XoilacSport,
+  index: number,
+  seenIds: Set<string>
+): EsportexEvent | null => {
+  const title = cleanText(match.tag);
+  const kickoff = cleanText(match.kickoff);
+  if (!title || !kickoff) return null;
+
+  const sportLabel = XOILAC_SPORTS[sport].label;
+  const leagueName = getLeagueName(match, sport);
+  const teams = splitMatchTitle(title, cleanText(match.league), sportLabel);
+  const baseSlug = cleanText(match.slug) || makeSafeSlug(`${title}-${kickoff}`);
+  const safeSlug = makeSafeSlug(baseSlug) || `${sport}-${index}`;
+  const baseId = `esportex-${sport}-${safeSlug}`;
+  const id = seenIds.has(baseId) ? `${baseId}-${index}` : baseId;
+  const streams = toStreams(match.iframes);
+  const poster = cleanText(match.poster) || FALLBACK_LOGO;
+
+  seenIds.add(id);
+
+  return {
+    id_event: id,
+    nama_event: leagueName,
+    player_1: teams.home,
+    player_2: teams.away,
+    logo_1: poster,
+    logo_2: poster,
+    jadwal_event: kickoff,
+    jadwal_stop: getEndTime(match),
+    url_iptv: streams[0]?.url || '',
+    url_license: '',
+    jenis: 'iframe',
+    sport_type: sport,
+    poster,
+    esportex_slug: safeSlug,
+    streams_all: streams,
+  };
+};
+
+const flattenEsportexResponse = (data: EsportexStreamsResponse): EsportexEvent[] => {
+  const seenIds = new Set<string>();
+  const events: EsportexEvent[] = [];
+
+  for (const sport of ESPORTEX_SPORT_KEYS) {
+    const category = data[sport];
+    if (!Array.isArray(category)) continue;
+
+    category.forEach((match, index) => {
+      const event = toEsportexEvent(match as EsportexMatch, sport, index, seenIds);
+      if (event) events.push(event);
+    });
+  }
+
+  return events;
+};
+
+const fetchEsportexEventsRemote = async (): Promise<EsportexEvent[]> => {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  const cacheBucket = Math.floor(Date.now() / CACHE_TTL);
+
+  try {
+    const response = await fetch(`${ESPORTEX_STREAMS_URL}?cache=${cacheBucket}`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json() as EsportexStreamsResponse;
+    return flattenEsportexResponse(data);
+  } finally {
+    window.clearTimeout(timeout);
+  }
+};
+
+export async function getEsportexEvents(forceRefresh = false): Promise<EsportexEvent[]> {
+  const now = Date.now();
+
+  if (
+    cachedEsportexEvents &&
+    now - esportexCacheTime < CACHE_TTL &&
+    (!forceRefresh || now - esportexCacheTime < CACHE_TTL)
+  ) {
+    return cachedEsportexEvents;
+  }
+
+  if (esportexInFlight) return esportexInFlight;
+
+  const request = fetchEsportexEventsRemote();
+  esportexInFlight = request;
+
+  try {
+    const events = await request;
+    cachedEsportexEvents = events;
+    esportexCacheTime = Date.now();
+    return events;
+  } catch (err) {
+    console.warn('[EsportexService] Remote fetch failed:', err);
+    return cachedEsportexEvents || [];
+  } finally {
+    if (esportexInFlight === request) {
+      esportexInFlight = null;
+    }
+  }
 }
 
-function mapEventToMatch(ev: XoilacEvent): Match {
-  const start = parseJadwal(ev.jadwal_event);
-  const stop = parseJadwal(ev.jadwal_stop);
+const getStatus = (start: Date, stop: Date): Match['status'] => {
   const now = new Date();
 
-  const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
-  const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
+  if (!isNaN(stop.getTime()) && now > stop) return 'finished';
+  if (!isNaN(start.getTime()) && now >= start) return 'live';
 
-  let status: Match['status'] = 'upcoming';
+  return 'upcoming';
+};
 
-  // Prefer status_id from API when available
-  if (ev.status_id !== undefined && ev.sport_type) {
-    if (FINISHED_STATUS_IDS[ev.sport_type]?.has(ev.status_id)) {
-      status = 'finished';
-    } else if (LIVE_STATUS_IDS[ev.sport_type]?.has(ev.status_id)) {
-      status = 'live';
-    } else if (now > playableEnd) {
-      status = 'finished';
-    } else if (now >= playableStart) {
-      status = 'upcoming'; // still scheduled, hasn't started
-    }
-  } else {
-    if (now > playableEnd) {
-      status = 'finished';
-    } else if (now >= playableStart) {
-      status = 'live';
-    }
-  }
-
-  // Compute score from home_scores/away_scores arrays
-  // Index 0 = current total, index 1 = HT, 2–6 = extra
-  let score: string | undefined;
-  if (
-    (status === 'live' || status === 'finished') &&
-    ev.home_scores?.length && ev.away_scores?.length
-  ) {
-    const h = ev.home_scores[0] ?? 0;
-    const a = ev.away_scores[0] ?? 0;
-    score = `${h} - ${a}`;
-  }
+function mapEventToMatch(ev: EsportexEvent): Match {
+  const start = parseJadwal(ev.jadwal_event);
+  const stop = parseJadwal(ev.jadwal_stop);
 
   return {
     id: ev.id_event,
     homeTeam: {
       name: ev.player_1 || 'TBD',
-      logo: ev.logo_1 || '',
+      logo: ev.logo_1 || FALLBACK_LOGO,
     },
     awayTeam: {
       name: ev.player_2 || 'TBD',
-      logo: ev.logo_2 || '',
+      logo: ev.logo_2 || FALLBACK_LOGO,
     },
     league: {
-      name: ev.nama_event || 'Unknown League',
-      logo: '/favicon.svg',
+      name: ev.nama_event || XOILAC_SPORTS[ev.sport_type].label,
+      logo: ev.poster || FALLBACK_LOGO,
     },
     time: formatMatchTime(start),
     date: ev.jadwal_event,
     stopDate: ev.jadwal_stop,
-    status,
-    score,
+    status: getStatus(start, stop),
     channelId: ev.id_event,
-    // Extra xoilac-specific data (carried on the Match for nav routing)
   };
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────
-let cachedXoilacMatches: Match[] | null = null;
-let xoilacCacheTime = 0;
-const CACHE_TTL = 30_000; // 30s
+const sortMatches = (matches: Match[]): Match[] => (
+  [...matches].sort((a, b) => {
+    if (a.status !== b.status) {
+      if (a.status === 'live') return -1;
+      if (b.status === 'live') return 1;
+      if (a.status === 'upcoming') return -1;
+      if (b.status === 'upcoming') return 1;
+    }
+
+    const timeA = a.date ? parseJadwal(a.date).getTime() : 0;
+    const timeB = b.date ? parseJadwal(b.date).getTime() : 0;
+    return timeA - timeB;
+  })
+);
 
 export async function getXoilacMatches(forceRefresh = false): Promise<Match[]> {
   const now = Date.now();
-  if (!forceRefresh && cachedXoilacMatches && now - xoilacCacheTime < CACHE_TTL) {
+  if (cachedXoilacMatches && now - xoilacCacheTime < CACHE_TTL) {
     return cachedXoilacMatches;
   }
 
-  let events: XoilacEvent[] = [];
+  const events = await getEsportexEvents(forceRefresh);
+  const matches = sortMatches(events.map(mapEventToMatch));
 
-  // Try remote first
-  const remote = await fetchXoilacEventsRemote();
-  if (remote) {
-    events = remote;
-  } else {
-    events = (localXoilacEvents as XoilacEvent[]);
-  }
-
-  const matches = events.map(mapEventToMatch);
   cachedXoilacMatches = matches;
-  xoilacCacheTime = now;
+  xoilacCacheTime = Date.now();
   return matches;
 }
 
-/**
- * Returns unique sport types present in the local/remote events.
- */
 export function getAvailableSports(): XoilacSport[] {
-  const events = localXoilacEvents as XoilacEvent[];
-  const seen = new Set<XoilacSport>();
-  events.forEach(ev => {
-    if (ev.sport_type && ev.sport_type in XOILAC_SPORTS) {
-      seen.add(ev.sport_type as XoilacSport);
-    }
-  });
-  return Array.from(seen);
+  return [...ESPORTEX_SPORT_KEYS];
 }
 
-/**
- * Filter matches by sport type. Pass null/'all' for all sports.
- */
 export function filterBySport(matches: Match[], sport: XoilacSport | 'all' | null): Match[] {
   if (!sport || sport === 'all') return matches;
-  return matches.filter(m => m.league.name.toLowerCase().includes(
-    XOILAC_SPORTS[sport]?.label.toLowerCase() ?? sport.toLowerCase()
+
+  const label = XOILAC_SPORTS[sport]?.label.toLowerCase() ?? sport.toLowerCase();
+  const providerPrefixes = [`esportex-${sport}-`, `xoilac-${sport}-`];
+
+  return matches.filter((match) => (
+    providerPrefixes.some((prefix) => match.id.includes(prefix)) ||
+    match.league.name.toLowerCase().includes(label)
   ));
 }

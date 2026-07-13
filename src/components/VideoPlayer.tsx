@@ -170,7 +170,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isIOSNativeFullscreen, setIsIOSNativeFullscreen] = useState(false);
   const [isIOSCssFullscreenFallback, setIsIOSCssFullscreenFallback] = useState(false);
-  const [isIframeCssFullscreen, setIsIframeCssFullscreen] = useState(false);
+  const [isIframeClickLocked, setIsIframeClickLocked] = useState(false);
   const [iosFullscreenViewport, setIOSFullscreenViewport] = useState<IOSFullscreenViewport>(() => (
     getIOSFullscreenViewport()
   ));
@@ -181,13 +181,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const [levels, setLevels] = useState<QualityOption[]>([]);
   const [currentLevel, setCurrentLevel] = useState<number | 'auto'>('auto');
   const [showQualityMenu, setShowQualityMenu] = useState(false);
-  const [showIframeChrome, setShowIframeChrome] = useState(true);
   const [hasStarted, setHasStarted] = useState(true);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAtLiveEdge, setIsAtLiveEdge] = useState(true);
   const [activeHeight, setActiveHeight] = useState<number | null>(null);
   const stallWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const iframeChromeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTimeRef = useRef<number>(0);
   const stallCountRef = useRef<number>(0);
   const lastQualityChangeTimeRef = useRef<number>(0);
@@ -213,6 +211,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       return servers[0];
     });
   }, [servers]);
+
+  useEffect(() => {
+    if (currentServer?.type !== 'iframe') return;
+
+    const guardTopRedirect = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', guardTopRedirect);
+    return () => window.removeEventListener('beforeunload', guardTopRedirect);
+  }, [currentServer?.type]);
 
   // Extract clearKeys DRM keys from server info or fallback to URL pipe strings
   const getDrmKeys = (server: StreamServer) => {
@@ -441,7 +451,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       if (!isFs) {
         setIsIOSNativeFullscreen(false);
         setIsIOSCssFullscreenFallback(false);
-        setIsIframeCssFullscreen(false);
       }
     };
 
@@ -453,31 +462,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
   }, []);
-
-  useEffect(() => {
-    if (iframeChromeTimerRef.current) {
-      clearTimeout(iframeChromeTimerRef.current);
-      iframeChromeTimerRef.current = null;
-    }
-
-    if (currentServer?.type !== 'iframe' || (!isFullscreen && !isIframeCssFullscreen)) {
-      setShowIframeChrome(true);
-      return;
-    }
-
-    setShowIframeChrome(true);
-    iframeChromeTimerRef.current = setTimeout(() => {
-      setShowIframeChrome(false);
-      iframeChromeTimerRef.current = null;
-    }, 2400);
-
-    return () => {
-      if (iframeChromeTimerRef.current) {
-        clearTimeout(iframeChromeTimerRef.current);
-        iframeChromeTimerRef.current = null;
-      }
-    };
-  }, [currentServer?.type, isFullscreen, isIframeCssFullscreen]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -552,7 +536,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   // Manage body scroll and orientation lock dynamically when isFullscreen changes
   useEffect(() => {
-    const shouldManageBodyFullscreen = !useIOSNativePlayer || isIframeCssFullscreen;
+    const shouldManageBodyFullscreen = !useIOSNativePlayer;
     if (!shouldManageBodyFullscreen) return;
 
     const releaseBodyFullscreen = () => {
@@ -585,7 +569,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
 
     releaseBodyFullscreen();
-  }, [isFullscreen, useIOSNativePlayer, isIframeCssFullscreen]);
+  }, [isFullscreen, useIOSNativePlayer]);
 
   useEffect(() => {
     if (!useIOSNativePlayer || !isIOSCssFullscreenFallback || isIOSNativeFullscreen) return;
@@ -1399,17 +1383,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     }
   };
 
-  const enterIframeCssFullscreen = () => {
-    setIsIframeCssFullscreen(true);
-    setIsFullscreen(true);
-    setShowQualityMenu(false);
-    window.requestAnimationFrame(() => {
-      containerRef.current?.focus();
-    });
-    void lockLandscapeIfPossible();
-  };
+  const toggleEmbedFullscreen = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const container = containerRef.current;
+    if (!container) return;
 
-  const exitIframeFullscreen = async () => {
     const docFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
 
     if (docFullscreen) {
@@ -1420,86 +1398,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
           (document as any).webkitExitFullscreen();
         }
       } catch (err) {
-        console.warn('Exit iframe fullscreen failed:', err);
+        console.warn('Exit embed fullscreen failed:', err);
       }
-    }
-
-    setIsIframeCssFullscreen(false);
-    setIsFullscreen(false);
-    unlockOrientationIfPossible();
-  };
-
-  const toggleIframeFullscreen = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const container = containerRef.current;
-    if (!container) return;
-
-    const docFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement;
-    if (docFullscreen || isIframeCssFullscreen) {
-      await exitIframeFullscreen();
+      setIsFullscreen(false);
       return;
     }
-
-    setShowQualityMenu(false);
 
     try {
       if (container.requestFullscreen) {
         await container.requestFullscreen();
-        setIsFullscreen(true);
-        setIsIframeCssFullscreen(false);
-        await lockLandscapeIfPossible();
       } else if ((container as any).webkitRequestFullscreen) {
         (container as any).webkitRequestFullscreen();
-        setIsFullscreen(true);
-        setIsIframeCssFullscreen(false);
-        await lockLandscapeIfPossible();
-      } else {
-        enterIframeCssFullscreen();
       }
+      setIsFullscreen(true);
     } catch (err) {
-      console.warn('Iframe fullscreen failed, using CSS fallback:', err);
-      enterIframeCssFullscreen();
+      console.warn('Embed fullscreen failed:', err);
     }
   };
-
-  const revealIframeChrome = () => {
-    setShowIframeChrome(true);
-
-    if (iframeChromeTimerRef.current) {
-      clearTimeout(iframeChromeTimerRef.current);
-      iframeChromeTimerRef.current = null;
-    }
-
-    if (currentServer?.type === 'iframe' && (isFullscreen || isIframeCssFullscreen)) {
-      iframeChromeTimerRef.current = setTimeout(() => {
-        setShowIframeChrome(false);
-        iframeChromeTimerRef.current = null;
-      }, 2400);
-    }
-  };
-
-  useEffect(() => {
-    if (!isIframeCssFullscreen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-
-      setIsIframeCssFullscreen(false);
-      setIsFullscreen(false);
-
-      try {
-        const orientation = screen.orientation as any;
-        if (orientation && typeof orientation.unlock === 'function') {
-          orientation.unlock();
-        }
-      } catch (err) {
-        console.warn('Orientation unlock failed:', err);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isIframeCssFullscreen]);
 
   const formatTime = (secs: number) => {
     if (isNaN(secs) || !isFinite(secs)) return '0:00';
@@ -1681,99 +1596,89 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   if (!currentServer) return null;
 
-  // ── Iframe mode (Xoilac / embedded player) ─────────────────────────────
+  // Iframe embeds provide their own player controls, so render them directly.
   if (currentServer.type === 'iframe') {
-    const iframeIsFullscreen = isFullscreen || isIframeCssFullscreen;
-    const iframeContainerStyle: React.CSSProperties = isIframeCssFullscreen
-      ? {
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100dvh',
-        maxWidth: 'none',
-        maxHeight: 'none',
-        borderRadius: 0,
-        zIndex: 2147483647,
-        backgroundColor: '#000',
-      }
+    const embedContainerStyle: React.CSSProperties = isFullscreen
+      ? { width: '100vw', height: '100dvh' }
       : { aspectRatio: '16/9' };
-    const iframeChromeClass = !iframeIsFullscreen || showIframeChrome
-      ? 'opacity-100 translate-y-0'
-      : 'opacity-0 translate-y-1';
 
     return (
       <div className="flex flex-col gap-3 w-full">
         <div
           ref={containerRef}
-          className={`relative w-full overflow-hidden bg-black ${iframeIsFullscreen ? 'rounded-none' : 'rounded-2xl'}`}
-          style={iframeContainerStyle}
-          tabIndex={0}
-          onMouseMove={revealIframeChrome}
-          onTouchStart={revealIframeChrome}
-          onFocus={revealIframeChrome}
+          className={`relative w-full overflow-hidden bg-black ${isFullscreen ? 'rounded-none' : 'rounded-2xl'}`}
+          style={embedContainerStyle}
         >
           <iframe
             key={currentServer.url}
             src={currentServer.url}
             className="absolute inset-0 w-full h-full border-0"
             allow="autoplay; encrypted-media; picture-in-picture"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
             referrerPolicy="no-referrer"
             scrolling="no"
             title="YKN TV Live Stream"
           />
 
-          <div
-            className={`absolute top-3 right-3 z-20 pointer-events-none select-none transition-all duration-300 ${iframeChromeClass}`}
-          >
-            <div className="flex items-baseline gap-[3px] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              <span
-                className="text-xl font-black leading-none text-white sm:text-3xl"
-                style={{ fontFamily: "'Arial Black', Arial, sans-serif", letterSpacing: 0 }}
-              >
-                YKN
+          {isIframeClickLocked && (
+            <button
+              type="button"
+              onClick={() => setIsIframeClickLocked(false)}
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-black/20 text-white backdrop-blur-[1px] transition-all hover:bg-black/30"
+              tabIndex={0}
+            >
+              <Shield size={30} className="text-primary drop-shadow-lg" />
+              <span className="rounded-full border border-white/10 bg-black/70 px-4 py-2 text-[10px] font-black uppercase tracking-wider shadow-xl">
+                Klik terkunci - tekan untuk buka
               </span>
-              <span
-                className="text-xl font-black leading-none sm:text-3xl"
-                style={{ fontFamily: "'Arial Black', Arial, sans-serif", color: '#D4AF37', letterSpacing: 0 }}
-              >
-                TV
-              </span>
-            </div>
-          </div>
-
-          <button
-            onMouseMove={revealIframeChrome}
-            onTouchStart={revealIframeChrome}
-            onClick={toggleIframeFullscreen}
-            className={`absolute bottom-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/65 text-white shadow-2xl backdrop-blur-md transition-all duration-300 hover:bg-white/15 active:scale-95 tv-focusable ${iframeChromeClass}`}
-            title={iframeIsFullscreen ? 'Keluar fullscreen YKN TV' : 'Fullscreen YKN TV'}
-            tabIndex={0}
-          >
-            {iframeIsFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-          </button>
+            </button>
+          )}
         </div>
 
-        {servers.length > 1 && (
+        {(servers.length > 1 || currentServer.url) && (
           <div className="mx-4 flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl sm:mx-0">
-            <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
-              <Server size={16} className="text-primary" />
-              <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
-            </div>
-            <div className="flex flex-wrap gap-2 flex-1">
-              {servers.map((server, index) => (
-                <button
-                  key={`${server.url}-${index}`}
-                  onClick={() => setCurrentServer(server)}
-                  className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentServer.url === server.url
-                    ? 'bg-primary text-dark shadow-md'
-                    : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
-                    }`}
-                  tabIndex={0}
-                >
-                  Server {index + 1}
-                </button>
-              ))}
+            {servers.length > 1 && (
+              <>
+                <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
+                  <Server size={16} className="text-primary" />
+                  <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
+                </div>
+                <div className="flex flex-wrap gap-2 flex-1">
+                  {servers.map((server, index) => (
+                    <button
+                      key={`${server.url}-${index}`}
+                      onClick={() => setCurrentServer(server)}
+                      className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable ${currentServer.url === server.url
+                        ? 'bg-primary text-dark shadow-md'
+                        : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
+                        }`}
+                      tabIndex={0}
+                    >
+                      Server {index + 1}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+            <div className="flex md:ml-auto">
+              <button
+                onClick={() => setIsIframeClickLocked((locked) => !locked)}
+                className={`mr-2 flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable border ${isIframeClickLocked
+                  ? 'bg-primary text-dark border-transparent'
+                  : 'bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border-white/5'
+                  }`}
+                tabIndex={0}
+              >
+                <Shield size={14} />
+                <span>{isIframeClickLocked ? 'Klik Aman' : 'Kunci Klik'}</span>
+              </button>
+              <button
+                onClick={toggleEmbedFullscreen}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/5"
+                tabIndex={0}
+              >
+                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                <span>{isFullscreen ? 'Keluar' : 'Fullscreen'}</span>
+              </button>
             </div>
           </div>
         )}

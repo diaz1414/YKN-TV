@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { findStreamByIdInList, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
+import { XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
 import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink, Film } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
@@ -72,6 +73,8 @@ const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[])
 };
 
 
+type MatchSportTab = 'wc' | XoilacSport;
+
 const MATCH_TABS = [
   { id: 'wc', label: 'Utama', icon: '🏆' },
   { id: 'football', label: 'Sepak Bola', icon: '⚽' },
@@ -81,6 +84,19 @@ const MATCH_TABS = [
   { id: 'volleyball', label: 'Bola Voli', icon: '🏐' },
   { id: 'esports', label: 'Esports', icon: '🎮' },
 ] as const;
+
+const COMPLETE_MATCH_TABS: Array<{ id: MatchSportTab; label: string; icon: string }> = [
+  {
+    id: 'wc',
+    label: MATCH_TABS[0].label,
+    icon: '🏆',
+  },
+  ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
+    id: id as XoilacSport,
+    label: meta.label,
+    icon: meta.icon,
+  })),
+];
 
 const ChannelDetail = () => {
   const { id } = useParams();
@@ -98,7 +114,7 @@ const ChannelDetail = () => {
     PUBLIC_LIVE_CHAT_ENABLED ? 'chat' : 'channels'
   );
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
-  const [matchSportTab, setMatchSportTab] = useState<'wc' | 'football' | 'basketball' | 'tennis' | 'badminton' | 'volleyball' | 'esports'>('wc');
+  const [matchSportTab, setMatchSportTab] = useState<MatchSportTab>('wc');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
 
@@ -711,8 +727,13 @@ const ChannelDetail = () => {
     })
     .filter(ch => ch.matchInfo.status !== 'finished')
     .filter(ch => {
-      if (matchSportTab === 'wc') return !ch.id.includes('xoilac-');
-      return ch.id.includes(`xoilac-${matchSportTab}-`);
+      const isProviderMatch = ch.id.includes('esportex-') || ch.id.includes('xoilac-');
+      if (matchSportTab === 'wc') return !isProviderMatch;
+
+      return (
+        ch.id.includes(`esportex-${matchSportTab}-`) ||
+        ch.id.includes(`xoilac-${matchSportTab}-`)
+      );
     })
     .sort((a, b) => {
       const aFinished = a.matchInfo.isFinishedMatch;
@@ -1417,7 +1438,7 @@ const ChannelDetail = () => {
                 <>
                   {activeTab === 'matches' && (
                     <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2 select-none scrollbar-hide border-b border-white/5 shrink-0">
-                      {MATCH_TABS.map(tab => {
+                      {COMPLETE_MATCH_TABS.map(tab => {
                         const isActive = matchSportTab === tab.id;
                         return (
                           <button

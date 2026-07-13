@@ -2,10 +2,10 @@ import stableChannels from '../data/stable_channels.json';
 import backupEvents from '../data/tv-events.json';
 import backupSports from '../data/tv-sports.json';
 import backupLive from '../data/tv-hiburan.json';
-import xoilacEventsBackup from '../data/xoilac-events.json';
 import axios from 'axios';
 import { getRawEventsUrl, SHOW_RTB_GO_IN_JADWAL } from './matchService';
 import { getActiveCustomEvents } from './customEventService';
+import { getEsportexEvents, type EsportexEvent } from './xoilacService';
 
 export interface StreamServer {
   name: string;
@@ -239,6 +239,20 @@ const buildTvstreamTokenServers = (tokenUrl: string, jenis: string): StreamServe
   ];
 };
 
+const buildIframeServers = (
+  streams: Array<{ server?: string; url?: string }>,
+  fallbackProvider = 'Embed'
+): StreamServer[] => (
+  streams
+    .map((stream, index) => ({
+      name: stream.server || `Server ${index + 1} (${fallbackProvider})`,
+      url: stream.url || '',
+      type: 'iframe',
+      forceProxy: false,
+    }))
+    .filter((server) => server.url.trim().length > 0)
+);
+
 
 export const buildServers = (
   urlIptv: string,
@@ -263,7 +277,7 @@ export const buildServers = (
   if (lowerJenis === 'iframe' || lowerJenis === 'xoilac') {
     if (rawUrl) {
       servers.push({
-        name: 'Server 1 (Xoilac)',
+        name: 'Server 1 (Embed)',
         url: rawUrl,
         type: 'iframe',
         forceProxy: false,
@@ -968,15 +982,17 @@ export const getLiveSportsData = async (): Promise<{
     }
   }
 
-  // ── Inject Xoilac multi-sport events (so YKN watch routes can find them) ──────
+  // Inject EmbedSportex multi-sport events (legacy xoilacService replacement).
   try {
-    const xoilacRaw = xoilacEventsBackup as any[];
-    for (const item of xoilacRaw) {
+    const esportexEvents: EsportexEvent[] = await getEsportexEvents();
+    for (const item of esportexEvents) {
       const key = item.id_event;
       if (!key || seenEvents.has(key)) continue;
       seenEvents.add(key);
 
-      const servers = buildServers(item.url_iptv || '', item.url_license || '', item.jenis || 'xoilac');
+      const servers = item.streams_all?.length
+        ? buildIframeServers(item.streams_all, 'Esportex')
+        : buildServers(item.url_iptv || '', item.url_license || '', item.jenis || 'iframe');
 
       mappedEvents.push({
         id: item.id_event,
@@ -996,7 +1012,7 @@ export const getLiveSportsData = async (): Promise<{
       });
     }
   } catch (xErr) {
-    console.warn('[streamService] Failed to inject xoilac events:', xErr);
+    console.warn('[streamService] Failed to inject Esportex events:', xErr);
   }
 
   // Process Sports TV
@@ -1067,13 +1083,14 @@ export const findStreamByIdInList = (idOrSlug: string, allStreams: PlayableStrea
   let found = allStreams.find(s => s.id === idOrSlug);
   if (found) return found;
 
-  // 2. Extract ID from the end of the slug (e.g. spain-vs-cabo-verde-1234 -> ID is 1234)
-  // Also check if idOrSlug contains or ends with any stream ID directly, particularly for prefixed IDs like xoilac-
-  const xoilacIdx = idOrSlug.indexOf('xoilac-');
-  if (xoilacIdx !== -1) {
-    const potentialId = idOrSlug.substring(xoilacIdx);
-    found = allStreams.find(s => s.id === potentialId);
-    if (found) return found;
+  // 2. Extract provider-prefixed IDs embedded in route slugs.
+  for (const providerPrefix of ['esportex-', 'xoilac-']) {
+    const providerIdx = idOrSlug.indexOf(providerPrefix);
+    if (providerIdx !== -1) {
+      const potentialId = idOrSlug.substring(providerIdx);
+      found = allStreams.find(s => s.id === potentialId);
+      if (found) return found;
+    }
   }
 
   const lastDashIndex = idOrSlug.lastIndexOf('-');
