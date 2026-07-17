@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Match } from '../services/matchService';
+import { formatBracketText } from '../utils/textFormatter';
 import { Play, Radio } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -152,7 +153,9 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
       {/* League Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{match.league.name}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-1.5 flex-wrap">
+            {formatBracketText(match.league.name)}
+          </span>
         </div>
         {isLive && (
           <div className="flex items-center gap-1.5 px-3 py-1 bg-red-500/10 rounded-full border border-red-500/25 select-none">

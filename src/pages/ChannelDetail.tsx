@@ -16,6 +16,7 @@ import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 import { PUBLIC_LIVE_CHAT_ENABLED } from '../config/features';
+import { formatBracketText } from '../utils/textFormatter';
 
 const isIOSDevice = (): boolean => {
   if (typeof navigator === 'undefined') return false;
@@ -974,7 +975,9 @@ const ChannelDetail = () => {
                 )}
                 <div>
                   <h1 className="text-2xl md:text-3xl font-display font-black tracking-tight text-white leading-tight">{stream.name}</h1>
-                  <p className="text-sm md:text-base text-primary font-bold italic mt-1.5">{stream.subName}</p>
+                  <div className="text-sm md:text-base text-primary font-bold italic mt-1.5 flex items-center gap-1.5 flex-wrap">
+                    {formatBracketText(stream.subName)}
+                  </div>
                   <div className="flex items-center gap-2.5 mt-3.5">
                     <span className="px-2.5 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-black text-zinc-400 uppercase tracking-wider">
                       {stream.isChannel ? 'Saluran TV' : 'Live Match'}
@@ -1488,7 +1491,9 @@ const ChannelDetail = () => {
                                 )}
                                 <div className="truncate">
                                   <h5 className={`text-xs sm:text-sm font-black transition-colors truncate ${isActive ? 'text-primary' : 'text-white group-hover:text-primary'}`}>{ch.name}</h5>
-                                  <p className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1">{ch.subName}</p>
+                                  <div className="text-[10px] text-zinc-500 font-bold truncate uppercase tracking-wider mt-1 flex items-center gap-1.5 flex-wrap">
+                                    {formatBracketText(ch.subName)}
+                                  </div>
                                 </div>
                               </div>
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive
@@ -1540,7 +1545,9 @@ const ChannelDetail = () => {
                                   {ch.name}
                                 </h5>
                                 <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">{ch.subName}</p>
+                                  <div className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
+                                    {formatBracketText(ch.subName)}
+                                  </div>
                                   {isLive && !isFinished ? (
                                     <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
                                       LIVE

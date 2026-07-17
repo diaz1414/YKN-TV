@@ -1,5 +1,6 @@
 import { Play, Radio } from 'lucide-react';
 import type { PlayableStream } from '../services/streamService';
+import { formatBracketText } from '../utils/textFormatter';
 
 interface ChannelCardProps {
   stream: PlayableStream;
@@ -46,7 +47,9 @@ const ChannelCard = ({ stream, onClick }: ChannelCardProps) => {
 
         <div>
           <h3 className="text-lg font-display font-black tracking-tight text-white group-hover:text-primary transition-colors">{stream.name}</h3>
-          <p className="text-xs text-zinc-500 font-bold line-clamp-1 italic mt-1 uppercase tracking-wider">{stream.subName}</p>
+          <div className="text-xs text-zinc-500 font-bold line-clamp-1 italic mt-1 uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
+            {formatBracketText(stream.subName)}
+          </div>
         </div>
 
         <button className="flex items-center justify-between w-full py-3.5 px-4 bg-white/5 group-hover:bg-primary group-hover:text-dark text-white rounded-2xl font-black transition-all duration-300">

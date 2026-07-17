@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
+import { formatBracketText } from '../utils/textFormatter';
 import { formatJadwalDateTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 
 type StatusTab = 'all' | 'events' | 'sports' | 'live';
@@ -413,7 +414,9 @@ const StatusPage = () => {
                         <span className="text-[9px] text-zinc-500 font-black uppercase tracking-widest">{kindLabel[item.kind]}</span>
                       </div>
                       <h2 className="text-sm md:text-base font-black text-white truncate">{item.stream.name}</h2>
-                      <p className="text-[10px] text-zinc-500 font-bold truncate">{item.stream.subName || item.detail}</p>
+                      <div className="text-[10px] text-zinc-500 font-bold truncate flex items-center gap-1.5 flex-wrap">
+                        {formatBracketText(item.stream.subName || item.detail)}
+                      </div>
                     </div>
                   </div>
 
