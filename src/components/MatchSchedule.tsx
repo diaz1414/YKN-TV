@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, startTransition } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, RadioTower } from 'lucide-react';
+import MatchCard from './MatchCard';
 import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
 import { getXoilacMatches, XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
-import MatchCard from './MatchCard';
-import { useNavigate } from 'react-router-dom';
-import { Trophy, Loader2 } from 'lucide-react';
 import { slugify } from '../services/streamService';
 
-type SportTab = 'wc' | XoilacSport;
+type SportTab = 'main' | XoilacSport;
 
 interface TabDef {
   id: SportTab;
@@ -16,7 +16,7 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { id: 'wc', label: 'Jadwal Utama', icon: '🏆', color: '#f59e0b' },
+  { id: 'main', label: 'Utama', icon: 'LIVE', color: '#d4af37' },
   ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
     id: id as XoilacSport,
     label: meta.label,
@@ -36,33 +36,33 @@ const matchBelongsToSport = (match: Match, sport: XoilacSport): boolean => {
 };
 
 const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, number> }) => {
-  const [activeTab, setActiveTab] = useState<SportTab>('wc');
-  const [wcMatches, setWcMatches] = useState<Match[]>([]);
+  const [activeTab, setActiveTab] = useState<SportTab>('main');
+  const [mainMatches, setMainMatches] = useState<Match[]>([]);
   const [xoilacMatches, setXoilacMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const lastWcSig = useRef<string>('');
+  const lastMainSig = useRef<string>('');
   const lastXoilacSig = useRef<string>('');
 
-  const fetchWc = async (silent = false) => {
+  const fetchMain = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
       const data = await getTodayMatches(true);
       const sig = JSON.stringify(data);
-      if (sig !== lastWcSig.current) {
-        lastWcSig.current = sig;
-        startTransition(() => setWcMatches(data));
+      if (sig !== lastMainSig.current) {
+        lastMainSig.current = sig;
+        startTransition(() => setMainMatches(data));
       }
     } catch (err) {
-      console.warn('[MatchSchedule] Failed to refresh WC matches:', err);
+      console.warn('[MatchSchedule] Failed to refresh main matches:', err);
     } finally {
       if (!silent) setLoading(false);
     }
   };
 
   const fetchXoilac = async (silent = false) => {
-    if (!silent && activeTab !== 'wc') setLoading(true);
+    if (!silent && activeTab !== 'main') setLoading(true);
     try {
       const data = await getXoilacMatches(true);
       const sig = JSON.stringify(data);
@@ -73,7 +73,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     } catch (err) {
       console.warn('[MatchSchedule] Failed to refresh Esportex matches:', err);
     } finally {
-      if (!silent && activeTab !== 'wc') setLoading(false);
+      if (!silent && activeTab !== 'main') setLoading(false);
     }
   };
 
@@ -82,14 +82,14 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
 
     const init = async () => {
       setLoading(true);
-      await Promise.all([fetchWc(true), fetchXoilac(true)]);
+      await Promise.all([fetchMain(true), fetchXoilac(true)]);
       if (mounted) setLoading(false);
     };
 
     init();
 
     const interval = setInterval(() => {
-      fetchWc(true);
+      fetchMain(true);
       fetchXoilac(true);
     }, MATCH_SCHEDULE_REFRESH_MS);
 
@@ -107,10 +107,10 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   }, [activeTab]);
 
   const displayedMatches: Match[] = (() => {
-    if (activeTab === 'wc') return wcMatches;
+    if (activeTab === 'main') return mainMatches;
 
     const sport = activeTab as XoilacSport;
-    return xoilacMatches.filter(m => matchBelongsToSport(m, sport));
+    return xoilacMatches.filter((match) => matchBelongsToSport(match, sport));
   })();
 
   const handleMatchClick = (match: Match) => {
@@ -119,13 +119,13 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   };
 
   const liveCounts = TABS.reduce<Record<SportTab, number>>((counts, tab) => {
-    if (tab.id === 'wc') {
-      counts[tab.id] = wcMatches.filter(m => m.status === 'live').length;
+    if (tab.id === 'main') {
+      counts[tab.id] = mainMatches.filter((match) => match.status === 'live').length;
       return counts;
     }
 
-    counts[tab.id] = xoilacMatches.filter(m => (
-      m.status === 'live' && matchBelongsToSport(m, tab.id as XoilacSport)
+    counts[tab.id] = xoilacMatches.filter((match) => (
+      match.status === 'live' && matchBelongsToSport(match, tab.id as XoilacSport)
     )).length;
 
     return counts;
@@ -136,7 +136,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5 shadow-md">
-            <Trophy size={20} className="fill-primary/10" />
+            <RadioTower size={20} />
           </div>
           <div>
             <h3 className="text-2xl md:text-3xl font-display font-black uppercase tracking-tighter italic leading-none">
@@ -150,7 +150,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        {TABS.map(tab => {
+        {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           const liveCount = liveCounts[tab.id] ?? 0;
 
@@ -166,7 +166,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
               ].join(' ')}
               style={isActive ? { background: tab.color, boxShadow: `0 0 16px ${tab.color}55` } : {}}
             >
-              <span className="text-sm">{tab.icon}</span>
+              <span className="text-[10px] font-black">{tab.icon}</span>
               <span>{tab.label}</span>
               {liveCount > 0 && (
                 <span
@@ -193,7 +193,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         </div>
       ) : displayedMatches.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayedMatches.map(match => (
+          {displayedMatches.map((match) => (
             <MatchCard
               key={match.id}
               match={match}

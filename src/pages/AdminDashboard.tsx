@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Key, ShieldAlert, RefreshCw, LogOut, Tv, Act
 import axios from 'axios';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
-import yknwcLogo from '../assets/yknwc-logo.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 import { io } from 'socket.io-client';
 import { supabase } from '../services/supabase';
 import {
@@ -87,7 +87,7 @@ const MATCH_CATEGORY_TABS: Array<{
   color: string;
 }> = [
     { id: 'all', label: 'Semua', icon: '•', color: '#eab308' },
-    { id: 'main', label: 'Utama', icon: '🏆', color: '#f59e0b' },
+    { id: 'main', label: 'Utama', icon: 'LIVE', color: '#f59e0b' },
     ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
       id: id as XoilacSport,
       label: meta.label,
@@ -334,7 +334,7 @@ const AdminDashboard = () => {
   const [customEventSaving, setCustomEventSaving] = useState(false);
   const [customEventMessage, setCustomEventMessage] = useState('');
 
-  const [eventName, setEventName] = useState('FIFA World Cup');
+  const [eventName, setEventName] = useState('Live Event');
   const [eventPlayer1, setEventPlayer1] = useState('');
   const [eventPlayer2, setEventPlayer2] = useState('');
   const [eventLogo1, setEventLogo1] = useState('');
@@ -569,7 +569,7 @@ const AdminDashboard = () => {
       setScheduleChannelMode('raw');
       setScheduleManualSourceId('');
       setScheduleWebSourceId('');
-      setEventName('FIFA World Cup');
+      setEventName('Live Event');
       setEventPlayer1('');
       setEventPlayer2('');
       setEventLogo1('');
@@ -666,7 +666,7 @@ const AdminDashboard = () => {
       newSocket.emit('join_room', {
         roomId: selectedChannel.id,
         username: 'YKN TV',
-        avatar: yknwcLogo,
+        avatar: yknLogo,
         role: 'user',
         userId: savedUserId
       });
@@ -708,7 +708,7 @@ const AdminDashboard = () => {
       roomId: selectedChannel.id,
       username: 'YKN TV',
       message: chatInput.trim(),
-      avatar: yknwcLogo,
+      avatar: yknLogo,
       role: 'user'
     });
 
@@ -1127,7 +1127,7 @@ const AdminDashboard = () => {
         storage.setItem('ykn_admin_role', assignedRole);
         storage.setItem('ykn_admin_token', hashedPassword);
         storage.setItem('ykn_chat_nickname', 'YKN TV');
-        storage.setItem('ykn_chat_avatar', yknwcLogo);
+        storage.setItem('ykn_chat_avatar', yknLogo);
 
         setIsLoggedIn(true);
         setAdminRole(assignedRole);
@@ -1158,7 +1158,7 @@ const AdminDashboard = () => {
       storage.setItem('ykn_admin_role', data.role);
       storage.setItem('ykn_admin_token', data.password);
       storage.setItem('ykn_chat_nickname', 'YKN TV');
-      storage.setItem('ykn_chat_avatar', yknwcLogo);
+      storage.setItem('ykn_chat_avatar', yknLogo);
 
       setIsLoggedIn(true);
       setAdminRole(data.role);
@@ -1482,7 +1482,7 @@ const AdminDashboard = () => {
                 <div className="flex items-center gap-4 relative z-10">
                   <div className="relative shrink-0 select-none">
                     <img
-                      src={yknwcLogo}
+                      src={yknLogo}
                       alt="YKN TV Logo"
                       className="w-12 h-12 rounded-full bg-zinc-900 border border-primary/30 p-1 shadow-lg"
                     />
@@ -1941,7 +1941,7 @@ const AdminDashboard = () => {
                             {/* Left App Icon / Avatar */}
                             <div className="w-8 h-8 rounded-full bg-zinc-900 border border-primary/20 p-0.5 shrink-0 shadow-lg flex items-center justify-center">
                               <img
-                                src={yknwcLogo}
+                                src={yknLogo}
                                 alt="YKN TV"
                                 className="w-full h-full object-contain rounded-full"
                               />
@@ -2484,7 +2484,7 @@ const AdminDashboard = () => {
                                         onClick={() => {
                                           setSelectedRawEventKey(match.id_event);
                                           // Auto-fill event states from raw
-                                          setEventName(match.nama_event || 'FIFA World Cup');
+                                          setEventName(match.nama_event || 'Live Event');
                                           setEventPlayer1(match.player_1);
                                           setEventPlayer2(match.player_2);
                                           setEventLogo1(match.logo_1 || '');
@@ -2543,7 +2543,7 @@ const AdminDashboard = () => {
                                 type="button"
                                 onClick={() => {
                                   setSelectedRawEventKey('__manual__');
-                                  setEventName('FIFA World Cup');
+                                  setEventName('Live Event');
                                   setEventPlayer1('');
                                   setEventPlayer2('');
                                   setEventLogo1('');
@@ -2581,7 +2581,7 @@ const AdminDashboard = () => {
                                   {/* Kustomisasi Nama Event */}
                                   <div className="space-y-1.5 border-t border-white/5 pt-2">
                                     <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Kustomisasi Nama Event</label>
-                                    <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="FIFA World Cup" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                    <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="Live Event" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
                                   </div>
                                 </div>
                               )}
@@ -2593,7 +2593,7 @@ const AdminDashboard = () => {
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
                                       <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Nama Event</label>
-                                      <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="FIFA World Cup" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
+                                      <input value={eventName} onChange={(e) => setEventName(e.target.value)} placeholder="Live Event" className="w-full bg-zinc-900 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white outline-none focus:border-primary/30 transition-all" />
                                     </div>
                                     <div className="space-y-1.5">
                                       <label className="text-[8px] font-black uppercase tracking-wider text-zinc-500">Mulai</label>
@@ -3211,7 +3211,7 @@ const AdminDashboard = () => {
                             </div>
                           ) : (
                             chatMessages.map((msg) => {
-                              const isMe = msg.username === 'YKN TV' && msg.avatar?.includes('yknwc-logo');
+                              const isMe = msg.username === 'YKN TV' && msg.avatar?.includes('ykn-tv-logo');
                               const isSystem = msg.role === 'system';
 
                               if (isSystem) {

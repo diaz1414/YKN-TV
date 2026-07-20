@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Tv, Home, Award, Calendar, Menu, X, Coffee } from 'lucide-react';
+import { Search, Tv, Home, RadioTower, Calendar, Menu, X, Coffee, ShieldCheck } from 'lucide-react';
 import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
-import yknwcLogo from '../assets/yknwc-logo.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 import { slugify } from '../services/streamService';
 import { SupportModal } from '../components/SupportDeveloper';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -39,7 +39,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   // (auto-detect UA, D-pad, atau sebelumnya manual diaktifkan)
   const showTvToggle = isTvMode;
 
-  const activeTab = searchParams.get('tab') || 'home';
+  const activeTabParam = searchParams.get('tab') || 'home';
+  const activeTab = activeTabParam === 'standings' ? 'live' : activeTabParam;
   const isWatchPage = location.pathname.startsWith('/watch/');
 
   const [activeMatch, setActiveMatch] = useState<Match | null>(null);
@@ -290,16 +291,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             tabIndex={0}
           >
             <img
-              src={yknwcLogo}
+              src={yknLogo}
               alt="YKN TV Logo"
-              className="w-9 h-9 md:w-11 md:h-11 object-contain rounded-xl shadow-lg shadow-primary/10 group-hover:scale-105 transition-transform duration-300"
+              className="h-7 w-[102px] object-contain drop-shadow-[0_7px_18px_rgba(0,0,0,0.65)] transition-transform duration-300 group-hover:scale-105 md:h-9 md:w-[132px] lg:w-[148px]"
             />
-            <div>
-              <span className="text-lg md:text-2xl font-black tracking-tighter uppercase font-display italic">
-                YKN <span className="text-primary">TV</span>
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-[9px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                WC 2026
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline-block text-[9px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                LIVE HUB
               </span>
               {isAdminLoggedIn && (
                 <button
@@ -342,12 +340,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               Saluran TV
             </button>
             <button
-              onClick={() => handleTabChange('standings')}
-              className={`${getActiveTabClass('standings')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
+              onClick={() => handleTabChange('live')}
+              className={`${getActiveTabClass('live')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
               tabIndex={0}
             >
-              <Award size={14} />
-              Klasemen
+              <RadioTower size={14} />
+              Live Center
             </button>
             {showTvToggle && (
               <button
@@ -495,12 +493,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           </button>
 
           <button
-            onClick={() => handleTabChange('standings')}
-            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'standings' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
+            onClick={() => handleTabChange('live')}
+            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'live' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
               }`}
           >
-            <Award size={14} />
-            Klasemen Grup
+            <RadioTower size={14} />
+            Live Center
           </button>
         </div>
       )}
@@ -527,13 +525,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 WhatsApp
               </a>
               <a
-                href="https://t.me/worldcup2026_ykntv"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/status"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#229ED9]/10 border border-[#229ED9]/20 text-[#229ED9] font-black text-[9px] uppercase tracking-wider hover:bg-[#229ED9]/20 transition-all cursor-pointer"
               >
-                <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" /></svg>
-                Telegram
+                <ShieldCheck size={12} />
+                Status
               </a>
             </div>
           </div>
@@ -558,7 +554,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 sm:justify-end">
               <span onClick={() => handleTabChange('home')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Jadwal</span>
               <span onClick={() => handleTabChange('channels')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Saluran TV</span>
-              <span onClick={() => handleTabChange('standings')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Klasemen</span>
+              <span onClick={() => handleTabChange('live')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Live Center</span>
               <span onClick={() => navigate('/about')} className="hover:text-primary transition-colors cursor-pointer tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>Tentang</span>
               <span onClick={() => setIsSupportOpen(true)} className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer flex items-center gap-1 select-none tv-focusable rounded px-1.5 py-0.5" tabIndex={0}>
                 <Coffee size={12} className="fill-amber-400/10" />
@@ -600,11 +596,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         </button>
 
         <button
-          onClick={() => handleTabChange('standings')}
-          className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('standings')}`}
+          onClick={() => handleTabChange('live')}
+          className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('live')}`}
         >
-          <Award size={20} />
-          <span className="text-[9px] font-black uppercase tracking-wider">Klasemen</span>
+          <RadioTower size={20} />
+          <span className="text-[9px] font-black uppercase tracking-wider">Live</span>
         </button>
       </nav>
 

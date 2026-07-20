@@ -83,7 +83,7 @@ const ESPORTEX_SPORT_KEYS = Object.keys(XOILAC_SPORTS) as XoilacSport[];
 const CACHE_TTL = 30_000;
 const FETCH_TIMEOUT_MS = 8_000;
 const DEFAULT_EVENT_DURATION_MS = 3 * 60 * 60 * 1000;
-const FALLBACK_LOGO = '/favicon.svg';
+const FALLBACK_LOGO = '/favicon.png';
 
 const parseJadwal = parseJadwalDate;
 const formatMatchTime = formatMatchTimeForUserZone;

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info, AlertTriangle, CheckCircle2, X, Bell, ShieldAlert } from 'lucide-react';
 import { supabase } from '../services/supabase';
-import yknwcLogo from '../assets/yknwc-logo.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 
 interface GlobalAnnouncementProps {
   onlyShowWhenNormal?: boolean;
@@ -319,11 +319,11 @@ const GlobalAnnouncement: React.FC<GlobalAnnouncementProps> = ({
           {/* Main Card Content */}
           <div className="p-4 flex items-start gap-3.5 pr-10 relative select-none">
             {/* Left App Icon / Avatar */}
-            <div className="w-9 h-9 rounded-full bg-zinc-900 border border-primary/20 p-0.5 shrink-0 shadow-lg flex items-center justify-center">
+            <div className="w-16 h-9 rounded-xl bg-zinc-900 border border-primary/20 p-1 shrink-0 shadow-lg flex items-center justify-center">
               <img
-                src={yknwcLogo}
+                src={yknLogo}
                 alt="YKN TV"
-                className="w-full h-full object-contain rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
 

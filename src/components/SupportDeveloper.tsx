@@ -181,7 +181,7 @@ export const SupportModal: React.FC<SupportDeveloperProps> = ({ onClose }) => {
             <p className="text-xs text-amber-500 font-bold uppercase tracking-widest mt-1.5">Dukungan Anda Menjaga Server Tetap Aktif</p>
             
             <p className="text-zinc-400 text-xs font-semibold leading-relaxed mt-4 max-w-sm uppercase tracking-wider">
-              YKN TV berkomitmen memberikan siaran sepak bola berkualitas tinggi secara gratis tanpa iklan mengganggu. Mari bantu kami menutupi biaya operasional server.
+              YKN TV berkomitmen memberikan siaran live dan saluran TV berkualitas secara gratis tanpa iklan mengganggu. Mari bantu kami menutupi biaya operasional server.
             </p>
           </div>
 
@@ -262,7 +262,7 @@ export const SupportModal: React.FC<SupportDeveloperProps> = ({ onClose }) => {
           <div className="mt-8 text-center flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-widest text-zinc-600 select-none">
             <span>DIBUAT DENGAN</span>
             <Heart size={8} className="text-[#e50914] fill-[#e50914]" />
-            <span>UNTUK PECINTA SEPAK BOLA</span>
+            <span>UNTUK PENONTON YKN TV</span>
           </div>
 
         </div>

@@ -5,10 +5,10 @@ import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { findStreamByIdInList, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
-import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, Trophy, ExternalLink, Film } from 'lucide-react';
+import { ChevronLeft, Wifi, Share2, Play, Calendar, Lock, MessageSquare, Shuffle, Send, ExternalLink, Film } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { SupportCard } from '../components/SupportDeveloper';
-import yknwcLogo from '../assets/yknwc-logo.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 import ShareModal from '../components/ShareModal';
 import BagiBagiLeaderboard from '../components/BagiBagiLeaderboard';
 import EmptyWatchState from '../components/EmptyWatchState';
@@ -74,10 +74,10 @@ const findIosSiblingStream = (stream: PlayableStream, matches: PlayableStream[])
 };
 
 
-type MatchSportTab = 'wc' | XoilacSport;
+type MatchSportTab = 'main' | XoilacSport;
 
 const MATCH_TABS = [
-  { id: 'wc', label: 'Utama', icon: '🏆' },
+  { id: 'main', label: 'Utama', icon: 'LIVE' },
   { id: 'football', label: 'Sepak Bola', icon: '⚽' },
   { id: 'basketball', label: 'Bola Basket', icon: '🏀' },
   { id: 'tennis', label: 'Tenis', icon: '🎾' },
@@ -88,9 +88,9 @@ const MATCH_TABS = [
 
 const COMPLETE_MATCH_TABS: Array<{ id: MatchSportTab; label: string; icon: string }> = [
   {
-    id: 'wc',
+    id: 'main',
     label: MATCH_TABS[0].label,
-    icon: '🏆',
+    icon: 'LIVE',
   },
   ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
     id: id as XoilacSport,
@@ -115,7 +115,7 @@ const ChannelDetail = () => {
     PUBLIC_LIVE_CHAT_ENABLED ? 'chat' : 'channels'
   );
   const [channelSubTab, setChannelSubTab] = useState<'all' | 'sports' | 'general'>('all');
-  const [matchSportTab, setMatchSportTab] = useState<MatchSportTab>('wc');
+  const [matchSportTab, setMatchSportTab] = useState<MatchSportTab>('main');
   const [extraServers, setExtraServers] = useState<StreamServer[]>([]);
   const isIOSRuntime = useMemo(() => isIOSDevice(), []);
 
@@ -186,12 +186,12 @@ const ChannelDetail = () => {
     ];
     const nouns = [
       'Garuda', 'MerahPutih', 'Bola', 'Gawang', 'Tribun', 'Lapangan', 'Sepatu',
-      'Jersei', 'Peluit', 'Piala', 'Stadion', 'YKN', 'Nusantara', 'TikiTaka', 'VAR',
+      'Jersei', 'Peluit', 'Laga', 'Stadion', 'YKN', 'Nusantara', 'TikiTaka', 'VAR',
       'Gacor', 'Meluncur', 'Hattrick', 'Nutmeg', 'Offside', 'Freekick', 'Penalty',
-      'CornerKick', 'GoldenBoot', 'BallonDor', 'Trophy', 'RedCard', 'YellowCard',
+      'CornerKick', 'GoldenBoot', 'BallonDor', 'Streaming', 'RedCard', 'YellowCard',
       'Gegenpressing', 'ParkirBus', 'JogaBonito', 'Wembley', 'SanSiro', 'CampNou',
       'OldTrafford', 'SantiagoBernabeu', 'Anfield', 'Maracana', 'GBK', 'JIS', 'GBT',
-      'LigaChampions', 'PialaDunia', 'Manahan', 'Samba', 'Tango', 'TotalFootball',
+      'LigaChampions', 'LiveMatch', 'Manahan', 'Samba', 'Tango', 'TotalFootball',
       'Selebrasi', 'Golazo', 'Tembakan'
     ];
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
@@ -236,7 +236,7 @@ const ChannelDetail = () => {
     if (PUBLIC_LIVE_CHAT_ENABLED && savedNickname) {
       setNickname(savedNickname);
       const computedAvatar = savedNickname === 'YKN TV'
-        ? '/yknwc-logo.png'
+        ? '/ykn-tv-logo.png'
         : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`);
       setChatAvatar(computedAvatar);
       setIsJoined(true);
@@ -274,7 +274,7 @@ const ChannelDetail = () => {
             roomId: stream.id,
             username: savedNickname,
             avatar: savedNickname === 'YKN TV'
-              ? '/yknwc-logo.png'
+              ? '/ykn-tv-logo.png'
               : (savedAvatar || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(savedNickname)}`),
             role: 'user',
             userId: savedUserId
@@ -362,7 +362,7 @@ const ChannelDetail = () => {
     // Special Admin Passcode handler
     if (cleanNick === 'YKNTV#admin123') {
       cleanNick = 'YKN TV';
-      avatar = '/yknwc-logo.png';
+      avatar = '/ykn-tv-logo.png';
     }
 
     setJoinError('');
@@ -729,7 +729,7 @@ const ChannelDetail = () => {
     .filter(ch => ch.matchInfo.status !== 'finished')
     .filter(ch => {
       const isProviderMatch = ch.id.includes('esportex-') || ch.id.includes('xoilac-');
-      if (matchSportTab === 'wc') return !isProviderMatch;
+      if (matchSportTab === 'main') return !isProviderMatch;
 
       return (
         ch.id.includes(`esportex-${matchSportTab}-`) ||
@@ -800,7 +800,7 @@ const ChannelDetail = () => {
                   <div className="min-h-[60vh] flex items-center justify-center px-4">
                     <div className="max-w-md w-full rounded-3xl border border-yellow-500/30 bg-black/80 p-6 text-center shadow-2xl backdrop-blur-xl">
                       <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-amber-500/5 border border-yellow-500/30 flex items-center justify-center mb-5 shadow-[0_0_25px_rgba(234,179,8,0.2)]">
-                        <Trophy className="w-8 h-8 text-yellow-500" />
+                        <Play className="w-8 h-8 text-yellow-500 fill-yellow-500/20" />
                       </div>
 
                       <h2 className="text-xl font-bold text-white mb-2">
@@ -840,16 +840,15 @@ const ChannelDetail = () => {
                       Pertandingan Selesai
                     </h3>
                     <p className="text-[10px] sm:text-xs text-zinc-400 font-bold leading-relaxed">
-                      Pertandingan ini telah usai. Masih ingin menikmati serunya Piala Dunia?{' '}
-                      <span className="text-primary">Yuk, lanjut nonton lewat Channel World Cup TV</span> yang masih mengudara!
+                      Pertandingan ini telah usai. Kamu masih bisa lanjut menonton saluran olahraga atau hiburan lain yang tersedia.
                     </p>
                   </div>
                   <button
-                    onClick={() => navigate('/watch/worldcup-tv')}
+                    onClick={() => navigate('/?tab=channels')}
                     className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-primary text-dark font-black text-[9px] sm:text-[10px] uppercase tracking-wider rounded-xl hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.35)] active:scale-95 transition-all cursor-pointer shrink-0"
                   >
                     <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24"><path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z" /></svg>
-                    Tonton Channel World Cup TV
+                    Lihat Saluran TV
                   </button>
                 </div>
               ) : (
@@ -1147,9 +1146,9 @@ const ChannelDetail = () => {
                           alt="avatar"
                           className="w-5 h-5 rounded-full bg-zinc-800 border border-white/10 shrink-0"
                           onError={(e) => {
-                            const isAdmin = nickname === 'YKN TV' || (chatAvatar && chatAvatar.includes('yknwc-logo'));
+                            const isAdmin = nickname === 'YKN TV' || (chatAvatar && chatAvatar.includes('ykn-tv-logo'));
                             e.currentTarget.src = isAdmin
-                              ? '/yknwc-logo.png'
+                              ? '/ykn-tv-logo.png'
                               : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nickname)}`;
                           }}
                         />
@@ -1196,7 +1195,7 @@ const ChannelDetail = () => {
                           }
 
                           const isMe = msg.username === nickname;
-                          const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('yknwc-logo'));
+                          const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('ykn-tv-logo'));
 
                           const getNameColor = (name: string) => {
                             if (name === nickname) return 'text-primary';
@@ -1225,9 +1224,9 @@ const ChannelDetail = () => {
                                 alt="avatar"
                                 className="w-7 h-7 rounded-full bg-zinc-900 border border-white/10 shrink-0 select-none mt-1"
                                 onError={(e) => {
-                                  const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('yknwc-logo'));
+                                  const isAdmin = msg.username === 'YKN TV' || (msg.avatar && msg.avatar.includes('ykn-tv-logo'));
                                   e.currentTarget.src = isAdmin
-                                    ? '/yknwc-logo.png'
+                                    ? '/ykn-tv-logo.png'
                                     : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(msg.username)}`;
                                 }}
                               />
@@ -1299,7 +1298,7 @@ const ChannelDetail = () => {
                     <>
                       {/* Quick Reactions Bar */}
                       <div className="flex items-center gap-1.5 overflow-x-auto py-2 px-1 mb-2 shrink-0 select-none custom-scrollbar-horizontal border-t border-white/5">
-                        {['⚽', '🔥', '🏆', '👏', '😮', '😂', '👑', '🐐', '⚡', '❤️'].map((emoji) => (
+                        {['⚽', '🔥', '💛', '👏', '😮', '😂', '👑', '⭐', '⚡', '❤️'].map((emoji) => (
                           <button
                             key={emoji}
                             onClick={() => handleSendReaction(emoji)}
@@ -1327,7 +1326,7 @@ const ChannelDetail = () => {
                           }}
                           placeholder={connected ? "Ketik pesan..." : "Menghubungkan obrolan..."}
                           disabled={!connected}
-                          maxLength={nickname === 'YKN TV' || (chatAvatar && chatAvatar.includes('yknwc-logo')) ? undefined : 150}
+                          maxLength={nickname === 'YKN TV' || (chatAvatar && chatAvatar.includes('ykn-tv-logo')) ? undefined : 150}
                           rows={1}
                           className="flex-1 bg-zinc-950/70 border border-white/5 rounded-xl px-3 py-2.5 text-xs font-bold text-white placeholder-zinc-500 focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50 resize-none h-[40px] custom-scrollbar"
                         />
@@ -1363,7 +1362,7 @@ const ChannelDetail = () => {
                       <div className="space-y-5">
                         <div className="text-center space-y-1.5">
                           <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center text-primary mx-auto animate-bounce">
-                            <Trophy size={20} className="text-primary" />
+                            <Play size={20} className="text-primary fill-primary/20" />
                           </div>
                           <h4 className="text-base font-display font-black uppercase tracking-wider text-white">Gabung Live Chat</h4>
                           <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Tentukan nama obrolan Anda terlebih dahulu</p>
@@ -1373,7 +1372,7 @@ const ChannelDetail = () => {
                         <div className="flex justify-center">
                           <div className="relative">
                             <img
-                              src={tempNickname === 'YKNTV#admin123' ? yknwcLogo : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(tempNickname || 'Guest')}`}
+                              src={tempNickname === 'YKNTV#admin123' ? yknLogo : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(tempNickname || 'Guest')}`}
                               alt="avatar preview"
                               className="w-16 h-16 rounded-full bg-zinc-900 border-2 border-primary/30 p-1 transition-all"
                             />

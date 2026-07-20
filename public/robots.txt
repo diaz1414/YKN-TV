@@ -77,4 +77,4 @@ Disallow: /ykn-c0ntr0l-hq
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://worldcup2026-ykntv.diaww.my.id/sitemap.xml
+Sitemap: https://tv.ykn.my.id/sitemap.xml

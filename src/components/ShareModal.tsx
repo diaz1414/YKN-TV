@@ -8,7 +8,7 @@ import {
   FaXTwitter, 
   FaInstagram 
 } from 'react-icons/fa6';
-import yknwcLogo from '../assets/yknwc-logo.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -248,11 +248,11 @@ const ShareModal: React.FC<ShareModalProps> = ({
               {isChannel || !logo2 ? (
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center p-1.5 overflow-hidden shrink-0 select-none">
                   <img 
-                    src={logo || yknwcLogo} 
+                    src={logo || yknLogo} 
                     alt={shareTitle} 
                     className="w-full h-full object-contain filter brightness-110" 
                     onError={(e) => {
-                      e.currentTarget.src = yknwcLogo;
+                      e.currentTarget.src = yknLogo;
                     }}
                   />
                 </div>
@@ -264,7 +264,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                       alt="Team A" 
                       className="w-full h-full object-contain filter brightness-110" 
                       onError={(e) => {
-                        e.currentTarget.src = yknwcLogo;
+                        e.currentTarget.src = yknLogo;
                       }}
                     />
                   </div>
@@ -274,7 +274,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                       alt="Team B" 
                       className="w-full h-full object-contain filter brightness-110" 
                       onError={(e) => {
-                        e.currentTarget.src = yknwcLogo;
+                        e.currentTarget.src = yknLogo;
                       }}
                     />
                   </div>

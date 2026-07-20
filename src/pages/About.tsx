@@ -21,8 +21,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
-import heroBg from '../assets/banner3.png';
-import yknLogo from '../assets/yknwc-logo.png';
+import heroBg from '../assets/banner2.png';
+import yknLogo from '../assets/ykn-tv-logo.png';
 
 interface AboutItem {
   icon: LucideIcon;
@@ -209,7 +209,7 @@ const About = () => {
             >
               <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/25 bg-black/55 px-4 py-2 text-primary shadow-lg shadow-primary/10 backdrop-blur-xl">
                 <RadioTower size={16} />
-                <span className="text-xs font-black uppercase">Streaming football control room</span>
+                <span className="text-xs font-black uppercase">Live streaming control room</span>
               </div>
 
               <h1 className="font-display text-4xl font-black uppercase leading-[1.02] text-white sm:text-6xl lg:text-7xl">
@@ -318,7 +318,7 @@ const About = () => {
             </h2>
             <p className="mt-4 text-sm font-bold leading-relaxed text-zinc-400 sm:text-base">
               Animasi di YKN TV diarahkan untuk membantu rasa aplikasi streaming: sinyal live, badge status,
-              transisi card, robot error, dan loading player. Efeknya dibuat memakai transform, opacity, dan CSS ringan.
+              transisi card, halaman error, dan loading player. Efeknya dibuat memakai transform, opacity, dan CSS ringan.
             </p>
             <div className="mt-7 rounded-[1.75rem] border border-primary/20 bg-primary/10 p-5 text-sm font-bold leading-relaxed text-zinc-200">
               Developed by <span className="font-black text-primary">YKN DEVELOPER</span>. Dibangun dengan rasa cepat,
@@ -396,16 +396,16 @@ const About = () => {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
           <div>
             <div className="mb-5 flex items-center gap-3">
-              <img src={yknLogo} alt="YKN TV" className="h-14 w-14 rounded-2xl object-contain" />
+              <img src={yknLogo} alt="YKN TV" className="h-12 w-36 object-contain" />
               <div>
                 <p className="text-xs font-black uppercase text-primary">YKN TV</p>
-                <h2 className="text-2xl font-black text-white sm:text-3xl">Streaming hub untuk penonton bola.</h2>
+                <h2 className="text-2xl font-black text-white sm:text-3xl">Streaming hub untuk penonton live.</h2>
               </div>
             </div>
             <p className="max-w-3xl text-sm font-bold leading-relaxed text-zinc-400 sm:text-base">
               Tujuan YKN TV adalah membuat pengalaman nonton terasa dekat: buka cepat, lihat jadwal,
               masuk player, pilih server, dan tetap punya jalur cadangan kalau kondisi stream berubah.
-              Desainnya dibuat gelap, fokus, dan sinematik supaya cocok dengan suasana live match.
+              Desainnya dibuat gelap, fokus, dan sinematik supaya cocok dengan suasana siaran live.
             </p>
           </div>
 

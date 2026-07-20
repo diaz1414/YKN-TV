@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="576" viewBox="0 0 2048 576" role="img" aria-labelledby="title">
+  <title id="title">YKN TV</title>
+  <defs>
+    <linearGradient id="white" x1="0" y1="126" x2="0" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D8D8D8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="1188" y1="104" x2="1886" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF1A8"/>
+      <stop offset="0.42" stop-color="#E0BD4D"/>
+      <stop offset="1" stop-color="#B88921"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="2048" height="576" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="18" dy="24" stdDeviation="4" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+  <rect width="2048" height="576" fill="none"/>
+  <g filter="url(#shadow)" transform="skewX(-6)">
+    <text x="120" y="416" fill="url(#white)" font-family="Arial Black, Impact, sans-serif" font-size="360" font-style="italic" font-weight="900" letter-spacing="-12">YKN</text>
+    <text x="1220" y="416" fill="url(#gold)" font-family="Arial Black, Impact, sans-serif" font-size="360" font-style="italic" font-weight="900" letter-spacing="-10">TV</text>
+  </g>
+  <path d="M1207 475H1906" stroke="#D4AF37" stroke-width="12" stroke-linecap="round"/>
+</svg>

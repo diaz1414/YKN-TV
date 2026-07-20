@@ -232,11 +232,11 @@
   text-shadow: 2px 2px 0px #D4AF37, 4px 4px 8px rgba(0, 0, 0, 0.8);
 }
 
-.glow-card-wc {
+.glow-card-live {
   position: relative;
 }
 
-.glow-card-wc::after {
+.glow-card-live::after {
   content: '';
   position: absolute;
   inset: 0;

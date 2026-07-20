@@ -2,9 +2,6 @@ import localEvents from '../data/tv-events.json';
 import { getActiveCustomEvents } from './customEventService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
 
-// Toggle to temporarily show/hide RTB Go matches in the match schedule (set to false to hide)
-export const SHOW_RTB_GO_IN_JADWAL = false;
-
 export interface Match {
   id: string;
   parentMatchId?: string;
@@ -165,33 +162,6 @@ const sortMatchesNeatly = (matches: Match[]): Match[] => {
   });
 };
 
-const findWcGame = (player1: string, player2: string, wcGames: any[]) => {
-  if (!player1 || !player2) return null;
-  const p1 = normalizeTeamName(player1);
-  const p2 = normalizeTeamName(player2);
-
-  return wcGames.find(g => {
-    const home = normalizeTeamName(g.home_team_name_en || g.home_team_label || '');
-    const away = normalizeTeamName(g.away_team_name_en || g.away_team_label || '');
-    return (home === p1 && away === p2) || (home === p2 && away === p1);
-  });
-};
-
-const getWcScore = (player1: string, game: any) => {
-  if (!game) return null;
-  const p1 = normalizeTeamName(player1);
-  const home = normalizeTeamName(game.home_team_name_en || game.home_team_label || '');
-
-  const homeScore = game.home_score;
-  const awayScore = game.away_score;
-
-  if (home === p1) {
-    return `${homeScore} - ${awayScore}`;
-  } else {
-    return `${awayScore} - ${homeScore}`;
-  }
-};
-
 let cachedMatches: Match[] | null = null;
 let cacheTime = 0;
 const CACHE_EXPIRY = MATCH_SCHEDULE_REFRESH_MS;
@@ -212,398 +182,131 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutM
   }
 };
 
-// ESPN live score lookup map: "normalizedHome|normalizedAway" -> { homeScore, awayScore, clock, state }
-interface EspnScore {
-  homeScore: string;
-  awayScore: string;
-  clock: string;
-  state: string; // "pre" | "in" | "post"
-  homeName: string;
-  awayName: string;
-}
-
-const buildEspnScoreMap = (espnEvents: any[]): Map<string, EspnScore> => {
-  const map = new Map<string, EspnScore>();
-  for (const event of espnEvents) {
-    const comp = event.competitions?.[0];
-    if (!comp) continue;
-    const competitors = comp.competitors || [];
-    const homeComp = competitors.find((c: any) => c.homeAway === 'home');
-    const awayComp = competitors.find((c: any) => c.homeAway === 'away');
-    if (!homeComp || !awayComp) continue;
-
-    const homeName = normalizeTeamName(homeComp.team?.displayName || '');
-    const awayName = normalizeTeamName(awayComp.team?.displayName || '');
-    const state = comp.status?.type?.state || 'pre';
-    const clock = comp.status?.displayClock || '';
-
-    const score: EspnScore = {
-      homeScore: homeComp.score || '0',
-      awayScore: awayComp.score || '0',
-      clock,
-      state,
-      homeName,
-      awayName,
-    };
-    // Index both directions so we can find regardless of home/away order
-    map.set(`${homeName}|${awayName}`, score);
-    map.set(`${awayName}|${homeName}`, score);
-  }
-  return map;
-};
-
-const getEspnScore = (
-  player1: string,
-  player2: string,
-  espnMap: Map<string, EspnScore>
-): EspnScore | null => {
-  const p1 = normalizeTeamName(player1);
-  const p2 = normalizeTeamName(player2);
-  return espnMap.get(`${p1}|${p2}`) || espnMap.get(`${p2}|${p1}`) || null;
-};
-
 export const getTodayMatches = async (forceRefresh = false): Promise<Match[]> => {
   const now = Date.now();
   if (!forceRefresh && cachedMatches && (now - cacheTime < CACHE_EXPIRY)) {
     return cachedMatches;
   }
 
-  const fetchAndProcess = async (): Promise<Match[]> => {
+  const loadEvents = async (): Promise<any[]> => {
     try {
-      let eventsData: any[] = [];
-      let wcGames: any[] = [];
-      let espnMap = new Map<string, EspnScore>();
-
-      // Parallel fetching: bot events + worldcup26 (fallback scores) + ESPN (live scores)
-      const [eventsResult, wcGamesResult, espnResult] = await Promise.allSettled([
-        (async () => {
-          // 1. Primary: GitHub raw CDN (tahan beban banyak user)
-          try {
-            const res = await fetchWithTimeout(getRawEventsUrl(), { cache: 'no-store' }, 3000);
-            return await res.json();
-          } catch (githubErr) {
-            // 2. Fallback: Bot API
-            console.warn('Failed to fetch events from GitHub raw, trying Bot API fallback...', githubErr);
-            try {
-              const envVal = import.meta.env.VITE_BOT_API_URL;
-              const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
-              const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
-              return await res.json();
-            } catch (botErr) {
-              console.warn('Failed to fetch events from Bot API, falling back to local JSON data...', botErr);
-              return localEvents;
-            }
-          }
-        })(),
-        (async () => {
-          try {
-            const res = await fetchWithTimeout('https://worldcup26.ir/get/games', {}, 3000);
-            const json = await res.json();
-            return json?.games || [];
-          } catch (wcErr) {
-            console.warn('Failed to fetch World Cup games scores', wcErr);
-            return [];
-          }
-        })(),
-        (async () => {
-          try {
-            // ESPN public live scoreboard — real-time scores
-            const res = await fetchWithTimeout(
-              'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',
-              {}, 4000
-            );
-            const json = await res.json();
-            return json?.events || [];
-          } catch (espnErr) {
-            console.warn('Failed to fetch ESPN live scores', espnErr);
-            return [];
-          }
-        })(),
-      ]);
-
-      if (eventsResult.status === 'fulfilled') {
-        eventsData = eventsResult.value;
-      } else {
-        eventsData = localEvents;
+      const res = await fetchWithTimeout(getRawEventsUrl(), { cache: 'no-store' }, 3000);
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } catch (githubErr) {
+      console.warn('Failed to fetch events from GitHub raw, trying Bot API fallback...', githubErr);
+      try {
+        const envVal = import.meta.env.VITE_BOT_API_URL;
+        const BOT_API_URL = envVal === '/api' ? '' : (envVal || 'https://api.ykn.my.id');
+        const res = await fetchWithTimeout(`${BOT_API_URL}/api/sports/events`, {}, 3000);
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (botErr) {
+        console.warn('Failed to fetch events from Bot API, falling back to local JSON data...', botErr);
+        return Array.isArray(localEvents) ? localEvents : [];
       }
-
-      if (wcGamesResult.status === 'fulfilled') {
-        wcGames = wcGamesResult.value;
-      }
-
-      if (!Array.isArray(eventsData)) eventsData = [];
-      if (!Array.isArray(wcGames)) wcGames = [];
-
-      // Build ESPN score map from fetched ESPN events
-      if (espnResult.status === 'fulfilled' && espnResult.value.length > 0) {
-        espnMap = buildEspnScoreMap(espnResult.value);
-        console.log('[ESPN] Score map built with', espnMap.size / 2, 'matches');
-      }
-
-      if (eventsData.length > 0) {
-        const parsedMatches: Match[] = [];
-        const seenRtbMatchups = new Set<string>();
-        eventsData.forEach((event: any) => {
-          const homeTeamName = event.player_1 || 'TBD';
-          const awayTeamName = event.player_2 || 'TBD';
-
-          const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
-          const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
-
-          const start = parseJadwal(event.jadwal_event);
-          const stop = parseJadwal(event.jadwal_stop);
-          const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
-          const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
-
-          const nowTime = new Date();
-
-          let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-
-          if (nowTime > playableEnd) {
-            status = 'finished';
-          } else if (nowTime >= playableStart) {
-            status = 'live';
-          }
-
-          const matchedGame = findWcGame(homeTeamName, awayTeamName, wcGames);
-
-          // Show score for both live and finished matches
-          // Priority: ESPN (real-time) > worldcup26.ir (fallback)
-          let score: string | undefined = undefined;
-          let liveMinute: string | undefined = undefined;
-
-          if (status === 'live' || status === 'finished') {
-            // 1) Try ESPN score first (real-time, updated every few seconds)
-            const espnScore = getEspnScore(homeTeamName, awayTeamName, espnMap);
-            if (espnScore) {
-              // Determine which team is home in our event vs ESPN's home/away
-              const p1Norm = normalizeTeamName(homeTeamName);
-              const espnHomeNorm = espnScore.homeName;
-              if (p1Norm === espnHomeNorm) {
-                score = `${espnScore.homeScore} - ${espnScore.awayScore}`;
-              } else {
-                // Our player_1 is ESPN's away team, flip the score
-                score = `${espnScore.awayScore} - ${espnScore.homeScore}`;
-              }
-              // ESPN clock as live minute
-              if (espnScore.state === 'in' && espnScore.clock) {
-                liveMinute = espnScore.clock;
-              }
-              console.log(`[ESPN] ${homeTeamName} vs ${awayTeamName}: ${score} (${espnScore.state})`);
-            } else {
-              // 2) Fallback to worldcup26.ir
-              const isWc = event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup");
-              const wcScore = getWcScore(homeTeamName, matchedGame);
-              if (isWc) {
-                score = wcScore || '0 - 0';
-              } else {
-                score = wcScore || undefined;
-              }
-              if (matchedGame && matchedGame.time_elapsed &&
-                matchedGame.time_elapsed !== 'notstarted' &&
-                matchedGame.time_elapsed !== 'finished') {
-                liveMinute = matchedGame.time_elapsed;
-              }
-            }
-          }
-
-          const timeStr = formatMatchTime(start);
-
-          const originalMatch: Match = {
-            id: event.id_event,
-            homeTeam: {
-              name: homeTeamName,
-              logo: homeTeamFlag
-            },
-            awayTeam: {
-              name: awayTeamName,
-              logo: awayTeamFlag
-            },
-            league: {
-              name: event.nama_event || 'FIFA World Cup',
-              logo: '/favicon.svg'
-            },
-            time: timeStr,
-            date: event.jadwal_event,
-            stopDate: event.jadwal_stop,
-            status: status,
-            score: score,
-            liveMinute: liveMinute,
-            channelId: event.id_event
-          };
-
-          parsedMatches.push(originalMatch);
-
-          const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
-          const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
-          if (SHOW_RTB_GO_IN_JADWAL && event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
-            if (!seenRtbMatchups.has(matchupKey)) {
-              seenRtbMatchups.add(matchupKey);
-              parsedMatches.push({
-                ...originalMatch,
-                id: `${event.id_event}9`,
-                parentMatchId: event.id_event,
-                league: {
-                  name: "FIFA World Cup [RTB Go]",
-                  logo: '/favicon.svg'
-                },
-                channelId: `${event.id_event}9`
-              });
-            }
-          }
-        });
-
-        // Sort matches: Live first, then Upcoming (earliest kickoff first), then Finished
-        let finalMatches = parsedMatches;
-
-        // Inject active custom events from Supabase
-        try {
-          const customEvents = await getActiveCustomEvents();
-          customEvents.forEach((ev) => {
-            // Avoid duplicate if already in parsedMatches by id_event
-            if (parsedMatches.some(m => m.id === ev.id_event)) return;
-
-            const parseCustomDate = (s: string | null): Date => {
-              if (!s) return new Date(0);
-              let clean = s.trim().replace(' ', 'T');
-              if (clean.match(/([+-]\d{2})$/)) clean += ':00';
-              return new Date(clean);
-            };
-
-            const start = parseCustomDate(ev.jadwal_event);
-            const stop = ev.jadwal_stop ? parseCustomDate(ev.jadwal_stop) : new Date(start.getTime() + 2 * 60 * 60 * 1000);
-            const nowTime = new Date();
-
-            let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-            if (nowTime > stop) {
-              status = 'finished';
-            } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
-              status = 'live';
-            }
-
-            const homeFlag = ev.logo_1 || getFlagByName(ev.player_1);
-            const awayFlag = ev.logo_2 || getFlagByName(ev.player_2);
-
-            // Try to find an existing match with the same teams so they sort into the same group
-            const p1 = normalizeTeamName(ev.player_1);
-            const p2 = normalizeTeamName(ev.player_2);
-            const existingMatch = parsedMatches.find(m => {
-              const home = normalizeTeamName(m.homeTeam.name);
-              const away = normalizeTeamName(m.awayTeam.name);
-              return (home === p1 && away === p2) || (home === p2 && away === p1);
-            });
-
-            // Use the existing match's date so getMatchGroupKey produces the same key → grouped together
-            const groupDate = existingMatch ? existingMatch.date : ev.jadwal_event;
-            const groupStatus = existingMatch ? existingMatch.status : status;
-            const groupHomeTeam = existingMatch
-              ? existingMatch.homeTeam
-              : { name: ev.player_1, logo: homeFlag };
-            const groupAwayTeam = existingMatch
-              ? existingMatch.awayTeam
-              : { name: ev.player_2, logo: awayFlag };
-
-            finalMatches.push({
-              id: ev.id_event,
-              parentMatchId: existingMatch?.id,
-              homeTeam: groupHomeTeam,
-              awayTeam: groupAwayTeam,
-              league: { name: ev.nama_event || 'Live Event', logo: '/favicon.svg' },
-              time: existingMatch ? existingMatch.time : formatMatchTime(start),
-              date: groupDate,
-              stopDate: ev.jadwal_stop || undefined,
-              status: groupStatus,
-              score: existingMatch?.score,
-              liveMinute: existingMatch?.liveMinute,
-              channelId: ev.id_event,
-            });
-          });
-        } catch (ceErr) {
-          console.warn('[matchService] Failed to inject custom events:', ceErr);
-        }
-
-        const sorted = sortMatchesNeatly(finalMatches);
-        return sorted;
-      }
-    } catch (error) {
-      console.error('Failed to resolve matches schedule:', error);
-    }
-
-    // Fallback to local events if everything fails
-    try {
-      const parsedMatches: Match[] = [];
-      const seenRtbMatchups = new Set<string>();
-      (localEvents as any[]).forEach((event: any) => {
-        const homeTeamName = event.player_1 || 'TBD';
-        const awayTeamName = event.player_2 || 'TBD';
-
-        const homeTeamFlag = event.logo_1 || getFlagByName(homeTeamName);
-        const awayTeamFlag = event.logo_2 || getFlagByName(awayTeamName);
-
-        const start = parseJadwal(event.jadwal_event);
-        const stop = parseJadwal(event.jadwal_stop);
-        const nowTime = new Date();
-
-        let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-        if (nowTime > stop) {
-          status = 'finished';
-        } else if (nowTime >= new Date(start.getTime() - 30 * 60 * 1000)) {
-          status = 'live';
-        }
-
-        const timeStr = formatMatchTime(start);
-
-        const originalMatch: Match = {
-          id: event.id_event,
-          homeTeam: {
-            name: homeTeamName,
-            logo: homeTeamFlag
-          },
-          awayTeam: {
-            name: awayTeamName,
-            logo: awayTeamFlag
-          },
-          league: {
-            name: event.nama_event || 'FIFA World Cup',
-            logo: '/favicon.svg'
-          },
-          time: timeStr,
-          date: event.jadwal_event,
-          stopDate: event.jadwal_stop,
-          status: status,
-          channelId: event.id_event
-        };
-
-        parsedMatches.push(originalMatch);
-
-        const isStartingSoonOrLive = nowTime.getTime() >= start.getTime() - 60 * 60 * 1000;
-        const matchupKey = `${homeTeamName.toLowerCase().trim()} vs ${awayTeamName.toLowerCase().trim()}`;
-        if (SHOW_RTB_GO_IN_JADWAL && event.nama_event && event.nama_event.toLowerCase().includes("fifa world cup") && isStartingSoonOrLive) {
-          if (!seenRtbMatchups.has(matchupKey)) {
-            seenRtbMatchups.add(matchupKey);
-            parsedMatches.push({
-              ...originalMatch,
-              id: `${event.id_event}9`,
-              parentMatchId: event.id_event,
-              league: {
-                name: "FIFA World Cup [RTB Go]",
-                logo: '/favicon.svg'
-              },
-              channelId: `${event.id_event}9`
-            });
-          }
-        }
-      });
-      const sorted = sortMatchesNeatly(parsedMatches);
-      return sorted;
-    } catch (err) {
-      console.error('Failed fallback mapping', err);
-      return [];
     }
   };
 
-  const result = await fetchAndProcess();
-  cachedMatches = result;
-  cacheTime = Date.now();
-  return result;
+  const getEventStatus = (start: Date, stop: Date): 'live' | 'upcoming' | 'finished' => {
+    const nowTime = new Date();
+    const playableStart = new Date(start.getTime() - 30 * 60 * 1000);
+    const playableEnd = new Date(stop.getTime() + 30 * 60 * 1000);
+
+    if (nowTime > playableEnd) return 'finished';
+    if (nowTime >= playableStart) return 'live';
+    return 'upcoming';
+  };
+
+  const mapEventToMatch = (event: any): Match => {
+    const homeTeamName = event.player_1 || 'TBD';
+    const awayTeamName = event.player_2 || 'TBD';
+    const start = parseJadwal(event.jadwal_event);
+    const stop = event.jadwal_stop
+      ? parseJadwal(event.jadwal_stop)
+      : new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+    return {
+      id: event.id_event,
+      homeTeam: {
+        name: homeTeamName,
+        logo: event.logo_1 || getFlagByName(homeTeamName),
+      },
+      awayTeam: {
+        name: awayTeamName,
+        logo: event.logo_2 || getFlagByName(awayTeamName),
+      },
+      league: {
+        name: event.nama_event || 'Live Event',
+        logo: '/favicon.png',
+      },
+      time: formatMatchTime(start),
+      date: event.jadwal_event,
+      stopDate: event.jadwal_stop,
+      status: getEventStatus(start, stop),
+      channelId: event.id_event,
+    };
+  };
+
+  try {
+    const eventsData = await loadEvents();
+    const parsedMatches = eventsData.map(mapEventToMatch);
+    const finalMatches: Match[] = [...parsedMatches];
+
+    try {
+      const customEvents = await getActiveCustomEvents();
+      customEvents.forEach((ev) => {
+        if (finalMatches.some((match) => match.id === ev.id_event)) return;
+
+        const start = ev.jadwal_event ? parseJadwal(ev.jadwal_event) : new Date(0);
+        const stop = ev.jadwal_stop
+          ? parseJadwal(ev.jadwal_stop)
+          : new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+        const p1 = normalizeTeamName(ev.player_1);
+        const p2 = normalizeTeamName(ev.player_2);
+        const existingMatch = parsedMatches.find((match) => {
+          const home = normalizeTeamName(match.homeTeam.name);
+          const away = normalizeTeamName(match.awayTeam.name);
+          return (home === p1 && away === p2) || (home === p2 && away === p1);
+        });
+
+        const groupDate = existingMatch ? existingMatch.date : ev.jadwal_event;
+        const groupStatus = existingMatch ? existingMatch.status : getEventStatus(start, stop);
+        const groupHomeTeam = existingMatch
+          ? existingMatch.homeTeam
+          : { name: ev.player_1, logo: ev.logo_1 || getFlagByName(ev.player_1) };
+        const groupAwayTeam = existingMatch
+          ? existingMatch.awayTeam
+          : { name: ev.player_2, logo: ev.logo_2 || getFlagByName(ev.player_2) };
+
+        finalMatches.push({
+          id: ev.id_event,
+          parentMatchId: existingMatch?.id,
+          homeTeam: groupHomeTeam,
+          awayTeam: groupAwayTeam,
+          league: { name: ev.nama_event || 'Live Event', logo: '/favicon.png' },
+          time: existingMatch ? existingMatch.time : formatMatchTime(start),
+          date: groupDate,
+          stopDate: ev.jadwal_stop || undefined,
+          status: groupStatus,
+          score: existingMatch?.score,
+          liveMinute: existingMatch?.liveMinute,
+          channelId: ev.id_event,
+        });
+      });
+    } catch (ceErr) {
+      console.warn('[matchService] Failed to inject custom events:', ceErr);
+    }
+
+    const sorted = sortMatchesNeatly(finalMatches);
+    cachedMatches = sorted;
+    cacheTime = Date.now();
+    return sorted;
+  } catch (error) {
+    console.error('Failed to resolve matches schedule:', error);
+    cachedMatches = [];
+    cacheTime = Date.now();
+    return [];
+  }
 };
