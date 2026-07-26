@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ykn_black">#020202</color>
+    <color name="ykn_surface">#080808</color>
+    <color name="ykn_surface_hover">#121212</color>
+    <color name="ykn_gold">#D4AF37</color>
+    <color name="ykn_emerald">#10B981</color>
+    <color name="ykn_red">#E50914</color>
+    <color name="ykn_text">#FFFFFF</color>
+</resources>
+
