@@ -2,10 +2,10 @@ package id.ykn.tv;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +23,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.LruCache;
-import android.util.Rational;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +91,11 @@ public class MainActivity extends Activity {
     private static final String SAWERIA_URL = "https://saweria.co/diaw14";
     private static final String BAGIBAGI_URL = "https://bagibagi.co/Diaww";
     private static final String KOFI_URL = "https://ko-fi.com/diaww14";
+    private static final String PREFS_NAME = "ykn_tv_prefs";
+    private static final String CACHE_MAIN_ITEMS = "cache_main_items";
+    private static final String CACHE_CHANNEL_ITEMS = "cache_channel_items";
+    private static final String CACHE_ESPORTEX_ITEMS = "cache_esportex_items";
+    private static final String CACHE_UPDATED_AT = "cache_updated_at";
     private static final long MAIN_CACHE_BUST_MS = 5_000L;
     private static final long ESPORTEX_CACHE_BUST_MS = 30_000L;
     private static final long SCHEDULE_REFRESH_MS = 5_000L;
@@ -199,13 +203,6 @@ public class MainActivity extends Activity {
     private String currentLoadedSignature = "";
     private String playerLogoDataUri = "";
     private long lastOfflineToastAt = 0L;
-    private long suppressAutoPipUntil = 0L;
-    private boolean pipPlayerLayoutApplied = false;
-    private int savedContentPaddingLeft = 0;
-    private int savedContentPaddingTop = 0;
-    private int savedContentPaddingRight = 0;
-    private int savedContentPaddingBottom = 0;
-
     private final Runnable refreshRunnable = new Runnable() {
         @Override
         public void run() {
@@ -264,14 +261,6 @@ public class MainActivity extends Activity {
             return;
         }
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        if (shouldAutoEnterPip()) {
-            enterNativePictureInPicture();
-        }
     }
 
     private void buildUi() {
@@ -444,70 +433,80 @@ public class MainActivity extends Activity {
     private View buildFooter() {
         LinearLayout footer = new LinearLayout(this);
         footer.setOrientation(LinearLayout.VERTICAL);
-        footer.setPadding(dp(12), dp(10), dp(12), dp(12));
-        footer.setBackground(stroked(Color.argb(245, 5, 5, 5), Color.argb(24, 255, 255, 255), 1, 0));
+        footer.setPadding(dp(8), dp(6), dp(8), dp(8));
+        footer.setBackgroundColor(Color.rgb(3, 3, 3));
 
-        LinearLayout actions = new LinearLayout(this);
-        actions.setOrientation(LinearLayout.HORIZONTAL);
-        actions.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout pill = new LinearLayout(this);
+        pill.setOrientation(LinearLayout.HORIZONTAL);
+        pill.setGravity(Gravity.CENTER_VERTICAL);
+        pill.setPadding(dp(8), dp(5), dp(6), dp(5));
+        pill.setBackground(stroked(Color.argb(235, 8, 8, 8), Color.argb(52, 212, 175, 55), 1, 24));
 
-        TextView community = footerButton("JOIN COMMUNITY", C_EMERALD, Color.argb(22, 16, 185, 129));
-        community.setOnClickListener(v -> openExternalUrl(COMMUNITY_URL));
-        actions.addView(community, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        LinearLayout support = new LinearLayout(this);
-        support.setOrientation(LinearLayout.HORIZONTAL);
-        support.setGravity(Gravity.CENTER);
-        support.setPadding(dp(12), dp(9), dp(12), dp(9));
-        support.setBackground(stroked(Color.argb(26, 212, 175, 55), Color.argb(90, 212, 175, 55), 1, 14));
-        support.setOnClickListener(v -> showSupportDialog());
-
-        ImageView coffee = new ImageView(this);
-        coffee.setImageResource(R.drawable.ic_coffee);
-        LinearLayout.LayoutParams coffeeLp = new LinearLayout.LayoutParams(dp(22), dp(22));
-        coffeeLp.setMargins(0, 0, dp(7), 0);
-        support.addView(coffee, coffeeLp);
-
-        TextView supportText = new TextView(this);
-        supportText.setText("SUPPORT");
-        supportText.setTextColor(C_GOLD);
-        supportText.setTypeface(Typeface.DEFAULT_BOLD);
-        supportText.setTextSize(10);
-        supportText.setSingleLine(true);
-        support.addView(supportText);
-
-        LinearLayout.LayoutParams supportLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        supportLp.setMargins(dp(8), 0, 0, 0);
-        actions.addView(support, supportLp);
-        footer.addView(actions);
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.ykn_tv_logo);
+        logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        LinearLayout.LayoutParams logoLp = new LinearLayout.LayoutParams(dp(50), dp(18));
+        logoLp.setMargins(0, 0, dp(7), 0);
+        pill.addView(logo, logoLp);
 
         TextView credit = new TextView(this);
         credit.setText("Developed by YKN Team");
-        credit.setTextColor(C_DIM);
+        credit.setTextColor(C_MUTED);
         credit.setTypeface(Typeface.DEFAULT_BOLD);
-        credit.setTextSize(9);
-        credit.setGravity(Gravity.CENTER);
+        credit.setTextSize(8.5f);
         credit.setSingleLine(true);
-        LinearLayout.LayoutParams creditLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+        credit.setEllipsize(TextUtils.TruncateAt.END);
+        pill.addView(credit, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        View community = footerActionButton("Join", R.drawable.ic_users, C_EMERALD, Color.argb(22, 16, 185, 129));
+        community.setOnClickListener(v -> openExternalUrl(COMMUNITY_URL));
+        LinearLayout.LayoutParams communityLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        creditLp.setMargins(0, dp(8), 0, 0);
-        footer.addView(credit, creditLp);
+        communityLp.setMargins(dp(6), 0, 0, 0);
+        pill.addView(community, communityLp);
+
+        View support = footerActionButton("Support", R.drawable.ic_coffee, C_GOLD, Color.argb(24, 212, 175, 55));
+        support.setOnClickListener(v -> showSupportDialog());
+        LinearLayout.LayoutParams supportLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        supportLp.setMargins(dp(6), 0, 0, 0);
+        pill.addView(support, supportLp);
+
+        footer.addView(pill, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
 
         return footer;
     }
 
-    private TextView footerButton(String text, int textColor, int fillColor) {
-        TextView button = new TextView(this);
-        button.setText(text);
-        button.setTextColor(textColor);
-        button.setTextSize(10);
-        button.setTypeface(Typeface.DEFAULT_BOLD);
-        button.setGravity(Gravity.CENTER);
-        button.setSingleLine(true);
-        button.setPadding(dp(12), dp(12), dp(12), dp(12));
-        button.setBackground(stroked(fillColor, Color.argb(70, 255, 255, 255), 1, 14));
+    private View footerActionButton(String title, int iconRes, int accent, int fillColor) {
+        LinearLayout button = new LinearLayout(this);
+        button.setOrientation(LinearLayout.HORIZONTAL);
+        button.setGravity(Gravity.CENTER_VERTICAL);
+        button.setMinimumHeight(dp(31));
+        button.setPadding(dp(9), dp(6), dp(10), dp(6));
+        button.setBackground(stroked(fillColor, withAlpha(accent, 105), 1, 18));
+
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(iconRes);
+        icon.setColorFilter(accent);
+        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(15), dp(15));
+        iconLp.setMargins(0, 0, dp(5), 0);
+        button.addView(icon, iconLp);
+
+        TextView label = new TextView(this);
+        label.setText(title);
+        label.setTextColor(C_WHITE);
+        label.setTypeface(Typeface.DEFAULT_BOLD);
+        label.setTextSize(9.5f);
+        label.setSingleLine(true);
+        button.addView(label);
+
         return button;
     }
 
@@ -582,12 +581,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
-        setPipPlayerLayout(isInPictureInPictureMode);
-    }
-
     private void setChromeVisible(boolean visible) {
         int state = visible ? View.VISIBLE : View.GONE;
         if (headerView != null) headerView.setVisibility(state);
@@ -597,88 +590,6 @@ public class MainActivity extends Activity {
         if (loadingLabel != null) loadingLabel.setVisibility(visible && isLoadingSchedules ? View.VISIBLE : View.GONE);
         if (scheduleScroll != null) scheduleScroll.setVisibility(state);
         if (footerView != null) footerView.setVisibility(state);
-    }
-
-    private void enterNativePictureInPicture() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            Toast.makeText(this, "Picture-in-Picture is not supported on this Android version.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            setPipPlayerLayout(true);
-            PictureInPictureParams params = new PictureInPictureParams.Builder()
-                    .setAspectRatio(new Rational(16, 9))
-                    .build();
-            boolean entered = enterPictureInPictureMode(params);
-            if (!entered) {
-                setPipPlayerLayout(false);
-                Toast.makeText(this, "Picture-in-Picture failed.", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception err) {
-            setPipPlayerLayout(false);
-            Toast.makeText(this, "Picture-in-Picture failed.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void setPipPlayerLayout(boolean enabled) {
-        setPlayerWebPipMode(enabled);
-        if (fullscreenView != null) return;
-        if (playerShell == null || appContent == null) return;
-
-        if (enabled) {
-            if (!pipPlayerLayoutApplied) {
-                savedContentPaddingLeft = appContent.getPaddingLeft();
-                savedContentPaddingTop = appContent.getPaddingTop();
-                savedContentPaddingRight = appContent.getPaddingRight();
-                savedContentPaddingBottom = appContent.getPaddingBottom();
-                pipPlayerLayoutApplied = true;
-            }
-            appContent.setVisibility(View.VISIBLE);
-            appContent.setPadding(0, 0, 0, 0);
-            setChromeVisible(false);
-            playerShell.setClipToOutline(false);
-            playerShell.setElevation(0);
-            playerShell.setBackgroundColor(Color.BLACK);
-            playerShell.setLayoutParams(pipPlayerLayoutParams());
-            return;
-        }
-
-        if (!pipPlayerLayoutApplied) {
-            setChromeVisible(true);
-            return;
-        }
-        appContent.setVisibility(View.VISIBLE);
-        appContent.setPadding(
-                savedContentPaddingLeft,
-                savedContentPaddingTop,
-                savedContentPaddingRight,
-                savedContentPaddingBottom
-        );
-        playerShell.setBackground(playerChrome());
-        playerShell.setClipToOutline(true);
-        playerShell.setElevation(dp(2));
-        playerShell.setLayoutParams(normalPlayerLayoutParams());
-        setChromeVisible(true);
-        pipPlayerLayoutApplied = false;
-        if (rootFrame != null) rootFrame.requestApplyInsets();
-    }
-
-    private void setPlayerWebPipMode(boolean enabled) {
-        if (playerView == null) return;
-        String js = "try{if(window.__yknSetNativePip)window.__yknSetNativePip("
-                + (enabled ? "true" : "false")
-                + ");}catch(e){}";
-        playerView.evaluateJavascript(js, null);
-    }
-
-    private boolean shouldAutoEnterPip() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false;
-        if (System.currentTimeMillis() < suppressAutoPipUntil) return false;
-        if (selectedItem == null || isFinishedStatus(selectedItem.status)) return false;
-        if (currentLoadedSignature == null || currentLoadedSignature.isEmpty()) return false;
-        return !currentLoadedSignature.startsWith("countdown|")
-                && !currentLoadedSignature.startsWith("finished|");
     }
 
     private void showSponsorDialogIfNeeded() {
@@ -760,7 +671,6 @@ public class MainActivity extends Activity {
 
     private void openExternalUrl(String url) {
         try {
-            suppressAutoPipUntil = System.currentTimeMillis() + 2000L;
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -834,9 +744,9 @@ public class MainActivity extends Activity {
         descLp.setMargins(0, dp(14), 0, dp(14));
         card.addView(description, descLp);
 
-        card.addView(supportOption("Saweria", "QRIS, Gopay, OVO, Dana, LinkAja", Color.rgb(249, 115, 22), SAWERIA_URL, dialog));
-        card.addView(supportOption("BagiBagi", "QRIS, E-Wallet, dan Bank", C_GOLD, BAGIBAGI_URL, dialog));
-        card.addView(supportOption("Ko-fi", "Paypal dan Credit Card", Color.rgb(34, 211, 238), KOFI_URL, dialog));
+        card.addView(supportOption(R.drawable.ic_wallet, "Saweria", "QRIS, Gopay, OVO, Dana, LinkAja", Color.rgb(249, 115, 22), SAWERIA_URL, dialog));
+        card.addView(supportOption(R.drawable.ic_gift, "BagiBagi", "QRIS, E-Wallet, dan Bank", C_GOLD, BAGIBAGI_URL, dialog));
+        card.addView(supportOption(R.drawable.ic_card, "Ko-fi", "Paypal dan Credit Card", Color.rgb(34, 211, 238), KOFI_URL, dialog));
 
         TextView footer = new TextView(this);
         footer.setText("Developed by YKN Team");
@@ -861,26 +771,27 @@ public class MainActivity extends Activity {
         }
     }
 
-    private View supportOption(String title, String subtitle, int color, String url, Dialog dialog) {
+    private View supportOption(int iconRes, String title, String subtitle, int color, String url, Dialog dialog) {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(13), dp(12), dp(13), dp(12));
-        row.setBackground(stroked(Color.argb(18, 255, 255, 255), Color.argb(28, 255, 255, 255), 1, 15));
+        row.setPadding(dp(12), dp(11), dp(11), dp(11));
+        row.setBackground(stroked(withAlpha(color, 18), withAlpha(color, 58), 1, 14));
         row.setOnClickListener(v -> {
             dialog.dismiss();
             openExternalUrl(url);
         });
 
-        TextView badge = new TextView(this);
-        badge.setText(title.substring(0, 1).toUpperCase(Locale.US));
-        badge.setTextColor(C_BLACK);
-        badge.setTextSize(13);
-        badge.setTypeface(Typeface.DEFAULT_BOLD);
-        badge.setGravity(Gravity.CENTER);
-        badge.setBackground(stroked(color, color, 1, 12));
+        FrameLayout badge = new FrameLayout(this);
+        badge.setBackground(stroked(withAlpha(color, 35), withAlpha(color, 120), 1, 12));
         LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(dp(42), dp(42));
         badgeLp.setMargins(0, 0, dp(12), 0);
+
+        ImageView optionIcon = new ImageView(this);
+        optionIcon.setImageResource(iconRes);
+        optionIcon.setColorFilter(color);
+        FrameLayout.LayoutParams optionIconLp = new FrameLayout.LayoutParams(dp(22), dp(22), Gravity.CENTER);
+        badge.addView(optionIcon, optionIconLp);
         row.addView(badge, badgeLp);
 
         LinearLayout textCol = new LinearLayout(this);
@@ -904,12 +815,12 @@ public class MainActivity extends Activity {
 
         row.addView(textCol, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView arrow = new TextView(this);
-        arrow.setText(">");
-        arrow.setTextColor(color);
-        arrow.setTypeface(Typeface.DEFAULT_BOLD);
-        arrow.setTextSize(18);
-        row.addView(arrow);
+        ImageView arrow = new ImageView(this);
+        arrow.setImageResource(R.drawable.ic_arrow_right);
+        arrow.setColorFilter(color);
+        LinearLayout.LayoutParams arrowLp = new LinearLayout.LayoutParams(dp(21), dp(21));
+        arrowLp.setMargins(dp(9), 0, 0, 0);
+        row.addView(arrow, arrowLp);
 
         LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -936,6 +847,14 @@ public class MainActivity extends Activity {
         if (!hasInternetConnection()) {
             loadingLabel.setVisibility(View.GONE);
             showOfflineNotice(!silent);
+            if (mainItems.isEmpty() && channelItems.isEmpty() && esportexItems.isEmpty()) {
+                if (loadCachedSchedules()) {
+                    if (!silent) {
+                        Toast.makeText(this, "Showing saved schedule. Connect internet to play streams.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
+            }
             if (mainItems.isEmpty() && channelItems.isEmpty() && esportexItems.isEmpty()) {
                 loadPlaceholder("YKN TV", "No internet connection. Turn on Wi-Fi or mobile data.");
             }
@@ -994,6 +913,155 @@ public class MainActivity extends Activity {
         if (!silent && result.error != null && getVisibleItems().isEmpty()) {
             Toast.makeText(this, result.error, Toast.LENGTH_LONG).show();
         }
+
+        saveScheduleCache(result);
+    }
+
+    private void saveScheduleCache(FetchResult result) {
+        if (result == null) return;
+        if (result.mainItems.isEmpty() && result.channelItems.isEmpty() && result.esportexItems.isEmpty()) return;
+
+        try {
+            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                    .edit()
+                    .putString(CACHE_MAIN_ITEMS, scheduleItemsToJson(result.mainItems).toString())
+                    .putString(CACHE_CHANNEL_ITEMS, scheduleItemsToJson(result.channelItems).toString())
+                    .putString(CACHE_ESPORTEX_ITEMS, scheduleItemsToJson(result.esportexItems).toString())
+                    .putLong(CACHE_UPDATED_AT, System.currentTimeMillis())
+                    .apply();
+        } catch (JSONException ignored) {
+        }
+    }
+
+    private boolean loadCachedSchedules() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String cachedMain = prefs.getString(CACHE_MAIN_ITEMS, "[]");
+        String cachedChannels = prefs.getString(CACHE_CHANNEL_ITEMS, "[]");
+        String cachedEsportex = prefs.getString(CACHE_ESPORTEX_ITEMS, "[]");
+
+        try {
+            ArrayList<ScheduleItem> cachedMainItems = scheduleItemsFromJson(new JSONArray(cachedMain));
+            ArrayList<ScheduleItem> cachedChannelItems = scheduleItemsFromJson(new JSONArray(cachedChannels));
+            ArrayList<ScheduleItem> cachedEsportexItems = scheduleItemsFromJson(new JSONArray(cachedEsportex));
+
+            if (cachedMainItems.isEmpty() && cachedChannelItems.isEmpty() && cachedEsportexItems.isEmpty()) {
+                return false;
+            }
+
+            Collections.sort(cachedMainItems);
+            Collections.sort(cachedChannelItems);
+            Collections.sort(cachedEsportexItems);
+
+            mainItems.clear();
+            mainItems.addAll(cachedMainItems);
+            channelItems.clear();
+            channelItems.addAll(cachedChannelItems);
+            esportexItems.clear();
+            esportexItems.addAll(cachedEsportexItems);
+
+            renderTabs();
+            reconcileSelection();
+            renderServerButtons();
+            renderScheduleList();
+            return true;
+        } catch (JSONException err) {
+            return false;
+        }
+    }
+
+    private JSONArray scheduleItemsToJson(List<ScheduleItem> items) throws JSONException {
+        JSONArray array = new JSONArray();
+        for (ScheduleItem item : items) {
+            array.put(scheduleItemToJson(item));
+        }
+        return array;
+    }
+
+    private JSONObject scheduleItemToJson(ScheduleItem item) throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put("id", item.id);
+        object.put("title", item.title);
+        object.put("league", item.league);
+        object.put("startRaw", item.startRaw);
+        object.put("endRaw", item.endRaw);
+        object.put("poster", item.poster);
+        object.put("sportKey", item.sportKey);
+        object.put("source", item.source);
+        object.put("mainSource", item.mainSource);
+        object.put("channelSource", item.channelSource);
+        object.put("displayTime", item.displayTime);
+
+        JSONArray streams = new JSONArray();
+        for (StreamOption stream : item.streams) {
+            JSONObject streamObject = new JSONObject();
+            streamObject.put("name", stream.name);
+            streamObject.put("url", stream.url);
+            streamObject.put("type", stream.type);
+            streamObject.put("license", stream.license);
+            streams.put(streamObject);
+        }
+        object.put("streams", streams);
+        return object;
+    }
+
+    private ArrayList<ScheduleItem> scheduleItemsFromJson(JSONArray array) {
+        ArrayList<ScheduleItem> items = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject object = array.optJSONObject(i);
+            ScheduleItem item = scheduleItemFromJson(object);
+            if (item != null) items.add(item);
+        }
+        return items;
+    }
+
+    private ScheduleItem scheduleItemFromJson(JSONObject object) {
+        if (object == null) return null;
+
+        ScheduleItem item = new ScheduleItem();
+        item.id = cleanText(object.optString("id"));
+        item.title = cleanText(object.optString("title"));
+        item.league = cleanText(object.optString("league"));
+        item.startRaw = cleanText(object.optString("startRaw"));
+        item.endRaw = cleanText(object.optString("endRaw"));
+        item.poster = cleanText(object.optString("poster"));
+        item.sportKey = cleanText(object.optString("sportKey"));
+        item.source = cleanText(object.optString("source"));
+        item.mainSource = object.optBoolean("mainSource");
+        item.channelSource = object.optBoolean("channelSource");
+
+        if (item.id.isEmpty() || item.title.isEmpty() || item.sportKey.isEmpty()) return null;
+
+        if (item.channelSource || item.startRaw.isEmpty()) {
+            item.startMillis = 0L;
+            item.endMillis = Long.MAX_VALUE;
+            item.status = "live";
+            item.displayTime = firstNonEmpty(object.optString("displayTime"), "24 Jam");
+        } else {
+            item.startMillis = parseScheduleMillis(item.startRaw);
+            item.endMillis = item.endRaw.isEmpty()
+                    ? item.startMillis + (item.mainSource ? MAIN_DEFAULT_EVENT_DURATION_MS : ESPORTEX_DEFAULT_EVENT_DURATION_MS)
+                    : parseScheduleMillis(item.endRaw);
+            item.status = getStatus(item.startMillis, item.endMillis, item.mainSource);
+            item.displayTime = formatScheduleTime(item.startMillis);
+        }
+
+        JSONArray streams = object.optJSONArray("streams");
+        if (streams != null) {
+            for (int i = 0; i < streams.length(); i++) {
+                JSONObject stream = streams.optJSONObject(i);
+                if (stream == null) continue;
+                String url = cleanStreamUrl(stream.optString("url"));
+                if (url.isEmpty()) continue;
+                item.streams.add(new StreamOption(
+                        stream.optString("name"),
+                        url,
+                        stream.optString("type"),
+                        stream.optString("license")
+                ));
+            }
+        }
+
+        return item.streams.isEmpty() ? null : item;
     }
 
     private List<ScheduleItem> fetchMainSchedule() throws Exception {
@@ -1034,8 +1102,9 @@ public class MainActivity extends Activity {
 
             String url = cleanStreamUrl(event.optString("url_iptv"));
             String type = cleanText(event.optString("jenis", "hls"));
+            String license = cleanText(event.optString("url_license"));
             if (!url.isEmpty()) {
-                item.streams.addAll(buildPlayableServers(url, type));
+                item.streams.addAll(buildPlayableServers(url, type, license));
             }
 
             items.add(item);
@@ -1096,6 +1165,7 @@ public class MainActivity extends Activity {
             seenIds.add(id);
 
             String type = cleanText(channel.optString("jenis", "hls"));
+            String license = cleanText(channel.optString("url_license"));
             ScheduleItem item = new ScheduleItem();
             item.id = id;
             item.title = title;
@@ -1111,7 +1181,7 @@ public class MainActivity extends Activity {
             item.endMillis = Long.MAX_VALUE;
             item.status = "live";
             item.displayTime = "24 Jam";
-            item.streams.addAll(buildPlayableServers(streamUrl, type));
+            item.streams.addAll(buildPlayableServers(streamUrl, type, license));
 
             if (!item.streams.isEmpty()) items.add(item);
         }
@@ -1128,18 +1198,18 @@ public class MainActivity extends Activity {
         }
     }
 
-    private List<StreamOption> buildPlayableServers(String rawUrl, String type) {
+    private List<StreamOption> buildPlayableServers(String rawUrl, String type, String license) {
         ArrayList<StreamOption> servers = new ArrayList<>();
         String lowerType = type.toLowerCase(Locale.US);
         String lowerUrl = rawUrl.toLowerCase(Locale.US);
 
         if (lowerType.contains("iframe") || lowerType.contains("xoilac") || lowerUrl.contains("iframe")) {
-            servers.add(new StreamOption("Server 1 (Embed)", rawUrl, "iframe"));
+            servers.add(new StreamOption("Server 1 (Embed)", rawUrl, "iframe", license));
             return servers;
         }
 
-        servers.add(new StreamOption("Server 1 (Direct)", rawUrl, type));
-        servers.add(new StreamOption("Server 2 (Proxy)", getProxiedUrl(rawUrl), type));
+        servers.add(new StreamOption("Server 1 (Direct)", rawUrl, type, license));
+        servers.add(new StreamOption("Server 2 (Proxy)", getProxiedUrl(rawUrl), type, license));
         return servers;
     }
 
@@ -1482,7 +1552,7 @@ public class MainActivity extends Activity {
             if (isIframeStream(option)) {
                 loadIframePage(option.url);
             } else {
-                loadVideoPage(option.url);
+                loadVideoPage(option);
             }
         }, PLAYER_LOAD_HOLD_MS);
     }
@@ -1518,10 +1588,10 @@ public class MainActivity extends Activity {
                 + "<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
                 + "<style>html,body{margin:0;height:100%;width:100%;overflow:hidden;background:#000;}"
                 + ".bg{position:fixed;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(212,175,55,.18),transparent 34%),linear-gradient(180deg,#080808,#000);transition:opacity .22s ease;}"
-                + ".bg:after{content:'YKN TV';position:absolute;bottom:11px;left:0;right:0;text-align:center;color:rgba(212,175,55,.42);font:900 9px Arial,sans-serif;letter-spacing:0}.bg img{width:62%;max-width:310px;max-height:66%;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(212,175,55,.28));opacity:.92}.wordmark{font:900 34px Arial,sans-serif;color:#fff;text-shadow:0 10px 28px #000}.wordmark span{color:#D4AF37}.ready .bg{opacity:0}.native-pip .bg{display:none!important;}"
+                + ".bg:after{content:'YKN TV';position:absolute;bottom:11px;left:0;right:0;text-align:center;color:rgba(212,175,55,.42);font:900 9px Arial,sans-serif;letter-spacing:0}.bg img{width:62%;max-width:310px;max-height:66%;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(212,175,55,.28));opacity:.92}.wordmark{font:900 34px Arial,sans-serif;color:#fff;text-shadow:0 10px 28px #000}.wordmark span{color:#D4AF37}.ready .bg{opacity:0}"
                 + "iframe{position:fixed;inset:0;z-index:1;width:100%;height:100%;border:0;background:transparent;opacity:0;transition:opacity .22s ease}.ready iframe{opacity:1}.error-state iframe{opacity:0;}"
                 + ".status{position:fixed;top:8px;left:8px;z-index:3;max-width:210px;height:30px;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(0,0,0,.72);color:#f8fafc;font:900 10px Arial,sans-serif;padding:0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;}"
-                + ".status.loading:before{content:'';width:7px;height:7px;border-radius:50%;background:#D4AF37;box-shadow:0 0 14px rgba(212,175,55,.85);animation:pulse 1s infinite}.status.success{color:#86efac;border-color:rgba(134,239,172,.42);background:rgba(2,44,34,.78)}.status.error{color:#fca5a5;border-color:rgba(248,113,113,.55);background:rgba(69,10,10,.78)}.native-pip .status{display:none!important}@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}"
+                + ".status.loading:before{content:'';width:7px;height:7px;border-radius:50%;background:#D4AF37;box-shadow:0 0 14px rgba(212,175,55,.85);animation:pulse 1s infinite}.status.success{color:#86efac;border-color:rgba(134,239,172,.42);background:rgba(2,44,34,.78)}.status.error{color:#fca5a5;border-color:rgba(248,113,113,.55);background:rgba(69,10,10,.78)}@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}"
                 + "[hidden]{display:none!important;}</style>"
                 + "</head><body>"
                 + "<div class='bg'>" + brandBackground + "</div>"
@@ -1531,7 +1601,6 @@ public class MainActivity extends Activity {
                 + "<script>window.open=function(){return null};"
                 + "var f=document.getElementById('f'),status=document.getElementById('status'),iframeDone=false;"
                 + "function setStatus(t,state,hide){var s=state||'loading';status.textContent=t;status.hidden=!t;status.className='status '+s;document.body.classList.toggle('ready',s==='success');document.body.classList.toggle('error-state',s==='error');if(s==='success'||s==='error')iframeDone=true;if(hide)setTimeout(function(){status.hidden=true},hide);}"
-                + "window.__yknSetNativePip=function(on){document.body.classList.toggle('native-pip',!!on)};"
                 + "window.__yknPlayerStatus=function(t,state){setStatus(t,state||'loading',0)};window.__yknPlayerError=function(t){setStatus('ERROR: '+String(t||'IFRAME FAILED').toUpperCase(),'error',0)};"
                 + "f.addEventListener('load',function(){setStatus('SUCCESS','success',0)});f.addEventListener('error',function(){setStatus('ERROR: IFRAME FAILED','error')});setTimeout(function(){if(!iframeDone)setStatus('SUCCESS','success',0)},3200);"
                 + "try{Object.defineProperty(window,'opener',{value:null,writable:false});}catch(e){}"
@@ -1582,53 +1651,63 @@ public class MainActivity extends Activity {
         playerView.loadDataWithBaseURL(LOCAL_PLAYER_BASE, html, "text/html", "UTF-8", null);
     }
 
-    private void loadVideoPage(String url) {
-        String safeUrl = escapeJsString(url);
+    private void loadVideoPage(StreamOption option) {
+        String safeUrl = escapeJsString(option.url);
+        String safeType = escapeJsString(option.type);
+        String safeLicense = escapeJsString(option.license);
         String brandBackground = buildPlayerBackgroundHtml();
         String html = "<!doctype html><html><head>"
                 + "<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
                 + "<script src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js'></script>"
+                + "<script src='https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.min.js'></script>"
                 + "<style>html,body{margin:0;height:100%;width:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif;}"
                 + "*{box-sizing:border-box}.player{position:fixed;inset:0;background:#000;overflow:hidden;touch-action:manipulation;}"
                 + ".bg{position:absolute;inset:0;z-index:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(212,175,55,.18),transparent 34%),linear-gradient(180deg,#080808,#000);transition:opacity .22s ease;}"
-                + ".bg:after{content:'YKN TV';position:absolute;bottom:11px;left:0;right:0;text-align:center;color:rgba(212,175,55,.42);font:900 9px Arial,sans-serif;letter-spacing:0}.bg img{width:62%;max-width:310px;max-height:66%;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(212,175,55,.28));opacity:.92}.wordmark{font:900 34px Arial,sans-serif;color:#fff;text-shadow:0 10px 28px #000}.wordmark span{color:#D4AF37}.player.ready .bg{opacity:0}.player.error-state .bg{opacity:1}.player.native-pip .bg{display:none!important;}"
+                + ".bg:after{content:'YKN TV';position:absolute;bottom:11px;left:0;right:0;text-align:center;color:rgba(212,175,55,.42);font:900 9px Arial,sans-serif;letter-spacing:0}.bg img{width:62%;max-width:310px;max-height:66%;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(212,175,55,.28));opacity:.92}.wordmark{font:900 34px Arial,sans-serif;color:#fff;text-shadow:0 10px 28px #000}.wordmark span{color:#D4AF37}.player.ready .bg{opacity:0}.player.error-state .bg{opacity:1}"
                 + "video{position:absolute;inset:0;z-index:1;width:100%;height:100%;background:transparent;object-fit:contain;opacity:0;transition:opacity .22s ease}.player.ready video{opacity:1}.player.error-state video{opacity:0;}"
                 + ".shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent 32%,rgba(0,0,0,.78));}"
-                + ".player.native-pip .top,.player.native-pip .controls,.player.native-pip .center,.player.native-pip .shade{display:none!important;}"
                 + ".top{position:absolute;left:9px;right:9px;top:8px;display:flex;align-items:center;justify-content:flex-start;gap:8px;z-index:3;}"
                 + ".brand{margin-left:auto;font-size:12px;font-weight:900;text-shadow:0 2px 8px #000}.brand span{color:#D4AF37}.status{max-width:58vw;height:28px;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(0,0,0,.68);color:#f8fafc;font-size:10px;font-weight:900;padding:0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;}"
                 + ".status.loading:before{content:'';width:7px;height:7px;border-radius:50%;background:#D4AF37;box-shadow:0 0 14px rgba(212,175,55,.85);animation:pulse 1s infinite}.status.success{color:#86efac;border-color:rgba(134,239,172,.42);background:rgba(2,44,34,.78)}.status.error{color:#fca5a5;border-color:rgba(248,113,113,.55);background:rgba(69,10,10,.78)}@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}"
                 + ".center{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:2}.big{width:62px;height:62px;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(0,0,0,.48);color:#fff;box-shadow:0 12px 42px rgba(0,0,0,.55);backdrop-filter:blur(12px);pointer-events:auto;}"
+                + ".loader{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#f8fafc;font-size:10px;font-weight:900;text-transform:uppercase;text-shadow:0 2px 8px #000;opacity:0;pointer-events:none;transition:opacity .18s ease}.player.loading-state .loader{opacity:1}.player.ready .loader,.player.error-state .loader{opacity:0}.ring{width:38px;height:38px;border-radius:50%;border:3px solid rgba(255,255,255,.18);border-top-color:#D4AF37;box-shadow:0 0 22px rgba(212,175,55,.28);animation:spin .85s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}"
                 + ".controls{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:26px 10px 9px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9));display:flex;flex-direction:column;gap:8px;transition:opacity .2s ease;}"
                 + ".player.idle .controls,.player.idle .top,.player.idle .shade{opacity:0;pointer-events:none}.seekrow{display:flex;align-items:center;gap:8px}.time{min-width:76px;text-align:right;color:#d4d4d8;font-size:10px;font-weight:800}"
-                + "input[type=range]{accent-color:#D4AF37}#seek{flex:1;min-width:0;height:18px}.bar{display:flex;align-items:center;justify-content:space-between;gap:7px}.group{display:flex;align-items:center;gap:6px;min-width:0}"
-                + "button.icon{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:#fff;padding:0;outline:0}button.big{width:62px;height:62px}button.icon:active{background:rgba(255,255,255,.18);transform:scale(.96)}button.icon svg,.big svg{width:21px;height:21px;display:block;fill:currentColor}.big svg{width:28px;height:28px}"
-                + "select{height:30px;max-width:96px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(8,8,8,.82);color:#D4AF37;font-size:10px;font-weight:900;padding:0 8px;outline:0}select:focus{background:#D4AF37;color:#020202;border-color:#D4AF37}.vol{width:68px}.live{color:#ef4444;font-size:10px;font-weight:900}.error{color:#fca5a5}[hidden]{display:none!important;}"
-                + "@media(max-width:390px){.brand{font-size:10px}.status{max-width:62vw;font-size:9px}.vol{display:none}button.icon{width:31px;height:31px}button.big{width:58px;height:58px}select{height:29px;font-size:9px;max-width:80px;padding:0 7px}.time{min-width:58px}.controls{padding-left:8px;padding-right:8px}}"
+                + "input[type=range]{accent-color:#D4AF37}#seek{flex:1;min-width:0;height:18px}.bar{display:flex;align-items:center;justify-content:space-between;gap:7px}.group{display:flex;align-items:center;gap:6px;min-width:0}.rightTools{position:relative;flex:0 0 auto}.rightTools>select{display:none!important}"
+                + "button.icon{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:#fff;padding:0;outline:0}button.big{width:62px;height:62px}button.icon:active,button.icon.active{background:rgba(255,255,255,.18);transform:scale(.96)}button.icon svg,.big svg{width:21px;height:21px;display:block;fill:currentColor}.big svg{width:28px;height:28px}"
+                + ".vol{width:68px}.live{color:#ef4444;font-size:10px;font-weight:900}.error{color:#fca5a5}.settingsMenu{position:absolute;right:0;bottom:42px;width:238px;max-width:calc(100vw - 18px);max-height:calc(100vh - 54px);overflow-y:auto;overscroll-behavior:contain;padding:9px;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:rgba(8,8,8,.92);box-shadow:0 18px 44px rgba(0,0,0,.55);backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:8px;transform-origin:right bottom}.settingsMenu::-webkit-scrollbar{display:none}.settingsHead{display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:10px;font-weight:900;text-transform:uppercase}.settingsHead span{color:#D4AF37}.settingBlock{border:1px solid rgba(255,255,255,.1);border-radius:8px;background:rgba(255,255,255,.055);padding:8px}.settingLabel{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#f8fafc;font-size:10px;font-weight:900;text-transform:uppercase}.settingLabel b{color:#D4AF37;font-size:10px;white-space:nowrap}.choices{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.choice{height:28px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(0,0,0,.42);color:#f8fafc;font-size:10px;font-weight:900;padding:0 10px;outline:0}.choice.active{background:#D4AF37;color:#020202;border-color:#D4AF37}.choice:active{transform:scale(.97)}[hidden]{display:none!important;}"
+                + "@media(max-width:390px){.brand{font-size:10px}.status{max-width:62vw;font-size:9px}.vol{display:none}button.icon{width:31px;height:31px}button.big{width:58px;height:58px}.settingsMenu{right:0;bottom:39px;width:226px;max-width:calc(100vw - 16px);padding:8px}.choice{height:27px;font-size:9px;padding:0 9px}.time{min-width:58px}.controls{padding-left:8px;padding-right:8px}}"
+                + "@media(max-height:270px){.settingsMenu{bottom:38px;width:224px;max-height:calc(100vh - 48px);padding:6px;gap:5px}.settingsHead{display:none}.settingBlock{padding:6px}.settingLabel{font-size:9px}.settingLabel b{font-size:9px}.choices{gap:5px;margin-top:5px}.choice{height:24px;font-size:9px;padding:0 8px}}"
                 + "@media(max-height:190px){.top{display:none}.controls{gap:5px;padding-bottom:6px}.center .big{width:48px;height:48px}.big svg{width:24px;height:24px}}"
                 + "</style>"
-                + "</head><body><div id='p' class='player'><div class='bg'>" + brandBackground + "</div><video id='v' autoplay playsinline webkit-playsinline preload='auto'></video>"
-                + "<div class='shade'></div><div class='top'><div id='status' class='status loading'>LOADING STREAM</div><div class='brand'>YKN <span>TV</span></div></div>"
+                + "</head><body><div id='p' class='player loading-state'><div class='bg'>" + brandBackground + "</div><video id='v' autoplay playsinline webkit-playsinline preload='auto'></video>"
+                + "<div class='shade'></div><div class='loader'><div class='ring'></div><div id='loaderText'>LOADING STREAM</div></div><div class='top'><div id='status' class='status loading'>LOADING STREAM</div><div class='brand'>YKN <span>TV</span></div></div>"
                 + "<div class='center'><button id='big' class='big icon' aria-label='Play'></button></div>"
                 + "<div class='controls'><div class='seekrow'><input id='seek' type='range' min='0' max='1000' value='0'><div id='time' class='time'>LIVE</div></div>"
                 + "<div class='bar'><div class='group'><button id='play' class='icon' aria-label='Play'></button><button id='mute' class='icon' aria-label='Mute'></button><input id='vol' class='vol' type='range' min='0' max='100' value='100'></div>"
-                + "<div class='group'><select id='quality' hidden disabled></select><select id='speed'></select><button id='pip' class='icon' aria-label='Picture in picture'></button><button id='fs' class='icon' aria-label='Fullscreen'></button></div></div></div></div>"
+                + "<div class='group rightTools'><select id='quality' hidden disabled></select><select id='speed' hidden></select><select id='fit' hidden></select><button id='settings' class='icon' aria-label='Player settings' aria-expanded='false'></button><div id='settingsMenu' class='settingsMenu' hidden><div class='settingsHead'>Player <span>Settings</span></div><div id='qualityRow' class='settingBlock'><div class='settingLabel'><span>Quality</span><b id='qualityValue'>AUTO</b></div><div id='qualityChoices' class='choices'></div></div><div class='settingBlock'><div class='settingLabel'><span>Ratio</span><b id='fitValue'>DEFAULT</b></div><div id='fitChoices' class='choices'></div></div><div class='settingBlock'><div class='settingLabel'><span>Speed</span><b id='speedValue'>1x</b></div><div id='speedChoices' class='choices'></div></div></div><button id='fs' class='icon' aria-label='Fullscreen'></button></div></div></div></div>"
                 + "<script>window.open=function(){return null};"
-                + "var src='" + safeUrl + "',p=document.getElementById('p'),v=document.getElementById('v'),hls=null;"
-                + "var playBtn=document.getElementById('play'),big=document.getElementById('big'),mute=document.getElementById('mute'),vol=document.getElementById('vol'),seek=document.getElementById('seek'),time=document.getElementById('time'),quality=document.getElementById('quality'),speed=document.getElementById('speed'),pip=document.getElementById('pip'),fs=document.getElementById('fs'),status=document.getElementById('status'),seeking=false,idleTimer=0,statusTimer=0,readyWatch=0,streamReady=false,lastVolume=1;"
-                + "var ICON={play:`<svg viewBox='0 0 24 24'><path d='M8 5v14l11-7z'/></svg>`,pause:`<svg viewBox='0 0 24 24'><path d='M7 5h4v14H7zM13 5h4v14h-4z'/></svg>`,vol:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.5 12c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z'/><path d='M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/></svg>`,mute:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.59 12l2.71-2.71-1.41-1.41-2.72 2.71-2.71-2.71-1.41 1.41L13.76 12l-2.71 2.71 1.41 1.41 2.71-2.71 2.72 2.71 1.41-1.41z'/></svg>`,pip:`<svg viewBox='0 0 24 24'><path d='M4 5h16v14H4V5zm2 2v10h12V7H6zm7 6h4v3h-4v-3z'/></svg>`,full:`<svg viewBox='0 0 24 24'><path d='M5 5h6v2H7v4H5V5zm8 0h6v6h-2V7h-4V5zM5 13h2v4h4v2H5v-6zm12 0h2v6h-6v-2h4v-4z'/></svg>`,exitFull:`<svg viewBox='0 0 24 24'><path d='M7 7h4v2H9v2H7V7zm8 0h2v4h-2V9h-2V7h2zM7 13h2v2h2v2H7v-4zm8 2v-2h2v4h-4v-2h2z'/></svg>`};"
-                + "pip.innerHTML=ICON.pip;fs.innerHTML=ICON.full;"
-                + "function setStatus(t,state,hide){clearTimeout(statusTimer);var s=state||'loading';status.textContent=t||'';status.hidden=!t;status.className='status '+s;p.classList.toggle('ready',s==='success');p.classList.toggle('error-state',s==='error');if(t)p.classList.remove('idle');if(hide&&t)statusTimer=setTimeout(function(){status.hidden=true},hide)}"
+                + "var src='" + safeUrl + "',streamType='" + safeType + "',rawLicense='" + safeLicense + "',p=document.getElementById('p'),v=document.getElementById('v'),hls=null,dash=null;"
+                + "var playBtn=document.getElementById('play'),big=document.getElementById('big'),mute=document.getElementById('mute'),vol=document.getElementById('vol'),seek=document.getElementById('seek'),time=document.getElementById('time'),quality=document.getElementById('quality'),speed=document.getElementById('speed'),fit=document.getElementById('fit'),settings=document.getElementById('settings'),settingsMenu=document.getElementById('settingsMenu'),qualityRow=document.getElementById('qualityRow'),qualityChoices=document.getElementById('qualityChoices'),speedChoices=document.getElementById('speedChoices'),fitChoices=document.getElementById('fitChoices'),qualityValue=document.getElementById('qualityValue'),speedValue=document.getElementById('speedValue'),fitValue=document.getElementById('fitValue'),fs=document.getElementById('fs'),status=document.getElementById('status'),loaderText=document.getElementById('loaderText'),seeking=false,idleTimer=0,statusTimer=0,readyWatch=0,streamReady=false,lastVolume=1,qualityAvailable=false;"
+                + "var ICON={play:`<svg viewBox='0 0 24 24'><path d='M8 5v14l11-7z'/></svg>`,pause:`<svg viewBox='0 0 24 24'><path d='M7 5h4v14H7zM13 5h4v14h-4z'/></svg>`,vol:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.5 12c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z'/><path d='M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/></svg>`,mute:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.59 12l2.71-2.71-1.41-1.41-2.72 2.71-2.71-2.71-1.41 1.41L13.76 12l-2.71 2.71 1.41 1.41 2.71-2.71 2.72 2.71 1.41-1.41z'/></svg>`,settings:`<svg viewBox='0 0 24 24'><path d='M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65-2-3.46-2.49 1a7.34 7.34 0 0 0-1.69-.98L15 3.28h-4l-.36 2.65c-.6.24-1.17.57-1.69.98l-2.49-1-2 3.46 2.11 1.65c-.04.32-.07.65-.07.98s.02.66.07.98l-2.11 1.65 2 3.46 2.49-1c.52.4 1.08.73 1.69.98L11 20.72h4l.36-2.65c.6-.24 1.17-.57 1.69-.98l2.49 1 2-3.46-2.11-1.65zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z'/></svg>`,full:`<svg viewBox='0 0 24 24'><path d='M5 5h6v2H7v4H5V5zm8 0h6v6h-2V7h-4V5zM5 13h2v4h4v2H5v-6zm12 0h2v6h-6v-2h4v-4z'/></svg>`,exitFull:`<svg viewBox='0 0 24 24'><path d='M7 7h4v2H9v2H7V7zm8 0h2v4h-2V9h-2V7h2zM7 13h2v2h2v2H7v-4zm8 2v-2h2v4h-4v-2h2z'/></svg>`};"
+                + "fs.innerHTML=ICON.full;settings.innerHTML=ICON.settings;"
+                + "function setStatus(t,state,hide){clearTimeout(statusTimer);var s=state||'loading';status.textContent=t||'';if(loaderText)loaderText.textContent=t||'LOADING STREAM';status.hidden=!t;status.className='status '+s;p.classList.toggle('loading-state',s==='loading');p.classList.toggle('ready',s==='success');p.classList.toggle('error-state',s==='error');if(t)p.classList.remove('idle');if(hide&&t)statusTimer=setTimeout(function(){status.hidden=true},hide)}"
                 + "function setLoading(t){if(streamReady)return;setStatus(t||'LOADING STREAM','loading',0)}"
                 + "function setSuccess(t,hide){streamReady=true;if(readyWatch)clearInterval(readyWatch);setStatus(t||'SUCCESS','success',hide||0)}"
                 + "function setError(t){if(readyWatch)clearInterval(readyWatch);setStatus('ERROR: '+String(t||'STREAM FAILED').toUpperCase(),'error',0)}"
                 + "function errText(d){var r=d&&d.response,c=r&&(r.code||r.status);if(c)return 'HTTP '+c;if(d&&d.details)return String(d.details).replace(/_/g,' ');if(v.error&&v.error.code){var map={1:'ABORTED',2:'NETWORK',3:'DECODE',4:'SOURCE NOT SUPPORTED'};return 'MEDIA '+v.error.code+' '+(map[v.error.code]||'ERROR')}return 'STREAM FAILED'}"
                 + "function checkReady(){if(streamReady)return;if(v.readyState>=2||v.videoWidth>0||v.currentTime>0||(!v.paused&&!v.ended))setSuccess('SUCCESS')}"
                 + "function watchReady(){if(readyWatch)clearInterval(readyWatch);readyWatch=setInterval(checkReady,500);setTimeout(checkReady,900);setTimeout(checkReady,1800);setTimeout(checkReady,3200)}"
-                + "function bump(){p.classList.remove('idle');clearTimeout(idleTimer);if(!v.paused)idleTimer=setTimeout(function(){p.classList.add('idle')},3000)}"
+                + "function bump(){p.classList.remove('idle');clearTimeout(idleTimer);if(settingsMenu&&!settingsMenu.hidden)return;if(!v.paused)idleTimer=setTimeout(function(){p.classList.add('idle')},3000)}"
                 + "['mousemove','touchstart','click'].forEach(function(e){p.addEventListener(e,bump,{passive:true})});"
-                + "window.__yknSetNativePip=function(on){p.classList.toggle('native-pip',!!on)};"
                 + "window.__yknPlayerStatus=function(t,state){setStatus(t,state||'loading',0)};window.__yknPlayerError=function(t){setError(t)};"
+                + "function isDashSource(){var t=(streamType||'').toLowerCase(),u=(src||'').toLowerCase();return t.indexOf('dash')>=0||u.indexOf('.mpd')>=0}"
+                + "function isClearKeySource(){return (streamType||'').toLowerCase().indexOf('clearkey')>=0}"
+                + "function parseClearKeyPair(s){s=String(s||'').trim();var m=s.match(/^([0-9a-fA-F]{32}):([0-9a-fA-F]{32})$/);return m?{keyId:m[1].toLowerCase(),key:m[2].toLowerCase()}:null}"
+                + "function xorDecryptBase64(data,key){var raw=atob(data),out='';for(var i=0;i<raw.length;i++)out+=String.fromCharCode(raw.charCodeAt(i)^key.charCodeAt(i%key.length));return out}"
+                + "function decodeClearKey(){var direct=parseClearKeyPair(rawLicense);if(direct)return direct;var keys=['Nhsdfugu8','indonesia','1785088500'];for(var i=0;i<keys.length;i++){try{var pair=parseClearKeyPair(xorDecryptBase64(rawLicense,keys[i]));if(pair)return pair}catch(e){}}return null}"
+                + "function shakaErr(e){if(!e)return 'DASH FAILED';var code=e.code||e.errorCode||'';var cat=e.category||'';var msg=e.message||e.data&&e.data.join&&e.data.join(' ')||'';return ('DASH '+code+' '+msg).trim()||'DASH FAILED'}"
+                + "function setupDash(){if(!window.shaka||!shaka.Player){setError('DASH ENGINE FAILED');return}try{shaka.polyfill.installAll()}catch(e){}if(!shaka.Player.isBrowserSupported()){setError('DASH NOT SUPPORTED');return}setLoading(isClearKeySource()?'LOADING DASH DRM':'LOADING DASH');dash=new shaka.Player(v);dash.addEventListener('error',function(ev){setError(shakaErr(ev.detail))});dash.addEventListener('buffering',function(ev){if(ev.buffering&&!streamReady)setLoading('LOADING DASH')});if(isClearKeySource()){var clear=decodeClearKey();if(!clear){setError('DASH KEY DECODE FAILED');return}var map={};map[clear.keyId]=clear.key;dash.configure({drm:{clearKeys:map}})}dash.load(src).then(function(){populateQuality();setLoading('LOADING STREAM');watchReady();doPlay();updateTime()}).catch(function(e){setError(shakaErr(e))})}"
                 + "function fmt(s){if(!isFinite(s)||s<0)return '0:00';var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=Math.floor(s%60);return (h?h+':':'')+String(m).padStart(h?2:1,'0')+':'+String(x).padStart(2,'0')}"
                 + "function finite(){return isFinite(v.duration)&&v.duration>0}"
                 + "function isNativeFs(){try{return !!(window.YknNative&&window.YknNative.isFullscreen&&window.YknNative.isFullscreen())}catch(e){return false}}"
@@ -1639,19 +1718,30 @@ public class MainActivity extends Activity {
                 + "function doPlay(){watchReady();try{var pr=v.play();if(pr&&pr.catch)pr.catch(function(){setLoading('TAP PLAY TO START')})}catch(e){setError('PLAY FAILED')}}"
                 + "function nativePlay(){v.src=src;watchReady();doPlay()}"
                 + "function togglePlay(){if(v.paused)doPlay();else v.pause();bump();updateButtons()}"
-                + "function setupSpeed(){[0.5,0.75,1,1.25,1.5,2].forEach(function(r){var o=document.createElement('option');o.value=String(r);o.textContent=r===1?'1x':r+'x';if(r===1)o.selected=true;speed.appendChild(o)})}"
-                + "function populateQuality(){if(!hls||!hls.levels||!hls.levels.length)return;var byHeight={};hls.levels.forEach(function(l,i){var h=l.height||0;if(!h)return;var b=l.bitrate||l.bandwidth||0;if(!byHeight[h]||b>byHeight[h].bitrate)byHeight[h]={index:i,bitrate:b}});var heights=Object.keys(byHeight).map(Number).sort(function(a,b){return b-a});if(!heights.length)return;quality.innerHTML='<option value=\"-1\">AUTO</option>';heights.forEach(function(h){var o=document.createElement('option');o.value=byHeight[h].index;o.textContent=h+'p'+(h===1080?' HD':'');quality.appendChild(o)});quality.hidden=false;quality.disabled=heights.length<2}"
+                + "function optionLabel(sel,fallback){return sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].textContent:fallback}"
+                + "function renderChoices(sel,box,valueBox,handler,fallback){if(!box)return;box.innerHTML='';for(var i=0;i<sel.options.length;i++){var opt=sel.options[i],btn=document.createElement('button');btn.type='button';btn.className='choice'+(opt.value===sel.value?' active':'');btn.textContent=opt.textContent;btn.dataset.value=opt.value;btn.onclick=function(){sel.value=this.dataset.value;handler();renderSettings()};box.appendChild(btn)}if(valueBox)valueBox.textContent=optionLabel(sel,fallback)}"
+                + "function renderSettings(){if(qualityRow)qualityRow.hidden=!qualityAvailable||quality.options.length<2;renderChoices(quality,qualityChoices,qualityValue,applyQuality,'AUTO');renderChoices(fit,fitChoices,fitValue,applyFit,'DEFAULT');renderChoices(speed,speedChoices,speedValue,applySpeed,'1x')}"
+                + "function closeSettings(){settingsMenu.hidden=true;settings.classList.remove('active');settings.setAttribute('aria-expanded','false');bump()}"
+                + "settings.onclick=function(e){e.stopPropagation();var open=settingsMenu.hidden;settingsMenu.hidden=!open;settings.classList.toggle('active',open);settings.setAttribute('aria-expanded',open?'true':'false');bump()};settingsMenu.addEventListener('click',function(e){e.stopPropagation()});p.addEventListener('click',function(e){if(!settingsMenu.hidden&&!settingsMenu.contains(e.target)&&!settings.contains(e.target))closeSettings()});"
+                + "function setupSpeed(){[0.5,0.75,1,1.25,1.5,2].forEach(function(r){var o=document.createElement('option');o.value=String(r);o.textContent=r===1?'1x':r+'x';if(r===1)o.selected=true;speed.appendChild(o)});renderSettings()}"
+                + "function setFitMode(mode,announce){v.style.objectFit=mode||'contain';v.style.objectPosition='center center';if(announce){var label=optionLabel(fit,'DEFAULT');setStatus('SCREEN '+label,'success',1600)}}"
+                + "function setupFit(){[{v:'contain',t:'DEFAULT'},{v:'cover',t:'FULL'},{v:'fill',t:'STRETCH'}].forEach(function(x){var o=document.createElement('option');o.value=x.v;o.textContent=x.t;fit.appendChild(o)});fit.value='contain';setFitMode('contain',false);renderSettings()}"
+                + "function applyQuality(){var val=quality.value;if(hls)hls.currentLevel=Number(val);else if(dash){if(val==='-1'){dash.configure({abr:{enabled:true}})}else{var id=Number(String(val).replace('dash:',''));var track=dash.getVariantTracks().filter(function(t){return t.id===id})[0];if(track){dash.configure({abr:{enabled:false}});dash.selectVariantTrack(track,true)}}}setStatus(val==='-1'?'AUTO QUALITY':'QUALITY '+optionLabel(quality,'AUTO'),'success',1600);bump()}"
+                + "function applySpeed(){var r=Number(speed.value)||1;try{v.playbackRate=r;v.defaultPlaybackRate=r;setStatus('SPEED '+optionLabel(speed,'1x'),'success',1600)}catch(e){setError('SPEED UNAVAILABLE')}bump()}"
+                + "function applyFit(){setFitMode(fit.value,true);bump()}"
+                + "function populateQuality(){quality.innerHTML='<option value=\"-1\">AUTO</option>';var added=0;if(hls&&hls.levels&&hls.levels.length){var byHeight={};hls.levels.forEach(function(l,i){var h=l.height||0;if(!h)return;var b=l.bitrate||l.bandwidth||0;if(!byHeight[h]||b>byHeight[h].bitrate)byHeight[h]={value:String(i),bitrate:b}});Object.keys(byHeight).map(Number).sort(function(a,b){return b-a}).forEach(function(h){var o=document.createElement('option');o.value=byHeight[h].value;o.textContent=h+'p'+(h===1080?' HD':'');quality.appendChild(o);added++})}else if(dash){var byDashHeight={};dash.getVariantTracks().forEach(function(t){var h=t.height||0;if(!h)return;var b=t.bandwidth||0;if(!byDashHeight[h]||b>byDashHeight[h].bandwidth)byDashHeight[h]={value:'dash:'+t.id,bandwidth:b}});Object.keys(byDashHeight).map(Number).sort(function(a,b){return b-a}).forEach(function(h){var o=document.createElement('option');o.value=byDashHeight[h].value;o.textContent=h+'p'+(h===1080?' HD':'');quality.appendChild(o);added++})}qualityAvailable=added>0;quality.hidden=true;quality.disabled=added===0;renderSettings()}"
                 + "playBtn.onclick=togglePlay;big.onclick=togglePlay;mute.onclick=function(){var muted=v.muted||v.volume===0;if(muted){if(v.volume===0)v.volume=lastVolume||1;v.muted=false}else{if(v.volume>0)lastVolume=v.volume;v.muted=true}updateButtons();bump()};vol.oninput=function(){var next=Number(vol.value)/100;v.volume=next;if(next>0){lastVolume=next;v.muted=false}else{v.muted=true}updateButtons();bump()};"
                 + "seek.oninput=function(){seeking=true;bump()};seek.onchange=function(){if(finite())v.currentTime=(Number(seek.value)/1000)*v.duration;seeking=false;bump()};"
-                + "quality.onchange=function(){if(hls)hls.currentLevel=Number(quality.value);setStatus(quality.value==='-1'?'AUTO QUALITY':'QUALITY '+quality.options[quality.selectedIndex].textContent,'success',1600);bump()};"
-                + "speed.onchange=function(){var r=Number(speed.value)||1;try{v.playbackRate=r;v.defaultPlaybackRate=r;setStatus('SPEED '+speed.options[speed.selectedIndex].textContent,'success',1600)}catch(e){setError('SPEED UNAVAILABLE')}bump()};"
-                + "pip.onclick=async function(){bump();try{if(document.pictureInPictureElement){await document.exitPictureInPicture();return}if(document.pictureInPictureEnabled&&v.requestPictureInPicture){await v.requestPictureInPicture();setStatus('PIP VIDEO','success',1600);return}}catch(e){}try{if(window.YknNative){setStatus('PIP PLAYER','success',1600);window.YknNative.enterPip();return}}catch(e){}setError('PIP UNAVAILABLE')};"
+                + "quality.onchange=function(){applyQuality();renderSettings()};"
+                + "speed.onchange=function(){applySpeed();renderSettings()};"
+                + "fit.onchange=function(){applyFit();renderSettings()};"
                 + "async function exitFs(){try{if(document.exitFullscreen){await document.exitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(document.webkitExitFullscreen){document.webkitExitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(document.mozCancelFullScreen){document.mozCancelFullScreen();setTimeout(updateFullscreenButton,120);return true}if(document.msExitFullscreen){document.msExitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(v.webkitExitFullscreen){v.webkitExitFullscreen();setTimeout(updateFullscreenButton,120);return true}}catch(e){}try{if(window.YknNative&&window.YknNative.exitFullscreen){window.YknNative.exitFullscreen();setTimeout(updateFullscreenButton,180);return true}}catch(e){}return false}"
-                + "fs.onclick=async function(){bump();if(isFs()){if(!(await exitFs()))setError('EXIT FULLSCREEN FAILED');return}try{var el=p;if(el.requestFullscreen){await el.requestFullscreen()}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen()}else if(v.webkitEnterFullscreen){v.webkitEnterFullscreen()}else{setError('FULLSCREEN UNAVAILABLE');return}setTimeout(updateFullscreenButton,180)}catch(e){try{if(window.YknNative&&window.YknNative.exitFullscreen&&isNativeFs()){window.YknNative.exitFullscreen();return}}catch(x){}setError('FULLSCREEN UNAVAILABLE')}};"
+                + "fs.onclick=async function(){closeSettings();bump();if(isFs()){if(!(await exitFs()))setError('EXIT FULLSCREEN FAILED');return}try{var el=p;if(el.requestFullscreen){await el.requestFullscreen()}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen()}else if(v.webkitEnterFullscreen){v.webkitEnterFullscreen()}else{setError('FULLSCREEN UNAVAILABLE');return}setTimeout(updateFullscreenButton,180)}catch(e){try{if(window.YknNative&&window.YknNative.exitFullscreen&&isNativeFs()){window.YknNative.exitFullscreen();return}}catch(x){}setError('FULLSCREEN UNAVAILABLE')}};"
                 + "['fullscreenchange','webkitfullscreenchange','mozfullscreenchange','MSFullscreenChange'].forEach(function(e){document.addEventListener(e,updateFullscreenButton)});"
                 + "v.addEventListener('loadstart',function(){setLoading('LOADING STREAM')});v.addEventListener('loadedmetadata',function(){setSuccess('SUCCESS')});v.addEventListener('loadeddata',function(){setSuccess('SUCCESS')});v.addEventListener('canplay',function(){setSuccess('SUCCESS')});v.addEventListener('play',function(){setSuccess('SUCCESS');updateButtons();bump()});v.addEventListener('pause',updateButtons);v.addEventListener('timeupdate',function(){updateTime();checkReady()});v.addEventListener('progress',checkReady);v.addEventListener('durationchange',updateTime);v.addEventListener('volumechange',updateButtons);v.addEventListener('playing',function(){setSuccess('SUCCESS');bump()});v.addEventListener('waiting',function(){setLoading('LOADING STREAM')});v.addEventListener('stalled',function(){setLoading('LOADING STREAM')});v.addEventListener('error',function(){setError(errText(null))});"
-                + "setupSpeed();updateButtons();updateTime();updateFullscreenButton();"
-                + "if(window.Hls&&Hls.isSupported()){setLoading('LOADING HLS');hls=new Hls({enableWorker:true,lowLatencyMode:true,capLevelToPlayerSize:false});hls.loadSource(src);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,function(){populateQuality();setLoading('LOADING STREAM');watchReady();doPlay();updateTime()});hls.on(Hls.Events.ERROR,function(e,d){if(d&&d.fatal){setError(errText(d))}else if(!streamReady&&d&&d.response){setError(errText(d))}})}"
+                + "setupSpeed();setupFit();updateButtons();updateTime();updateFullscreenButton();"
+                + "if(isDashSource()){setupDash()}"
+                + "else if(window.Hls&&Hls.isSupported()){setLoading('LOADING HLS');hls=new Hls({enableWorker:true,lowLatencyMode:true,capLevelToPlayerSize:false});hls.loadSource(src);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,function(){populateQuality();setLoading('LOADING STREAM');watchReady();doPlay();updateTime()});hls.on(Hls.Events.ERROR,function(e,d){if(d&&d.fatal){setError(errText(d))}else if(!streamReady&&d&&d.response){setError(errText(d))}})}"
                 + "else if(v.canPlayType('application/vnd.apple.mpegurl')){nativePlay();}"
                 + "else{nativePlay();}"
                 + "</script>"
@@ -2119,6 +2209,10 @@ public class MainActivity extends Activity {
         return C_MUTED;
     }
 
+    private int withAlpha(int color, int alpha) {
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
+    }
+
     private GradientDrawable stroked(int fill, int stroke, int strokeDp, float radiusDp) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setColor(fill);
@@ -2148,16 +2242,6 @@ public class MainActivity extends Activity {
                 getPlayerHeight()
         );
         params.setMargins(dp(8), dp(4), dp(8), dp(7));
-        return params;
-    }
-
-    private LinearLayout.LayoutParams pipPlayerLayoutParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                0,
-                1f
-        );
-        params.setMargins(0, 0, 0, 0);
         return params;
     }
 
@@ -2209,11 +2293,6 @@ public class MainActivity extends Activity {
     }
 
     private final class NativeBridge {
-        @JavascriptInterface
-        public void enterPip() {
-            mainHandler.post(MainActivity.this::enterNativePictureInPicture);
-        }
-
         @JavascriptInterface
         public void exitFullscreen() {
             mainHandler.post(MainActivity.this::hideFullscreenView);
@@ -2337,11 +2416,17 @@ public class MainActivity extends Activity {
         final String name;
         final String url;
         final String type;
+        final String license;
 
         StreamOption(String name, String url, String type) {
+            this(name, url, type, "");
+        }
+
+        StreamOption(String name, String url, String type, String license) {
             this.name = name == null || name.trim().isEmpty() ? "Server" : name.trim();
             this.url = url == null ? "" : url.trim();
             this.type = type == null || type.trim().isEmpty() ? "hls" : type.trim();
+            this.license = license == null ? "" : license.trim();
         }
     }
 
