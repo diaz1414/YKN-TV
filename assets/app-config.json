@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "proxyBaseUrl": "https://tv.ykn.my.id/api/proxy",
+  "sponsorUrls": [
+    "https://www.effectivecpmnetwork.com/y1eyn99g?key=a90145a7b7e54a1196a76d83553b473d",
+    "https://omg10.com/4/11195650"
+  ],
+  "primarySponsorWeight": 0.82,
+  "clearKeyXorKeys": [
+    "90_NiwmsdfhgjQw",
+    "indonesia",
+    "Nhsdfugu8",
+    "1785088500"
+  ],
+  "playerDebug": true
+}

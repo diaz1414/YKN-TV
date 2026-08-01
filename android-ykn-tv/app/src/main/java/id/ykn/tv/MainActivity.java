@@ -85,13 +85,16 @@ public class MainActivity extends Activity {
     private static final String BOT_TV_SPORTS_URL = "https://api.ykn.my.id/api/sports/tv";
     private static final String BOT_TV_HIBURAN_URL = "https://api.ykn.my.id/api/sports/hiburan";
     private static final String ESPORTEX_STREAMS_URL = "https://api.esportex.site/api/streams";
-    private static final String PROXY_BASE_URL = "https://proxy-ykntv414.ykn.my.id/api/proxy";
+    private static final String REMOTE_CONFIG_URL =
+            "https://raw.githubusercontent.com/diaz1414/YKN-TV/main/assets/app-config.json";
+    private static final String DEFAULT_PROXY_BASE_URL = "https://tv.ykn.my.id/api/proxy";
     private static final String LOCAL_PLAYER_BASE = "https://ykn.local/player/";
     private static final String COMMUNITY_URL = "https://whatsapp.com/channel/0029Vb8VPpIAjPXPX2SYKN2P";
     private static final String SAWERIA_URL = "https://saweria.co/diaw14";
     private static final String BAGIBAGI_URL = "https://bagibagi.co/Diaww";
     private static final String KOFI_URL = "https://ko-fi.com/diaww14";
     private static final String PREFS_NAME = "ykn_tv_prefs";
+    private static final String CACHE_REMOTE_CONFIG = "cache_remote_config";
     private static final String CACHE_MAIN_ITEMS = "cache_main_items";
     private static final String CACHE_CHANNEL_ITEMS = "cache_channel_items";
     private static final String CACHE_ESPORTEX_ITEMS = "cache_esportex_items";
@@ -116,11 +119,17 @@ public class MainActivity extends Activity {
     private static final int C_MUTED = Color.rgb(161, 161, 170);
     private static final int C_DIM = Color.rgb(82, 82, 91);
 
-    private static final String[] SPONSOR_URLS = {
+    private static final String[] DEFAULT_SPONSOR_URLS = {
             "https://www.effectivecpmnetwork.com/y1eyn99g?key=a90145a7b7e54a1196a76d83553b473d",
             "https://omg10.com/4/11195650"
     };
-    private static final double PRIMARY_SPONSOR_WEIGHT = 0.82d;
+    private static final String[] DEFAULT_CLEARKEY_XOR_KEYS = {
+            "90_NiwmsdfhgjQw",
+            "indonesia",
+            "Nhsdfugu8",
+            "1785088500"
+    };
+    private static final double DEFAULT_PRIMARY_SPONSOR_WEIGHT = 0.82d;
 
     private static final SportTab[] SPORT_TABS = {
             new SportTab("main", "Jadwal"),
@@ -161,6 +170,7 @@ public class MainActivity extends Activity {
     private static boolean sponsorShownThisSession = false;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService configExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService scheduleExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService imageExecutor = Executors.newFixedThreadPool(3);
     private final TimeZone userDisplayTimeZone = resolveUserIndonesianTimeZone();
@@ -202,6 +212,11 @@ public class MainActivity extends Activity {
     private boolean refreshLoopRunning = false;
     private String currentLoadedSignature = "";
     private String playerLogoDataUri = "";
+    private volatile String proxyBaseUrl = DEFAULT_PROXY_BASE_URL;
+    private volatile String[] sponsorUrls = DEFAULT_SPONSOR_URLS.clone();
+    private volatile String[] clearKeyXorKeys = DEFAULT_CLEARKEY_XOR_KEYS.clone();
+    private volatile double primarySponsorWeight = DEFAULT_PRIMARY_SPONSOR_WEIGHT;
+    private volatile boolean playerDebugEnabled = true;
     private long lastOfflineToastAt = 0L;
     private final Runnable refreshRunnable = new Runnable() {
         @Override
@@ -218,6 +233,8 @@ public class MainActivity extends Activity {
         getWindow().setStatusBarColor(C_BLACK);
         getWindow().setNavigationBarColor(C_BLACK);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        loadCachedRemoteConfig();
+        refreshRemoteConfig();
 
         buildUi();
         installSystemInsetPadding();
@@ -251,6 +268,7 @@ public class MainActivity extends Activity {
         }
         scheduleExecutor.shutdownNow();
         imageExecutor.shutdownNow();
+        configExecutor.shutdownNow();
         super.onDestroy();
     }
 
@@ -408,7 +426,10 @@ public class MainActivity extends Activity {
         refresh.setGravity(Gravity.CENTER);
         refresh.setPadding(dp(10), dp(7), dp(10), dp(7));
         refresh.setBackground(stroked(Color.argb(18, 255, 255, 255), Color.argb(22, 255, 255, 255), 1, 12));
-        refresh.setOnClickListener(v -> loadSchedules(false));
+        refresh.setOnClickListener(v -> {
+            refreshRemoteConfig();
+            loadSchedules(false);
+        });
         header.addView(refresh);
         return header;
     }
@@ -665,7 +686,14 @@ public class MainActivity extends Activity {
     }
 
     private void openSponsorPage() {
-        String url = Math.random() < PRIMARY_SPONSOR_WEIGHT ? SPONSOR_URLS[0] : SPONSOR_URLS[1];
+        String[] urls = sponsorUrls == null || sponsorUrls.length == 0
+                ? DEFAULT_SPONSOR_URLS
+                : sponsorUrls;
+        String url = urls[0];
+        if (urls.length > 1 && Math.random() >= primarySponsorWeight) {
+            int fallbackIndex = 1 + (int) Math.floor(Math.random() * (urls.length - 1));
+            url = urls[Math.min(fallbackIndex, urls.length - 1)];
+        }
         openExternalUrl(url);
     }
 
@@ -842,6 +870,188 @@ public class MainActivity extends Activity {
         mainHandler.removeCallbacks(refreshRunnable);
     }
 
+    private void loadCachedRemoteConfig() {
+        String cached = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getString(CACHE_REMOTE_CONFIG, "");
+        if (cached == null || cached.trim().isEmpty()) return;
+        try {
+            applyRemoteConfig(new JSONObject(cached));
+        } catch (JSONException ignored) {
+        }
+    }
+
+    private void refreshRemoteConfig() {
+        if (!hasInternetConnection()) return;
+        configExecutor.execute(() -> {
+            try {
+                String url = REMOTE_CONFIG_URL + "?t=" + (System.currentTimeMillis() / MAIN_CACHE_BUST_MS);
+                JSONObject config = new JSONObject(httpGet(url, 5000));
+                boolean streamConfigChanged = applyRemoteConfig(config);
+                getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                        .edit()
+                        .putString(CACHE_REMOTE_CONFIG, config.toString())
+                        .apply();
+                if (streamConfigChanged) {
+                    mainHandler.post(this::applyRuntimeStreamConfig);
+                }
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
+    private boolean applyRemoteConfig(JSONObject config) {
+        String oldProxyBase = proxyBaseUrl;
+        String[] oldClearKeyKeys = clearKeyXorKeys;
+        boolean oldPlayerDebug = playerDebugEnabled;
+
+        String nextProxy = optStringAny(config, "proxyBaseUrl", "proxy_base_url", "cdnBackupBaseUrl", "cdn_backup_base_url");
+        if (!nextProxy.isEmpty()) {
+            proxyBaseUrl = stripTrailingSlash(nextProxy);
+        }
+
+        sponsorUrls = parseStringArray(
+                optJSONArrayAny(config, "sponsorUrls", "sponsor_urls"),
+                DEFAULT_SPONSOR_URLS,
+                true
+        );
+        primarySponsorWeight = clamp01(optDoubleAny(
+                config,
+                DEFAULT_PRIMARY_SPONSOR_WEIGHT,
+                "primarySponsorWeight",
+                "primary_sponsor_weight"
+        ));
+        clearKeyXorKeys = parseStringArray(
+                optJSONArrayAny(config, "clearKeyXorKeys", "clearkeyXorKeys", "clear_key_xor_keys"),
+                DEFAULT_CLEARKEY_XOR_KEYS,
+                false
+        );
+        playerDebugEnabled = optBooleanAny(config, playerDebugEnabled, "playerDebug", "player_debug");
+
+        return !oldProxyBase.equals(proxyBaseUrl)
+                || !Arrays.equals(oldClearKeyKeys, clearKeyXorKeys)
+                || oldPlayerDebug != playerDebugEnabled;
+    }
+
+    private void applyRuntimeStreamConfig() {
+        if (mainItems.isEmpty() && channelItems.isEmpty() && esportexItems.isEmpty()) return;
+        String selectedId = selectedItem == null ? "" : selectedItem.id;
+        int previousServerIndex = selectedServerIndex;
+
+        rebuildStreamOptionsForConfig(mainItems);
+        rebuildStreamOptionsForConfig(channelItems);
+        rebuildStreamOptionsForConfig(esportexItems);
+
+        if (!selectedId.isEmpty()) {
+            selectedItem = findByIdAnywhere(selectedId);
+            if (selectedItem != null && selectedServerIndex >= selectedItem.streams.size()) {
+                selectedServerIndex = Math.max(0, selectedItem.streams.size() - 1);
+            } else {
+                selectedServerIndex = previousServerIndex;
+            }
+        }
+
+        renderServerButtons();
+        renderScheduleList();
+        if (selectedItem != null) {
+            updateNowPlayingText(getSelectedStreamOption());
+            currentLoadedSignature = "";
+            loadSelectedStream();
+        }
+    }
+
+    private void rebuildStreamOptionsForConfig(List<ScheduleItem> items) {
+        for (ScheduleItem item : items) {
+            if (item.streams.isEmpty()) continue;
+
+            StreamOption source = item.streams.get(0);
+            for (StreamOption stream : item.streams) {
+                String label = stream.name.toLowerCase(Locale.US);
+                if (label.contains("direct") || label.contains("embed")) {
+                    source = stream;
+                    break;
+                }
+            }
+
+            String rawUrl = unwrapProxyUrl(source.url);
+            if (rawUrl.isEmpty()) continue;
+            item.streams.clear();
+            item.streams.addAll(buildPlayableServers(rawUrl, source.type, source.license));
+        }
+    }
+
+    private JSONArray optJSONArrayAny(JSONObject object, String... names) {
+        if (object == null) return null;
+        for (String name : names) {
+            JSONArray array = object.optJSONArray(name);
+            if (array != null) return array;
+        }
+        return null;
+    }
+
+    private String optStringAny(JSONObject object, String... names) {
+        if (object == null) return "";
+        for (String name : names) {
+            if (!object.has(name) || object.isNull(name)) continue;
+            String value = cleanText(object.optString(name));
+            if (!value.isEmpty()) return value;
+        }
+        return "";
+    }
+
+    private boolean optBooleanAny(JSONObject object, boolean fallback, String... names) {
+        if (object == null) return fallback;
+        for (String name : names) {
+            if (!object.has(name) || object.isNull(name)) continue;
+            Object value = object.opt(name);
+            if (value instanceof Boolean) return (Boolean) value;
+            String text = cleanText(String.valueOf(value)).toLowerCase(Locale.US);
+            if ("true".equals(text) || "1".equals(text) || "yes".equals(text) || "on".equals(text)) return true;
+            if ("false".equals(text) || "0".equals(text) || "no".equals(text) || "off".equals(text)) return false;
+        }
+        return fallback;
+    }
+
+    private double optDoubleAny(JSONObject object, double fallback, String... names) {
+        if (object == null) return fallback;
+        for (String name : names) {
+            if (!object.has(name) || object.isNull(name)) continue;
+            Object value = object.opt(name);
+            if (value instanceof Number) return ((Number) value).doubleValue();
+            try {
+                return Double.parseDouble(cleanText(String.valueOf(value)));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return fallback;
+    }
+
+    private String[] parseStringArray(JSONArray array, String[] fallback, boolean requireHttpUrl) {
+        if (array == null) return fallback.clone();
+
+        ArrayList<String> values = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            String value = cleanText(array.optString(i));
+            if (value.isEmpty()) continue;
+            if (requireHttpUrl && !value.toLowerCase(Locale.US).startsWith("http")) continue;
+            if (!values.contains(value)) values.add(value);
+        }
+
+        if (values.isEmpty()) return fallback.clone();
+        return values.toArray(new String[0]);
+    }
+
+    private double clamp01(double value) {
+        if (Double.isNaN(value)) return DEFAULT_PRIMARY_SPONSOR_WEIGHT;
+        return Math.max(0d, Math.min(1d, value));
+    }
+
+    private String stripTrailingSlash(String value) {
+        String clean = cleanText(value);
+        while (clean.endsWith("/") && clean.length() > "https://".length()) {
+            clean = clean.substring(0, clean.length() - 1);
+        }
+        return clean.isEmpty() ? DEFAULT_PROXY_BASE_URL : clean;
+    }
+
     private void loadSchedules(boolean silent) {
         if (isLoadingSchedules) return;
         if (!hasInternetConnection()) {
@@ -958,6 +1168,9 @@ public class MainActivity extends Activity {
             channelItems.addAll(cachedChannelItems);
             esportexItems.clear();
             esportexItems.addAll(cachedEsportexItems);
+            rebuildStreamOptionsForConfig(mainItems);
+            rebuildStreamOptionsForConfig(channelItems);
+            rebuildStreamOptionsForConfig(esportexItems);
 
             renderTabs();
             reconcileSelection();
@@ -985,6 +1198,7 @@ public class MainActivity extends Activity {
         object.put("startRaw", item.startRaw);
         object.put("endRaw", item.endRaw);
         object.put("poster", item.poster);
+        object.put("posterSecondary", item.posterSecondary);
         object.put("sportKey", item.sportKey);
         object.put("source", item.source);
         object.put("mainSource", item.mainSource);
@@ -1024,6 +1238,10 @@ public class MainActivity extends Activity {
         item.startRaw = cleanText(object.optString("startRaw"));
         item.endRaw = cleanText(object.optString("endRaw"));
         item.poster = cleanText(object.optString("poster"));
+        item.posterSecondary = firstNonEmpty(
+                object.optString("posterSecondary"),
+                object.optString("poster2")
+        );
         item.sportKey = cleanText(object.optString("sportKey"));
         item.source = cleanText(object.optString("source"));
         item.mainSource = object.optBoolean("mainSource");
@@ -1089,7 +1307,9 @@ public class MainActivity extends Activity {
             item.league = cleanText(event.optString("nama_event", "Live Event"));
             item.startRaw = startRaw;
             item.endRaw = cleanText(event.optString("jadwal_stop"));
-            item.poster = firstNonEmpty(event.optString("logo_1"), event.optString("logo_2"));
+            item.poster = cleanText(event.optString("logo_1"));
+            item.posterSecondary = cleanText(event.optString("logo_2"));
+            if (item.poster.isEmpty()) item.poster = item.posterSecondary;
             item.sportKey = "main";
             item.source = "GitHub";
             item.mainSource = true;
@@ -1200,8 +1420,8 @@ public class MainActivity extends Activity {
 
     private List<StreamOption> buildPlayableServers(String rawUrl, String type, String license) {
         ArrayList<StreamOption> servers = new ArrayList<>();
-        String lowerType = type.toLowerCase(Locale.US);
-        String lowerUrl = rawUrl.toLowerCase(Locale.US);
+        String lowerType = type == null ? "" : type.toLowerCase(Locale.US);
+        String lowerUrl = rawUrl == null ? "" : rawUrl.toLowerCase(Locale.US);
 
         if (lowerType.contains("iframe") || lowerType.contains("xoilac") || lowerUrl.contains("iframe")) {
             servers.add(new StreamOption("Server 1 (Embed)", rawUrl, "iframe", license));
@@ -1209,7 +1429,7 @@ public class MainActivity extends Activity {
         }
 
         servers.add(new StreamOption("Server 1 (Direct)", rawUrl, type, license));
-        servers.add(new StreamOption("Server 2 (Proxy)", getProxiedUrl(rawUrl), type, license));
+        servers.add(new StreamOption("Server 2 (CDN Backup)", getProxiedUrl(rawUrl), type, license));
         return servers;
     }
 
@@ -1405,12 +1625,8 @@ public class MainActivity extends Activity {
             loadSelectedStream();
         });
 
-        ImageView poster = new ImageView(this);
-        poster.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        poster.setBackground(stroked(C_SURFACE_2, Color.argb(24, 255, 255, 255), 1, 10));
-        poster.setImageResource(R.drawable.ykn_tv_logo);
-        loadImageInto(item.poster, poster);
-        LinearLayout.LayoutParams posterLp = new LinearLayout.LayoutParams(dp(80), dp(54));
+        View poster = buildCardArtwork(item);
+        LinearLayout.LayoutParams posterLp = new LinearLayout.LayoutParams(dp(86), dp(56));
         posterLp.setMargins(0, 0, dp(11), 0);
         card.addView(poster, posterLp);
 
@@ -1472,6 +1688,61 @@ public class MainActivity extends Activity {
         cardLp.setMargins(0, 0, 0, dp(10));
         card.setLayoutParams(cardLp);
         return card;
+    }
+
+    private View buildCardArtwork(ScheduleItem item) {
+        if (!item.mainSource) {
+            ImageView poster = new ImageView(this);
+            poster.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            poster.setBackground(stroked(C_SURFACE_2, Color.argb(24, 255, 255, 255), 1, 10));
+            poster.setImageResource(R.drawable.ykn_tv_logo);
+            loadImageInto(item.poster, poster);
+            return poster;
+        }
+
+        FrameLayout frame = new FrameLayout(this);
+        frame.setBackground(stroked(C_SURFACE_2, Color.argb(28, 212, 175, 55), 1, 12));
+        frame.setPadding(dp(4), dp(5), dp(4), dp(5));
+
+        LinearLayout logos = new LinearLayout(this);
+        logos.setOrientation(LinearLayout.HORIZONTAL);
+        logos.setGravity(Gravity.CENTER);
+
+        ImageView homeLogo = buildTeamLogoView(item.poster);
+        ImageView awayLogo = buildTeamLogoView(firstNonEmpty(item.posterSecondary, item.poster));
+
+        LinearLayout.LayoutParams logoLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        logoLp.setMargins(0, 0, dp(4), 0);
+        logos.addView(homeLogo, logoLp);
+
+        LinearLayout.LayoutParams awayLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        awayLp.setMargins(dp(4), 0, 0, 0);
+        logos.addView(awayLogo, awayLp);
+
+        frame.addView(logos, matchFrame());
+
+        TextView vs = smallCaps("VS", C_BLACK);
+        vs.setTextSize(8);
+        vs.setPadding(dp(5), dp(2), dp(5), dp(2));
+        vs.setBackground(stroked(C_GOLD, C_GOLD, 1, 999));
+        FrameLayout.LayoutParams vsLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+        );
+        frame.addView(vs, vsLp);
+
+        return frame;
+    }
+
+    private ImageView buildTeamLogoView(String url) {
+        ImageView logo = new ImageView(this);
+        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        logo.setPadding(dp(5), dp(5), dp(5), dp(5));
+        logo.setBackground(stroked(Color.argb(18, 255, 255, 255), Color.argb(22, 255, 255, 255), 1, 9));
+        logo.setImageResource(R.drawable.ykn_tv_logo);
+        loadImageInto(url, logo);
+        return logo;
     }
 
     private void reconcileSelection() {
@@ -1584,6 +1855,7 @@ public class MainActivity extends Activity {
     private void loadIframePage(String url) {
         String safeUrl = TextUtils.htmlEncode(url);
         String brandBackground = buildPlayerBackgroundHtml();
+        String debugFlag = playerDebugEnabled ? "true" : "false";
         String html = "<!doctype html><html><head>"
                 + "<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
                 + "<style>html,body{margin:0;height:100%;width:100%;overflow:hidden;background:#000;}"
@@ -1597,12 +1869,12 @@ public class MainActivity extends Activity {
                 + "<div class='bg'>" + brandBackground + "</div>"
                 + "<iframe id='f' src='" + safeUrl + "' "
                 + "allow='autoplay; fullscreen; encrypted-media' allowfullscreen referrerpolicy='no-referrer'></iframe>"
-                + "<div id='status' class='status loading'>LOADING IFRAME</div>"
+                + "<div id='status' class='status loading'>LOADING: IFRAME</div>"
                 + "<script>window.open=function(){return null};"
-                + "var f=document.getElementById('f'),status=document.getElementById('status'),iframeDone=false;"
-                + "function setStatus(t,state,hide){var s=state||'loading';status.textContent=t;status.hidden=!t;status.className='status '+s;document.body.classList.toggle('ready',s==='success');document.body.classList.toggle('error-state',s==='error');if(s==='success'||s==='error')iframeDone=true;if(hide)setTimeout(function(){status.hidden=true},hide);}"
+                + "var f=document.getElementById('f'),status=document.getElementById('status'),debugEnabled=" + debugFlag + ",iframeDone=false;"
+                + "function setStatus(t,state,hide){var s=state||'loading';status.textContent=t;status.hidden=!debugEnabled||!t;status.className='status '+s;document.body.classList.toggle('ready',s==='success');document.body.classList.toggle('error-state',s==='error');if(s==='success'||s==='error')iframeDone=true;if(hide)setTimeout(function(){status.hidden=true},hide);}"
                 + "window.__yknPlayerStatus=function(t,state){setStatus(t,state||'loading',0)};window.__yknPlayerError=function(t){setStatus('ERROR: '+String(t||'IFRAME FAILED').toUpperCase(),'error',0)};"
-                + "f.addEventListener('load',function(){setStatus('SUCCESS','success',0)});f.addEventListener('error',function(){setStatus('ERROR: IFRAME FAILED','error')});setTimeout(function(){if(!iframeDone)setStatus('SUCCESS','success',0)},3200);"
+                + "f.addEventListener('load',function(){setStatus('SUCCESS: IFRAME READY','success',0)});f.addEventListener('error',function(){setStatus('ERROR: IFRAME FAILED','error')});setTimeout(function(){if(!iframeDone)setStatus('SUCCESS: IFRAME READY','success',0)},3200);"
                 + "try{Object.defineProperty(window,'opener',{value:null,writable:false});}catch(e){}"
                 + "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');"
                 + "if(a&&a.href&&a.href.indexOf('ykn.local')<0){e.preventDefault();e.stopPropagation();}},true);</script>"
@@ -1656,6 +1928,8 @@ public class MainActivity extends Activity {
         String safeType = escapeJsString(option.type);
         String safeLicense = escapeJsString(option.license);
         String brandBackground = buildPlayerBackgroundHtml();
+        String clearKeyKeysJs = buildJsStringArray(clearKeyXorKeys);
+        String debugFlag = playerDebugEnabled ? "true" : "false";
         String html = "<!doctype html><html><head>"
                 + "<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
                 + "<script src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js'></script>"
@@ -1681,22 +1955,22 @@ public class MainActivity extends Activity {
                 + "@media(max-height:190px){.top{display:none}.controls{gap:5px;padding-bottom:6px}.center .big{width:48px;height:48px}.big svg{width:24px;height:24px}}"
                 + "</style>"
                 + "</head><body><div id='p' class='player loading-state'><div class='bg'>" + brandBackground + "</div><video id='v' autoplay playsinline webkit-playsinline preload='auto'></video>"
-                + "<div class='shade'></div><div class='loader'><div class='ring'></div><div id='loaderText'>LOADING STREAM</div></div><div class='top'><div id='status' class='status loading'>LOADING STREAM</div><div class='brand'>YKN <span>TV</span></div></div>"
+                + "<div class='shade'></div><div class='loader'><div class='ring'></div><div id='loaderText'>LOADING: STREAM</div></div><div class='top'><div id='status' class='status loading'>LOADING: STREAM</div><div class='brand'>YKN <span>TV</span></div></div>"
                 + "<div class='center'><button id='big' class='big icon' aria-label='Play'></button></div>"
                 + "<div class='controls'><div class='seekrow'><input id='seek' type='range' min='0' max='1000' value='0'><div id='time' class='time'>LIVE</div></div>"
                 + "<div class='bar'><div class='group'><button id='play' class='icon' aria-label='Play'></button><button id='mute' class='icon' aria-label='Mute'></button><input id='vol' class='vol' type='range' min='0' max='100' value='100'></div>"
                 + "<div class='group rightTools'><select id='quality' hidden disabled></select><select id='speed' hidden></select><select id='fit' hidden></select><button id='settings' class='icon' aria-label='Player settings' aria-expanded='false'></button><div id='settingsMenu' class='settingsMenu' hidden><div class='settingsHead'>Player <span>Settings</span></div><div id='qualityRow' class='settingBlock'><div class='settingLabel'><span>Quality</span><b id='qualityValue'>AUTO</b></div><div id='qualityChoices' class='choices'></div></div><div class='settingBlock'><div class='settingLabel'><span>Ratio</span><b id='fitValue'>DEFAULT</b></div><div id='fitChoices' class='choices'></div></div><div class='settingBlock'><div class='settingLabel'><span>Speed</span><b id='speedValue'>1x</b></div><div id='speedChoices' class='choices'></div></div></div><button id='fs' class='icon' aria-label='Fullscreen'></button></div></div></div></div>"
                 + "<script>window.open=function(){return null};"
-                + "var src='" + safeUrl + "',streamType='" + safeType + "',rawLicense='" + safeLicense + "',p=document.getElementById('p'),v=document.getElementById('v'),hls=null,dash=null;"
+                + "var src='" + safeUrl + "',streamType='" + safeType + "',rawLicense='" + safeLicense + "',clearKeyKeys=" + clearKeyKeysJs + ",debugEnabled=" + debugFlag + ",p=document.getElementById('p'),v=document.getElementById('v'),hls=null,dash=null;"
                 + "var playBtn=document.getElementById('play'),big=document.getElementById('big'),mute=document.getElementById('mute'),vol=document.getElementById('vol'),seek=document.getElementById('seek'),time=document.getElementById('time'),quality=document.getElementById('quality'),speed=document.getElementById('speed'),fit=document.getElementById('fit'),settings=document.getElementById('settings'),settingsMenu=document.getElementById('settingsMenu'),qualityRow=document.getElementById('qualityRow'),qualityChoices=document.getElementById('qualityChoices'),speedChoices=document.getElementById('speedChoices'),fitChoices=document.getElementById('fitChoices'),qualityValue=document.getElementById('qualityValue'),speedValue=document.getElementById('speedValue'),fitValue=document.getElementById('fitValue'),fs=document.getElementById('fs'),status=document.getElementById('status'),loaderText=document.getElementById('loaderText'),seeking=false,idleTimer=0,statusTimer=0,readyWatch=0,streamReady=false,lastVolume=1,qualityAvailable=false;"
                 + "var ICON={play:`<svg viewBox='0 0 24 24'><path d='M8 5v14l11-7z'/></svg>`,pause:`<svg viewBox='0 0 24 24'><path d='M7 5h4v14H7zM13 5h4v14h-4z'/></svg>`,vol:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.5 12c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02z'/><path d='M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/></svg>`,mute:`<svg viewBox='0 0 24 24'><path d='M3 9v6h4l5 4V5L7 9H3z'/><path d='M16.59 12l2.71-2.71-1.41-1.41-2.72 2.71-2.71-2.71-1.41 1.41L13.76 12l-2.71 2.71 1.41 1.41 2.71-2.71 2.72 2.71 1.41-1.41z'/></svg>`,settings:`<svg viewBox='0 0 24 24'><path d='M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65-2-3.46-2.49 1a7.34 7.34 0 0 0-1.69-.98L15 3.28h-4l-.36 2.65c-.6.24-1.17.57-1.69.98l-2.49-1-2 3.46 2.11 1.65c-.04.32-.07.65-.07.98s.02.66.07.98l-2.11 1.65 2 3.46 2.49-1c.52.4 1.08.73 1.69.98L11 20.72h4l.36-2.65c.6-.24 1.17-.57 1.69-.98l2.49 1 2-3.46-2.11-1.65zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z'/></svg>`,full:`<svg viewBox='0 0 24 24'><path d='M5 5h6v2H7v4H5V5zm8 0h6v6h-2V7h-4V5zM5 13h2v4h4v2H5v-6zm12 0h2v6h-6v-2h4v-4z'/></svg>`,exitFull:`<svg viewBox='0 0 24 24'><path d='M7 7h4v2H9v2H7V7zm8 0h2v4h-2V9h-2V7h2zM7 13h2v2h2v2H7v-4zm8 2v-2h2v4h-4v-2h2z'/></svg>`};"
                 + "fs.innerHTML=ICON.full;settings.innerHTML=ICON.settings;"
-                + "function setStatus(t,state,hide){clearTimeout(statusTimer);var s=state||'loading';status.textContent=t||'';if(loaderText)loaderText.textContent=t||'LOADING STREAM';status.hidden=!t;status.className='status '+s;p.classList.toggle('loading-state',s==='loading');p.classList.toggle('ready',s==='success');p.classList.toggle('error-state',s==='error');if(t)p.classList.remove('idle');if(hide&&t)statusTimer=setTimeout(function(){status.hidden=true},hide)}"
-                + "function setLoading(t){if(streamReady)return;setStatus(t||'LOADING STREAM','loading',0)}"
-                + "function setSuccess(t,hide){streamReady=true;if(readyWatch)clearInterval(readyWatch);setStatus(t||'SUCCESS','success',hide||0)}"
+                + "function setStatus(t,state,hide){clearTimeout(statusTimer);var s=state||'loading';status.textContent=t||'';if(loaderText)loaderText.textContent=t||'LOADING: STREAM';status.hidden=!debugEnabled||!t;status.className='status '+s;p.classList.toggle('loading-state',s==='loading');p.classList.toggle('ready',s==='success');p.classList.toggle('error-state',s==='error');if(t)p.classList.remove('idle');if(hide&&t)statusTimer=setTimeout(function(){status.hidden=true},hide)}"
+                + "function setLoading(t){if(streamReady)return;setStatus(t||'LOADING: STREAM','loading',0)}"
+                + "function setSuccess(t,hide){streamReady=true;if(readyWatch)clearInterval(readyWatch);setStatus(t||'SUCCESS: STREAM READY','success',hide||0)}"
                 + "function setError(t){if(readyWatch)clearInterval(readyWatch);setStatus('ERROR: '+String(t||'STREAM FAILED').toUpperCase(),'error',0)}"
                 + "function errText(d){var r=d&&d.response,c=r&&(r.code||r.status);if(c)return 'HTTP '+c;if(d&&d.details)return String(d.details).replace(/_/g,' ');if(v.error&&v.error.code){var map={1:'ABORTED',2:'NETWORK',3:'DECODE',4:'SOURCE NOT SUPPORTED'};return 'MEDIA '+v.error.code+' '+(map[v.error.code]||'ERROR')}return 'STREAM FAILED'}"
-                + "function checkReady(){if(streamReady)return;if(v.readyState>=2||v.videoWidth>0||v.currentTime>0||(!v.paused&&!v.ended))setSuccess('SUCCESS')}"
+                + "function checkReady(){if(streamReady)return;if(v.readyState>=2||v.videoWidth>0||v.currentTime>0||(!v.paused&&!v.ended))setSuccess('SUCCESS: STREAM READY')}"
                 + "function watchReady(){if(readyWatch)clearInterval(readyWatch);readyWatch=setInterval(checkReady,500);setTimeout(checkReady,900);setTimeout(checkReady,1800);setTimeout(checkReady,3200)}"
                 + "function bump(){p.classList.remove('idle');clearTimeout(idleTimer);if(settingsMenu&&!settingsMenu.hidden)return;if(!v.paused)idleTimer=setTimeout(function(){p.classList.add('idle')},3000)}"
                 + "['mousemove','touchstart','click'].forEach(function(e){p.addEventListener(e,bump,{passive:true})});"
@@ -1705,9 +1979,9 @@ public class MainActivity extends Activity {
                 + "function isClearKeySource(){return (streamType||'').toLowerCase().indexOf('clearkey')>=0}"
                 + "function parseClearKeyPair(s){s=String(s||'').trim();var m=s.match(/^([0-9a-fA-F]{32}):([0-9a-fA-F]{32})$/);return m?{keyId:m[1].toLowerCase(),key:m[2].toLowerCase()}:null}"
                 + "function xorDecryptBase64(data,key){var raw=atob(data),out='';for(var i=0;i<raw.length;i++)out+=String.fromCharCode(raw.charCodeAt(i)^key.charCodeAt(i%key.length));return out}"
-                + "function decodeClearKey(){var direct=parseClearKeyPair(rawLicense);if(direct)return direct;var keys=['Nhsdfugu8','indonesia','1785088500'];for(var i=0;i<keys.length;i++){try{var pair=parseClearKeyPair(xorDecryptBase64(rawLicense,keys[i]));if(pair)return pair}catch(e){}}return null}"
+                + "function decodeClearKey(){var direct=parseClearKeyPair(rawLicense);if(direct)return direct;var keys=clearKeyKeys||[];for(var i=0;i<keys.length;i++){try{var pair=parseClearKeyPair(xorDecryptBase64(rawLicense,keys[i]));if(pair)return pair}catch(e){}}return null}"
                 + "function shakaErr(e){if(!e)return 'DASH FAILED';var code=e.code||e.errorCode||'';var cat=e.category||'';var msg=e.message||e.data&&e.data.join&&e.data.join(' ')||'';return ('DASH '+code+' '+msg).trim()||'DASH FAILED'}"
-                + "function setupDash(){if(!window.shaka||!shaka.Player){setError('DASH ENGINE FAILED');return}try{shaka.polyfill.installAll()}catch(e){}if(!shaka.Player.isBrowserSupported()){setError('DASH NOT SUPPORTED');return}setLoading(isClearKeySource()?'LOADING DASH DRM':'LOADING DASH');dash=new shaka.Player(v);dash.addEventListener('error',function(ev){setError(shakaErr(ev.detail))});dash.addEventListener('buffering',function(ev){if(ev.buffering&&!streamReady)setLoading('LOADING DASH')});if(isClearKeySource()){var clear=decodeClearKey();if(!clear){setError('DASH KEY DECODE FAILED');return}var map={};map[clear.keyId]=clear.key;dash.configure({drm:{clearKeys:map}})}dash.load(src).then(function(){populateQuality();setLoading('LOADING STREAM');watchReady();doPlay();updateTime()}).catch(function(e){setError(shakaErr(e))})}"
+                + "function setupDash(){if(!window.shaka||!shaka.Player){setError('DASH ENGINE FAILED');return}try{shaka.polyfill.installAll()}catch(e){}if(!shaka.Player.isBrowserSupported()){setError('DASH NOT SUPPORTED');return}setLoading(isClearKeySource()?'LOADING: DASH DRM':'LOADING: DASH');dash=new shaka.Player(v);dash.addEventListener('error',function(ev){setError(shakaErr(ev.detail))});dash.addEventListener('buffering',function(ev){if(ev.buffering&&!streamReady)setLoading('LOADING: DASH')});if(isClearKeySource()){var clear=decodeClearKey();if(!clear){setError('DASH KEY DECODE FAILED');return}var map={};map[clear.keyId]=clear.key;dash.configure({drm:{clearKeys:map}})}dash.load(src).then(function(){populateQuality();setLoading('LOADING: STREAM');watchReady();doPlay();updateTime()}).catch(function(e){setError(shakaErr(e))})}"
                 + "function fmt(s){if(!isFinite(s)||s<0)return '0:00';var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=Math.floor(s%60);return (h?h+':':'')+String(m).padStart(h?2:1,'0')+':'+String(x).padStart(2,'0')}"
                 + "function finite(){return isFinite(v.duration)&&v.duration>0}"
                 + "function isNativeFs(){try{return !!(window.YknNative&&window.YknNative.isFullscreen&&window.YknNative.isFullscreen())}catch(e){return false}}"
@@ -1738,10 +2012,10 @@ public class MainActivity extends Activity {
                 + "async function exitFs(){try{if(document.exitFullscreen){await document.exitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(document.webkitExitFullscreen){document.webkitExitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(document.mozCancelFullScreen){document.mozCancelFullScreen();setTimeout(updateFullscreenButton,120);return true}if(document.msExitFullscreen){document.msExitFullscreen();setTimeout(updateFullscreenButton,120);return true}if(v.webkitExitFullscreen){v.webkitExitFullscreen();setTimeout(updateFullscreenButton,120);return true}}catch(e){}try{if(window.YknNative&&window.YknNative.exitFullscreen){window.YknNative.exitFullscreen();setTimeout(updateFullscreenButton,180);return true}}catch(e){}return false}"
                 + "fs.onclick=async function(){closeSettings();bump();if(isFs()){if(!(await exitFs()))setError('EXIT FULLSCREEN FAILED');return}try{var el=p;if(el.requestFullscreen){await el.requestFullscreen()}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen()}else if(v.webkitEnterFullscreen){v.webkitEnterFullscreen()}else{setError('FULLSCREEN UNAVAILABLE');return}setTimeout(updateFullscreenButton,180)}catch(e){try{if(window.YknNative&&window.YknNative.exitFullscreen&&isNativeFs()){window.YknNative.exitFullscreen();return}}catch(x){}setError('FULLSCREEN UNAVAILABLE')}};"
                 + "['fullscreenchange','webkitfullscreenchange','mozfullscreenchange','MSFullscreenChange'].forEach(function(e){document.addEventListener(e,updateFullscreenButton)});"
-                + "v.addEventListener('loadstart',function(){setLoading('LOADING STREAM')});v.addEventListener('loadedmetadata',function(){setSuccess('SUCCESS')});v.addEventListener('loadeddata',function(){setSuccess('SUCCESS')});v.addEventListener('canplay',function(){setSuccess('SUCCESS')});v.addEventListener('play',function(){setSuccess('SUCCESS');updateButtons();bump()});v.addEventListener('pause',updateButtons);v.addEventListener('timeupdate',function(){updateTime();checkReady()});v.addEventListener('progress',checkReady);v.addEventListener('durationchange',updateTime);v.addEventListener('volumechange',updateButtons);v.addEventListener('playing',function(){setSuccess('SUCCESS');bump()});v.addEventListener('waiting',function(){setLoading('LOADING STREAM')});v.addEventListener('stalled',function(){setLoading('LOADING STREAM')});v.addEventListener('error',function(){setError(errText(null))});"
+                + "v.addEventListener('loadstart',function(){setLoading('LOADING: STREAM')});v.addEventListener('loadedmetadata',function(){setSuccess('SUCCESS: METADATA READY')});v.addEventListener('loadeddata',function(){setSuccess('SUCCESS: STREAM READY')});v.addEventListener('canplay',function(){setSuccess('SUCCESS: CAN PLAY')});v.addEventListener('play',function(){setSuccess('SUCCESS: PLAYING');updateButtons();bump()});v.addEventListener('pause',updateButtons);v.addEventListener('timeupdate',function(){updateTime();checkReady()});v.addEventListener('progress',checkReady);v.addEventListener('durationchange',updateTime);v.addEventListener('volumechange',updateButtons);v.addEventListener('playing',function(){setSuccess('SUCCESS: PLAYING');bump()});v.addEventListener('waiting',function(){setLoading('LOADING: BUFFERING')});v.addEventListener('stalled',function(){setLoading('LOADING: STALLED')});v.addEventListener('error',function(){setError(errText(null))});"
                 + "setupSpeed();setupFit();updateButtons();updateTime();updateFullscreenButton();"
                 + "if(isDashSource()){setupDash()}"
-                + "else if(window.Hls&&Hls.isSupported()){setLoading('LOADING HLS');hls=new Hls({enableWorker:true,lowLatencyMode:true,capLevelToPlayerSize:false});hls.loadSource(src);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,function(){populateQuality();setLoading('LOADING STREAM');watchReady();doPlay();updateTime()});hls.on(Hls.Events.ERROR,function(e,d){if(d&&d.fatal){setError(errText(d))}else if(!streamReady&&d&&d.response){setError(errText(d))}})}"
+                + "else if(window.Hls&&Hls.isSupported()){setLoading('LOADING: HLS');hls=new Hls({enableWorker:true,lowLatencyMode:true,capLevelToPlayerSize:false});hls.loadSource(src);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,function(){populateQuality();setLoading('LOADING: STREAM');watchReady();doPlay();updateTime()});hls.on(Hls.Events.ERROR,function(e,d){if(d&&d.fatal){setError(errText(d))}else if(!streamReady&&d&&d.response){setError(errText(d))}})}"
                 + "else if(v.canPlayType('application/vnd.apple.mpegurl')){nativePlay();}"
                 + "else{nativePlay();}"
                 + "</script>"
@@ -2090,8 +2364,45 @@ public class MainActivity extends Activity {
 
     private String getProxiedUrl(String url) {
         String clean = cleanStreamUrl(url);
+        if (clean.isEmpty()) return "";
         String encodedPath = clean.replaceFirst("^(https?)://", "$1/");
-        return PROXY_BASE_URL + "/" + encodedPath;
+        return stripTrailingSlash(proxyBaseUrl) + "/" + encodedPath;
+    }
+
+    private String unwrapProxyUrl(String url) {
+        String clean = cleanStreamUrl(url);
+        String lower = clean.toLowerCase(Locale.US);
+        int httpsIndex = lower.indexOf("/api/proxy/https/");
+        if (httpsIndex >= 0) {
+            return "https://" + clean.substring(httpsIndex + "/api/proxy/https/".length());
+        }
+        int httpIndex = lower.indexOf("/api/proxy/http/");
+        if (httpIndex >= 0) {
+            return "http://" + clean.substring(httpIndex + "/api/proxy/http/".length());
+        }
+        return clean;
+    }
+
+    private String buildJsStringArray(String[] values) {
+        String[] source = values == null || values.length == 0 ? DEFAULT_CLEARKEY_XOR_KEYS : values;
+        StringBuilder builder = new StringBuilder("[");
+        int count = 0;
+        for (String value : source) {
+            String clean = cleanText(value);
+            if (clean.isEmpty()) continue;
+            if (count > 0) builder.append(",");
+            builder.append("'").append(escapeJsString(clean)).append("'");
+            count++;
+        }
+        if (count == 0) {
+            for (String value : DEFAULT_CLEARKEY_XOR_KEYS) {
+                if (count > 0) builder.append(",");
+                builder.append("'").append(escapeJsString(value)).append("'");
+                count++;
+            }
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
     private String cleanText(String value) {
@@ -2157,6 +2468,7 @@ public class MainActivity extends Activity {
         String clean = cleanText(name);
         String lower = clean.toLowerCase(Locale.US);
         if (lower.contains("direct")) return "DIRECT";
+        if (lower.contains("cdn")) return "CDN";
         if (lower.contains("proxy")) return "PROXY";
         if (lower.contains("embed")) return "EMBED";
         if (lower.contains("auto")) return "AUTO";
@@ -2437,6 +2749,7 @@ public class MainActivity extends Activity {
         String startRaw;
         String endRaw;
         String poster;
+        String posterSecondary;
         String sportKey;
         String source;
         String status;
