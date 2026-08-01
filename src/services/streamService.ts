@@ -15,6 +15,7 @@ export interface StreamServer {
   key?: string;
   keys?: Record<string, string>;
   forceProxy?: boolean;
+  cdnBackup?: boolean;
   tokenChannelId?: string;
   tokenEndpoint?: string;
   tokenBaseUrl?: string;
@@ -202,6 +203,24 @@ export const getProxiedUrl = (url: string, force = false) => {
   return `${proxyBase}/${cleanUrl}`;
 };
 
+export const getCdnBackupBaseUrl = () => (
+  import.meta.env.VITE_CDN_BACKUP_BASE_URL ||
+  import.meta.env.VITE_WORKER_CDN_BASE_URL ||
+  ''
+).replace(/\/$/, '');
+
+export const getCdnBackupUrl = (url: string, force = false) => {
+  const cleanTargetUrl = normalizeStreamUrl(url);
+  const backupBase = getCdnBackupBaseUrl();
+
+  if (!force || !backupBase) {
+    return cleanTargetUrl;
+  }
+
+  const cleanUrl = cleanTargetUrl.replace(/^(https?):\/\//, '$1/');
+  return `${backupBase}/${cleanUrl}`;
+};
+
 const makeTvstreamTokenUrl = (channelId: string) => (
   `${TVSTREAM_CHANNEL_TOKEN_PREFIX}${channelId}`
 );
@@ -217,7 +236,7 @@ const buildTvstreamTokenServers = (tokenUrl: string, jenis: string): StreamServe
 
   if (!tokenChannelId) return [];
 
-  return [
+  const servers: StreamServer[] = [
     {
       name: 'Server 1 (SBS Token)',
       url: tokenUrl,
@@ -227,16 +246,22 @@ const buildTvstreamTokenServers = (tokenUrl: string, jenis: string): StreamServe
       tokenEndpoint: TVSTREAM_PLAY_TOKEN_ENDPOINT,
       tokenBaseUrl: TVSTREAM_ORIGIN,
     },
-    {
-      name: 'Server 2 (SBS Proxy)',
+  ];
+
+  if (getCdnBackupBaseUrl()) {
+    servers.push({
+      name: 'Server 2 (CDN Backup)',
       url: tokenUrl,
       type: jenis || 'hls',
-      forceProxy: true,
+      forceProxy: false,
+      cdnBackup: true,
       tokenChannelId,
       tokenEndpoint: TVSTREAM_PLAY_TOKEN_ENDPOINT,
       tokenBaseUrl: TVSTREAM_ORIGIN,
-    },
-  ];
+    });
+  }
+
+  return servers;
 };
 
 const buildIframeServers = (
@@ -258,7 +283,7 @@ export const buildServers = (
   urlIptv: string,
   urlLicense: string | undefined,
   jenis: string,
-  _forceProxyFirst = false  // tidak lagi dipakai — Server 1 selalu direct
+  forceProxyFallback = false
 ): StreamServer[] => {
   const decryptedLicense = urlLicense ? decryptLicense(urlLicense) : '';
   const servers: StreamServer[] = [];
@@ -293,14 +318,25 @@ export const buildServers = (
     forceProxy: false,
   });
 
-  // Server 2: selalu proxy — sama seperti backup HTML yang always provide proxy untuk semua channel.
-  // Tidak perlu whitelist domain lagi.
-  servers.push({
-    name: 'Server 2 (Proxy)',
-    url: rawUrl,
-    type: jenis,
-    forceProxy: true,
-  });
+  if (getCdnBackupBaseUrl()) {
+    servers.push({
+      name: `Server ${servers.length + 1} (CDN Backup)`,
+      url: rawUrl,
+      type: jenis,
+      forceProxy: false,
+      cdnBackup: true,
+    });
+  }
+
+  // Proxy lama tetap fallback khusus untuk http/mixed-content atau data lama yang eksplisit memintanya.
+  if (rawUrl.startsWith('http://') || forceProxyFallback) {
+    servers.push({
+      name: `Server ${servers.length + 1} (Proxy Backup)`,
+      url: rawUrl,
+      type: jenis,
+      forceProxy: true,
+    });
+  }
 
   if (decryptedLicense) {
     if (!isHlsStream && decryptedLicense.includes(':') && !decryptedLicense.startsWith('http')) {
@@ -320,7 +356,7 @@ export const buildServers = (
       });
 
       if (Object.keys(keys).length > 0) {
-        // DRM key dipasang ke Server 1 dan Server 2 supaya keduanya bisa play.
+        // DRM key dipasang ke semua server yang tersedia.
         servers.forEach(s => {
           s.keys = keys;
           const firstKeyId = Object.keys(keys)[0];
@@ -331,20 +367,21 @@ export const buildServers = (
     } else if (decryptedLicense.startsWith('http')) {
       const altUrl = normalizeStreamUrl(decryptedLicense);
 
-      // Server Alt selalu direct + proxy, konsisten dengan pola di atas.
       servers.push({
-        name: 'Server 3 (Alt Direct)',
+        name: `Server ${servers.length + 1} (Alt Direct)`,
         url: altUrl,
         type: 'hls',
         forceProxy: false
       });
 
-      servers.push({
-        name: 'Server 4 (Alt Proxy)',
-        url: altUrl,
-        type: 'hls',
-        forceProxy: true
-      });
+      if (altUrl.startsWith('http://')) {
+        servers.push({
+          name: `Server ${servers.length + 1} (Alt Proxy)`,
+          url: altUrl,
+          type: 'hls',
+          forceProxy: true
+        });
+      }
     }
   }
 
@@ -536,11 +573,7 @@ const parseDoms9AllM3u = (m3uText: string): ChannelEvent[] => {
       gbr_base64: '',
       logo: tvgLogo || '',
 
-      // Paksa proxy kalau:
-      // 1. URL masih http
-      // 2. URL bukan .m3u8 standar
-      // 3. URL .ts / mpegts
-      forceProxy: !lowerUrl.startsWith('https://') || !isM3u8 || isTs,
+      forceProxy: !lowerUrl.startsWith('https://'),
     });
   }
 

@@ -5,7 +5,7 @@ import {
   Server, Shield, Play, Pause, AlertTriangle,
   RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, PictureInPicture2
 } from 'lucide-react';
-import { getProxiedUrl, type StreamServer } from '../services/streamService';
+import { getCdnBackupUrl, getProxiedUrl, type StreamServer } from '../services/streamService';
 import GlobalAnnouncement from './GlobalAnnouncement';
 
 interface VideoPlayerProps {
@@ -192,7 +192,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   const bufferingDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getPublicServerName = (server: any) => {
-    const index = servers.findIndex(s => s.url === server?.url && s.forceProxy === server?.forceProxy);
+    const index = servers.findIndex(s => (
+      s.url === server?.url &&
+      s.forceProxy === server?.forceProxy &&
+      s.cdnBackup === server?.cdnBackup
+    ));
     return `Server ${index >= 0 ? index + 1 : 1}`;
   };
 
@@ -203,7 +207,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
     setCurrentServer((prev) => {
       // Kalau user sudah pilih server, jangan diganti otomatis.
       // Ini mencegah balik ke Server 1 saat polling extraServers jalan.
-      if (prev?.url && servers.some(s => s.url === prev.url && s.forceProxy === prev.forceProxy)) {
+      if (prev?.url && servers.some(s => (
+        s.url === prev.url &&
+        s.forceProxy === prev.forceProxy &&
+        s.cdnBackup === prev.cdnBackup
+      ))) {
         return prev;
       }
 
@@ -287,11 +295,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   };
 
   const getProxyFallbackServer = () => {
-    if (!currentServer || currentServer.forceProxy) return null;
+    if (!currentServer || currentServer.forceProxy || currentServer.cdnBackup) return null;
 
     const currentRawUrl = cleanStreamUrl(currentServer.url);
     return servers.find((server) => (
-      server.forceProxy === true && cleanStreamUrl(server.url) === currentRawUrl
+      (server.cdnBackup === true || server.forceProxy === true) && cleanStreamUrl(server.url) === currentRawUrl
     )) || null;
   };
 
@@ -350,7 +358,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       ? 'Browser iOS ini tidak support player HLS JS, jadi fallback ke native Safari. Kalau masih gagal, source iOS ini perlu diganti.'
       : currentServer?.forceProxy
         ? 'Kalau masih gagal, source HLS kemungkinan memang ditolak Safari iOS.'
-        : 'Coba pilih Server 2 (Proxy) supaya playlist dan segment lewat proxy.';
+        : 'Coba pilih server CDN Backup supaya playlist dan segment lewat jalur cadangan.';
 
     if (code === 2) {
       return `iOS gagal mengambil playlist/segment HLS dari ${activeServerName}. ${proxyHint}`;
@@ -677,15 +685,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
   const loadIOSNativeQualityLevels = async (
     streamUrl: string,
-    rawUrl: string,
+    _rawUrl: string,
     loadId: number
   ) => {
     const manifestUrls = [streamUrl];
-    const forcedProxyUrl = getProxiedUrl(rawUrl, true);
-
-    if (forcedProxyUrl !== streamUrl) {
-      manifestUrls.push(forcedProxyUrl);
-    }
 
     for (const manifestUrl of manifestUrls) {
       try {
@@ -733,8 +736,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       }
 
       const forceProxy = currentServer.forceProxy === true || rawUrl.startsWith('http://');
-      const autoProxiedUrl = getProxiedUrl(rawUrl, forceProxy);
-      let streamUrl = autoProxiedUrl;
+      const streamUrlCandidate = currentServer.cdnBackup
+        ? getCdnBackupUrl(rawUrl, true)
+        : getProxiedUrl(rawUrl, forceProxy);
+      let streamUrl = streamUrlCandidate;
       let isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
 
       const lowerStreamUrl = streamUrl.toLowerCase();
@@ -766,7 +771,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               if (targetLine) {
                 const resolvedUrl = new URL(targetLine.trim(), checkRes.url).toString();
                 console.log('Frontend resolved IPTV container to:', resolvedUrl);
-                streamUrl = getProxiedUrl(resolvedUrl, currentServer.forceProxy === true);
+                streamUrl = currentServer.cdnBackup
+                  ? getCdnBackupUrl(resolvedUrl, true)
+                  : getProxiedUrl(resolvedUrl, currentServer.forceProxy === true);
                 isHls = streamUrl.includes('.m3u8') || streamUrl.includes('m3u8');
               }
             }
@@ -977,7 +984,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                   showStartupErrorWithDelay('Gagal memuat siaran video (Error Jaringan).');
                 }
               } else {
-                showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
+                showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih CDN Backup.');
               }
             } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
               try {
@@ -1066,7 +1073,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
         // 1001 = BAD_HTTP_STATUS, 1002 = HTTP_ERROR, 1009 = REQUEST_FILTER_ERROR or bad CDN response
         const isNetworkError = [1001, 1002, 1009].includes(e.code);
         if (isNetworkError && currentServer.forceProxy !== true) {
-          showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih Server Proxy Backup.');
+          showStartupErrorWithDelay('Server direct gagal dimuat. Coba pilih CDN Backup.');
           return;
         }
 
@@ -2190,7 +2197,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
                   className="px-5 py-3 bg-primary text-dark font-black rounded-xl flex items-center gap-2 hover:scale-102 transition-transform cursor-pointer text-xs uppercase tracking-wider shadow"
                 >
                   <Server size={14} />
-                  Coba Server Proxy
+                  Coba CDN Backup
                 </button>
               )}
               <button
@@ -2225,7 +2232,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               >
                 <span className="relative z-10">Server {index + 1}</span>
 
-                {(server.forceProxy || server.keyId || server.keys || server.url.includes('|')) && (
+                {(server.forceProxy || server.cdnBackup || server.keyId || server.keys || server.url.includes('|')) && (
                   <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
                 )}
               </button>
