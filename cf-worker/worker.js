@@ -21,6 +21,11 @@ const DIRECT_EXT = /\.(ts|m4s|mp4|m4v|aac|mp3|m4a|fmp4|cmfv|cmfa)(\?.*)?$/i;
 // Extensions that must stay proxied (sub-manifests, DRM keys)
 const PROXY_EXT = /\.(m3u8|mpd|key|bin)(\?.*)?$/i;
 
+const toProxyPath = (absoluteUrl, workerOrigin) => {
+  const clean = absoluteUrl.replace(/^(https?):\/\//, '$1/');
+  return `${workerOrigin}/${clean}`;
+};
+
 export default {
   async fetch(request, env, ctx) {
     // CORS preflight
@@ -35,7 +40,9 @@ export default {
     // Accept both:
     //   /https/domain/path   (standard)
     //   /https://domain/path (auto-corrected)
-    const normalized = path.replace(/^\/(https?):\/\//, '/$1/');
+    const normalized = path
+      .replace(/^\/api\/proxy\//, '/')
+      .replace(/^\/(https?):\/\//, '/$1/');
     const match = normalized.match(/^\/(https?)\/(.+)$/);
 
     if (!match) {
@@ -174,8 +181,7 @@ export default {
             const resolved = new URL(p1, finalUrl).toString();
             // DRM keys, init segments → always proxy. If excluded (Akamai), always proxy keys/segments too.
             if (isBypassExcluded || PROXY_EXT.test(resolved) || resolved.includes('key') || resolved.includes('init')) {
-              const clean = resolved.replace(/^(https?):\/\//, '$1/');
-              return `URI="${proxyPrefix}${clean}"`;
+              return `URI="${toProxyPath(resolved, workerOrigin)}"`;
             }
             return `URI="${resolved}"`;
           });
@@ -189,8 +195,7 @@ export default {
         }
 
         // Sub-manifests (e.g. quality-specific playlists) → still through proxy
-        const clean = resolved.replace(/^(https?):\/\//, '$1/');
-        return `${proxyPrefix}${clean}`;
+        return toProxyPath(resolved, workerOrigin);
       }).join('\n');
 
       const contentType = upstream.headers.get('content-type') || 'application/vnd.apple.mpegurl';
@@ -255,6 +260,19 @@ export default {
             );
           }
         }
+      } else if (isBypassExcluded) {
+        const workerOrigin = reqUrl.origin;
+
+        rewrittenBody = rewrittenBody
+          .replace(/(>)(https?:\/\/[^<\s]+)(<)/g, (_match, open, absoluteUrl, close) => (
+            `${open}${toProxyPath(absoluteUrl, workerOrigin)}${close}`
+          ))
+          .replace(/(\b(?:sourceURL|media|initialization|index|href)=["'])(https?:\/\/[^"']+)(["'])/gi, (
+            _match,
+            prefix,
+            absoluteUrl,
+            suffix
+          ) => `${prefix}${toProxyPath(absoluteUrl, workerOrigin)}${suffix}`);
       }
 
       const response = new Response(rewrittenBody, {
