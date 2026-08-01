@@ -2224,7 +2224,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
               <button
                 key={`${server.url}-${index}`}
                 onClick={() => selectServer(server)}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy && currentServer.cdnBackup === server.cdnBackup
                   ? 'bg-primary text-dark shadow-md'
                   : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
                   }`}
