@@ -1087,6 +1087,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   }, [
     currentServer?.url,
     currentServer?.forceProxy,
+    currentServer?.cdnBackup,
     currentServer?.tokenChannelId,
     currentServer?.tokenEndpoint,
     currentServer?.tokenBaseUrl,
@@ -1459,6 +1460,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
 
       // Auto-clear loading overlays when time starts advancing
       if (!videoRef.current.paused) {
+        if (!isPlaying) setIsPlaying(true);
         if (isBooting) setIsBooting(false);
         if (isBuffering || bufferingDelayTimerRef.current) {
           hideBuffering();
