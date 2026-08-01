@@ -1087,6 +1087,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
   }, [
     currentServer?.url,
     currentServer?.forceProxy,
+    currentServer?.cdnBackup,
     currentServer?.tokenChannelId,
     currentServer?.tokenEndpoint,
     currentServer?.tokenBaseUrl,
