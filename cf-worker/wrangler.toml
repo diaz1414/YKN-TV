@@ -1,6 +1,9 @@
 name = "ykn-proxy"
 main = "worker.js"
 compatibility_date = "2024-09-23"
+routes = [
+  { pattern = "tv.ykn.my.id/api/proxy/*", zone_name = "ykn.my.id" }
+]
 
 # Worker runs on Cloudflare's free tier
 # Free: 100,000 req/day | CPU: 10ms per request (more than enough for proxying)
