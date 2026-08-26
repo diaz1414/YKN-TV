@@ -76,11 +76,11 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
     private static final String RAW_EVENTS_URL =
-            "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat";
+            "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat";
     private static final String RAW_TV_SPORTS_URL =
-            "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat";
+            "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat";
     private static final String RAW_TV_HIBURAN_URL =
-            "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat";
+            "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat";
     private static final String BOT_EVENTS_URL = "https://api.ykn.my.id/api/sports/events";
     private static final String BOT_TV_SPORTS_URL = "https://api.ykn.my.id/api/sports/tv";
     private static final String BOT_TV_HIBURAN_URL = "https://api.ykn.my.id/api/sports/hiburan";

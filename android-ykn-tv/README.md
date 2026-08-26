@@ -11,8 +11,8 @@ Native Android WebView version for YKN TV.
   2. Bot API fallback `https://api.ykn.my.id/api/sports/events`
   3. Esportex multi-sport iframe schedule `https://api.esportex.site/api/streams`
 - Loads TV channel tabs from the same website sources:
-  - `https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat`
-  - `https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat`
+  - `https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat`
+  - `https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat`
 - Uses a large guarded WebView player on top and schedule/server buttons below.
 - Adds a bottom footer with `Developed by YKN Team`, Join Community, and Support buttons.
 - Support popup includes Saweria, BagiBagi, and Ko-fi links.
