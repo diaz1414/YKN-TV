@@ -75,18 +75,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
-    private static final String RAW_EVENTS_URL =
+    private static final String DEFAULT_RAW_EVENTS_URL =
             "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat";
-    private static final String RAW_TV_SPORTS_URL =
+    private static final String DEFAULT_RAW_TV_SPORTS_URL =
             "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat";
-    private static final String RAW_TV_HIBURAN_URL =
+    private static final String DEFAULT_RAW_TV_HIBURAN_URL =
             "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat";
-    private static final String BOT_EVENTS_URL = "https://api.ykn.my.id/api/sports/events";
-    private static final String BOT_TV_SPORTS_URL = "https://api.ykn.my.id/api/sports/tv";
-    private static final String BOT_TV_HIBURAN_URL = "https://api.ykn.my.id/api/sports/hiburan";
-    private static final String ESPORTEX_STREAMS_URL = "https://api.esportex.site/api/streams";
+    private static final String DEFAULT_BOT_EVENTS_URL = "https://api.ykn.my.id/api/sports/events";
+    private static final String DEFAULT_BOT_TV_SPORTS_URL = "https://api.ykn.my.id/api/sports/tv";
+    private static final String DEFAULT_BOT_TV_HIBURAN_URL = "https://api.ykn.my.id/api/sports/hiburan";
+    private static final String DEFAULT_ESPORTEX_STREAMS_URL = "https://api.esportex.site/api/streams";
     private static final String REMOTE_CONFIG_URL =
             "https://raw.githubusercontent.com/diaz1414/YKN-TV/main/assets/app-config.json";
+
+    private volatile String rawEventsUrl = DEFAULT_RAW_EVENTS_URL;
+    private volatile String rawTvSportsUrl = DEFAULT_RAW_TV_SPORTS_URL;
+    private volatile String rawTvHiburanUrl = DEFAULT_RAW_TV_HIBURAN_URL;
+    private volatile String botEventsUrl = DEFAULT_BOT_EVENTS_URL;
+    private volatile String botTvSportsUrl = DEFAULT_BOT_TV_SPORTS_URL;
+    private volatile String botTvHiburanUrl = DEFAULT_BOT_TV_HIBURAN_URL;
+    private volatile String esportexStreamsUrl = DEFAULT_ESPORTEX_STREAMS_URL;
     private static final String DEFAULT_PROXY_BASE_URL = "https://tv.ykn.my.id/api/proxy";
     private static final String LOCAL_PLAYER_BASE = "https://ykn.local/player/";
     private static final String COMMUNITY_URL = "https://whatsapp.com/channel/0029Vb8VPpIAjPXPX2SYKN2P";
@@ -885,13 +893,34 @@ public class MainActivity extends Activity {
             try {
                 String url = REMOTE_CONFIG_URL + "?t=" + (System.currentTimeMillis() / MAIN_CACHE_BUST_MS);
                 JSONObject config = new JSONObject(httpGet(url, 5000));
+
+                String oldEventsUrl = rawEventsUrl;
+                String oldTvSportsUrl = rawTvSportsUrl;
+                String oldTvHiburanUrl = rawTvHiburanUrl;
+                String oldBotEventsUrl = botEventsUrl;
+                String oldBotTvSportsUrl = botTvSportsUrl;
+                String oldBotTvHiburanUrl = botTvHiburanUrl;
+                String oldEsportexStreamsUrl = esportexStreamsUrl;
+
                 boolean streamConfigChanged = applyRemoteConfig(config);
+
+                boolean urlsChanged = !oldEventsUrl.equals(rawEventsUrl)
+                        || !oldTvSportsUrl.equals(rawTvSportsUrl)
+                        || !oldTvHiburanUrl.equals(rawTvHiburanUrl)
+                        || !oldBotEventsUrl.equals(botEventsUrl)
+                        || !oldBotTvSportsUrl.equals(botTvSportsUrl)
+                        || !oldBotTvHiburanUrl.equals(botTvHiburanUrl)
+                        || !oldEsportexStreamsUrl.equals(esportexStreamsUrl);
+
                 getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                         .edit()
                         .putString(CACHE_REMOTE_CONFIG, config.toString())
                         .apply();
                 if (streamConfigChanged) {
                     mainHandler.post(this::applyRuntimeStreamConfig);
+                }
+                if (urlsChanged) {
+                    mainHandler.post(() -> loadSchedules(true));
                 }
             } catch (Exception ignored) {
             }
@@ -925,6 +954,35 @@ public class MainActivity extends Activity {
                 false
         );
         playerDebugEnabled = optBooleanAny(config, playerDebugEnabled, "playerDebug", "player_debug");
+
+        String nextEventsUrl = optStringAny(config, "rawEventsUrl", "raw_events_url");
+        if (!nextEventsUrl.isEmpty()) {
+            rawEventsUrl = nextEventsUrl;
+        }
+        String nextTvSportsUrl = optStringAny(config, "rawTvSportsUrl", "raw_tv_sports_url");
+        if (!nextTvSportsUrl.isEmpty()) {
+            rawTvSportsUrl = nextTvSportsUrl;
+        }
+        String nextTvHiburanUrl = optStringAny(config, "rawTvHiburanUrl", "raw_tv_hiburan_url");
+        if (!nextTvHiburanUrl.isEmpty()) {
+            rawTvHiburanUrl = nextTvHiburanUrl;
+        }
+        String nextBotEventsUrl = optStringAny(config, "botEventsUrl", "bot_events_url");
+        if (!nextBotEventsUrl.isEmpty()) {
+            botEventsUrl = nextBotEventsUrl;
+        }
+        String nextBotTvSportsUrl = optStringAny(config, "botTvSportsUrl", "bot_tv_sports_url");
+        if (!nextBotTvSportsUrl.isEmpty()) {
+            botTvSportsUrl = nextBotTvSportsUrl;
+        }
+        String nextBotTvHiburanUrl = optStringAny(config, "botTvHiburanUrl", "bot_tv_hiburan_url");
+        if (!nextBotTvHiburanUrl.isEmpty()) {
+            botTvHiburanUrl = nextBotTvHiburanUrl;
+        }
+        String nextEsportexStreamsUrl = optStringAny(config, "esportexStreamsUrl", "esportex_streams_url");
+        if (!nextEsportexStreamsUrl.isEmpty()) {
+            esportexStreamsUrl = nextEsportexStreamsUrl;
+        }
 
         return !oldProxyBase.equals(proxyBaseUrl)
                 || !Arrays.equals(oldClearKeyKeys, clearKeyXorKeys)
@@ -1333,26 +1391,26 @@ public class MainActivity extends Activity {
     }
 
     private JSONArray fetchMainEventsArray() throws Exception {
-        String rawUrl = RAW_EVENTS_URL + "?t=" + (System.currentTimeMillis() / MAIN_CACHE_BUST_MS);
+        String rawUrl = rawEventsUrl + "?t=" + (System.currentTimeMillis() / MAIN_CACHE_BUST_MS);
         try {
             return new JSONArray(httpGet(rawUrl, 3000));
         } catch (Exception githubErr) {
-            return new JSONArray(httpGet(BOT_EVENTS_URL, 4000));
+            return new JSONArray(httpGet(botEventsUrl, 4000));
         }
     }
 
     private List<ScheduleItem> fetchChannelSchedules() throws Exception {
         ArrayList<ScheduleItem> items = new ArrayList<>();
         items.addAll(fetchChannelCategory(
-                RAW_TV_SPORTS_URL,
-                BOT_TV_SPORTS_URL,
+                rawTvSportsUrl,
+                botTvSportsUrl,
                 "tv_sports",
                 "GitHub TV Sports",
                 "Saluran Sports Premium"
         ));
         items.addAll(fetchChannelCategory(
-                RAW_TV_HIBURAN_URL,
-                BOT_TV_HIBURAN_URL,
+                rawTvHiburanUrl,
+                botTvHiburanUrl,
                 "tv_hiburan",
                 "GitHub TV Hiburan",
                 "Saluran Hiburan & Lokal"
@@ -1434,7 +1492,7 @@ public class MainActivity extends Activity {
     }
 
     private List<ScheduleItem> fetchEsportexSchedule() throws Exception {
-        String url = ESPORTEX_STREAMS_URL + "?cache=" + (System.currentTimeMillis() / ESPORTEX_CACHE_BUST_MS);
+        String url = esportexStreamsUrl + "?cache=" + (System.currentTimeMillis() / ESPORTEX_CACHE_BUST_MS);
         JSONObject root = new JSONObject(httpGet(url, 8000));
         ArrayList<ScheduleItem> items = new ArrayList<>();
         HashSet<String> seenIds = new HashSet<>();

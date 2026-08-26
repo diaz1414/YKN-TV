@@ -12,5 +12,12 @@
     "Nhsdfugu8",
     "1785088500"
   ],
-  "playerDebug": true
+  "playerDebug": true,
+  "rawEventsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat",
+  "rawTvSportsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat",
+  "rawTvHiburanUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat",
+  "botEventsUrl": "https://api.ykn.my.id/api/sports/events",
+  "botTvSportsUrl": "https://api.ykn.my.id/api/sports/tv",
+  "botTvHiburanUrl": "https://api.ykn.my.id/api/sports/hiburan",
+  "esportexStreamsUrl": "https://api.esportex.site/api/streams"
 }
