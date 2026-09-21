@@ -1990,6 +1990,7 @@ public class MainActivity extends Activity {
         String debugFlag = playerDebugEnabled ? "true" : "false";
         String html = "<!doctype html><html><head>"
                 + "<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>"
+                + "<meta name='referrer' content='no-referrer'>"
                 + "<script src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js'></script>"
                 + "<script src='https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.min.js'></script>"
                 + "<style>html,body{margin:0;height:100%;width:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif;}"
