@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Tv, Home, RadioTower, Calendar, Menu, X, Coffee, ShieldCheck } from 'lucide-react';
+import { Search, Tv, RadioTower, Calendar, Menu, X, Coffee, ShieldCheck, Play } from 'lucide-react';
 import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
 import yknLogo from '../assets/ykn-tv-logo.png';
 import { slugify } from '../services/streamService';
@@ -252,26 +252,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     }
   };
 
-  const getActiveTabClass = (tab: string) => {
-    const isActive = activeTab === tab && !isWatchPage;
-    return isActive
-      ? 'text-primary font-black scale-105 border-b-2 border-primary pb-1'
-      : 'text-zinc-400 hover:text-white transition-all font-semibold';
-  };
-
-  const getMobileTabClass = (tab: string) => {
-    const isActive = activeTab === tab && !isWatchPage;
-    return isActive
-      ? 'text-primary scale-110 font-bold'
-      : 'text-zinc-500 hover:text-zinc-300';
-  };
-
   return (
     <div className="min-h-screen bg-transparent text-white flex flex-col font-sans">
       {/* Top Header Navbar - Glassmorphism */}
       <header
         onClick={(e) => e.stopPropagation()}
-        className="h-16 md:h-20 glass border-b border-white/5 flex items-center justify-between px-4 md:px-8 sticky top-0 bg-[#020202]/80 backdrop-blur-xl z-50"
+        className="h-16 md:h-20 border-b border-white/[0.07] bg-[#020202]/85 backdrop-blur-2xl flex items-center justify-between px-4 md:px-8 sticky top-0 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
       >
         <div className="flex items-center gap-3 md:gap-8">
           {/* Tombol Burger - Muncul hanya di layar mobile (md:hidden) */}
@@ -287,17 +273,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {/* Logo YKN TV */}
           <div
             onClick={() => navigate('/')}
-            className="flex items-center gap-2.5 cursor-pointer select-none group tv-focusable rounded-xl p-1"
+            className="flex items-center gap-2.5 cursor-pointer select-none group tv-focusable rounded-2xl p-1"
             tabIndex={0}
           >
             <img
               src={yknLogo}
               alt="YKN TV Logo"
-              className="h-7 w-[102px] object-contain drop-shadow-[0_7px_18px_rgba(0,0,0,0.65)] transition-transform duration-300 group-hover:scale-105 md:h-9 md:w-[132px] lg:w-[148px]"
+              className="h-7 w-[96px] sm:w-[102px] object-contain drop-shadow-[0_7px_18px_rgba(0,0,0,0.65)] transition-transform duration-300 group-hover:scale-105 md:h-9 md:w-[132px] lg:w-[148px] shrink-0"
             />
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:inline-block text-[9px] bg-gradient-to-r from-primary to-emerald-500 text-black font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-[0_0_10px_rgba(212,175,55,0.2)]">
-                LIVE HUB
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <span className="hidden sm:inline-block text-[9px] bg-gradient-to-r from-primary to-amber-500 text-black font-black px-2 py-0.5 rounded-full tracking-widest uppercase shadow-[0_0_12px_rgba(212,175,55,0.25)]">
+                BROADCAST HUB
               </span>
               {isAdminLoggedIn && (
                 <button
@@ -305,7 +291,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                     e.stopPropagation();
                     navigate('/ykn-c0ntr0l-hq/dashboard');
                   }}
-                  className={`ml-2 text-[8px] md:text-[9.5px] border font-black px-2 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all tv-focusable ${adminRole === 'developer'
+                  className={`ml-1 sm:ml-2 text-[7.5px] sm:text-[9.5px] border font-black px-2 sm:px-2.5 py-0.5 rounded-full tracking-wider uppercase inline-flex items-center gap-1 cursor-pointer hover:scale-105 active:scale-95 transition-all tv-focusable shrink-0 ${adminRole === 'developer'
                     ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_12px_rgba(168,85,247,0.15)] hover:bg-purple-500/20'
                     : 'bg-[#e50914]/10 text-[#e50914] border-[#e50914]/20 shadow-[0_0_12px_rgba(229,9,20,0.15)] hover:bg-[#e50914]/20'
                     }`}
@@ -315,45 +301,80 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-red-400'}`}></span>
                     <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${adminRole === 'developer' ? 'bg-purple-400' : 'bg-[#e50914]'}`} />
                   </span>
-                  {adminRole === 'developer' ? 'Developer' : 'Admin'}
+                  <span className="hidden sm:inline">{adminRole === 'developer' ? 'Developer' : 'Admin'}</span>
+                  <span className="sm:hidden">{adminRole === 'developer' ? 'Dev' : 'Admin'}</span>
                 </button>
               )}
             </div>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <button
-              onClick={() => handleTabChange('home')}
-              className={`${getActiveTabClass('home')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
-              tabIndex={0}
-            >
-              <Calendar size={14} />
-              Jadwal
-            </button>
-            <button
-              onClick={() => handleTabChange('channels')}
-              className={`${getActiveTabClass('channels')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
-              tabIndex={0}
-            >
-              <Tv size={14} />
-              Saluran TV
-            </button>
-            <button
-              onClick={() => handleTabChange('live')}
-              className={`${getActiveTabClass('live')} cursor-pointer flex items-center gap-1.5 tv-focusable rounded-lg px-2 py-1`}
-              tabIndex={0}
-            >
-              <RadioTower size={14} />
-              Live Center
-            </button>
+          <nav className="hidden md:flex items-center gap-1.5 relative text-sm p-1 rounded-2xl bg-black/40 border border-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            {[
+              { id: 'home', label: 'Jadwal', icon: Calendar },
+              { id: 'channels', label: 'Saluran TV', icon: Tv },
+              { id: 'live', label: 'Live Center', icon: RadioTower },
+            ].map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id && !isWatchPage;
+              return (
+                <motion.button
+                  key={item.id}
+                  onClick={() => handleTabChange(item.id)}
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`relative cursor-pointer flex items-center gap-2 tv-focusable rounded-xl px-4 py-2.5 text-xs font-black uppercase tracking-wider transition-colors duration-200 select-none ${
+                    isActive
+                      ? 'text-white'
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
+                  }`}
+                  tabIndex={0}
+                >
+                  {/* Tactile ambient glass pill when active */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="desktopNavActiveBg"
+                      className="absolute inset-0 rounded-xl bg-white/[0.06] border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
+
+                  {/* Smooth sliding bottom line - Glowing Stadium Specular Gold Line */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="desktopNavActiveLine"
+                      className="absolute bottom-0 inset-x-2.5 h-[2.5px] rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30 shadow-[0_0_12px_rgba(212,175,55,0.85),0_0_24px_rgba(212,175,55,0.45)]"
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
+
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Icon
+                      size={14}
+                      className={`transition-colors duration-200 ${
+                        isActive ? 'text-primary' : 'text-zinc-400'
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                    {item.id === 'live' && (
+                      <span className="relative flex h-2 w-2 ml-0.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                    )}
+                  </span>
+                </motion.button>
+              );
+            })}
+
             {showTvToggle && (
               <button
                 onClick={toggleTvMode}
-                className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-xs font-bold uppercase tracking-wider tv-focusable ${isTvMode
-                  ? 'bg-primary/20 text-primary border-primary/30 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
-                  : 'bg-white/5 text-zinc-400 border-white/5 hover:text-white hover:bg-white/10'
-                  }`}
+                className={`cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all text-xs font-bold uppercase tracking-wider tv-focusable ml-1 ${
+                  isTvMode
+                    ? 'bg-primary/20 text-primary border-primary/30 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
+                    : 'bg-white/5 text-zinc-400 border-white/5 hover:text-white hover:bg-white/10'
+                }`}
                 tabIndex={0}
               >
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -370,19 +391,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         <div className="flex items-center gap-3 md:gap-6">
           {/* Search Input - Desktop */}
           {onSearchChange && (
-            <div className="hidden md:flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-64 focus-within:border-primary/40 focus-within:bg-white/[0.05] transition-all tv-focusable" tabIndex={0}>
-              <Search size={16} className="text-zinc-500" />
+            <div className="hidden md:flex items-center gap-2.5 glass-specular px-3.5 py-2 rounded-xl w-64 focus-within:border-primary/50 transition-all tv-focusable" tabIndex={0}>
+              <Search size={15} className="text-zinc-400" />
               <input
                 type="text"
                 placeholder={searchPlaceholder}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-600"
+                className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-500 font-medium text-white"
               />
             </div>
           )}
 
-          {/*Live Streaming Info Match Badge */}
+          {/* Live Streaming Info Match Badge */}
           {activeMatch && (
             <div
               onClick={() => {
@@ -390,51 +411,49 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 navigate(`/watch/${slugify(slugName)}-${activeMatch.id}`);
               }}
               data-trigger-popunder="true"
-              className="flex items-center gap-3 pl-4 md:border-l border-white/10 group cursor-pointer select-none bg-white/5 hover:bg-white/10 py-1.5 px-3 rounded-full transition-all duration-300 tv-focusable"
+              className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 md:border-l border-white/[0.08] group cursor-pointer select-none glass-specular hover:border-primary/40 py-1 sm:py-1.5 px-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl transition-all duration-300 tv-focusable shrink-0 max-w-[170px] sm:max-w-none"
               tabIndex={0}
             >
               {/* Indikator Live Berkedip / Upcoming status */}
-              <div className="relative flex h-2 w-2">
+              <div className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
                 {activeMatch.status === 'live' ? (
                   <>
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    <span className="animate-live-dot-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-red-500"></span>
                   </>
                 ) : activeMatch.status === 'finished' ? (
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-600"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-zinc-600"></span>
                 ) : (
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-amber-500"></span>
                 )}
               </div>
 
               {/* Info Match yang lagi hot */}
-              <div className="text-right block">
-                <p className="text-[8px] sm:text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+              <div className="text-right min-w-0">
+                <p className="hidden sm:block text-[8px] sm:text-[9px] font-black text-zinc-400 uppercase tracking-wider">
                   {activeMatch.status === 'live'
                     ? 'Sedang Berlangsung'
                     : activeMatch.status === 'finished'
                       ? 'Selesai'
                       : 'Akan Datang'}
                 </p>
-                <p className="text-[10px] sm:text-xs font-black text-white group-hover:text-amber-400 transition-colors">
+                <p className="text-[10px] sm:text-xs font-black text-white group-hover:text-primary transition-colors tracking-tight truncate">
                   {getTeamAbbreviation(activeMatch.homeTeam.name)}{' '}
-                  <span className="text-amber-400">
+                  <span className="text-primary font-display font-black">
                     {activeMatch.status === 'live' || activeMatch.status === 'finished'
                       ? activeMatch.score || 'vs'
                       : 'vs'}
                   </span>{' '}
                   {getTeamAbbreviation(activeMatch.awayTeam.name)}
                   {activeMatch.status === 'live' && activeMatch.liveMinute && (
-                    <span className="ml-1 text-red-400 text-[8px] font-black">{activeMatch.liveMinute}</span>
+                    <span className="ml-1 text-red-400 text-[9px] font-black hidden sm:inline">{activeMatch.liveMinute}</span>
                   )}
                 </p>
               </div>
 
               {/* Tombol Tonton Langsung */}
-              <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-dark shadow-lg group-hover:scale-105 transition-transform duration-300">
-                <svg className="w-4 h-4 fill-black translate-x-[1px]" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-primary text-black flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300 shrink-0">
+                <Play size={9} fill="currentColor" className="ml-0.5 sm:w-2.5 sm:h-2.5" />
               </div>
             </div>
           )}
@@ -449,57 +468,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           <BackupSiteNotice
             variant={location.pathname.startsWith('/watch/') ? 'watch' : 'home'}
           />
-        </div>
-      )}
-
-      {/* Dropdown Menu Tirai untuk Layar Mobile (md:hidden) */}
-      {SHOW_BURGER_MENU && (
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className={`fixed inset-x-0 top-16 bg-[#020202]/95 backdrop-blur-2xl border-b border-white/5 z-40 md:hidden flex flex-col p-4 gap-2.5 transition-all duration-300 transform origin-top ${isMenuOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'
-            }`}
-        >
-          {/* Kolom Pencarian khusus di Mobile (Hanya muncul jika prop onSearchChange dikirim) */}
-          {onSearchChange && (
-            <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl w-full mb-1">
-              <Search size={16} className="text-zinc-500" />
-              <input
-                type="text"
-                placeholder={searchPlaceholder}
-                value={searchValue}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="bg-transparent border-none outline-none text-xs w-full placeholder:text-zinc-600"
-              />
-            </div>
-          )}
-
-          {/* List Menu Link Navigasi Mobile */}
-          <button
-            onClick={() => handleTabChange('home')}
-            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'home' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
-              }`}
-          >
-            <Calendar size={14} />
-            Jadwal Pertandingan
-          </button>
-
-          <button
-            onClick={() => handleTabChange('channels')}
-            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'channels' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
-              }`}
-          >
-            <Tv size={14} />
-            Saluran TV Langsung
-          </button>
-
-          <button
-            onClick={() => handleTabChange('live')}
-            className={`flex items-center gap-3 p-3 rounded-xl font-bold text-xs uppercase tracking-wider text-left transition-colors ${activeTab === 'live' && !isWatchPage ? 'bg-primary/10 text-primary' : 'text-zinc-400 bg-white/[0.01]'
-              }`}
-          >
-            <RadioTower size={14} />
-            Live Center
-          </button>
         </div>
       )}
 
@@ -574,43 +542,94 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         </footer>
       </main>
 
-      {/* Mobile Sticky Bottom Navigation Bar */}
-      <nav
-        onClick={(e) => e.stopPropagation()}
-        className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#020202]/95 border-t border-white/5 backdrop-blur-xl z-50 flex items-center justify-around px-2 select-none shadow-[0_-10px_30px_rgba(0,0,0,0.8)]"
-      >
-        <button
-          onClick={() => handleTabChange('home')}
-          className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('home')}`}
+      {/* Mobile Floating Bottom Navigation Dock */}
+      <div className="md:hidden fixed bottom-4 inset-x-0 z-50 pointer-events-none flex justify-center px-4 pb-[env(safe-area-inset-bottom,0px)]">
+        <nav
+          onClick={(e) => e.stopPropagation()}
+          className="pointer-events-auto h-16 w-full max-w-sm bg-[#08080a]/95 border border-white/[0.12] backdrop-blur-2xl rounded-2xl flex items-center justify-around px-2 select-none shadow-[0_16px_40px_rgba(0,0,0,0.9),inset_0_1px_0_0_rgba(255,255,255,0.15)]"
         >
-          <Home size={20} />
-          <span className="text-[9px] font-black uppercase tracking-wider">Jadwal</span>
-        </button>
+          <button
+            onClick={() => handleTabChange('home')}
+            className={`relative flex flex-col items-center justify-center gap-1 py-1.5 px-3.5 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'home' && !isWatchPage
+                ? 'text-primary font-black'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {activeTab === 'home' && !isWatchPage && (
+              <motion.div
+                layoutId="activeMobileDockPill"
+                className="absolute inset-0 bg-primary/15 border border-primary/30 rounded-xl shadow-[0_0_12px_rgba(212,175,55,0.2)] z-0"
+                transition={{ type: "spring", stiffness: 450, damping: 32 }}
+              />
+            )}
+            <span className="relative z-10 flex flex-col items-center gap-1">
+              <Calendar size={18} />
+              <span className="text-[9px] font-black uppercase tracking-wider">Jadwal</span>
+            </span>
+          </button>
 
-        <button
-          onClick={() => handleTabChange('channels')}
-          className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('channels')}`}
-        >
-          <Tv size={20} />
-          <span className="text-[9px] font-black uppercase tracking-wider">Saluran</span>
-        </button>
+          <button
+            onClick={() => handleTabChange('channels')}
+            className={`relative flex flex-col items-center justify-center gap-1 py-1.5 px-3.5 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'channels' && !isWatchPage
+                ? 'text-primary font-black'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {activeTab === 'channels' && !isWatchPage && (
+              <motion.div
+                layoutId="activeMobileDockPill"
+                className="absolute inset-0 bg-primary/15 border border-primary/30 rounded-xl shadow-[0_0_12px_rgba(212,175,55,0.2)] z-0"
+                transition={{ type: "spring", stiffness: 450, damping: 32 }}
+              />
+            )}
+            <span className="relative z-10 flex flex-col items-center gap-1">
+              <Tv size={18} />
+              <span className="text-[9px] font-black uppercase tracking-wider">Saluran</span>
+            </span>
+          </button>
 
-        <button
-          onClick={() => handleTabChange('live')}
-          className={`flex flex-col items-center gap-1 cursor-pointer ${getMobileTabClass('live')}`}
-        >
-          <RadioTower size={20} />
-          <span className="text-[9px] font-black uppercase tracking-wider">Live</span>
-        </button>
-      </nav>
+          <button
+            onClick={() => handleTabChange('live')}
+            className={`relative flex flex-col items-center justify-center gap-1 py-1.5 px-3.5 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'live' && !isWatchPage
+                ? 'text-primary font-black'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {activeTab === 'live' && !isWatchPage && (
+              <motion.div
+                layoutId="activeMobileDockPill"
+                className="absolute inset-0 bg-primary/15 border border-primary/30 rounded-xl shadow-[0_0_12px_rgba(212,175,55,0.2)] z-0"
+                transition={{ type: "spring", stiffness: 450, damping: 32 }}
+              />
+            )}
+            <span className="relative z-10 flex flex-col items-center gap-1">
+              <RadioTower size={18} />
+              <span className="text-[9px] font-black uppercase tracking-wider">Live</span>
+            </span>
+          </button>
 
-      {/* Floating Action Button (FAB) for Support - Hidden on Watch Page */}
+          <button
+            onClick={() => setIsSupportOpen(true)}
+            className="relative flex flex-col items-center justify-center gap-1 py-1.5 px-3.5 rounded-xl transition-all cursor-pointer text-amber-400 hover:text-amber-300"
+          >
+            <span className="relative z-10 flex flex-col items-center gap-1">
+              <Coffee size={18} className="fill-amber-400/20" />
+              <span className="text-[9px] font-black uppercase tracking-wider">Traktir</span>
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      {/* Floating Action Button (FAB) for Support - Desktop only, hidden on Watch Page */}
       {!isWatchPage && (
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsSupportOpen(true)}
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 border border-amber-400/30 hover:shadow-amber-500/35 transition-all select-none cursor-pointer group tv-focusable"
+          className="hidden md:flex fixed md:bottom-6 md:right-6 z-40 items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-[0_8px_20px_rgba(245,158,11,0.3)] border border-amber-400/40 hover:shadow-[0_0_24px_rgba(245,158,11,0.5)] transition-all select-none cursor-pointer group tv-focusable"
           tabIndex={0}
         >
           <Coffee size={22} className="group-hover:rotate-12 transition-transform duration-300 fill-black/10" />

@@ -1,4 +1,5 @@
-import { Play, Radio } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, Tv } from 'lucide-react';
 import type { PlayableStream } from '../services/streamService';
 import { formatBracketText } from '../utils/textFormatter';
 
@@ -20,46 +21,61 @@ const ChannelCard = ({ stream, onClick }: ChannelCardProps) => {
   };
 
   return (
-    <div
+    <motion.div
+      whileHover={{ y: -5, scale: 1.015, transition: { type: "spring", stiffness: 350, damping: 25 } }}
+      whileTap={{ scale: 0.98 }}
       onClick={handleClick}
-      className="group bg-zinc-950/96 backdrop-blur-2xl hover:bg-zinc-900/98 border border-white/10 rounded-3xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/30 relative overflow-hidden shadow-xl tv-focusable"
+      className="group glass-specular rounded-[1.75rem] p-5 md:p-6 cursor-pointer border border-white/[0.08] hover:border-primary/35 transition-all duration-300 relative overflow-hidden select-none transform-gpu tv-focusable"
       tabIndex={0}
     >
-      {/* Gold Accent Glow */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500" />
+      {/* Ambient Top Light Beam */}
+      <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-500 pointer-events-none" />
 
-      <div className="flex flex-col gap-6 relative z-10">
+      <div className="flex flex-col gap-5 relative z-10">
+        {/* Header: Channel Logo Pod & Broadcast Beacon */}
         <div className="flex justify-between items-start">
-          {stream.isBase64Logo && stream.logo ? (
-            <div className="h-14 w-20 bg-white/5 rounded-2xl flex items-center justify-center p-2 group-hover:scale-105 transition-transform overflow-hidden border border-white/5">
-              <img src={stream.logo} alt={stream.name} className="h-full max-w-full object-contain filter brightness-110" />
-            </div>
-          ) : (
-            <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center p-3 group-hover:scale-105 transition-transform border border-white/5">
-              <img src={stream.logo || "https://flagcdn.com/w80/un.png"} alt={stream.name} className="w-full h-full object-contain filter brightness-110" />
-            </div>
-          )}
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 select-none">
-            <Radio size={12} className="text-emerald-400 animate-pulse-live" />
-            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">LIVE</span>
+          <div className="h-14 w-20 bg-gradient-to-b from-white/[0.08] to-white/[0.02] rounded-2xl flex items-center justify-center p-2.5 border border-white/[0.08] shadow-[inset_0_1px_2px_rgba(255,255,255,0.08)] group-hover:border-primary/30 transition-all duration-300 overflow-hidden">
+            {stream.logo ? (
+              <img
+                src={stream.logo}
+                alt={stream.name}
+                className="h-full max-w-full object-contain filter drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+              />
+            ) : (
+              <Tv size={24} className="text-zinc-500" />
+            )}
+          </div>
+
+          {/* Broadcast Live Beacon */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/15 rounded-full border border-emerald-500/30 select-none shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">LIVE</span>
           </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-display font-black tracking-tight text-white group-hover:text-primary transition-colors">{stream.name}</h3>
-          <div className="text-xs text-zinc-500 font-bold line-clamp-1 italic mt-1 uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
-            {formatBracketText(stream.subName)}
+        {/* Channel Details */}
+        <div className="min-h-[44px]">
+          <h3 className="text-base md:text-lg font-display font-black tracking-tight text-white group-hover:text-primary transition-colors truncate">
+            {stream.name}
+          </h3>
+          <div className="text-[11px] text-zinc-400 font-bold line-clamp-1 mt-1 uppercase tracking-wider flex items-center gap-1.5">
+            {formatBracketText(stream.subName) || 'Saluran Resmi 24 Jam'}
           </div>
         </div>
 
-        <button className="flex items-center justify-between w-full py-3.5 px-4 bg-white/5 group-hover:bg-primary group-hover:text-dark text-white rounded-2xl font-black transition-all duration-300">
-          <span className="text-xs uppercase tracking-wider">Mulai Menonton</span>
-          <div className="w-7 h-7 rounded-full bg-white/10 group-hover:bg-dark/10 flex items-center justify-center">
-            <Play size={12} fill="currentColor" className="ml-0.5" />
+        {/* Action Button */}
+        <div className="flex items-center justify-between w-full py-3 px-4 bg-white/[0.04] group-hover:bg-primary group-hover:text-black text-zinc-200 rounded-xl font-black transition-all duration-300 border border-white/[0.06] group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(212,175,55,0.35)]">
+          <span className="text-[11px] uppercase tracking-wider font-display font-bold">Mulai Menonton</span>
+          <div className="w-7 h-7 rounded-full bg-white/[0.08] group-hover:bg-black/15 flex items-center justify-center transition-transform group-hover:translate-x-1">
+            <Play size={11} fill="currentColor" className="ml-0.5" />
           </div>
-        </button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

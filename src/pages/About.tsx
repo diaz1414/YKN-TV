@@ -1,174 +1,129 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  BadgeCheck,
+  Activity,
+  Clock,
+  Coffee,
   Cpu,
-  Globe2,
-  Headphones,
-  Layers,
+  ExternalLink,
+  Heart,
   MonitorPlay,
   PlayCircle,
-  Radio,
-  RadioTower,
   Server,
   ShieldCheck,
-  Signal,
   Smartphone,
-  TimerReset,
-  Users,
+  Sparkles,
+  Trophy,
   Zap,
-  type LucideIcon,
 } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import heroBg from '../assets/banner2.png';
 import yknLogo from '../assets/ykn-tv-logo.png';
+import { SupportModal } from '../components/SupportDeveloper';
 
-interface AboutItem {
-  icon: LucideIcon;
-  title: string;
-  text: string;
+interface TechSpec {
+  label: string;
+  value: string;
+  detail: string;
+  icon: typeof Cpu;
 }
 
-const principles: AboutItem[] = [
+const TECH_SPECS: TechSpec[] = [
   {
-    icon: Zap,
-    title: 'Cepat dibuka',
-    text: 'Navigasi dibuat ringkas supaya penonton bisa langsung masuk ke jadwal, saluran, dan halaman watch tanpa banyak langkah.',
-  },
-  {
-    icon: MonitorPlay,
-    title: 'Fokus ke player',
-    text: 'Halaman watch diprioritaskan untuk pengalaman nonton: player besar, kontrol jelas, server mudah dipilih, dan status siaran terbaca.',
-  },
-  {
-    icon: Smartphone,
-    title: 'Mobile first',
-    text: 'Tampilan dibuat nyaman untuk HP, lalu diperluas ke tablet, laptop, dan desktop tanpa kehilangan rasa aplikasi streaming.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Fallback siap',
-    text: 'Backup website, status page, dan pesan error dibuat supaya penonton tetap punya arah saat stream penuh atau koneksi bermasalah.',
-  },
-];
-
-const stackItems: AboutItem[] = [
-  {
-    icon: Radio,
-    title: 'Live stream hub',
-    text: 'YKN TV merapikan akses pertandingan, saluran olahraga, dan siaran live dalam satu pengalaman yang konsisten.',
-  },
-  {
-    icon: Server,
-    title: 'Multi server',
-    text: 'Beberapa sumber dan opsi server disiapkan agar penonton bisa pindah jalur saat salah satu koneksi tidak stabil.',
-  },
-  {
-    icon: Signal,
-    title: 'Realtime signal',
-    text: 'Viewer count, status koneksi, dan indikator live dirancang agar halaman terasa hidup tanpa membuat UI berat.',
-  },
-  {
+    label: 'Player Engine',
+    value: 'Clappr & Shaka & HLS.js',
+    detail: 'Adaptif otomatis sesuai format stream dan kapabilitas browser perangkat.',
     icon: Cpu,
-    title: 'Player engine',
-    text: 'Player mendukung format streaming modern seperti HLS dan DASH dengan fallback yang disesuaikan untuk perangkat tertentu.',
   },
   {
-    icon: Globe2,
-    title: 'Akses ringan',
-    text: 'Asset visual dipilih seperlunya, animasi memakai CSS transform, dan komponen penting dimuat sesuai kebutuhan halaman.',
+    label: 'Resolusi Siaran',
+    value: '1080p 60FPS / 720p',
+    detail: 'Kualitas tayangan tajam dengan bitrate dinamis untuk koneksi hemat kuota.',
+    icon: MonitorPlay,
   },
   {
-    icon: Headphones,
-    title: 'Penonton dulu',
-    text: 'Setiap detail diarahkan untuk pengalaman nonton yang jelas: tombol besar, status ramah, dan pilihan lanjut yang mudah dipahami.',
+    label: 'Sistem Telemetri',
+    value: 'Dual Realtime Sync',
+    detail: 'Supabase Presence tracking digabung WebSocket monitoring room berkecepatan tinggi.',
+    icon: Activity,
+  },
+  {
+    label: 'Multi-Server Failover',
+    value: 'Auto Backup Relay',
+    detail: 'Pilihan 3+ server cadangan per tayangan dan mirror domain saat trafik puncak.',
+    icon: Server,
   },
 ];
 
-const timeline = [
+const ARCHITECTURE_PILLARS = [
   {
-    label: '01',
-    title: 'Pilih pertandingan atau saluran',
-    text: 'Penonton masuk dari jadwal, daftar channel, atau link watch langsung.',
+    id: 'streaming-engine',
+    title: 'Low-Latency Streaming Pipeline',
+    subtitle: 'Arsitektur Player Mutakhir',
+    description: 'YKN TV menggabungkan pipeline pemutaran HLS dan MPEG-DASH modern dengan kemampuan parsing ClearKey DRM otomatis. Penonton dapat beralih antar server secara instan tanpa perlu memuat ulang seluruh halaman.',
+    icon: Zap,
+    accent: 'text-amber-400',
+    borderGlow: 'border-amber-500/20 group-hover:border-amber-500/40',
+    tags: ['HLS', 'MPEG-DASH', 'ClearKey DRM', 'Auto-Recover'],
   },
   {
-    label: '02',
-    title: 'Halaman watch menyiapkan konteks',
-    text: 'Nama siaran, status, server, viewer, dan rekomendasi disiapkan sebelum player berjalan penuh.',
+    id: 'telemetry',
+    title: 'Real-Time Telemetri & Kehadiran',
+    subtitle: 'Presisi Data 100% Riil',
+    description: 'Setiap jumlah penonton dan status siaran dihitung secara transparan melalui sinkronisasi Supabase Realtime Presence dan backend WebSocket gateway kami. Tidak ada manipulasi angka penonton buatan.',
+    icon: Activity,
+    accent: 'text-emerald-400',
+    borderGlow: 'border-emerald-500/20 group-hover:border-emerald-500/40',
+    tags: ['Supabase Presence', 'WebSocket Rooms', 'Live Telemetry'],
   },
   {
-    label: '03',
-    title: 'Player mulai membaca stream',
-    text: 'Manifest stream dibuka, kualitas disesuaikan, dan user tetap punya opsi server kalau koneksi kurang cocok.',
+    id: 'smart-tv-mobile',
+    title: 'Desain Lintas Perangkat & Smart TV',
+    subtitle: '10-Foot UI & Mobile Ergonomics',
+    description: 'Dioptimalkan untuk kenyamanan navigasi satu tangan di smartphone lewat Mobile Bottom Dock, serta mendukung navigasi Remote Control D-Pad (tv-focusable) untuk browser Android TV dan Smart TV ruang keluarga.',
+    icon: Smartphone,
+    accent: 'text-sky-400',
+    borderGlow: 'border-sky-500/20 group-hover:border-sky-500/40',
+    tags: ['Mobile Dock', 'Remote D-Pad', 'Smart TV Ready', 'PWA Support'],
   },
   {
-    label: '04',
-    title: 'Fallback menjaga arah',
-    text: 'Kalau link rusak atau halaman tidak ada, UI error tetap memberi jalan ke beranda, status, dan siaran tersedia.',
+    id: 'high-availability',
+    title: 'Ketahanan Tinggi & Server Cadangan',
+    subtitle: 'Zero Downtime Architecture',
+    description: 'Saat pertandingan akbar (El Clasico, Liga Champions, Timnas) berlangsung dengan lonjakan trafik ratusan ribu pengguna, sistem secara otomatis mengaktifkan rute mirror CDN dan cadangan server sekunder.',
+    icon: ShieldCheck,
+    accent: 'text-primary',
+    borderGlow: 'border-primary/20 group-hover:border-primary/40',
+    tags: ['Multi Server', 'Edge CDN', 'Mirror Fallback', 'Load Balancing'],
   },
 ];
 
-const stats = [
-  { value: '24/7', label: 'Mode siaran siap pantau' },
-  { value: 'HD', label: 'Pengalaman player prioritas' },
-  { value: 'Multi', label: 'Server dan sumber cadangan' },
-  { value: 'Fast', label: 'UI ringan untuk HP' },
+const PLATFORM_VALUES = [
+  {
+    title: 'Bebas AI-Slop & Desain Berbobot',
+    desc: 'Kami menolak antarmuka generik yang hambar. Setiap kartu pertandingan, papan skor, dan status saluran dirancang dengan presisi atmosfer stadion malam (Stadium Nocturne) berkecepatan tinggi.',
+    icon: Trophy,
+  },
+  {
+    title: 'Gratis & Terbuka untuk Pecinta Olahraga',
+    desc: 'Platform ini dikembangkan dengan semangat komunitas sepak bola dan olahraga tanah air agar seluruh masyarakat dapat menikmati siaran tim favorit mereka dengan akses yang mudah.',
+    icon: Heart,
+  },
+  {
+    title: 'Jadwal Siaran Diperbarui Berkala',
+    desc: 'Jadwal pertandingan dari liga top Eropa, kompetisi Asia, dan siaran TV nasional diperbarui setiap hari secara otomatis lengkap dengan waktu kickoff zona WIB/WITA/WIT.',
+    icon: Clock,
+  },
 ];
-
-const AboutRobot = () => (
-  <div className="ykn-about-robot-scene" aria-hidden="true">
-    <div className="ykn-about-stream-screen">
-      <div className="ykn-about-screen-play" />
-      <span className="line one" />
-      <span className="line two" />
-      <span className="line three" />
-    </div>
-    <div className="ykn-about-signal-ring ring-one" />
-    <div className="ykn-about-signal-ring ring-two" />
-    <div className="ykn-about-signal-ring ring-three" />
-    <div className="ykn-about-bot">
-      <div className="ykn-about-bot-antenna">
-        <span />
-      </div>
-      <div className="ykn-about-bot-head">
-        <div className="eye left" />
-        <div className="eye right" />
-        <div className="mouth" />
-      </div>
-      <div className="ykn-about-bot-body">
-        <div className="arm left" />
-        <div className="arm right" />
-        <img src={yknLogo} alt="" />
-        <div className="meter" />
-      </div>
-    </div>
-    <div className="ykn-about-console">
-      <span />
-      <span />
-      <span />
-    </div>
-    <div className="ykn-about-robot-shadow" />
-  </div>
-);
 
 const About = () => {
   const navigate = useNavigate();
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-  const heroImageY = useTransform(scrollYProgress, [0, 1], ['0%', '18%']);
-  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.13]);
-  const heroContentY = useTransform(scrollYProgress, [0, 0.85], [0, 120]);
-  const heroContentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0.16]);
-  const robotY = useTransform(scrollYProgress, [0, 0.9], [0, 165]);
-  const robotOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.18]);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
 
   useEffect(() => {
     const originalTitle = document.title;
-    document.title = 'Tentang YKN TV | YKN DEVELOPER';
+    document.title = 'Tentang YKN TV | Official Sports & Live TV Hub';
     return () => {
       document.title = originalTitle;
     };
@@ -176,257 +131,251 @@ const About = () => {
 
   return (
     <MainLayout>
-      <div className="-mx-4 -mt-4 overflow-hidden md:-mx-8 md:-mt-8">
-        <section
-          ref={heroRef}
-          className="relative flex min-h-[calc(100svh-64px)] items-center overflow-hidden px-4 pb-28 pt-12 sm:px-6 md:min-h-[calc(100svh-80px)] md:px-8 md:pb-32 md:pt-20"
-        >
-          <motion.img
+      <div className="space-y-12 sm:space-y-16 pb-16 max-w-[1360px] mx-auto px-2 sm:px-4 select-none">
+
+        {/* HERO SECTION: Stadium Nocturne Atmosphere */}
+        <section className="relative min-h-[440px] sm:min-h-[520px] rounded-[2.5rem] overflow-hidden group shadow-2xl border border-white/[0.08] before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-primary/80 before:via-emerald-400 before:to-white/40 before:z-10 mt-2">
+          {/* Background image & gradient overlay */}
+          <img
             src={heroBg}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ y: heroImageY, scale: heroImageScale }}
+            alt="YKN TV Stadium Nocturne"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 brightness-[0.38]"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,2,2,0.97)_0%,rgba(2,2,2,0.82)_44%,rgba(2,2,2,0.50)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_24%,rgba(212,175,55,0.20),transparent_28%),radial-gradient(circle_at_22%_72%,rgba(16,185,129,0.15),transparent_30%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-b from-transparent via-[#020202]/84 to-[#020202]" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.12),transparent_66%)]" />
-          <div className="ykn-about-data-rain" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#020202] via-[#020202]/85 to-[#020202]/40" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#020202] to-transparent" />
+
+          {/* Ambient Stadium Flare */}
+          <div className="absolute -top-24 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 right-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Hero Content */}
+          <div className="relative z-10 flex min-h-[440px] sm:min-h-[520px] max-w-4xl flex-col justify-end p-6 sm:p-12 md:p-16">
+            <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-black/60 px-4 py-1.5 text-primary shadow-[0_0_16px_rgba(212,175,55,0.2)] backdrop-blur-xl">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-200">
+                Official Broadcast Hub & Control Room
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black leading-none mb-4 tracking-tighter uppercase italic text-white">
+              Tentang <span className="text-gradient-gold inline-block pr-2">YKN TV</span>
+            </h1>
+
+            <p className="text-sm sm:text-base md:text-lg text-zinc-300 max-w-2xl font-bold leading-relaxed">
+              Pusat siaran langsung olahraga, saluran hiburan 24 jam, dan jadwal pertandingan terlengkap di Indonesia.
+              Dibangun dengan performa server berkecepatan tinggi, navigasi taktil bebas lag, dan komitmen data telemetri yang transparan.
+            </p>
+
+            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3.5">
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/')}
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-primary to-amber-500 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-black shadow-[0_0_24px_rgba(212,175,55,0.35)] transition-all cursor-pointer tv-focusable"
+                tabIndex={0}
+              >
+                <PlayCircle size={16} />
+                <span>Mulai Menonton</span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/status')}
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.05] hover:bg-white/10 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-white backdrop-blur-xl transition-all cursor-pointer tv-focusable"
+                tabIndex={0}
+              >
+                <Activity size={16} className="text-emerald-400" />
+                <span>Cek Uptime & Server</span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setIsSupportOpen(true)}
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 px-5 py-3.5 text-xs font-black uppercase tracking-wider text-amber-400 transition-all cursor-pointer tv-focusable"
+                tabIndex={0}
+              >
+                <Coffee size={15} />
+                <span>Traktir Kopi</span>
+              </motion.button>
+            </div>
+          </div>
+        </section>
+
+        {/* BENTO ARCHITECTURE: 4 CORE PLATFORM PILLARS */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-primary mb-1">
+                <Sparkles size={13} />
+                <span>Pilar Arsitektur Platform</span>
+              </div>
+              <h2 className="text-2xl sm:text-4xl font-display font-black uppercase tracking-tight italic text-white">
+                Direkayasa Khusus Siaran Langsung
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-zinc-400 font-bold max-w-md">
+              Dirancang dari nol untuk menahan beban ribuan penonton serentak saat kickoff pertandingan besar.
+            </p>
           </div>
 
-          <div className="relative z-10 mx-auto grid w-full max-w-[1320px] gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65 }}
-              className="max-w-4xl"
-              style={{ y: heroContentY, opacity: heroContentOpacity }}
-            >
-              <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/25 bg-black/55 px-4 py-2 text-primary shadow-lg shadow-primary/10 backdrop-blur-xl">
-                <RadioTower size={16} />
-                <span className="text-xs font-black uppercase">Live streaming control room</span>
-              </div>
-
-              <h1 className="font-display text-4xl font-black uppercase leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-                Tentang <span className="text-primary">YKN TV</span>
-              </h1>
-
-              <p className="mt-6 max-w-3xl text-base font-bold leading-relaxed text-zinc-300 sm:text-lg">
-                YKN TV adalah ruang streaming yang dibuat untuk penonton yang ingin masuk cepat ke pertandingan,
-                saluran olahraga, dan siaran live tanpa tampilan yang membingungkan. Fokusnya sederhana:
-                player jelas, informasi padat, server mudah dipilih, dan pengalaman nonton tetap nyaman di HP maupun desktop.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <button
-                  onClick={() => navigate('/')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-xs font-black uppercase text-dark shadow-xl shadow-primary/15 transition-all hover:bg-yellow-400 active:scale-95 cursor-pointer tv-focusable"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+            {ARCHITECTURE_PILLARS.map((pillar) => {
+              const Icon = pillar.icon;
+              return (
+                <div
+                  key={pillar.id}
+                  className={`glass-card glass-specular group rounded-3xl p-6 sm:p-8 border bg-[#060606]/85 backdrop-blur-xl transition-all duration-300 shadow-xl ${pillar.borderGlow} hover:-translate-y-1`}
                 >
-                  <PlayCircle size={16} />
-                  Mulai Nonton
-                </button>
-                <button
-                  onClick={() => navigate('/status')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/[0.12] bg-white/[0.07] px-6 py-4 text-xs font-black uppercase text-white backdrop-blur-xl transition-all hover:border-primary/35 hover:bg-white/[0.12] active:scale-95 cursor-pointer tv-focusable"
-                >
-                  <Signal size={16} />
-                  Cek Status
-                </button>
-              </div>
-
-              <div className="mt-10 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
-                {stats.map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white/10 bg-black/50 p-4 backdrop-blur-xl">
-                    <div className="text-2xl font-black text-primary">{item.value}</div>
-                    <p className="mt-1 text-[11px] font-bold leading-snug text-zinc-400">{item.label}</p>
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className={`p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] shadow-inner ${pillar.accent}`}>
+                      <Icon size={24} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 bg-white/[0.03] px-2.5 py-1 rounded-full border border-white/5">
+                      {pillar.subtitle}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.75, delay: 0.12 }}
-              className="flex justify-center lg:justify-end"
-              style={{ y: robotY, opacity: robotOpacity }}
-            >
-              <AboutRobot />
-            </motion.div>
+                  <h3 className="text-xl font-black text-white mb-2.5 tracking-tight group-hover:text-primary transition-colors">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-sm text-zinc-300 font-bold leading-relaxed mb-6">
+                    {pillar.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-white/[0.06]">
+                    {pillar.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[9.5px] font-black font-mono uppercase px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-400 group-hover:text-white group-hover:border-white/20 transition-all"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* TECHNICAL TELEMETRY SPECIFICATIONS TABLE */}
+        <section className="glass-card glass-specular rounded-3xl p-6 sm:p-8 border border-white/[0.08] bg-[#070707]/80 backdrop-blur-xl shadow-2xl space-y-6">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
+            <div className="flex items-center gap-2.5">
+              <Cpu size={18} className="text-primary" />
+              <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight">
+                Spesifikasi Teknis Sistem
+              </h3>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+              Production Release v2.4
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {TECH_SPECS.map((spec) => {
+              const Icon = spec.icon;
+              return (
+                <div
+                  key={spec.label}
+                  className="p-4 sm:p-5 rounded-2xl bg-white/[0.025] border border-white/[0.06] hover:border-white/15 transition-all"
+                >
+                  <div className="flex items-center gap-2 text-zinc-400 mb-2">
+                    <Icon size={14} className="text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">{spec.label}</span>
+                  </div>
+                  <div className="text-base sm:text-lg font-black text-white tracking-tight mb-1.5 font-display">
+                    {spec.value}
+                  </div>
+                  <p className="text-xs text-zinc-400 font-bold leading-relaxed">
+                    {spec.detail}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* PLATFORM PHILOSOPHY & VALUES */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          {PLATFORM_VALUES.map((val) => {
+            const Icon = val.icon;
+            return (
+              <div
+                key={val.title}
+                className="glass-card rounded-2xl p-6 border border-white/[0.06] bg-[#070707]/60 backdrop-blur-md hover:border-white/10 transition-colors"
+              >
+                <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] w-fit text-primary mb-3.5 shadow-inner">
+                  <Icon size={20} />
+                </div>
+                <h4 className="text-base font-black text-white mb-2 tracking-tight">
+                  {val.title}
+                </h4>
+                <p className="text-xs text-zinc-400 font-bold leading-relaxed">
+                  {val.desc}
+                </p>
+              </div>
+            );
+          })}
+        </section>
+
+        {/* DEVELOPER & ECOSYSTEM FOOTPRINT */}
+        <section className="glass-card glass-specular rounded-3xl p-6 sm:p-8 md:p-10 border border-white/[0.08] bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#020202] shadow-2xl relative overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="flex items-center gap-3">
+                <img src={yknLogo} alt="YKN TV" className="h-8 sm:h-9 object-contain" />
+                <div className="h-4 w-[1px] bg-zinc-700" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                  Developed by YKN DEVELOPER
+                </span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-display font-black text-white uppercase italic tracking-tight">
+                Mendukung Kemajuan Streaming Olahraga Indonesia
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-300 font-bold leading-relaxed">
+                YKN TV dirawat secara independen untuk memberikan alternatif siaran langsung yang stabil, ringan, dan ramah pengguna.
+                Jika Anda menikmati siaran dan ingin membantu biaya operasional server, Anda dapat berdonasi lewat tombol traktir kopi.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setIsSupportOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black px-6 py-3.5 text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all cursor-pointer tv-focusable"
+                tabIndex={0}
+              >
+                <Coffee size={15} />
+                <span>Traktir Pengembang</span>
+              </motion.button>
+
+              <motion.a
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                href="https://movies.ykn.my.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 px-6 py-3.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable"
+                tabIndex={0}
+              >
+                <span>Partner: YKN Movies</span>
+                <ExternalLink size={13} />
+              </motion.a>
+            </div>
           </div>
         </section>
 
       </div>
 
-      <section className="relative mx-auto max-w-[1320px] pb-12 pt-10 sm:pb-16 sm:pt-14">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.55 }}
-          className="mb-8 max-w-3xl"
-        >
-          <p className="text-xs font-black uppercase text-primary">Apa itu YKN TV</p>
-          <h2 className="mt-3 font-display text-3xl font-black uppercase text-white sm:text-4xl">
-            Platform nonton yang dibuat untuk momen live.
-          </h2>
-          <p className="mt-4 text-sm font-bold leading-relaxed text-zinc-400 sm:text-base">
-            YKN TV bukan sekadar daftar link. Halaman ini dirancang seperti pusat kendali siaran:
-            ada jadwal, channel, status, fallback, dan player yang menempatkan video sebagai fokus utama.
-          </p>
-        </motion.div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {principles.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.article
-                key={item.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.45, delay: index * 0.05 }}
-                className="group rounded-[1.75rem] border border-white/10 bg-zinc-950/78 p-5 shadow-xl shadow-black/20 backdrop-blur-xl transition-all hover:border-primary/30 hover:bg-zinc-900/82"
-              >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary transition-transform group-hover:scale-105">
-                  <Icon size={22} />
-                </div>
-                <h3 className="text-lg font-black text-white">{item.title}</h3>
-                <p className="mt-3 text-sm font-bold leading-relaxed text-zinc-400">{item.text}</p>
-              </motion.article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-[1320px] border-y border-white/10 py-12 sm:py-16">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -18 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.55 }}
-          >
-            <p className="text-xs font-black uppercase text-primary">Gaya streaming</p>
-            <h2 className="mt-3 font-display text-3xl font-black uppercase text-white sm:text-4xl">
-              UI dibuat hidup, tapi tetap hemat tenaga.
-            </h2>
-            <p className="mt-4 text-sm font-bold leading-relaxed text-zinc-400 sm:text-base">
-              Animasi di YKN TV diarahkan untuk membantu rasa aplikasi streaming: sinyal live, badge status,
-              transisi card, halaman error, dan loading player. Efeknya dibuat memakai transform, opacity, dan CSS ringan.
-            </p>
-            <div className="mt-7 rounded-[1.75rem] border border-primary/20 bg-primary/10 p-5 text-sm font-bold leading-relaxed text-zinc-200">
-              Developed by <span className="font-black text-primary">YKN DEVELOPER</span>. Dibangun dengan rasa cepat,
-              gelap, tajam, dan siap dipakai penonton ramai.
-            </div>
-          </motion.div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {stackItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <motion.article
-                  key={item.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={{ duration: 0.45, delay: index * 0.04 }}
-                  className="rounded-[1.5rem] border border-white/10 bg-black/45 p-5 backdrop-blur-xl transition-all hover:border-emerald-500/25 hover:bg-zinc-950/75"
-                >
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
-                      <Icon size={19} />
-                    </div>
-                    <h3 className="text-base font-black text-white">{item.title}</h3>
-                  </div>
-                  <p className="text-sm font-bold leading-relaxed text-zinc-400">{item.text}</p>
-                </motion.article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-[1320px] py-12 sm:py-16">
-        <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-start">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.55 }}
-          >
-            <p className="text-xs font-black uppercase text-primary">Alur pengalaman</p>
-            <h2 className="mt-3 font-display text-3xl font-black uppercase text-white">
-              Dari klik card sampai player siap.
-            </h2>
-            <p className="mt-4 text-sm font-bold leading-relaxed text-zinc-400">
-              YKN TV memisahkan hal yang ringan dan berat. UI boleh tampil dulu, sementara player baru mulai bekerja
-              saat halaman watch benar-benar dibuka.
-            </p>
-          </motion.div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {timeline.map((item, index) => (
-              <motion.article
-                key={item.label}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.45, delay: index * 0.05 }}
-                className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-zinc-950/70 p-5 backdrop-blur-xl"
-              >
-                <div className="absolute right-5 top-4 text-5xl font-black text-white/[0.035]">{item.label}</div>
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-black text-dark">
-                  {item.label}
-                </div>
-                <h3 className="text-lg font-black text-white">{item.title}</h3>
-                <p className="mt-3 text-sm font-bold leading-relaxed text-zinc-400">{item.text}</p>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto mb-8 max-w-[1320px] overflow-hidden rounded-[2rem] border border-white/10 bg-black/60 p-6 backdrop-blur-2xl sm:p-8">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
-          <div>
-            <div className="mb-5 flex items-center gap-3">
-              <img src={yknLogo} alt="YKN TV" className="h-12 w-36 object-contain" />
-              <div>
-                <p className="text-xs font-black uppercase text-primary">YKN TV</p>
-                <h2 className="text-2xl font-black text-white sm:text-3xl">Streaming hub untuk penonton live.</h2>
-              </div>
-            </div>
-            <p className="max-w-3xl text-sm font-bold leading-relaxed text-zinc-400 sm:text-base">
-              Tujuan YKN TV adalah membuat pengalaman nonton terasa dekat: buka cepat, lihat jadwal,
-              masuk player, pilih server, dan tetap punya jalur cadangan kalau kondisi stream berubah.
-              Desainnya dibuat gelap, fokus, dan sinematik supaya cocok dengan suasana siaran live.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: Layers, label: 'Layout responsif' },
-              { icon: TimerReset, label: 'Loading jelas' },
-              { icon: Users, label: 'Viewer aware' },
-              { icon: BadgeCheck, label: 'Fallback rapi' },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <Icon size={20} className="text-primary" />
-                  <p className="mt-3 text-xs font-black uppercase text-zinc-300">{item.label}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* Support Developer Modal */}
+      {isSupportOpen && <SupportModal onClose={() => setIsSupportOpen(false)} />}
     </MainLayout>
   );
 };
