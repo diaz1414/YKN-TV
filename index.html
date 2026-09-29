@@ -12,9 +12,18 @@
     content="Tonton jadwal pertandingan, saluran olahraga, berita, dan hiburan secara live dengan pilihan server yang ringan, stabil, dan mudah dipakai di YKN TV." />
   <meta name="keywords"
     content="ykn tv, live tv indonesia, live streaming olahraga, nonton tv online, jadwal pertandingan, sports tv online, saluran hiburan, live streaming indonesia" />
-  <meta name="robots" content="index, follow, noarchive, nosnippet, max-image-preview:none" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="YKN TV" />
-  <link rel="canonical" href="https://tv.ykn.my.id" />
+  <link rel="canonical" id="canonical-url" href="https://tv.ykn.my.id/" />
+  <script>
+    try {
+      var _cHost = window.location.hostname;
+      if (_cHost && _cHost.endsWith('ykn.my.id')) {
+        var _cEl = document.getElementById('canonical-url');
+        if (_cEl) _cEl.setAttribute('href', window.location.origin + window.location.pathname);
+      }
+    } catch(e) {}
+  </script>
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tv.ykn.my.id" />
   <meta property="og:title" content="YKN TV | Live TV & Sports Streaming Indonesia" />
@@ -231,6 +240,37 @@
       }
     }
   </style>
+
+  <!-- Structured Data: WebSite & BroadcastService for Google Rich Snippets -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://tv.ykn.my.id/#website",
+          "url": "https://tv.ykn.my.id/",
+          "name": "YKN TV",
+          "description": "Nonton TV online dan live streaming siaran langsung olahraga, sepak bola, dan hiburan Indonesia gratis kualitas HD di YKN TV.",
+          "inLanguage": "id-ID"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://tv.ykn.my.id/#organization",
+          "name": "YKN TV",
+          "url": "https://tv.ykn.my.id/",
+          "logo": "https://tv.ykn.my.id/ykn-tv-logo.png"
+        },
+        {
+          "@type": "BroadcastService",
+          "name": "YKN TV Live Sports & Entertainment",
+          "broadcastDisplayName": "YKN TV",
+          "videoFormat": "HD",
+          "isLiveBroadcast": true
+        }
+      ]
+    }
+  </script>
 </head>
 
 <body>
@@ -238,7 +278,37 @@
     <div class="spinner"></div>
   </div>
 
-  <div id="root"></div>
+  <div id="root">
+    <!-- Crawlable Pre-rendered Content for Search Engine Crawlers -->
+    <header style="padding: 24px 20px; border-bottom: 1px solid #1f1f23; max-width: 1200px; margin: 0 auto; color: #fff; font-family: system-ui, -apple-system, sans-serif;">
+      <h1 style="font-size: 2rem; font-weight: 800; color: #d4af37; margin: 0 0 10px 0;">YKN TV - Live TV &amp; Sports Streaming Indonesia</h1>
+      <p style="color: #a1a1aa; margin: 0; font-size: 1.1rem;">Nonton live streaming siaran langsung olahraga, sepak bola liga top dunia, saluran berita, dan hiburan TV nasional Indonesia online tanpa buffering.</p>
+      <nav style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="/" style="color: #fff; text-decoration: none; font-weight: 600;">Jadwal Pertandingan</a>
+        <a href="/status" style="color: #fff; text-decoration: none; font-weight: 600;">Server Status</a>
+        <a href="/about" style="color: #fff; text-decoration: none; font-weight: 600;">Tentang YKN TV</a>
+        <a href="https://movies.ykn.my.id" style="color: #E50914; text-decoration: none; font-weight: 600;">YKN Movies</a>
+        <a href="https://ykn.my.id" style="color: #d4af37; text-decoration: none; font-weight: 600;">YKN HUB</a>
+      </nav>
+    </header>
+    <main style="max-width: 1200px; margin: 30px auto; padding: 0 20px; color: #d4d4d8; font-family: system-ui, -apple-system, sans-serif;">
+      <section>
+        <h2 style="color: #fff; font-size: 1.4rem;">Siaran Langsung Olahraga &amp; TV Online Lengkap</h2>
+        <p style="line-height: 1.6; color: #a1a1aa;">YKN TV menghadirkan pengalaman nonton live sports online terbaik dan terlengkap dengan pilihan multi-server cadangan berkecepatan tinggi, audio jernih, dan resolusi high definition (HD).</p>
+        <ul style="line-height: 1.8; color: #a1a1aa; padding-left: 20px;">
+          <li>Live streaming pertandingan sepak bola liga dunia dan turnamen internasional</li>
+          <li>Pilihan server cadangan (Backup Server) anti gangguan</li>
+          <li>Bisa diputar di smartphone Android, iOS, PC, dan Smart TV</li>
+          <li>Akses cepat dan ringan tanpa perlu registrasi akun</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <noscript>
+    <div style="background: #09090b; color: #fff; padding: 20px; text-align: center; font-family: sans-serif;">
+      <p>Aktifkan JavaScript pada peramban Anda untuk menonton siaran langsung di <strong>YKN TV</strong>.</p>
+    </div>
+  </noscript>
 
   <script type="module" src="/src/main.tsx"></script>
 
@@ -268,6 +338,8 @@
       var _isLocal = _host === 'localhost' || _host === '127.0.0.1' || _host.startsWith('192.168.');
 
       function isDevBypassed() {
+        var _ua = (navigator.userAgent || '').toLowerCase();
+        if (/googlebot|bingbot|yandex|baiduspider|duckduckbot|slurp|google-inspectiontool|chrome-lighthouse|screaming frog|mediapartners-google/i.test(_ua)) return true;
         if (_isLocal) return true;
         var _role = localStorage.getItem('ykn_admin_role') || sessionStorage.getItem('ykn_admin_role');
         var _isAdminLogged = localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
@@ -465,6 +537,10 @@
       var AD_COOLDOWN_MINS = 15;
 
       function isBypassed() {
+        try {
+          var _adUa = (navigator.userAgent || '').toLowerCase();
+          if (/googlebot|bingbot|yandex|baiduspider|duckduckbot|slurp|google-inspectiontool|chrome-lighthouse|screaming frog|mediapartners-google/i.test(_adUa)) return true;
+        } catch(e) {}
         try {
           var path = window.location.pathname;
           if (path.indexOf('/ykn-c0ntr0l-hq') === 0) return true;

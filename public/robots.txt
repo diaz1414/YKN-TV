@@ -1,9 +1,7 @@
 # ============================================================
-# YKN TV — robots.txt
-# Blocks scrapers, AI crawlers, and malicious bots
+# YKN TV - robots.txt
 # ============================================================
 
-# Block ALL bots from sensitive paths
 User-agent: *
 Disallow: /ykn-c0ntr0l-hq
 Disallow: /ykn-c0ntr0l-hq/
@@ -12,69 +10,29 @@ Disallow: /api/
 Disallow: /src/
 Disallow: /.env
 
-# Block AI training crawlers
-User-agent: GPTBot
-Disallow: /
-
-User-agent: ChatGPT-User
-Disallow: /
-
-User-agent: CCBot
-Disallow: /
-
-User-agent: anthropic-ai
-Disallow: /
-
-User-agent: Claude-Web
-Disallow: /
-
-User-agent: Google-Extended
-Disallow: /
-
-User-agent: PerplexityBot
-Disallow: /
-
-User-agent: Bytespider
-Disallow: /
-
-User-agent: PetalBot
-Disallow: /
-
-# Block common scrapers
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: SemrushBot
-Disallow: /
-
-User-agent: DotBot
-Disallow: /
-
-User-agent: rogerbot
-Disallow: /
-
-User-agent: MegaIndex.ru
-Disallow: /
-
-User-agent: BLEXBot
-Disallow: /
-
-User-agent: DataForSeoBot
-Disallow: /
-
-# Allow legitimate search engines (only homepage)
+# Allow Googlebot and legitimate search crawlers full access
 User-agent: Googlebot
 Allow: /
 Disallow: /ykn-c0ntr0l-hq
 Disallow: /api/
 
+User-agent: Googlebot-Image
+Allow: /
+
 User-agent: Bingbot
 Allow: /
 Disallow: /ykn-c0ntr0l-hq
 Disallow: /api/
+
+# Block aggressive AI scrapers
+User-agent: GPTBot
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Bytespider
+Disallow: /
 
 # Sitemap
 Sitemap: https://tv.ykn.my.id/sitemap.xml
