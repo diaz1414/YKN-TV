@@ -377,7 +377,7 @@ const AdminDashboard = () => {
   const [remoteEventsLoading, setRemoteEventsLoading] = useState(false);
   const [remoteEventsFetched, setRemoteEventsFetched] = useState(false);
 
-  const REMOTE_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat';
+  const REMOTE_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat';
   const REMOTE_EVENTS_CACHE_BUST_MS = 5000;
   const getRemoteEventsUrl = () => {
     const bucket = Math.floor(Date.now() / REMOTE_EVENTS_CACHE_BUST_MS);

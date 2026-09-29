@@ -594,8 +594,8 @@ export const getLiveSportsData = async (): Promise<{
     // 1. Primary Source: Fetch from GitHub raw (CDN global, tahan beban banyak user)
     const [eventsRes, sportsRes, liveRes] = await Promise.all([
       axios.get<MatchEvent[]>(getRawEventsUrl()),
-      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-sports.dat'),
-      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-hiburan.dat')
+      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat'),
+      axios.get<ChannelEvent[]>('https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat')
     ]);
     eventsData = eventsRes.data;
     sportsData = sportsRes.data;

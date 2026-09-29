@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
 import { findStreamByIdInList, getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
@@ -794,7 +795,7 @@ const ChannelDetail = () => {
           <div className="lg:col-span-8 space-y-6 md:space-y-8">
 
             {/* Embedded Player */}
-            <div className="-mx-6 overflow-hidden rounded-[1.5rem] border border-white/5 shadow-2xl sm:mx-0 sm:rounded-3xl">
+            <div className="-mx-6 overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] sm:mx-0 sm:rounded-3xl glass-specular relative">
               {matchStatus === 'playable' ? (
                 !watchGateChecked ? null : !watchAdUnlocked ? (
                   <div className="min-h-[60vh] flex items-center justify-center px-4">
@@ -912,13 +913,13 @@ const ChannelDetail = () => {
 
             {/* Kickoff Countdown Banner */}
             {kickoffSecondsLeft !== null && kickoffSecondsLeft > 0 && (
-              <div className="bg-[#090909]/95 backdrop-blur-md border-l-4 border-l-amber-500 border-y border-r border-white/5 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl shadow-black/40 select-none">
+              <div className="bg-[#090909]/95 backdrop-blur-md border-l-4 border-l-amber-500 border-y border-r border-white/10 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl shadow-black/40 select-none glass-specular">
                 <div className="flex items-center gap-2.5">
-                  <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="relative flex h-2.5 w-2.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span>
                   </span>
-                  <span className="bg-amber-500 text-black px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md shadow-amber-500/10 shrink-0">
+                  <span className="bg-amber-500 text-black px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md shadow-amber-500/20 shrink-0">
                     INFO KICKOFF
                   </span>
                 </div>
@@ -941,13 +942,16 @@ const ChannelDetail = () => {
             )}
 
             {/* Stream info detail box */}
-            <div className="glass-card rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
+            <div className="glass-card glass-specular rounded-[2rem] p-6 md:p-8 relative overflow-hidden shadow-2xl">
               <div className="absolute top-6 right-6 select-none flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-[#e50914]/10 text-[#e50914] border border-[#e50914]/20 rounded-full text-[9px] font-black uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#e50914] animate-pulse" />
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-red-400 border border-red-500/25 rounded-full text-[9px] font-black uppercase tracking-widest shadow-[0_0_12px_rgba(239,68,68,0.2)]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
                   <span>{getFormattedViewers(stream.id)} WATCHING</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[9px] font-black uppercase tracking-widest hidden sm:flex">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 rounded-full text-[9px] font-black uppercase tracking-widest hidden sm:flex shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                   <Wifi size={12} className="animate-pulse" />
                   <span>ONLINE</span>
                 </div>
@@ -1052,53 +1056,81 @@ const ChannelDetail = () => {
 
           {/* Right Sidebar Quick Switcher Section (4 columns on desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card rounded-[2rem] p-4 sm:p-6 flex flex-col h-[480px] sm:h-[520px] lg:h-[620px] relative overflow-hidden">
+            <div className="glass-card glass-specular rounded-[2rem] p-4 sm:p-6 flex flex-col h-[480px] sm:h-[520px] lg:h-[620px] relative overflow-hidden shadow-2xl">
               {/* Tab Selector Segment Control */}
-              <div className="flex bg-zinc-950/60 p-1 rounded-[1.25rem] border border-white/5 gap-1 select-none mb-4 shrink-0">
+              <div className="flex bg-zinc-950/70 p-1.5 rounded-2xl border border-white/8 gap-1.5 select-none mb-4 shrink-0 relative">
                 {PUBLIC_LIVE_CHAT_ENABLED && (
                   <button
                     onClick={() => setActiveTab('chat')}
                     tabIndex={0}
-                    className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'chat'
-                      ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                    className={`relative flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'chat'
+                      ? 'text-black font-black'
                       : 'text-zinc-400 hover:text-white hover:bg-white/5'
                       }`}
                   >
-                    <span>Chat</span>
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
-                      <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${connected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                    {activeTab === 'chat' && (
+                      <motion.div
+                        layoutId="activeWatchTab"
+                        className="absolute inset-0 bg-primary rounded-xl shadow-[0_0_16px_rgba(212,175,55,0.35)] z-0"
+                        transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center justify-center gap-1">
+                      <span>Chat</span>
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
+                        <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${connected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                      </span>
                     </span>
                   </button>
                 )}
                 <button
                   onClick={() => setActiveTab('channels')}
                   tabIndex={0}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer tv-focusable ${activeTab === 'channels'
-                    ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                  className={`relative flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-colors cursor-pointer tv-focusable ${activeTab === 'channels'
+                    ? 'text-black font-black'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
                     }`}
                 >
-                  Saluran
+                  {activeTab === 'channels' && (
+                    <motion.div
+                      layoutId="activeWatchTab"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-[0_0_16px_rgba(212,175,55,0.35)] z-0"
+                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">Saluran</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('matches')}
                   tabIndex={0}
-                  className={`flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer tv-focusable ${activeTab === 'matches'
-                    ? 'bg-primary text-dark font-black shadow-lg shadow-primary/10'
+                  className={`relative flex-1 py-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer tv-focusable ${activeTab === 'matches'
+                    ? 'text-black font-black'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'
                     }`}
                 >
-                  <span>Jadwal</span>
-                  {otherMatches.filter(m => m.matchInfo.status === 'playable').length > 0 && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-netflix-red animate-pulse" />
+                  {activeTab === 'matches' && (
+                    <motion.div
+                      layoutId="activeWatchTab"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-[0_0_16px_rgba(212,175,55,0.35)] z-0"
+                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                    />
                   )}
+                  <span className="relative z-10 flex items-center justify-center gap-1.5">
+                    <span>Jadwal</span>
+                    {otherMatches.filter(m => m.matchInfo.status === 'playable').length > 0 && (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                    )}
+                  </span>
                 </button>
               </div>
 
               {/* Sub-tab pills — only visible on Saluran TV tab */}
               {activeTab === 'channels' && (
-                <div className="flex bg-zinc-950/50 p-0.5 rounded-xl border border-white/5 gap-0.5 select-none mb-3 shrink-0">
+                <div className="flex bg-zinc-950/60 p-1 rounded-xl border border-white/6 gap-1 select-none mb-3 shrink-0 relative">
                   {([
                     { key: 'all', label: 'Semua', icon: <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></svg> },
                     { key: 'sports', label: 'Olahraga', icon: <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> },
@@ -1108,13 +1140,22 @@ const ChannelDetail = () => {
                       key={t}
                       onClick={() => setChannelSubTab(t)}
                       tabIndex={0}
-                      className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer tv-focusable ${channelSubTab === t
-                        ? 'bg-white/10 text-white'
+                      className={`relative flex-1 flex items-center justify-center gap-1 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-colors cursor-pointer tv-focusable ${channelSubTab === t
+                        ? 'text-white'
                         : 'text-zinc-500 hover:text-zinc-300'
                         }`}
                     >
-                      {icon}
-                      {label}
+                      {channelSubTab === t && (
+                        <motion.div
+                          layoutId="activeWatchChannelSubTab"
+                          className="absolute inset-0 bg-white/10 rounded-lg shadow-inner z-0"
+                          transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center justify-center gap-1">
+                        {icon}
+                        {label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -1467,24 +1508,26 @@ const ChannelDetail = () => {
                         filteredOtherChannels.map((ch) => {
                           const isActive = ch.id === stream.id;
                           return (
-                            <div
+                            <motion.div
                               key={ch.id}
+                              whileHover={{ x: 2 }}
+                              transition={{ duration: 0.15 }}
                               onClick={() => navigate(`/watch/${slugify(ch.name)}`)}
                               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}`); } }}
                               tabIndex={0}
                               role="button"
-                              className={`flex items-center justify-between p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
-                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
-                                : 'bg-zinc-950/40 hover:bg-zinc-900/50 border-white/5 hover:border-white/10'
+                              className={`flex items-center justify-between p-3.5 border rounded-2xl transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
+                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10'
+                                : 'bg-zinc-950/40 hover:bg-zinc-900/60 border-white/5 hover:border-white/10'
                                 }`}
                             >
                               <div className="flex items-center gap-3.5 truncate">
                                 {ch.isBase64Logo && ch.logo ? (
-                                  <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                  <div className="h-10 w-14 bg-white/5 rounded-xl flex items-center justify-center p-1.5 border border-white/5 overflow-hidden shrink-0 group-hover:border-primary/20 transition-all duration-300 shadow-inner">
                                     <img src={ch.logo} alt={ch.name} className="h-full max-w-full object-contain filter brightness-110" />
                                   </div>
                                 ) : (
-                                  <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300">
+                                  <div className="h-10 w-10 bg-white/5 rounded-xl flex items-center justify-center p-2 border border-white/5 shrink-0 group-hover:border-primary/20 transition-all duration-300 shadow-inner">
                                     <img src={ch.logo || "https://flagcdn.com/w80/un.png"} alt={ch.name} className="w-full h-full object-contain filter brightness-110" />
                                   </div>
                                 )}
@@ -1496,12 +1539,12 @@ const ChannelDetail = () => {
                                 </div>
                               </div>
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive
-                                ? 'bg-primary text-dark scale-105'
+                                ? 'bg-primary text-dark scale-105 shadow-md shadow-primary/20'
                                 : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                                 }`}>
                                 <Play size={12} fill={isActive ? 'currentColor' : 'none'} className="ml-0.5" />
                               </div>
-                            </div>
+                            </motion.div>
                           );
                         })
                       )
@@ -1515,26 +1558,28 @@ const ChannelDetail = () => {
                           const isActive = ch.id === stream.id;
                           const isFinished = ch.matchInfo.isFinishedMatch;
                           return (
-                            <div
+                            <motion.div
                               key={ch.id}
+                              whileHover={{ x: 2 }}
+                              transition={{ duration: 0.15 }}
                               onClick={() => navigate(`/watch/${slugify(ch.name)}-${ch.id}`)}
                               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/watch/${slugify(ch.name)}-${ch.id}`); } }}
                               tabIndex={0}
                               role="button"
-                              className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-[1.25rem] transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
-                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/5'
+                              className={`flex items-center gap-3 p-3 sm:p-3.5 border rounded-2xl transition-all duration-300 cursor-pointer group select-none tv-focusable ${isActive
+                                ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10'
                                 : isLive && !isFinished
-                                  ? 'bg-primary/[0.03] border-primary/20 hover:border-primary/45 shadow-lg shadow-primary/5'
+                                  ? 'bg-red-500/[0.04] border-red-500/25 hover:border-red-500/40 shadow-lg shadow-red-500/5'
                                   : isSoon
-                                    ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/45'
+                                    ? 'bg-amber-500/[0.03] border-amber-500/20 hover:border-amber-500/40'
                                     : 'bg-zinc-950/40 border-white/5 hover:border-white/10 hover:bg-zinc-900/50'
                                 }`}
                             >
                               <div className="flex items-center -space-x-3 shrink-0 select-none">
-                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md group-hover:border-primary/20 transition-all">
+                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-inner group-hover:border-primary/20 transition-all">
                                   <img src={ch.logo || 'https://flagcdn.com/w80/un.png'} alt={ch.player1 || 'Home'} className="w-full h-full object-contain filter brightness-110" />
                                 </div>
-                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-md z-10 group-hover:border-primary/20 transition-all">
+                                <div className="h-8 w-8 bg-zinc-900 rounded-xl flex items-center justify-center p-1.5 border border-white/10 overflow-hidden shadow-inner z-10 group-hover:border-primary/20 transition-all">
                                   <img src={ch.logo2 || 'https://flagcdn.com/w80/un.png'} alt={ch.player2 || 'Away'} className="w-full h-full object-contain filter brightness-110" />
                                 </div>
                               </div>
@@ -1548,8 +1593,12 @@ const ChannelDetail = () => {
                                     {formatBracketText(ch.subName)}
                                   </div>
                                   {isLive && !isFinished ? (
-                                    <span className="px-2 py-0.5 bg-netflix-red/10 text-netflix-red border border-netflix-red/25 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse-live">
-                                      LIVE
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/25 rounded-full text-[8px] font-black uppercase tracking-widest shadow-[0_0_8px_rgba(239,68,68,0.25)]">
+                                      <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+                                      </span>
+                                      <span>LIVE</span>
                                     </span>
                                   ) : (
                                     <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${isFinished
@@ -1565,12 +1614,12 @@ const ChannelDetail = () => {
                               </div>
 
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow shrink-0 ${isActive || (isLive && !isFinished)
-                                ? 'bg-primary text-dark group-hover:scale-105'
+                                ? 'bg-primary text-dark group-hover:scale-105 shadow-md shadow-primary/20'
                                 : 'bg-white/5 text-zinc-400 group-hover:bg-primary group-hover:text-dark'
                                 }`}>
                                 <Play size={12} className="ml-0.5" fill={isActive || (isLive && !isFinished) ? 'currentColor' : 'none'} />
                               </div>
-                            </div>
+                            </motion.div>
                           );
                         })
 
@@ -1601,9 +1650,9 @@ const ChannelDetail = () => {
 };
 
 const StatItem = ({ label, value }: { label: string; value: string }) => (
-  <div className="text-center">
-    <p className="text-[9px] uppercase font-bold text-zinc-500 tracking-wider mb-1">{label}</p>
-    <p className="text-sm font-black text-white">{value}</p>
+  <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-3 text-center transition-all hover:border-white/10 hover:bg-white/[0.04]">
+    <p className="text-[9px] uppercase font-black text-zinc-500 tracking-widest mb-1">{label}</p>
+    <p className="text-sm font-black text-white tabular-nums tracking-tight">{value}</p>
   </div>
 );
 

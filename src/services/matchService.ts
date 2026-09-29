@@ -49,7 +49,7 @@ const getFlagByName = (name: string): string => {
   return 'https://flagcdn.com/w80/un.png';
 };
 
-const RAW_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/assets/tv-events.dat';
+const RAW_EVENTS_URL = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat';
 const RAW_EVENTS_CACHE_BUST_MS = 5000;
 export const MATCH_SCHEDULE_REFRESH_MS = 5000;
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "proxyBaseUrl": "https://tv.ykn.my.id/api/proxy",
+  "proxyBaseUrl": "http://eu1-node.diaww.my.id:5004",
   "sponsorUrls": [
     "https://www.effectivecpmnetwork.com/y1eyn99g?key=a90145a7b7e54a1196a76d83553b473d",
     "https://omg10.com/4/11195650"
@@ -12,5 +12,12 @@
     "Nhsdfugu8",
     "1785088500"
   ],
-  "playerDebug": true
+  "playerDebug": true,
+  "rawEventsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-events.dat",
+  "rawTvSportsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-sports.dat",
+  "rawTvHiburanUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek/main/assets/tv-hiburan.dat",
+  "botEventsUrl": "https://api.ykn.my.id/api/sports/events",
+  "botTvSportsUrl": "https://api.ykn.my.id/api/sports/tv",
+  "botTvHiburanUrl": "https://api.ykn.my.id/api/sports/hiburan",
+  "esportexStreamsUrl": "https://api.esportex.site/api/streams"
 }
