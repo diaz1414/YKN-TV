@@ -16,7 +16,7 @@ import EmptyWatchState from '../components/EmptyWatchState';
 import { getActiveEventServers } from '../services/eventServerService';
 import type { StreamServer } from '../services/streamService';
 import { formatMatchTimeForUserZone, parseJadwalDate } from '../utils/indonesiaTime';
-import { PUBLIC_LIVE_CHAT_ENABLED } from '../config/features';
+import { PUBLIC_LIVE_CHAT_ENABLED, SHOW_VIEWER_COUNT } from '../config/features';
 import { formatBracketText } from '../utils/textFormatter';
 
 const isIOSDevice = (): boolean => {
@@ -949,7 +949,7 @@ const ChannelDetail = () => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                   </span>
-                  <span>{getFormattedViewers(stream.id)} WATCHING</span>
+                  <span>{SHOW_VIEWER_COUNT ? `${getFormattedViewers(stream.id)} WATCHING` : 'LIVE'}</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 rounded-full text-[9px] font-black uppercase tracking-widest hidden sm:flex shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                   <Wifi size={12} className="animate-pulse" />
@@ -997,7 +997,10 @@ const ChannelDetail = () => {
                 <StatItem label="Bitrate" value={liveBitrate} />
                 <StatItem label="Latensi" value={liveLatency} />
                 <StatItem label="Format" value={stream.servers[0]?.type.toUpperCase() || 'HLS'} />
-                <StatItem label="Penonton" value={`${getFormattedViewers(stream.id)} Live`} />
+                <StatItem 
+                  label={SHOW_VIEWER_COUNT ? "Penonton" : "Status"} 
+                  value={SHOW_VIEWER_COUNT ? `${getFormattedViewers(stream.id)} Live` : "Live HD"} 
+                />
               </div>
 
               {/* Partner Banner YKN MOVIES */}

@@ -3,6 +3,7 @@ import type { Match } from '../services/matchService';
 import { formatBracketText } from '../utils/textFormatter';
 import { Play, Radio } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { SHOW_VIEWER_COUNT } from '../config/features';
 
 interface MatchCardProps {
   match: Match;
@@ -20,8 +21,15 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
   const [viewers, setViewers] = useState<string>('0');
 
   useEffect(() => {
-    if (!isLive) return;
+    if (!isLive || !SHOW_VIEWER_COUNT) {
+      setViewers('');
+      return;
+    }
     const rawPresence = viewerCount || 0;
+    if (rawPresence <= 0) {
+      setViewers('');
+      return;
+    }
     const format = (v: number) => {
       if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
       if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
@@ -167,7 +175,9 @@ const MatchCard = ({ match, onClick, viewerCount }: MatchCardProps) => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
             <span className="text-[9px] font-black text-red-400 uppercase tracking-widest flex items-center gap-1">
-              LIVE {viewers && <span className="text-zinc-300 font-bold tracking-tight">· {viewers}</span>}
+              LIVE {SHOW_VIEWER_COUNT && viewers ? (
+                <span className="text-zinc-300 font-bold tracking-tight">· {viewers}</span>
+              ) : null}
             </span>
           </div>
         )}
