@@ -18,7 +18,7 @@ import {
   Zap,
 } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
-import heroBg from '../assets/banner2.png';
+import heroBg from '../assets/banner_pitch_lights.jpg';
 import yknLogo from '../assets/ykn-tv-logo.png';
 import { SupportModal } from '../components/SupportDeveloper';
 

@@ -76,7 +76,7 @@
     z-index: -10;
     background-image:
       linear-gradient(to bottom, rgba(2, 2, 2, 0.55) 0%, rgba(2, 2, 2, 0.75) 100%),
-      url('./assets/banner2.png');
+      url('./assets/banner_multisport.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

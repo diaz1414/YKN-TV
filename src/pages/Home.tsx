@@ -20,7 +20,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import heroBg from '../assets/banner2.png';
+import heroBg from '../assets/banner_stadium_arena.jpg';
 import { supabase } from '../services/supabase';
 import axios from 'axios';
 
@@ -414,9 +414,8 @@ const Home = () => {
                 <div className="flex p-1.5 bg-black/40 border border-white/[0.08] rounded-2xl select-none relative">
                   <button
                     onClick={() => setActiveSubTab('sports')}
-                    className={`relative px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer tv-focusable outline-none ${
-                      activeSubTab === 'sports' ? 'text-black' : 'text-zinc-400 hover:text-white'
-                    }`}
+                    className={`relative px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer tv-focusable outline-none ${activeSubTab === 'sports' ? 'text-black' : 'text-zinc-400 hover:text-white'
+                      }`}
                     tabIndex={0}
                   >
                     {activeSubTab === 'sports' && (
@@ -430,9 +429,8 @@ const Home = () => {
                   </button>
                   <button
                     onClick={() => setActiveSubTab('general')}
-                    className={`relative px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer tv-focusable outline-none ${
-                      activeSubTab === 'general' ? 'text-black' : 'text-zinc-400 hover:text-white'
-                    }`}
+                    className={`relative px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer tv-focusable outline-none ${activeSubTab === 'general' ? 'text-black' : 'text-zinc-400 hover:text-white'
+                      }`}
                     tabIndex={0}
                   >
                     {activeSubTab === 'general' && (
