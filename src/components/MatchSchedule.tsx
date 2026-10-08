@@ -1,27 +1,58 @@
+import type { ComponentType } from 'react';
 import { startTransition, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, RadioTower, Flame } from 'lucide-react';
+import { Loader2, RadioTower, Flame, Radio } from 'lucide-react';
+import {
+  FaFutbol,
+  FaBasketball,
+  FaFootball,
+  FaBaseball,
+  FaVolleyball,
+  FaFlagCheckered,
+  FaHandFist,
+  FaHockeyPuck,
+  FaTrophy,
+} from 'react-icons/fa6';
+import { GiShuttlecock, GiCricket } from 'react-icons/gi';
+import { IoTennisball } from 'react-icons/io5';
 import { motion } from 'framer-motion';
 import MatchCard from './MatchCard';
 import { getTodayMatches, MATCH_SCHEDULE_REFRESH_MS, type Match } from '../services/matchService';
 import { getXoilacMatches, XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
 import { slugify } from '../services/streamService';
 
+const SPORT_ICONS: Record<string, ComponentType<{ className?: string; size?: number | string; style?: React.CSSProperties }>> = {
+  main: Radio,
+  football: FaFutbol,
+  basketball: FaBasketball,
+  amfootball: FaFootball,
+  baseball: FaBaseball,
+  badminton: GiShuttlecock,
+  volleyball: FaVolleyball,
+  tennis: IoTennisball,
+  race: FaFlagCheckered,
+  fight: FaHandFist,
+  hockey: FaHockeyPuck,
+  rugby: FaFootball,
+  cricket: GiCricket,
+  other: FaTrophy,
+};
+
 type SportTab = 'main' | XoilacSport;
 
 interface TabDef {
   id: SportTab;
   label: string;
-  icon: string;
+  IconComponent: ComponentType<{ className?: string; size?: number | string; style?: React.CSSProperties }>;
   color: string;
 }
 
 const TABS: TabDef[] = [
-  { id: 'main', label: 'Utama', icon: 'LIVE', color: '#d4af37' },
+  { id: 'main', label: 'Utama', IconComponent: Radio, color: '#d4af37' },
   ...Object.entries(XOILAC_SPORTS).map(([id, meta]) => ({
     id: id as XoilacSport,
     label: meta.label,
-    icon: meta.icon,
+    IconComponent: SPORT_ICONS[id] || FaTrophy,
     color: meta.color,
   })),
 ];
@@ -188,38 +219,59 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           const liveCount = liveCounts[tab.id] ?? 0;
+          const Icon = tab.IconComponent;
 
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-colors duration-200 outline-none tv-focusable cursor-pointer ${
+              className={`group relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 outline-none tv-focusable cursor-pointer transform-gpu ${
                 isActive
-                  ? 'text-black'
-                  : 'text-zinc-400 hover:text-white bg-white/[0.03] border border-white/[0.07] hover:border-white/15'
+                  ? 'text-black shadow-[0_0_24px_rgba(212,175,55,0.4)]'
+                  : 'text-zinc-300 hover:text-white bg-[#0e0e12]/85 hover:bg-[#16161c]/95 backdrop-blur-xl border border-white/[0.12] hover:border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.45)]'
               }`}
               tabIndex={0}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeSportPill"
-                  className="absolute inset-0 rounded-2xl shadow-lg"
+                  className="absolute inset-0 rounded-2xl border border-white/25"
                   style={{
                     background: tab.color,
-                    boxShadow: `0 0 20px ${tab.color}66`,
+                    boxShadow: `0 0 24px ${tab.color}66, inset 0 1px 0 rgba(255,255,255,0.45)`,
                   }}
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <span className="relative z-10 text-[10px] font-black">{tab.icon}</span>
-              <span className="relative z-10">{tab.label}</span>
+
+              {tab.id === 'main' ? (
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Radio size={13} className={isActive ? 'text-black animate-pulse' : 'text-amber-400 animate-pulse'} />
+                  <span
+                    className={`text-[9px] font-black tracking-widest px-1.5 py-0.5 rounded-md ${
+                      isActive ? 'bg-black/20 text-black' : 'bg-amber-400/15 text-amber-300 border border-amber-400/30'
+                    }`}
+                  >
+                    LIVE
+                  </span>
+                </span>
+              ) : (
+                <Icon
+                  size={13}
+                  className="relative z-10 shrink-0 transition-transform duration-200 group-hover:scale-110"
+                  style={{ color: isActive ? '#000000' : tab.color }}
+                />
+              )}
+
+              <span className="relative z-10 font-black">{tab.label}</span>
+
               {liveCount > 0 && (
                 <span
                   className="relative z-10 px-2 py-0.5 rounded-full text-[9px] font-black flex items-center gap-1 shadow-sm"
                   style={{
-                    background: isActive ? 'rgba(0,0,0,0.35)' : 'rgba(239,68,68,0.2)',
-                    color: isActive ? '#fff' : '#ef4444',
-                    border: isActive ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(239,68,68,0.4)',
+                    background: isActive ? 'rgba(0,0,0,0.35)' : 'rgba(239,68,68,0.22)',
+                    color: isActive ? '#fff' : '#f87171',
+                    border: isActive ? '1px solid rgba(0,0,0,0.25)' : '1px solid rgba(239,68,68,0.45)',
                   }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-current animate-ping" />
