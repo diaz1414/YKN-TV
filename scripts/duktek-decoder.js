@@ -29,12 +29,186 @@ const SRC_DATA_DIR = path.join(__dirname, '../src/data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(SRC_DATA_DIR)) fs.mkdirSync(SRC_DATA_DIR, { recursive: true });
 
-const REPO_BASE = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek2/main/dt';
+const DUKTEK2_RAW_BASE = 'https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek2/main';
+const REPO_BASE = `${DUKTEK2_RAW_BASE}/dt`;
 const TOKEN_URL = `${REPO_BASE}/token.dat`;
 const UPLOADS_BASE = `${REPO_BASE}/uploads`;
+const TV_HIBURAN_DAT_URL = `${DUKTEK2_RAW_BASE}/assets/tv-hiburan.dat`;
+const TV_SPORTS_DAT_URL = `${DUKTEK2_RAW_BASE}/assets/tv-sports.dat`;
 
 const TOKEN_FILE_DATA = path.join(DATA_DIR, 'duktek-token.txt');
 const TOKEN_FILE_SRC = path.join(SRC_DATA_DIR, 'duktek-token.txt');
+
+/**
+ * Normalisasi kunci nama channel untuk pencegahan duplikat (Anti Double Channel)
+ * Contoh: "KompasTV" vs "Kompas TV", "beIN Sports 1 HD" vs "beIN Sports 1"
+ */
+function makeChannelKey(name) {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/\[ch\d+\]/gi, '')
+    .replace(/\b(hd|fhd|sd|4k|uhd|live|24 jam|server \d+|v\+|a\+)\b/gi, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+/**
+ * Filter anti double channel: mempertahankan 1 entri terbaik per saluran
+ */
+function deduplicateChannels(channelList) {
+  const map = new Map();
+
+  for (const ch of channelList) {
+    const name = ch.nama_channel || '';
+    if (!name || !ch.url_iptv) continue;
+
+    // Abaikan stream pengumuman palsu
+    if (ch.url_iptv.includes('video_with_qr') || ch.url_iptv.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8')) {
+      continue;
+    }
+
+    const key = makeChannelKey(name);
+    if (!key) continue;
+
+    if (!map.has(key)) {
+      map.set(key, ch);
+      continue;
+    }
+
+    const existing = map.get(key);
+
+    // 1. Jika entri lama offline tapi entri baru live, ganti dengan yang live
+    if (!existing.is_alive && ch.is_alive) {
+      map.set(key, ch);
+      continue;
+    }
+
+    // 2. Jika entri lama belum punya logo base64 tapi yang baru punya, lengkapi logo
+    if ((!existing.logo || existing.logo.length < 50) && (ch.logo && ch.logo.length > 50)) {
+      existing.logo = ch.logo;
+      existing.gbr_base64 = ch.gbr_base64;
+    }
+
+    // 3. Simpan URL alternatif jika berbeda
+    if (ch.url_iptv && existing.url_iptv !== ch.url_iptv && !existing.backup_url) {
+      existing.backup_url = ch.url_iptv;
+    }
+  }
+
+  return Array.from(map.values());
+}
+
+/**
+ * Mengambil channel tambahan dari assets/tv-hiburan.dat dan assets/tv-sports.dat
+ */
+async function fetchDatSources() {
+  const list = [];
+
+  try {
+    const resH = await fetch(`${TV_HIBURAN_DAT_URL}?t=${Date.now()}`);
+    if (resH.ok) {
+      const arrH = await resH.json();
+      for (const item of arrH) {
+        if (!item.nama_channel || !item.url_iptv) continue;
+        let streamUrl = item.url_iptv;
+        let streamHeaders = null;
+        const nameLower = item.nama_channel.toLowerCase();
+
+        // Filter pengumuman palsu dan override Kompas TV
+        if (streamUrl.includes('video_with_qr') || streamUrl.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8')) {
+          if (nameLower.includes('kompas')) {
+            streamUrl = 'https://op-flashcon-digdayahd-1.dens.tv/h/h234/index.m3u8';
+            streamHeaders = {
+              'Referer': 'https://www.dens.tv/',
+              'Origin': 'https://www.dens.tv/',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            };
+          } else {
+            continue;
+          }
+        }
+
+        const logo = item.gbr_base64 || item.logo || '';
+        list.push({
+          id_iptv: String(item.id_iptv || item.id || `dat-h-${list.length}`),
+          nama_channel: item.nama_channel,
+          tagline: item.tagline || 'Hiburan & Nasional',
+          jadwal_event: '',
+          jadwal_stop: '',
+          t_stamp: null,
+          s_stamp: null,
+          url_iptv: streamUrl,
+          url_license: item.url_license && item.url_license !== 'none' ? item.url_license : '',
+          jenis: item.jenis || 'hls',
+          country_code: 'ID',
+          country_name: 'Indonesia',
+          logo: logo,
+          gbr_base64: logo.startsWith('data:image') ? logo : '',
+          headers: streamHeaders,
+          license_headers: null,
+          source_type: 'assets_dat'
+        });
+      }
+      console.log(` 📦 [ASSETS DAT] Membaca tv-hiburan.dat: ${arrH.length} channel dimuat`);
+    }
+  } catch (err) {
+    console.log(` ⚠️ Gagal membaca tv-hiburan.dat: ${err.message}`);
+  }
+
+  try {
+    const resS = await fetch(`${TV_SPORTS_DAT_URL}?t=${Date.now()}`);
+    if (resS.ok) {
+      const arrS = await resS.json();
+      for (const item of arrS) {
+        if (!item.nama_channel || !item.url_iptv) continue;
+        let streamUrl = item.url_iptv;
+        let streamHeaders = null;
+        const nameLower = item.nama_channel.toLowerCase();
+
+        // Filter pengumuman palsu dan override Kompas TV
+        if (streamUrl.includes('video_with_qr') || streamUrl.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8')) {
+          if (nameLower.includes('kompas')) {
+            streamUrl = 'https://op-flashcon-digdayahd-1.dens.tv/h/h234/index.m3u8';
+            streamHeaders = {
+              'Referer': 'https://www.dens.tv/',
+              'Origin': 'https://www.dens.tv/',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            };
+          } else {
+            continue;
+          }
+        }
+
+        const logo = item.gbr_base64 || item.logo || '';
+        list.push({
+          id_iptv: String(item.id_iptv || item.id || `dat-s-${list.length}`),
+          nama_channel: item.nama_channel,
+          tagline: item.tagline || 'Sports TV',
+          jadwal_event: '',
+          jadwal_stop: '',
+          t_stamp: null,
+          s_stamp: null,
+          url_iptv: streamUrl,
+          url_license: item.url_license && item.url_license !== 'none' ? item.url_license : '',
+          jenis: item.jenis || 'hls',
+          country_code: 'SP',
+          country_name: 'Sports TV',
+          logo: logo,
+          gbr_base64: logo.startsWith('data:image') ? logo : '',
+          headers: streamHeaders,
+          license_headers: null,
+          source_type: 'assets_dat'
+        });
+      }
+      console.log(` 📦 [ASSETS DAT] Membaca tv-sports.dat: ${arrS.length} channel dimuat`);
+    }
+  } catch (err) {
+    console.log(` ⚠️ Gagal membaca tv-sports.dat: ${err.message}`);
+  }
+
+  return list;
+}
 
 // Daftar lengkap semua 51 negara dan kategori yang ada di Duktek TV
 export const ALL_KNOWN_CODES = [
@@ -197,7 +371,7 @@ async function run() {
   }
   console.log('='.repeat(65));
 
-  const allChannels = [];
+  let allChannels = [];
   const report = [];
   let processedCount = 0;
 
@@ -281,6 +455,12 @@ async function run() {
 
   report.sort((a, b) => a.country_name.localeCompare(b.country_name));
 
+  // 1. Integrasi channel tambahan dari assets/tv-hiburan.dat dan assets/tv-sports.dat
+  console.log('\n 📥 Mengunduh siaran tambahan dari tv-hiburan.dat dan tv-sports.dat...');
+  const datChannels = await fetchDatSources();
+  allChannels.push(...datChannels);
+  console.log(` 📊 Total channel sebelum deduplikasi & health-check: ${allChannels.length}`);
+
   // FITUR HEALTH CHECK STREAM (HIDUP VS MATI)
   const isCheckStream = args.includes('--check') || args.includes('-c') || args.includes('--filter-live');
   let aliveChannels = allChannels;
@@ -315,8 +495,6 @@ async function run() {
     console.log(`    Stream Hidup (Live) : ${liveCount}`);
     console.log(`    Stream Mati         : ${allChannels.length - liveCount}`);
     console.log('='.repeat(65) + '\n');
-
-    aliveChannels = allChannels.filter(c => c.is_alive);
   } else {
     // Default: tandai status live jika belum dicek
     allChannels.forEach(c => {
@@ -324,6 +502,13 @@ async function run() {
       c.status = 'live';
     });
   }
+
+  // 2. Terapkan Anti Double Channel (Deduplikasi Cerdas)
+  console.log(' 🛡️ [ANTI DOUBLE CHANNEL] Membersihkan channel kembar dan duplikat...');
+  const beforeDedupCount = allChannels.length;
+  allChannels = deduplicateChannels(allChannels);
+  aliveChannels = allChannels.filter(c => c.is_alive);
+  console.log(`    Dieliminasi: ${beforeDedupCount - allChannels.length} channel duplikat | Sisa channel unik: ${allChannels.length}`);
 
   const outPath1 = path.join(DATA_DIR, 'duktek-channels.json');
   const outPath2 = path.join(SRC_DATA_DIR, 'duktek-channels.json');
@@ -338,9 +523,16 @@ async function run() {
   fs.writeFileSync(outAlive1, payloadAliveJson, 'utf-8');
   fs.writeFileSync(outAlive2, payloadAliveJson, 'utf-8');
 
-  // Ekspor feed khusus APK Android (tv-sports.json & tv-hiburan.json)
-  const sportsChannels = (isCheckStream ? aliveChannels : allChannels).filter(c => c.country_code === 'SP');
-  const hiburanChannels = (isCheckStream ? aliveChannels : allChannels).filter(c => c.country_code === 'ID');
+  // Ekspor feed khusus APK Android (tv-sports.json & tv-hiburan.json) dengan Anti-Double Channel
+  const rawSports = (isCheckStream ? aliveChannels : allChannels).filter(
+    c => c.country_code === 'SP' || (c.country_name && c.country_name.toLowerCase().includes('sport'))
+  );
+  const rawHiburan = (isCheckStream ? aliveChannels : allChannels).filter(
+    c => c.country_code === 'ID' || (c.country_name && c.country_name.toLowerCase().includes('indonesia'))
+  );
+
+  const sportsChannels = deduplicateChannels(rawSports);
+  const hiburanChannels = deduplicateChannels(rawHiburan);
 
   if (sportsChannels.length > 0) {
     const sportsJson = JSON.stringify(sportsChannels, null, 2);
