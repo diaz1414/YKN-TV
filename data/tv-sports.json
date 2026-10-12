@@ -3,6 +3,10 @@
     "id_iptv": "2972",
     "nama_channel": "beIN Sports AU 1 A+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSkwvWFhVTnN2M01XaWlvdHpOUUNnUSIsImtpZCI6Ik0xMnRkNEVKbFVVRDNMc2gzSklCWHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -19,6 +23,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -27,6 +32,10 @@
     "id_iptv": "2939",
     "nama_channel": "beIN Sports AU 2 A+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -43,6 +52,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -51,6 +61,10 @@
     "id_iptv": "2940",
     "nama_channel": "beIN Sports AU 3 A+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWjcydkhpRjF1ZjlvTDgzdzRqVkxIZyIsImtpZCI6ImVaWEhKS0UzU08yWENFQ29xMXU1c3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -67,6 +81,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -75,6 +90,10 @@
     "id_iptv": "1139",
     "nama_channel": "beIN Sports ID 1 V+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -95,6 +114,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -103,6 +123,10 @@
     "id_iptv": "91",
     "nama_channel": "beIN Sports ID 2 V+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -123,6 +147,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -131,6 +156,10 @@
     "id_iptv": "52",
     "nama_channel": "beIN Sports ID 3 V+",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -151,6 +180,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -159,6 +189,10 @@
     "id_iptv": "4433",
     "nama_channel": "Caze TV",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/vzeco5ty0v/out/v1/44c6b8f31a2544e3b2a9bb41ed5e241e/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoid01VRW91MHVjTGg1cGxDNGR3bzR4ZyIsImtpZCI6InJIcTZxY2xJR3F6NzJzWlB3K3d6RWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -176,6 +210,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -184,6 +219,10 @@
     "id_iptv": "3535",
     "nama_channel": "CBS Golazo",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/PDX/live/clients/dash/enc/5qz8wmdome/out/v1/b9323e853dce427eac214b77bd48a204/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -200,6 +239,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -208,6 +248,10 @@
     "id_iptv": "3835",
     "nama_channel": "CBS Sports",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://a166aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -224,6 +268,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -232,6 +277,10 @@
     "id_iptv": "4224",
     "nama_channel": "DAZN Fast",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://ac-003.live.p7s1video.net/63f8995e/t_003/dazn-fast-hd/cenc-default.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNDhXd2N5aUpURE56U2szbXJsV29mdyIsImtpZCI6Imk4N0dzeHpKN2N0bmFLc21WSTRpd3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -248,6 +297,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.496Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -256,6 +306,10 @@
     "id_iptv": "5371",
     "nama_channel": "F1 Channel",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://a184aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/5fjow0mrvw/out/v1/f870533ee24b4f3bb98d2afe4b1e1bac/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV3pFL1NjWThhQ0kyNnJNMWRBRGlGZyIsImtpZCI6IlVGWVdPQTNuQnBOdVNUL2RIQ1hRdGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -273,6 +327,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -281,6 +336,10 @@
     "id_iptv": "4191",
     "nama_channel": "fubo SPORTS 3",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/xtkswns2yn/out/v1/9c348c1bc962495a9420f01ac0964a86/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZUtiQXBCbHkzOXVpRkZyZ3JVdldnUSIsImtpZCI6IitsNk50VFdmeDlIeFVnZlYzaW82eEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -297,6 +356,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -305,6 +365,10 @@
     "id_iptv": "5188",
     "nama_channel": "fubo SPORTS 4",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/sin-nitro/live/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicDcyVUdobjIzUlR6QUVwaU9tclRvUSIsImtpZCI6IlF2Y3NBbDNWTURra1N0d1R0K01kclEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -322,6 +386,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -330,6 +395,10 @@
     "id_iptv": "5370",
     "nama_channel": "MotoGP Channel",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/wjeweupwyc/out/v1/8197c8e055c94a868623653ac55c10bf/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVStvUUo5Sy9LSk9sVXM4VnZBTm0zZyIsImtpZCI6IjREOHdMc1Rhdk16S2dzeWZkbk1leVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -347,6 +416,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -355,6 +425,10 @@
     "id_iptv": "2859",
     "nama_channel": "nova SPORT1 HD",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport1/playlist_cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -371,6 +445,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -379,6 +454,10 @@
     "id_iptv": "2860",
     "nama_channel": "nova SPORT2 HD",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport2/playlist_cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -395,6 +474,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -403,6 +483,10 @@
     "id_iptv": "461",
     "nama_channel": "Premier Sports 1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/vwq77hfgzw/out/v1/b858e0b845c64cec953887bd4269e4ea/cenc.mpd?encoding=segmentBase",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -419,6 +503,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -427,6 +512,10 @@
     "id_iptv": "462",
     "nama_channel": "Premier Sports 2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -443,6 +532,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -451,6 +541,10 @@
     "id_iptv": "5200",
     "nama_channel": "Premier Sports UK 1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -467,6 +561,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -475,6 +570,10 @@
     "id_iptv": "5201",
     "nama_channel": "Premier Sports UK 2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -491,6 +590,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -499,6 +599,10 @@
     "id_iptv": "239",
     "nama_channel": "Sportdigital Fussball",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/fra-nitro/live/clients/dash/enc/ssdefyhkkr/out/v1/cf01290cb7f64525bdf861580a016ca8/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiS0Y4U25GN0tBZDBJcGRXaFN0Z0J5QSIsImtpZCI6IkN0UUlETi80eGdzU003SWdoL0N6UUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -515,6 +619,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -523,6 +628,10 @@
     "id_iptv": "5193",
     "nama_channel": "SPORTS3 TV",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6otiglnptp/out/v1/add7499679b0422cb6791f7701f95ecc/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZXlNaW9uT0VPU0drUGl4aDJzZks0dyIsImtpZCI6ImtDNWV3T1BRWG1aZHFqTDhJL1QxbmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -539,6 +648,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -547,6 +657,10 @@
     "id_iptv": "2878",
     "nama_channel": "SporTV BR 1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/w8kwdfmlgs/out/v1/3aa321e477504937a439b602e078eb18/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiaUNQM0U3cHYyNXUrQ2lyWUxUQ2FTdyIsImtpZCI6IlVjRHZJN0Z5bCtYQUhOZnpiZENtemcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -563,6 +677,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -571,6 +686,10 @@
     "id_iptv": "2879",
     "nama_channel": "SporTV BR 2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/orhlovwjv8/out/v1/3fbdf8c3ec6743d085d32dace1764176/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQmgxNmM5YjBzVEZnNDluOXZCVktDZyIsImtpZCI6IkkxZWo0djV2QjhRc0FPNmU3SGFhSncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -587,6 +706,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -595,6 +715,10 @@
     "id_iptv": "2880",
     "nama_channel": "SporTV BR 3",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/g6fcpfaeeu/out/v1/d6a42c54e38549028b9bb5d888b20280/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiRVVzOHhPeXBpVnM5VFAzamp4OXRZUSIsImtpZCI6IkhyV2ZpdlJ6dWllWlN2aWJqbHhWVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -611,6 +735,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -619,6 +744,10 @@
     "id_iptv": "186",
     "nama_channel": "SPOTV ID1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -639,6 +768,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -647,6 +777,10 @@
     "id_iptv": "1251",
     "nama_channel": "SPOTV ID2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -667,6 +801,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -675,6 +810,10 @@
     "id_iptv": "5321",
     "nama_channel": "UFCTV",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/9v8cttmhcw/out/v1/df4c5196e3d74e7d8f484fc25d9034f1/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUmxtOFdLaGNCaTQvNE1BNXBFYitSdyIsImtpZCI6InBKQ0YrTnBlWmE4ZS8vRHRySU1MSHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -692,6 +831,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -700,6 +840,10 @@
     "id_iptv": "1129",
     "nama_channel": "Bahrain Sports 1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8",
     "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
     "jenis": "hls",
@@ -716,6 +860,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -724,6 +869,10 @@
     "id_iptv": "1130",
     "nama_channel": "Bahrain Sports 2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8",
     "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
     "jenis": "hls",
@@ -740,6 +889,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -748,6 +898,10 @@
     "id_iptv": "548",
     "nama_channel": "FIFA Plus [CH1]",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://f7ccf7fc.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLXB0X0ZJRkFQbHVzUG9ydHVndWVzZV9ITFM/playlist.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -764,6 +918,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -772,6 +927,10 @@
     "id_iptv": "910",
     "nama_channel": "FS1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/cizlveblk4/out/v1/e5c36c41621e4384b80427d87199433a/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWkNXc1RBemZrRy9nek9YUFFOeUpNdyIsImtpZCI6IjE5ZU9vZ0lhS1ZRUk5yMWR5RFV2NXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -789,6 +948,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -797,6 +957,10 @@
     "id_iptv": "911",
     "nama_channel": "FS2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/awxnrqkbo5/out/v1/716529a4091947b0877e6cb80dbd6ccb/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibU0vNVlBbVYramdjZHYyczg4ZnRyZyIsImtpZCI6IkNVVTg2Q0RXWDd4blhlTVlYNTVGVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -814,6 +978,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -822,6 +987,10 @@
     "id_iptv": "653",
     "nama_channel": "Oman Sports",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8?checkedby:iptvcat.com",
     "url_license": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist_b900000.m3u8",
     "jenis": "hls",
@@ -838,6 +1007,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -846,6 +1016,10 @@
     "id_iptv": "2870",
     "nama_channel": "Premiere Brazil 1",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/nelfyucw9a/out/v1/6ffb2c365ad14f88b154591beb43d1f6/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiK2ppcXFHV2xmdHA4ZDBSR2w3cU8wdyIsImtpZCI6IlZyZWNGNEt6RG10dnlYT3c2UDFCQkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -862,6 +1036,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -870,6 +1045,10 @@
     "id_iptv": "2871",
     "nama_channel": "Premiere Brazil 2",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/oy6rp0jwmf/out/v1/580ecf12bad24979baf8dd993dce053e/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiOXB5TlJpVDkzL1RLaWIwTE1iM0VwdyIsImtpZCI6Im5jUUVZTWt3aDY2b1RXTVY4STdMWkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -886,6 +1065,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -894,6 +1074,10 @@
     "id_iptv": "2872",
     "nama_channel": "Premiere Brazil 3",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6onrfniyry/out/v1/f23069c61dbf4e00890a40b705a84079/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU1VMdXZWbUxWeWZGekVoTXhpdFM2QSIsImtpZCI6IjBqOTBNM21LWlNwOVQyZVIyZUVEYkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -910,6 +1094,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -918,6 +1103,10 @@
     "id_iptv": "2873",
     "nama_channel": "Premiere Brazil 4",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/tirjor64kh/out/v1/fd2ed9916d994f09a3bd62b64141b9cb/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV0hDY2NVTWd1NFl0dlFjbkRmZ2NsQSIsImtpZCI6IjRqTmx3cTJYaHd5SEZ4SzNQdzFobFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -934,6 +1123,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -942,6 +1132,10 @@
     "id_iptv": "2874",
     "nama_channel": "Premiere Brazil 5",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/1obktrybht/out/v1/08265453c8f64d9fbeb3cf43764403a8/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiMFdtTTJqMEVENUJSRWxwaGRGdFphdyIsImtpZCI6Ik15OWk2enl1Z2s2WXBCSk5vcHA5TVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -958,6 +1152,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -966,6 +1161,10 @@
     "id_iptv": "39",
     "nama_channel": "RedBull",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -982,6 +1181,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -990,6 +1190,10 @@
     "id_iptv": "584",
     "nama_channel": "TUDN Cambiale 5",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ntkdl68eob/out/v1/bd5dfb7676994383881bc6e71877d29d/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQWI0L1pGNkpvR2ZTZUd3cFgyamQ1QSIsImtpZCI6IjFwVUpQcVBtYlhXazBoT2o0c3Z6WUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1006,6 +1210,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1014,6 +1219,10 @@
     "id_iptv": "775",
     "nama_channel": "TUDN Deportes",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/o2vy4aahsh/out/v1/e293c932745a44dcaf897573dfc53532/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiREY1c0NDQ2g2aWgxTnlIYkFDY2tFUSIsImtpZCI6ImRqemg2OHJ5TlFMSXp6VjhidlFqNFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1031,6 +1240,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1039,6 +1249,10 @@
     "id_iptv": "59",
     "nama_channel": "TV Real Madrid",
     "tagline": "Sports TV",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1055,30 +1269,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
-    "is_alive": true,
-    "status": "live",
-    "http_status": 200
-  },
-  {
-    "id_iptv": "3502",
-    "nama_channel": "TV4 Sportkanalen",
-    "tagline": "Sports TV",
-    "url_iptv": "https://live.streaming.a2d.tv/asset/20465728.isml/dash.mpd",
-    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoidFZleTVodHprMTczUy9vaTJPb3NOQSIsImtpZCI6IklQbWdOdXE4T1RDeXNkRWtkNENRNWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
-    "jenis": "dash-clearkey",
-    "country_code": "SP",
-    "country_name": "Sports",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": {
-      "Referer": "none",
-      "Origin": "none",
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
-    },
-    "license_headers": {
-      "x-data": "none"
-    },
-    "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:43.497Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1087,6 +1278,10 @@
     "id_iptv": "2972",
     "nama_channel": "beIN Sports AU 1 A+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSkwvWFhVTnN2M01XaWlvdHpOUUNnUSIsImtpZCI6Ik0xMnRkNEVKbFVVRDNMc2gzSklCWHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1103,6 +1298,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1111,6 +1307,10 @@
     "id_iptv": "2939",
     "nama_channel": "beIN Sports AU 2 A+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1127,6 +1327,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1135,6 +1336,10 @@
     "id_iptv": "2940",
     "nama_channel": "beIN Sports AU 3 A+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWjcydkhpRjF1ZjlvTDgzdzRqVkxIZyIsImtpZCI6ImVaWEhKS0UzU08yWENFQ29xMXU1c3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1151,6 +1356,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1159,6 +1365,10 @@
     "id_iptv": "1139",
     "nama_channel": "beIN Sports ID 1 V+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1179,6 +1389,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1187,6 +1398,10 @@
     "id_iptv": "91",
     "nama_channel": "beIN Sports ID 2 V+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1207,6 +1422,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1215,6 +1431,10 @@
     "id_iptv": "52",
     "nama_channel": "beIN Sports ID 3 V+",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1235,6 +1455,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1243,6 +1464,10 @@
     "id_iptv": "4433",
     "nama_channel": "Caze TV",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/vzeco5ty0v/out/v1/44c6b8f31a2544e3b2a9bb41ed5e241e/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoid01VRW91MHVjTGg1cGxDNGR3bzR4ZyIsImtpZCI6InJIcTZxY2xJR3F6NzJzWlB3K3d6RWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1260,6 +1485,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1268,6 +1494,10 @@
     "id_iptv": "3535",
     "nama_channel": "CBS Golazo",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/PDX/live/clients/dash/enc/5qz8wmdome/out/v1/b9323e853dce427eac214b77bd48a204/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1284,6 +1514,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1292,6 +1523,10 @@
     "id_iptv": "3835",
     "nama_channel": "CBS Sports",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://a166aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1308,6 +1543,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1316,6 +1552,10 @@
     "id_iptv": "4224",
     "nama_channel": "DAZN Fast",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://ac-003.live.p7s1video.net/63f8995e/t_003/dazn-fast-hd/cenc-default.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNDhXd2N5aUpURE56U2szbXJsV29mdyIsImtpZCI6Imk4N0dzeHpKN2N0bmFLc21WSTRpd3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1332,6 +1572,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1340,6 +1581,10 @@
     "id_iptv": "5371",
     "nama_channel": "F1 Channel",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://a184aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/5fjow0mrvw/out/v1/f870533ee24b4f3bb98d2afe4b1e1bac/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV3pFL1NjWThhQ0kyNnJNMWRBRGlGZyIsImtpZCI6IlVGWVdPQTNuQnBOdVNUL2RIQ1hRdGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1357,6 +1602,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1365,6 +1611,10 @@
     "id_iptv": "4191",
     "nama_channel": "fubo SPORTS 3",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/xtkswns2yn/out/v1/9c348c1bc962495a9420f01ac0964a86/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZUtiQXBCbHkzOXVpRkZyZ3JVdldnUSIsImtpZCI6IitsNk50VFdmeDlIeFVnZlYzaW82eEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1381,6 +1631,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1389,6 +1640,10 @@
     "id_iptv": "5188",
     "nama_channel": "fubo SPORTS 4",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/sin-nitro/live/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicDcyVUdobjIzUlR6QUVwaU9tclRvUSIsImtpZCI6IlF2Y3NBbDNWTURra1N0d1R0K01kclEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1406,6 +1661,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1414,6 +1670,10 @@
     "id_iptv": "5370",
     "nama_channel": "MotoGP Channel",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/wjeweupwyc/out/v1/8197c8e055c94a868623653ac55c10bf/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVStvUUo5Sy9LSk9sVXM4VnZBTm0zZyIsImtpZCI6IjREOHdMc1Rhdk16S2dzeWZkbk1leVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1431,6 +1691,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1439,6 +1700,10 @@
     "id_iptv": "2859",
     "nama_channel": "nova SPORT1 HD",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport1/playlist_cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1455,6 +1720,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1463,6 +1729,10 @@
     "id_iptv": "2860",
     "nama_channel": "nova SPORT2 HD",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport2/playlist_cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1479,6 +1749,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1487,6 +1758,10 @@
     "id_iptv": "461",
     "nama_channel": "Premier Sports 1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/vwq77hfgzw/out/v1/b858e0b845c64cec953887bd4269e4ea/cenc.mpd?encoding=segmentBase",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1503,6 +1778,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1511,6 +1787,10 @@
     "id_iptv": "462",
     "nama_channel": "Premier Sports 2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1527,6 +1807,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1535,6 +1816,10 @@
     "id_iptv": "5200",
     "nama_channel": "Premier Sports UK 1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1551,6 +1836,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1559,6 +1845,10 @@
     "id_iptv": "5201",
     "nama_channel": "Premier Sports UK 2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1575,6 +1865,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1583,6 +1874,10 @@
     "id_iptv": "239",
     "nama_channel": "Sportdigital Fussball",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/fra-nitro/live/clients/dash/enc/ssdefyhkkr/out/v1/cf01290cb7f64525bdf861580a016ca8/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiS0Y4U25GN0tBZDBJcGRXaFN0Z0J5QSIsImtpZCI6IkN0UUlETi80eGdzU003SWdoL0N6UUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1599,6 +1894,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1607,6 +1903,10 @@
     "id_iptv": "5193",
     "nama_channel": "SPORTS3 TV",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6otiglnptp/out/v1/add7499679b0422cb6791f7701f95ecc/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZXlNaW9uT0VPU0drUGl4aDJzZks0dyIsImtpZCI6ImtDNWV3T1BRWG1aZHFqTDhJL1QxbmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1623,6 +1923,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1631,6 +1932,10 @@
     "id_iptv": "2878",
     "nama_channel": "SporTV BR 1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/w8kwdfmlgs/out/v1/3aa321e477504937a439b602e078eb18/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiaUNQM0U3cHYyNXUrQ2lyWUxUQ2FTdyIsImtpZCI6IlVjRHZJN0Z5bCtYQUhOZnpiZENtemcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1647,6 +1952,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1655,6 +1961,10 @@
     "id_iptv": "2879",
     "nama_channel": "SporTV BR 2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/orhlovwjv8/out/v1/3fbdf8c3ec6743d085d32dace1764176/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQmgxNmM5YjBzVEZnNDluOXZCVktDZyIsImtpZCI6IkkxZWo0djV2QjhRc0FPNmU3SGFhSncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1671,14 +1981,19 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
-    "http_status": 200
+    "http_status": 206
   },
   {
     "id_iptv": "2880",
     "nama_channel": "SporTV BR 3",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/g6fcpfaeeu/out/v1/d6a42c54e38549028b9bb5d888b20280/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiRVVzOHhPeXBpVnM5VFAzamp4OXRZUSIsImtpZCI6IkhyV2ZpdlJ6dWllWlN2aWJqbHhWVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1695,6 +2010,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -1703,6 +2019,10 @@
     "id_iptv": "186",
     "nama_channel": "SPOTV ID1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1723,6 +2043,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1731,6 +2052,10 @@
     "id_iptv": "1251",
     "nama_channel": "SPOTV ID2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1751,6 +2076,7 @@
       "drm": "widevine"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1759,6 +2085,10 @@
     "id_iptv": "5321",
     "nama_channel": "UFCTV",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/9v8cttmhcw/out/v1/df4c5196e3d74e7d8f484fc25d9034f1/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUmxtOFdLaGNCaTQvNE1BNXBFYitSdyIsImtpZCI6InBKQ0YrTnBlWmE4ZS8vRHRySU1MSHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1776,6 +2106,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1784,6 +2115,10 @@
     "id_iptv": "1129",
     "nama_channel": "Bahrain Sports 1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8",
     "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
     "jenis": "hls",
@@ -1800,6 +2135,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1808,6 +2144,10 @@
     "id_iptv": "1130",
     "nama_channel": "Bahrain Sports 2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8",
     "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
     "jenis": "hls",
@@ -1824,6 +2164,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1832,6 +2173,10 @@
     "id_iptv": "548",
     "nama_channel": "FIFA Plus [CH1]",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://f7ccf7fc.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLXB0X0ZJRkFQbHVzUG9ydHVndWVzZV9ITFM/playlist.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -1848,6 +2193,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1856,6 +2202,10 @@
     "id_iptv": "910",
     "nama_channel": "FS1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/cizlveblk4/out/v1/e5c36c41621e4384b80427d87199433a/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWkNXc1RBemZrRy9nek9YUFFOeUpNdyIsImtpZCI6IjE5ZU9vZ0lhS1ZRUk5yMWR5RFV2NXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1873,6 +2223,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1881,6 +2232,10 @@
     "id_iptv": "911",
     "nama_channel": "FS2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/awxnrqkbo5/out/v1/716529a4091947b0877e6cb80dbd6ccb/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibU0vNVlBbVYramdjZHYyczg4ZnRyZyIsImtpZCI6IkNVVTg2Q0RXWDd4blhlTVlYNTVGVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1898,6 +2253,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1906,6 +2262,10 @@
     "id_iptv": "653",
     "nama_channel": "Oman Sports",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8?checkedby:iptvcat.com",
     "url_license": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist_b900000.m3u8",
     "jenis": "hls",
@@ -1922,6 +2282,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1930,6 +2291,10 @@
     "id_iptv": "2870",
     "nama_channel": "Premiere Brazil 1",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/nelfyucw9a/out/v1/6ffb2c365ad14f88b154591beb43d1f6/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiK2ppcXFHV2xmdHA4ZDBSR2w3cU8wdyIsImtpZCI6IlZyZWNGNEt6RG10dnlYT3c2UDFCQkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1946,6 +2311,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1954,6 +2320,10 @@
     "id_iptv": "2871",
     "nama_channel": "Premiere Brazil 2",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/oy6rp0jwmf/out/v1/580ecf12bad24979baf8dd993dce053e/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiOXB5TlJpVDkzL1RLaWIwTE1iM0VwdyIsImtpZCI6Im5jUUVZTWt3aDY2b1RXTVY4STdMWkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1970,6 +2340,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -1978,6 +2349,10 @@
     "id_iptv": "2872",
     "nama_channel": "Premiere Brazil 3",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6onrfniyry/out/v1/f23069c61dbf4e00890a40b705a84079/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU1VMdXZWbUxWeWZGekVoTXhpdFM2QSIsImtpZCI6IjBqOTBNM21LWlNwOVQyZVIyZUVEYkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -1994,6 +2369,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -2002,6 +2378,10 @@
     "id_iptv": "2873",
     "nama_channel": "Premiere Brazil 4",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/tirjor64kh/out/v1/fd2ed9916d994f09a3bd62b64141b9cb/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV0hDY2NVTWd1NFl0dlFjbkRmZ2NsQSIsImtpZCI6IjRqTmx3cTJYaHd5SEZ4SzNQdzFobFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -2018,6 +2398,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -2026,6 +2407,10 @@
     "id_iptv": "2874",
     "nama_channel": "Premiere Brazil 5",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/1obktrybht/out/v1/08265453c8f64d9fbeb3cf43764403a8/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiMFdtTTJqMEVENUJSRWxwaGRGdFphdyIsImtpZCI6Ik15OWk2enl1Z2s2WXBCSk5vcHA5TVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -2042,6 +2427,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -2050,6 +2436,10 @@
     "id_iptv": "39",
     "nama_channel": "RedBull",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -2066,6 +2456,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200
@@ -2074,6 +2465,10 @@
     "id_iptv": "584",
     "nama_channel": "TUDN Cambiale 5",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ntkdl68eob/out/v1/bd5dfb7676994383881bc6e71877d29d/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQWI0L1pGNkpvR2ZTZUd3cFgyamQ1QSIsImtpZCI6IjFwVUpQcVBtYlhXazBoT2o0c3Z6WUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -2090,6 +2485,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -2098,6 +2494,10 @@
     "id_iptv": "775",
     "nama_channel": "TUDN Deportes",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/o2vy4aahsh/out/v1/e293c932745a44dcaf897573dfc53532/cenc.mpd",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiREY1c0NDQ2g2aWgxTnlIYkFDY2tFUSIsImtpZCI6ImRqemg2OHJ5TlFMSXp6VjhidlFqNFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
     "jenis": "dash-clearkey",
@@ -2115,6 +2515,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 206
@@ -2123,6 +2524,10 @@
     "id_iptv": "59",
     "nama_channel": "TV Real Madrid",
     "tagline": "Sports",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
     "url_iptv": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8",
     "url_license": "",
     "jenis": "hls",
@@ -2139,30 +2544,7 @@
       "x-data": "none"
     },
     "updated_token": 1791800520,
-    "is_alive": true,
-    "status": "live",
-    "http_status": 200
-  },
-  {
-    "id_iptv": "3502",
-    "nama_channel": "TV4 Sportkanalen",
-    "tagline": "Sports",
-    "url_iptv": "https://live.streaming.a2d.tv/asset/20465728.isml/dash.mpd",
-    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoidFZleTVodHprMTczUy9vaTJPb3NOQSIsImtpZCI6IklQbWdOdXE4T1RDeXNkRWtkNENRNWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
-    "jenis": "dash-clearkey",
-    "country_code": "SP",
-    "country_name": "Sports TV",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": {
-      "Referer": "none",
-      "Origin": "none",
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
-    },
-    "license_headers": {
-      "x-data": "none"
-    },
-    "updated_token": 1791800520,
+    "last_updated": "2026-10-12T12:11:47.619Z",
     "is_alive": true,
     "status": "live",
     "http_status": 200

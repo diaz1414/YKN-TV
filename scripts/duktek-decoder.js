@@ -99,6 +99,21 @@ function normalizeLogo(logoPath) {
   return `${UPLOADS_BASE}/${cleanName}`;
 }
 
+function formatTimestampToWib(stamp) {
+  if (!stamp) return '';
+  const num = Number(stamp);
+  if (isNaN(num) || num <= 0) return '';
+  const d = new Date(num * 1000);
+  const pad = (n) => String(n).padStart(2, '0');
+  const wibTime = new Date(d.getTime() + 7 * 3600 * 1000);
+  const year = wibTime.getUTCFullYear();
+  const month = pad(wibTime.getUTCMonth() + 1);
+  const date = pad(wibTime.getUTCDate());
+  const hours = pad(wibTime.getUTCHours());
+  const minutes = pad(wibTime.getUTCMinutes());
+  return `${year}-${month}-${date} ${hours}:${minutes} WIB`;
+}
+
 /**
  * Fetch dan decode data per kode negara
  */
@@ -224,6 +239,10 @@ async function run() {
         id_iptv: String(item.id || item.id_iptv || ''),
         nama_channel: item.name || item.nama_channel || '',
         tagline: item.tagline || '',
+        jadwal_event: formatTimestampToWib(item.t_stamp),
+        jadwal_stop: formatTimestampToWib(item.s_stamp),
+        t_stamp: item.t_stamp ? Number(item.t_stamp) : null,
+        s_stamp: item.s_stamp ? Number(item.s_stamp) : null,
         url_iptv: item.hls || item.url_iptv || '',
         url_license: item.url_license && item.url_license !== 'none' ? item.url_license : '',
         jenis: item.jenis || 'hls',
@@ -233,7 +252,8 @@ async function run() {
         gbr_base64: finalLogo.startsWith('data:image') ? finalLogo : '',
         headers: parsedHeader,
         license_headers: parsedLicenseHeader,
-        updated_token: data.token || remoteToken
+        updated_token: data.token || remoteToken,
+        last_updated: new Date().toISOString()
       });
     });
   });
