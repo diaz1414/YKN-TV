@@ -235,22 +235,43 @@ async function run() {
       const rawLogo = item.image || item.logo || item.gbr_channel || '';
       const finalLogo = normalizeLogo(rawLogo);
 
+      let streamUrl = item.hls || item.url_iptv || '';
+      let streamHeaders = parsedHeader;
+      const channelName = item.name || item.nama_channel || '';
+      const nameLower = channelName.toLowerCase();
+
+      // CEK & FILTER STREAM PENGUMUMAN PALSU ("BitTV-v2.1.7-obsidian")
+      if (streamUrl.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8') || streamUrl.includes('video_with_qr')) {
+        // Jika KompasTV, ganti dengan stream live aslinya
+        if (nameLower.includes('kompas')) {
+          streamUrl = 'https://op-flashcon-digdayahd-1.dens.tv/h/h234/index.m3u8';
+          streamHeaders = {
+            'Referer': 'https://www.dens.tv/',
+            'Origin': 'https://www.dens.tv/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+          };
+        } else {
+          // Buang siaran yang hanya berisi video pengumuman palsu ini!
+          return;
+        }
+      }
+
       allChannels.push({
         id_iptv: String(item.id || item.id_iptv || ''),
-        nama_channel: item.name || item.nama_channel || '',
+        nama_channel: channelName,
         tagline: item.tagline || '',
         jadwal_event: formatTimestampToWib(item.t_stamp),
         jadwal_stop: formatTimestampToWib(item.s_stamp),
         t_stamp: item.t_stamp ? Number(item.t_stamp) : null,
         s_stamp: item.s_stamp ? Number(item.s_stamp) : null,
-        url_iptv: item.hls || item.url_iptv || '',
+        url_iptv: streamUrl,
         url_license: item.url_license && item.url_license !== 'none' ? item.url_license : '',
         jenis: item.jenis || 'hls',
         country_code: item.alpha_2_code || data.country || code,
         country_name: item.country_name || countryName,
         logo: finalLogo,
         gbr_base64: finalLogo.startsWith('data:image') ? finalLogo : '',
-        headers: parsedHeader,
+        headers: streamHeaders,
         license_headers: parsedLicenseHeader,
         updated_token: data.token || remoteToken,
         last_updated: new Date().toISOString()
