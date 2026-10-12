@@ -1,0 +1,3461 @@
+[
+  {
+    "id_iptv": "3492",
+    "nama_channel": "KOVO Cup Women [CH1]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://nvelop-livecloud.pstatic.net/chzzk/lip2_kr/cflexnmss2u0005/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/p77ne1un6rknxt0rolrnlkqb78muisafub_hls_playlist.m3u8?hdnts=st=1791799451~exp=1791860661~acl=*/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/*~hmac=7538c99bb092c0a3c531653891109652988eee76719a2857f4cac0b441e8ac1a&vp=47DEQpj8HBSa-_TIKgc8JzIZ-OGi_6-I5_uDpg",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5372",
+    "nama_channel": "KOVO Cup Women [CH2]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1056",
+    "nama_channel": "AFC Champions League Elite [CH1]",
+    "tagline": "12 Okt 20:45 WIB - Pakhtakor vs Al Qadsiah",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1057",
+    "nama_channel": "AFC Champions League Elite [CH2]",
+    "tagline": "12 Okt 23:00 WIB - Al-Wasl SC vs Al Ahli SC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621528-2.flv?txSecret=0212750636adf985ef96a3f520998ced&txTime=6aaacc5b",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1062",
+    "nama_channel": "AFC Champions League Elite [CH3]",
+    "tagline": "12 Okt 23:00 WIB - Tractor S.C. vs Al-Shamal Sports Club",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621522-2.flv?txSecret=cd9d9d798a6b565c48747c930bea7c4a&txTime=6aa94f83",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "916",
+    "nama_channel": "Italy: Serie-A [CH1]",
+    "tagline": "12 Okt 23:30 WIB - Atalanta vs Venezia",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1223",
+    "nama_channel": "AFC Champions League Elite [CH4]",
+    "tagline": "13 Okt 01:15 WIB - Al Quwa Al Jawiya vs Al-Ain FC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621511-2.flv?txSecret=53720107767be141a0aac5ef24ac911c&txTime=6aa95363",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1356",
+    "nama_channel": "AFC Champions League Elite [CH5]",
+    "tagline": "13 Okt 01:15 WIB - Al-Gharafa Sports Club vs Esteghlal Tehran",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWQiOjEzMzI5ODA3LCJwbCI6IndlYiIsImRldmljZV9pZCI6IndlYi02YTEzY2VhNmYyMWVkIiwibHR5cGUiOiJlbWFpbCIsImp0aSI6ImRlNWU2OGZjLTNmMjgtNDc5NC1iMTVkLTUxODBkZTgxY2ZlMSIsImlhdCI6MTc3OTY4Mjk4M30.KA5lQGDUZLkKuVOzhINLhfbjDIFQ39ew3mRVHDwJ54k",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2671",
+    "nama_channel": "AFC Champions League Elite [CH6]",
+    "tagline": "13 Okt 01:15 WIB - Al Nassr vs Neftchi Fergana",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3331",
+    "nama_channel": "Italy: Serie-A [CH2]",
+    "tagline": "13 Okt 01:45 WIB - Torino vs Udinese",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "907",
+    "nama_channel": "England: Premier League [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Coventry City vs Newcastle United",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/startover/clients/dash/manipulated-manifest-iad-prod/enc/ltavxjkqim/out/v1/ee234bf8b2854366834b938725860805/b6659233-b8b7-4b08-8dc0-b64dcf0b8f8a-cenc.mpd?aws_sessionId=27f0bde3-0a5f-459b-aa58-aad904c4af73",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiTFhrZUlLUjd2VVI5VlcrVEcveDRaUSIsImtpZCI6ImtseFRseUNoRGdkRjZiMlBwMmdKdFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2664",
+    "nama_channel": "Spain: La Liga [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Levante vs Sevilla FC",
+    "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1435",
+    "nama_channel": "Basketball: NBA [CH1]",
+    "tagline": "13 Okt 03:00 WIB - Portland Trail Blazers vs London Lions",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1452",
+    "nama_channel": "Basketball: NBA [CH2]",
+    "tagline": "13 Okt 06:00 WIB - Washington Wizards vs Brooklyn Nets",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1453",
+    "nama_channel": "Basketball: NBA [CH3]",
+    "tagline": "13 Okt 06:00 WIB - Atlanta Hawks vs Oklahoma City Thunder",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1454",
+    "nama_channel": "Basketball: NBA [CH4]",
+    "tagline": "13 Okt 06:30 WIB - New York Knicks vs Minnesota Timberwolves",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1455",
+    "nama_channel": "Basketball: NBA [CH5]",
+    "tagline": "13 Okt 08:00 WIB - Utah Jazz vs San Antonio Spurs",
+    "url_iptv": "http://43.152.136.207/live/channel27.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.livefeedtextbox.com",
+      "Referer": "https://xlz.edgevaultmedia.com/",
+      "Origin": "https://xlz.edgevaultmedia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "986",
+    "nama_channel": "Sindo News",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2830",
+    "nama_channel": "ANTV HD",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "10",
+    "nama_channel": "GTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1053",
+    "nama_channel": "Indosiar",
+    "tagline": "Entertainment",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/indosiar/indosiar-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5106",
+    "nama_channel": "iNews",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "18",
+    "nama_channel": "KompasTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2831",
+    "nama_channel": "MD.tv",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "14",
+    "nama_channel": "MetroTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8",
+    "url_license": "c64493155d8b443c834a13d4970cf834:509294911ac3c2d779ae2225a23460b4",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "9",
+    "nama_channel": "MNCTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "950",
+    "nama_channel": "mOji",
+    "tagline": "Entertainment",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h207/index.m3u8",
+    "url_license": "052861ebedab473089d0e7480d0c5b63:4d51aa0304af98c449fdec1548a199f9",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "6",
+    "nama_channel": "RCTI",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1106",
+    "nama_channel": "SCTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "11",
+    "nama_channel": "Trans7",
+    "tagline": "Entertainment",
+    "url_iptv": "https://video.detik.com/trans7-sec/smil:trans7.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603871648&wowzatokenhash=9mTM8_TkKcUD9L7m4YXEfSqNPFXcGdu0jWN6Jx5_D4g%3D",
+    "url_license": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "13",
+    "nama_channel": "TransTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://video.detik.com/transtv-sec/smil:transtv.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603947733&wowzatokenhash=QCkmM-TeVM2eAsdCHoRX2nU0qlygmalvFzJoxWBvbYk%3D",
+    "url_license": "334950781f60a66f5e58324b70ac675d:73caca97be8999ce9cfeb3babad8669d",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "12",
+    "nama_channel": "tvOne",
+    "tagline": "News/Berita",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h40/01.m3u8",
+    "url_license": "eab667a8f7f14ff7bf00d790314a10f0:1d6693bc942f036053fc1c3c3b3b5032",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "17",
+    "nama_channel": "TVRI Nasional",
+    "tagline": "News/Berita",
+    "url_iptv": "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://klik.tvri.go.id/",
+      "Origin": "https://klik.tvri.go.id/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2667",
+    "nama_channel": "Animal Planet",
+    "tagline": "Knowledge",
+    "url_iptv": "https://s2129134.cdn.mytvnet.vn/pkg20/live_dzones/ap.smil/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSFZPSTRIZ1VGZXZPeVpGUFd0ZFlkUSIsImtpZCI6IjdHOEhMSEVsTjNxYndLNWhXWUNWOUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "390",
+    "nama_channel": "Animax HD",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "280",
+    "nama_channel": "AXN",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "284",
+    "nama_channel": "Celestial Classic",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "795",
+    "nama_channel": "Celestial Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1020",
+    "nama_channel": "Cineedge",
+    "tagline": "Movie",
+    "url_iptv": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/47c895ca72544fcfa4221c499b555a10/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiM2JtWFZlQyt2WmpKTEg2cmwwdnhZUSIsImtpZCI6Ing3T0ZMWnlFUVkrVUtTUGtIREhtTXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "27",
+    "nama_channel": "CNBC",
+    "tagline": "News/Berita",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q05CQy1JbmRvbmVzaWE/manifest.mpd?signature=YTk1ZmIwOGZiNzJmY2MwOTVhMTg1ZDdmNmJmYWY2YjE=\\u0026time=77777777777\\u0026device_id=5LLYcjaiHzf4ZrVqPeZIxlhLX_Y46fBHO562BIliada-K1S-33nh",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "26",
+    "nama_channel": "CNN",
+    "tagline": "News/Berita",
+    "url_iptv": "https://video.detik.com/livecnn/smil:cnntv/chunklist_w268557525_b384000_sleng.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cnnindonesia.com/",
+      "Origin": "https://www.cnnindonesia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1157",
+    "nama_channel": "Discovery Channel",
+    "tagline": "Knowledge",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/disco/master.mpd",
+    "url_license": "192b1115da041585c77200128549efa1:634e10efe4abbb14be400a3ccbac0258",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://maxstream.tv/",
+      "Origin": "https://maxstream.tv",
+      "User-Agent": "IndiHomeTV/8.7.12 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "293",
+    "nama_channel": "Food Travel",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "292",
+    "nama_channel": "Galaxy Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "291",
+    "nama_channel": "Galaxy TV",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "956",
+    "nama_channel": "HBO",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjkt913.transvision.co.id:1000/live/master/3/4028c6856b6088c3016b87d64b970b53/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "957",
+    "nama_channel": "HBO Cinemax",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q2luZW1heA/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "955",
+    "nama_channel": "HBO Family",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLUZhbWlseS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "179",
+    "nama_channel": "HBO Hits",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPIEhpdHM/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "958",
+    "nama_channel": "HBO Signature",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLVNpZ25hdHVyZS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "289",
+    "nama_channel": "HITS Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "463",
+    "nama_channel": "IMC Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1082",
+    "nama_channel": "Love Nature V+",
+    "tagline": "Knowledge",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "724",
+    "nama_channel": "Music TV",
+    "tagline": "Music",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3214",
+    "nama_channel": "Premium Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "95",
+    "nama_channel": "Rock Action",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "75",
+    "nama_channel": "Rock Entertainment",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "376",
+    "nama_channel": "Thrill.TV",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "287",
+    "nama_channel": "tVN Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "286",
+    "nama_channel": "tVN Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3836",
+    "nama_channel": "Uniquest (V+)",
+    "tagline": "Movie",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2904",
+    "nama_channel": "Vision Prime HD",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "797",
+    "nama_channel": "Zee Bioskop",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "28",
+    "nama_channel": "BTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "53",
+    "nama_channel": "Citra Muslim",
+    "tagline": "Moslem",
+    "url_iptv": "https://atemecdnbalancer-voe.sysln.id/live/eds/CitraMuslimHD/mediampd/CitraMuslimHD.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibjNWVlJBK3pFRFFkMndETnZHT002ZyIsImtpZCI6IjhMMzk3dzlXU0JtaXRETkZzeWo1aVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://firstmedia-tv.id/",
+      "Origin": "https://firstmedia-tv.id",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "65",
+    "nama_channel": "Garuda TV",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://hgmtv.com:19360/garudatvlivestreaming/720p.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "30",
+    "nama_channel": "Nusantara TV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "110",
+    "nama_channel": "Rodja.tv",
+    "tagline": "Moslem",
+    "url_iptv": "https://rodjatv.com/rodjatv/live.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "21",
+    "nama_channel": "RTV",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "155",
+    "nama_channel": "TV9 Nusantara",
+    "tagline": "Moslem",
+    "url_iptv": "http://5bf7b725107e5.streamlock.net/tv9/tv9/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "84",
+    "nama_channel": "UG.tv",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://cdn.gunadarma.ac.id/streams/ugtv/ingestugtv.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3492",
+    "nama_channel": "KOVO Cup Women [CH1]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://nvelop-livecloud.pstatic.net/chzzk/lip2_kr/cflexnmss2u0005/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/p77ne1un6rknxt0rolrnlkqb78muisafub_hls_playlist.m3u8?hdnts=st=1791799451~exp=1791860661~acl=*/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/*~hmac=7538c99bb092c0a3c531653891109652988eee76719a2857f4cac0b441e8ac1a&vp=47DEQpj8HBSa-_TIKgc8JzIZ-OGi_6-I5_uDpg",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5372",
+    "nama_channel": "KOVO Cup Women [CH2]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1056",
+    "nama_channel": "AFC Champions League Elite [CH1]",
+    "tagline": "12 Okt 20:45 WIB - Pakhtakor vs Al Qadsiah",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1057",
+    "nama_channel": "AFC Champions League Elite [CH2]",
+    "tagline": "12 Okt 23:00 WIB - Al-Wasl SC vs Al Ahli SC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621528-2.flv?txSecret=0212750636adf985ef96a3f520998ced&txTime=6aaacc5b",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1062",
+    "nama_channel": "AFC Champions League Elite [CH3]",
+    "tagline": "12 Okt 23:00 WIB - Tractor S.C. vs Al-Shamal Sports Club",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621522-2.flv?txSecret=cd9d9d798a6b565c48747c930bea7c4a&txTime=6aa94f83",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "916",
+    "nama_channel": "Italy: Serie-A [CH1]",
+    "tagline": "12 Okt 23:30 WIB - Atalanta vs Venezia",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1223",
+    "nama_channel": "AFC Champions League Elite [CH4]",
+    "tagline": "13 Okt 01:15 WIB - Al Quwa Al Jawiya vs Al-Ain FC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621511-2.flv?txSecret=53720107767be141a0aac5ef24ac911c&txTime=6aa95363",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1356",
+    "nama_channel": "AFC Champions League Elite [CH5]",
+    "tagline": "13 Okt 01:15 WIB - Al-Gharafa Sports Club vs Esteghlal Tehran",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWQiOjEzMzI5ODA3LCJwbCI6IndlYiIsImRldmljZV9pZCI6IndlYi02YTEzY2VhNmYyMWVkIiwibHR5cGUiOiJlbWFpbCIsImp0aSI6ImRlNWU2OGZjLTNmMjgtNDc5NC1iMTVkLTUxODBkZTgxY2ZlMSIsImlhdCI6MTc3OTY4Mjk4M30.KA5lQGDUZLkKuVOzhINLhfbjDIFQ39ew3mRVHDwJ54k",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2671",
+    "nama_channel": "AFC Champions League Elite [CH6]",
+    "tagline": "13 Okt 01:15 WIB - Al Nassr vs Neftchi Fergana",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3331",
+    "nama_channel": "Italy: Serie-A [CH2]",
+    "tagline": "13 Okt 01:45 WIB - Torino vs Udinese",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "907",
+    "nama_channel": "England: Premier League [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Coventry City vs Newcastle United",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/startover/clients/dash/manipulated-manifest-iad-prod/enc/ltavxjkqim/out/v1/ee234bf8b2854366834b938725860805/b6659233-b8b7-4b08-8dc0-b64dcf0b8f8a-cenc.mpd?aws_sessionId=27f0bde3-0a5f-459b-aa58-aad904c4af73",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiTFhrZUlLUjd2VVI5VlcrVEcveDRaUSIsImtpZCI6ImtseFRseUNoRGdkRjZiMlBwMmdKdFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2664",
+    "nama_channel": "Spain: La Liga [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Levante vs Sevilla FC",
+    "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1435",
+    "nama_channel": "Basketball: NBA [CH1]",
+    "tagline": "13 Okt 03:00 WIB - Portland Trail Blazers vs London Lions",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1452",
+    "nama_channel": "Basketball: NBA [CH2]",
+    "tagline": "13 Okt 06:00 WIB - Washington Wizards vs Brooklyn Nets",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1453",
+    "nama_channel": "Basketball: NBA [CH3]",
+    "tagline": "13 Okt 06:00 WIB - Atlanta Hawks vs Oklahoma City Thunder",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1454",
+    "nama_channel": "Basketball: NBA [CH4]",
+    "tagline": "13 Okt 06:30 WIB - New York Knicks vs Minnesota Timberwolves",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1455",
+    "nama_channel": "Basketball: NBA [CH5]",
+    "tagline": "13 Okt 08:00 WIB - Utah Jazz vs San Antonio Spurs",
+    "url_iptv": "http://43.152.136.207/live/channel27.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.livefeedtextbox.com",
+      "Referer": "https://xlz.edgevaultmedia.com/",
+      "Origin": "https://xlz.edgevaultmedia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3492",
+    "nama_channel": "KOVO Cup Women [CH1]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://nvelop-livecloud.pstatic.net/chzzk/lip2_kr/cflexnmss2u0005/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/p77ne1un6rknxt0rolrnlkqb78muisafub_hls_playlist.m3u8?hdnts=st=1791799451~exp=1791860661~acl=*/mtuzlqcrry2q9mt3sgi7av1byb78muisakwd/*~hmac=7538c99bb092c0a3c531653891109652988eee76719a2857f4cac0b441e8ac1a&vp=47DEQpj8HBSa-_TIKgc8JzIZ-OGi_6-I5_uDpg",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5372",
+    "nama_channel": "KOVO Cup Women [CH2]",
+    "tagline": "12 Okt 17:00 WIB - GS Caltex Women vs Expressway Co Women",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1056",
+    "nama_channel": "AFC Champions League Elite [CH1]",
+    "tagline": "12 Okt 20:45 WIB - Pakhtakor vs Al Qadsiah",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1057",
+    "nama_channel": "AFC Champions League Elite [CH2]",
+    "tagline": "12 Okt 23:00 WIB - Al-Wasl SC vs Al Ahli SC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621528-2.flv?txSecret=0212750636adf985ef96a3f520998ced&txTime=6aaacc5b",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1062",
+    "nama_channel": "AFC Champions League Elite [CH3]",
+    "tagline": "12 Okt 23:00 WIB - Tractor S.C. vs Al-Shamal Sports Club",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621522-2.flv?txSecret=cd9d9d798a6b565c48747c930bea7c4a&txTime=6aa94f83",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "916",
+    "nama_channel": "Italy: Serie-A [CH1]",
+    "tagline": "12 Okt 23:30 WIB - Atalanta vs Venezia",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1223",
+    "nama_channel": "AFC Champions League Elite [CH4]",
+    "tagline": "13 Okt 01:15 WIB - Al Quwa Al Jawiya vs Al-Ain FC",
+    "url_iptv": "https://v101.sportcdn.live/live/live-1-4621511-2.flv?txSecret=53720107767be141a0aac5ef24ac911c&txTime=6aa95363",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.aiscore.com/",
+      "Origin": "https://www.aiscore.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1356",
+    "nama_channel": "AFC Champions League Elite [CH5]",
+    "tagline": "13 Okt 01:15 WIB - Al-Gharafa Sports Club vs Esteghlal Tehran",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWQiOjEzMzI5ODA3LCJwbCI6IndlYiIsImRldmljZV9pZCI6IndlYi02YTEzY2VhNmYyMWVkIiwibHR5cGUiOiJlbWFpbCIsImp0aSI6ImRlNWU2OGZjLTNmMjgtNDc5NC1iMTVkLTUxODBkZTgxY2ZlMSIsImlhdCI6MTc3OTY4Mjk4M30.KA5lQGDUZLkKuVOzhINLhfbjDIFQ39ew3mRVHDwJ54k",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2671",
+    "nama_channel": "AFC Champions League Elite [CH6]",
+    "tagline": "13 Okt 01:15 WIB - Al Nassr vs Neftchi Fergana",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3331",
+    "nama_channel": "Italy: Serie-A [CH2]",
+    "tagline": "13 Okt 01:45 WIB - Torino vs Udinese",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "907",
+    "nama_channel": "England: Premier League [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Coventry City vs Newcastle United",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/startover/clients/dash/manipulated-manifest-iad-prod/enc/ltavxjkqim/out/v1/ee234bf8b2854366834b938725860805/b6659233-b8b7-4b08-8dc0-b64dcf0b8f8a-cenc.mpd?aws_sessionId=27f0bde3-0a5f-459b-aa58-aad904c4af73",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiTFhrZUlLUjd2VVI5VlcrVEcveDRaUSIsImtpZCI6ImtseFRseUNoRGdkRjZiMlBwMmdKdFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2664",
+    "nama_channel": "Spain: La Liga [CH1]",
+    "tagline": "13 Okt 02:00 WIB - Levante vs Sevilla FC",
+    "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1435",
+    "nama_channel": "Basketball: NBA [CH1]",
+    "tagline": "13 Okt 03:00 WIB - Portland Trail Blazers vs London Lions",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1452",
+    "nama_channel": "Basketball: NBA [CH2]",
+    "tagline": "13 Okt 06:00 WIB - Washington Wizards vs Brooklyn Nets",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1453",
+    "nama_channel": "Basketball: NBA [CH3]",
+    "tagline": "13 Okt 06:00 WIB - Atlanta Hawks vs Oklahoma City Thunder",
+    "url_iptv": "http://43.152.182.139/live/channel29.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1454",
+    "nama_channel": "Basketball: NBA [CH4]",
+    "tagline": "13 Okt 06:30 WIB - New York Knicks vs Minnesota Timberwolves",
+    "url_iptv": "http://43.152.182.139/live/channel25.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.edgeburstcdn.com",
+      "Referer": "https://xlz.morvexstream.com/",
+      "Origin": "https://xlz.morvexstream.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1455",
+    "nama_channel": "Basketball: NBA [CH5]",
+    "tagline": "13 Okt 08:00 WIB - Utah Jazz vs San Antonio Spurs",
+    "url_iptv": "http://43.152.136.207/live/channel27.flv",
+    "url_license": "294b5761cefc22d0c6312939e13d8278:52148f1042d238849f0a7813f1da8a7b",
+    "jenis": "ts",
+    "country_code": "EV",
+    "country_name": "Events",
+    "logo": "",
+    "headers": {
+      "host": "live2.livefeedtextbox.com",
+      "Referer": "https://xlz.edgevaultmedia.com/",
+      "Origin": "https://xlz.edgevaultmedia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2972",
+    "nama_channel": "beIN Sports AU 1 A+",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/dash/enc/ghwcl6hv68/out/v1/83536910d8034e9b9895a20fbe1c1687/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSkwvWFhVTnN2M01XaWlvdHpOUUNnUSIsImtpZCI6Ik0xMnRkNEVKbFVVRDNMc2gzSklCWHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2939",
+    "nama_channel": "beIN Sports AU 2 A+",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/8m8cd46i1t/out/v1/83985c68e4174e90a58a1f2c024be4c9/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicmlRSkFTTzR4eXJGUUUzQlVvUjh1QSIsImtpZCI6IkMwSytKbVRYNkJIUVR6NVFUZ2treFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2940",
+    "nama_channel": "beIN Sports AU 3 A+",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/q4u5nwaogz/out/v1/18de6d3e65934f3a8de4358e69eab86c/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWjcydkhpRjF1ZjlvTDgzdzRqVkxIZyIsImtpZCI6ImVaWEhKS0UzU08yWENFQ29xMXU1c3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1139",
+    "nama_channel": "beIN Sports ID 1 V+",
+    "tagline": "Sports",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "91",
+    "nama_channel": "beIN Sports ID 2 V+",
+    "tagline": "Sports",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "52",
+    "nama_channel": "beIN Sports ID 3 V+",
+    "tagline": "Sports",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4433",
+    "nama_channel": "Caze TV",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/syd-nitro/live/clients/dash/enc/vzeco5ty0v/out/v1/44c6b8f31a2544e3b2a9bb41ed5e241e/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoid01VRW91MHVjTGg1cGxDNGR3bzR4ZyIsImtpZCI6InJIcTZxY2xJR3F6NzJzWlB3K3d6RWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3535",
+    "nama_channel": "CBS Golazo",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/PDX/live/clients/dash/enc/5qz8wmdome/out/v1/b9323e853dce427eac214b77bd48a204/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://dcf-fs-live-dazn-cdn.dazn.com/",
+      "Origin": "https://dcf-fs-live-dazn-cdn.dazn.com",
+      "User-Agent": "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.9.7 Chrome/56.0.2924.122 Safari/537.36 Sky_STB_ST412_2018/1.0.0 (Sky, EM150UK, )"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3835",
+    "nama_channel": "CBS Sports",
+    "tagline": "Sports",
+    "url_iptv": "https://a166aivottlinear-a.akamaihd.net/OTTB/lhr-nitro/live/clients/dash/enc/rbem8rorcw/out/v1/5318821e2c3c44c2a439681b9aa86e9b/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVVdUbTBGRmtvdFpmcVB6SllxcElZUSIsImtpZCI6IjJXSTNkS3hjakRVYXIrbDhYK2NDWncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.9.7 Chrome/56.0.2924.122 Safari/537.36 Sky_STB_ST412_2018/1.0.0 (Sky, EM150UK, )"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4224",
+    "nama_channel": "DAZN Fast",
+    "tagline": "Sports",
+    "url_iptv": "https://ac-003.live.p7s1video.net/63f8995e/t_003/dazn-fast-hd/cenc-default.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNDhXd2N5aUpURE56U2szbXJsV29mdyIsImtpZCI6Imk4N0dzeHpKN2N0bmFLc21WSTRpd3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5371",
+    "nama_channel": "F1 Channel",
+    "tagline": "Sports",
+    "url_iptv": "https://a184aivottlinear-a.akamaihd.net/OTTB/iad-nitro/live/clients/dash/enc/5fjow0mrvw/out/v1/f870533ee24b4f3bb98d2afe4b1e1bac/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV3pFL1NjWThhQ0kyNnJNMWRBRGlGZyIsImtpZCI6IlVGWVdPQTNuQnBOdVNUL2RIQ1hRdGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3393",
+    "nama_channel": "fubo SPORTS 1",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/uiffe4jhf0/out/v1/3534efafca8c4815adbb4d2e9a1fe003/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoidklYM1Q0RmRtK1d1SGRiZStxQlJOUSIsImtpZCI6IlBjKyt3T2NVYVNpNnBWSVF2eXkyTHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2777",
+    "nama_channel": "fubo SPORTS 2",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/3b7qwiqzk3/out/v1/9f14895badca43e6a716db021dcd0c31/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME55ODEzSTd4QTN3dnpUSndKTFZIdyIsImtpZCI6IjNHbTJGWm9QbndwT0E3UC9rY3VzMVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4191",
+    "nama_channel": "fubo SPORTS 3",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/xtkswns2yn/out/v1/9c348c1bc962495a9420f01ac0964a86/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZUtiQXBCbHkzOXVpRkZyZ3JVdldnUSIsImtpZCI6IitsNk50VFdmeDlIeFVnZlYzaW82eEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5188",
+    "nama_channel": "fubo SPORTS 4",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/sin-nitro/live/dash/enc/1wlv9dr4vx/out/v1/632322be5f1047acb2472f90f8857182/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicDcyVUdobjIzUlR6QUVwaU9tclRvUSIsImtpZCI6IlF2Y3NBbDNWTURra1N0d1R0K01kclEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5370",
+    "nama_channel": "MotoGP Channel",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/wjeweupwyc/out/v1/8197c8e055c94a868623653ac55c10bf/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVStvUUo5Sy9LSk9sVXM4VnZBTm0zZyIsImtpZCI6IjREOHdMc1Rhdk16S2dzeWZkbk1leVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2859",
+    "nama_channel": "nova SPORT1 HD",
+    "tagline": "Sports",
+    "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport1/playlist_cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2860",
+    "nama_channel": "nova SPORT2 HD",
+    "tagline": "Sports",
+    "url_iptv": "https://dash2.antik.sk/stream/nvidia_nova_sport2/playlist_cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUzRCeVRRNzRhOHNzSWZlWm5XZHpuUSIsImtpZCI6IkVTSXpSRlZtZDRpWkFCRWlNMFJWWmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "461",
+    "nama_channel": "Premier Sports 1",
+    "tagline": "Sports",
+    "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/vwq77hfgzw/out/v1/b858e0b845c64cec953887bd4269e4ea/cenc.mpd?encoding=segmentBase",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "462",
+    "nama_channel": "Premier Sports 2",
+    "tagline": "Sports",
+    "url_iptv": "http://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5200",
+    "nama_channel": "Premier Sports UK 1",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/m6sqanvm2m/out/v1/f6beb46c6e9a4132ad739f3ca27df6aa/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiNWVQK3hub2JzMGNxSUluSW9LSlZmdyIsImtpZCI6IkZFVDBJMVVwOFlQd3BhU0d2djZjMncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5201",
+    "nama_channel": "Premier Sports UK 2",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/fra-nitro/live/clients/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZC9ZcGdOV0M3RlFTZ0hscXo0c3RHUSIsImtpZCI6IkdsMzFOZ25yeVlWNG1NU1E5SEpKR0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3392",
+    "nama_channel": "Rai Sport",
+    "tagline": "Sports",
+    "url_iptv": "https://atemeshield1-voe.sysln.id/live/eds/RaiItalia/mediampd/RaiItalia.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiVkZueFhDd1JrTmxmNUpkdXhwcm9kUSIsImtpZCI6InNDNXNrV3pKUlQraU9tcHgyaW43L3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.firstmedia.com/",
+      "Origin": "https://www.firstmedia.com",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "712",
+    "nama_channel": "Sky Sports EPL",
+    "tagline": "Sports",
+    "url_iptv": "http://etvhosts.site:55337/live/6CwsnaTJM/hUERme4GrSZu/16559.ts",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "ts",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "239",
+    "nama_channel": "Sportdigital Fussball",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/fra-nitro/live/clients/dash/enc/ssdefyhkkr/out/v1/cf01290cb7f64525bdf861580a016ca8/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiS0Y4U25GN0tBZDBJcGRXaFN0Z0J5QSIsImtpZCI6IkN0UUlETi80eGdzU003SWdoL0N6UUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://dce-ac-live.cdn.indazn.com/",
+      "Origin": "https://dce-ac-live.cdn.indazn.com",
+      "User-Agent": "Roku/DVP-12.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5193",
+    "nama_channel": "SPORTS3 TV",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6otiglnptp/out/v1/add7499679b0422cb6791f7701f95ecc/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZXlNaW9uT0VPU0drUGl4aDJzZks0dyIsImtpZCI6ImtDNWV3T1BRWG1aZHFqTDhJL1QxbmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2878",
+    "nama_channel": "SporTV BR 1",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/w8kwdfmlgs/out/v1/3aa321e477504937a439b602e078eb18/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiaUNQM0U3cHYyNXUrQ2lyWUxUQ2FTdyIsImtpZCI6IlVjRHZJN0Z5bCtYQUhOZnpiZENtemcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2879",
+    "nama_channel": "SporTV BR 2",
+    "tagline": "Sports",
+    "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/orhlovwjv8/out/v1/3fbdf8c3ec6743d085d32dace1764176/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQmgxNmM5YjBzVEZnNDluOXZCVktDZyIsImtpZCI6IkkxZWo0djV2QjhRc0FPNmU3SGFhSncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2880",
+    "nama_channel": "SporTV BR 3",
+    "tagline": "Sports",
+    "url_iptv": "https://abgqheyaaaaaaaamkz47z2ccudy7s.ta.bia-cf.live.pv-cdn.net/gru-nitro/live/clients/dash/enc/g6fcpfaeeu/out/v1/d6a42c54e38549028b9bb5d888b20280/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiRVVzOHhPeXBpVnM5VFAzamp4OXRZUSIsImtpZCI6IkhyV2ZpdlJ6dWllWlN2aWJqbHhWVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "186",
+    "nama_channel": "SPOTV ID1",
+    "tagline": "Sports",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1251",
+    "nama_channel": "SPOTV ID2",
+    "tagline": "Sports",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3288",
+    "nama_channel": "Telemundo",
+    "tagline": "Sports",
+    "url_iptv": "https://fsly.stream.peacocktv.com/Content/CMAF_OL2-CTR-4s-v2/Live/channel(KVDA)/master.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiRmlJUENGdWhnbWFnMjJWQ3FWRXNjQSIsImtpZCI6ImM1elVDK0ZIUEFtdWtZMkowaE1pQUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5321",
+    "nama_channel": "UFCTV",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/9v8cttmhcw/out/v1/df4c5196e3d74e7d8f484fc25d9034f1/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiUmxtOFdLaGNCaTQvNE1BNXBFYitSdyIsImtpZCI6InBKQ0YrTnBlWmE4ZS8vRHRySU1MSHcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1129",
+    "nama_channel": "Bahrain Sports 1",
+    "tagline": "Sports",
+    "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8",
+    "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1130",
+    "nama_channel": "Bahrain Sports 2",
+    "tagline": "Sports",
+    "url_iptv": "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8",
+    "url_license": "https://lebo.huminbird.cn/live/ballbar_29030.m3u8",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5187",
+    "nama_channel": "F1 Apple TV",
+    "tagline": "Sports",
+    "url_iptv": "https://a96aivottlinear-a.akamaihd.net/OTTB/pdx-nitro/live/clients/dash/enc/xferskoxad/out/v1/5ad37e90cba5492facdcdb1dcdee5ec5/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQ3c2TzFiWW9kSzM4dmd0ZkVnbUR5ZyIsImtpZCI6IjBHVXpjSks4bHZza3hIQkI5bE5OU0EifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "548",
+    "nama_channel": "FIFA Plus [CH1]",
+    "tagline": "Sports",
+    "url_iptv": "https://f7ccf7fc.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLXB0X0ZJRkFQbHVzUG9ydHVndWVzZV9ITFM/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3704",
+    "nama_channel": "Fight Sports",
+    "tagline": "Sports",
+    "url_iptv": "https://d2tjypxxy769fn.cloudfront.net/out/v1/73b7057c72da4615888a11b02a6cbb3c/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWVduZEJDdTE1WjF3a25LMkZBRWJ1dyIsImtpZCI6InFnRHpJUEJpUjl5dmpqenFIN0IvUkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "widevine": "https://mrpw.ptmnc01.verspective.net/?deviceId=ZjdiMDljNTItMmYzZC0zNDcyLTllYmItY2QxNDdiYzlhZWY0"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "910",
+    "nama_channel": "FS1",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/cizlveblk4/out/v1/e5c36c41621e4384b80427d87199433a/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiWkNXc1RBemZrRy9nek9YUFFOeUpNdyIsImtpZCI6IjE5ZU9vZ0lhS1ZRUk5yMWR5RFV2NXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://cricrex.live/",
+      "Origin": "https://cricrex.live",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0",
+      "Accept": "*/*"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "911",
+    "nama_channel": "FS2",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/awxnrqkbo5/out/v1/716529a4091947b0877e6cb80dbd6ccb/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibU0vNVlBbVYramdjZHYyczg4ZnRyZyIsImtpZCI6IkNVVTg2Q0RXWDd4blhlTVlYNTVGVEEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://cricrex.live/",
+      "Origin": "https://cricrex.live",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0",
+      "Accept": "*/*"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4241",
+    "nama_channel": "ITV1",
+    "tagline": "Sports",
+    "url_iptv": "https://cdn.stmify.com/primevideo/stream/ITV1/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiOVYzSXRtN1UvR2RUMWdOYTUrRnhSQSIsImtpZCI6Ik1BaWNVcEpQQTNzaVc0TEdGdjdpcFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4240",
+    "nama_channel": "ITV2",
+    "tagline": "Sports",
+    "url_iptv": "https://cdn.stmify.com/primevideo/stream/ITV2/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiS29kRHBlYjZ0UGl0OWpRTG94emF0dyIsImtpZCI6ImN1OHoyM3ZkYmNRZjlnaXpjZUt5VncifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "4239",
+    "nama_channel": "ITV3",
+    "tagline": "Sports",
+    "url_iptv": "https://cdn.stmify.com/primevideo/stream/ITV3/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoidytPcnBrRWZud1BlZmErdEV1M3QyQSIsImtpZCI6Ijd1MEdrOFNWaW9FT1h1c1JCcmFscUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "250",
+    "nama_channel": "MUTV",
+    "tagline": "Sports",
+    "url_iptv": "https://fastly.live.brightcove.com/6374054671112/eu-west-1/6058004203001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiYXplMnp5LmVncmVzcy55ODN1ZWIiLCJhY2NvdW50X2lkIjoiNjA1ODAwNDIwMzAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2MDU4MDA0MjAzMDAxIl0sImp0aSI6IjYzNzQwNTQ2NzExMTIifQ.3FmuTna3DAmY7xlhK5fk6LMrosrtrR5VsU2QOgYO5y4/playlist-dash.mpd",
+    "url_license": "94f0b3d645c64f0dbe2e0990ec290cdf:0dc311915f9decffaf7dfee30c4d8482",
+    "jenis": "dash",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "widevine": "https://mrpw.ptmnc01.verspective.net/?deviceId=NDIzMDJhZmUtYWRjMi0zNGJkLTkyN2EtYmE1ZDFlZWIwODEz",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6 RTSP-Dogkiller)"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "653",
+    "nama_channel": "Oman Sports",
+    "tagline": "Sports",
+    "url_iptv": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist.m3u8?checkedby:iptvcat.com",
+    "url_license": "https://partneta.cdn.mgmlcdn.com/omsport/smil:omsport.stream.smil/chunklist_b900000.m3u8",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2870",
+    "nama_channel": "Premiere Brazil 1",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/nelfyucw9a/out/v1/6ffb2c365ad14f88b154591beb43d1f6/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiK2ppcXFHV2xmdHA4ZDBSR2w3cU8wdyIsImtpZCI6IlZyZWNGNEt6RG10dnlYT3c2UDFCQkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2871",
+    "nama_channel": "Premiere Brazil 2",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/oy6rp0jwmf/out/v1/580ecf12bad24979baf8dd993dce053e/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiOXB5TlJpVDkzL1RLaWIwTE1iM0VwdyIsImtpZCI6Im5jUUVZTWt3aDY2b1RXTVY4STdMWkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2872",
+    "nama_channel": "Premiere Brazil 3",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6onrfniyry/out/v1/f23069c61dbf4e00890a40b705a84079/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU1VMdXZWbUxWeWZGekVoTXhpdFM2QSIsImtpZCI6IjBqOTBNM21LWlNwOVQyZVIyZUVEYkEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2873",
+    "nama_channel": "Premiere Brazil 4",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/tirjor64kh/out/v1/fd2ed9916d994f09a3bd62b64141b9cb/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiV0hDY2NVTWd1NFl0dlFjbkRmZ2NsQSIsImtpZCI6IjRqTmx3cTJYaHd5SEZ4SzNQdzFobFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2874",
+    "nama_channel": "Premiere Brazil 5",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/1obktrybht/out/v1/08265453c8f64d9fbeb3cf43764403a8/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiMFdtTTJqMEVENUJSRWxwaGRGdFphdyIsImtpZCI6Ik15OWk2enl1Z2s2WXBCSk5vcHA5TVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "39",
+    "nama_channel": "RedBull",
+    "tagline": "Sports",
+    "url_iptv": "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3212",
+    "nama_channel": "Sharjah Sports",
+    "tagline": "Sports",
+    "url_iptv": "https://svs.itworkscdn.net/smc4sportslive/smc4.smil/smc4sportspublish/smc4tv_720p/chunks.m3u8",
+    "url_license": "https://chn.starlive.workers.dev/live/ballbar_36370.m3u8",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "584",
+    "nama_channel": "TUDN Cambiale 5",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ntkdl68eob/out/v1/bd5dfb7676994383881bc6e71877d29d/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiQWI0L1pGNkpvR2ZTZUd3cFgyamQ1QSIsImtpZCI6IjFwVUpQcVBtYlhXazBoT2o0c3Z6WUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "775",
+    "nama_channel": "TUDN Deportes",
+    "tagline": "Sports",
+    "url_iptv": "https://otte.cache.aiv-cdn.net/gru-nitro/live/clients/dash/enc/o2vy4aahsh/out/v1/e293c932745a44dcaf897573dfc53532/cenc.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiREY1c0NDQ2g2aWgxTnlIYkFDY2tFUSIsImtpZCI6ImRqemg2OHJ5TlFMSXp6VjhidlFqNFEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "59",
+    "nama_channel": "TV Real Madrid",
+    "tagline": "Sports",
+    "url_iptv": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3502",
+    "nama_channel": "TV4 Sportkanalen",
+    "tagline": "Sports",
+    "url_iptv": "https://live.streaming.a2d.tv/asset/20465728.isml/dash.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoidFZleTVodHprMTczUy9vaTJPb3NOQSIsImtpZCI6IklQbWdOdXE4T1RDeXNkRWtkNENRNWcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2815",
+    "nama_channel": "Universo (West)",
+    "tagline": "Sports",
+    "url_iptv": "https://fsly.stream.peacocktv.com/Content/CMAF_OL2-CTR-4s/Live//channel(universo-west)/master.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZloyL2dUUlRYaFpsNlJUN2NUVE9SdyIsImtpZCI6IkJwODBsVGdQUFNXb3dEUjNCbjk5R3cifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.peacocktv.com/",
+      "Origin": "https://www.peacocktv.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  }
+]
