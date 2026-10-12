@@ -48,6 +48,8 @@ jobs:
           [ -f data/ykn-leaderboard.json ] && cp data/ykn-leaderboard.json src/data/ykn-leaderboard.json || echo "No ykn-leaderboard.json found"
           [ -f data/duktek-channels.json ] && cp data/duktek-channels.json src/data/duktek-channels.json || echo "No duktek-channels.json found"
           [ -f data/duktek-token.txt ] && cp data/duktek-token.txt src/data/duktek-token.txt || echo "No duktek-token.txt found"
+          [ -f data/tv-sports.json ] && cp data/tv-sports.json src/data/tv-sports.json || echo "No tv-sports.json found"
+          [ -f data/tv-hiburan.json ] && cp data/tv-hiburan.json src/data/tv-hiburan.json || echo "No tv-hiburan.json found"
 
       - name: Commit and Push changes
         run: |

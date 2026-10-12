@@ -243,6 +243,22 @@ async function run() {
   fs.writeFileSync(outPath1, payloadJson, 'utf-8');
   fs.writeFileSync(outPath2, payloadJson, 'utf-8');
 
+  // Ekspor feed khusus APK Android (tv-sports.json & tv-hiburan.json)
+  const sportsChannels = allChannels.filter(c => c.country_code === 'SP');
+  const hiburanChannels = allChannels.filter(c => c.country_code === 'ID');
+
+  if (sportsChannels.length > 0) {
+    const sportsJson = JSON.stringify(sportsChannels, null, 2);
+    fs.writeFileSync(path.join(DATA_DIR, 'tv-sports.json'), sportsJson, 'utf-8');
+    fs.writeFileSync(path.join(SRC_DATA_DIR, 'tv-sports.json'), sportsJson, 'utf-8');
+  }
+
+  if (hiburanChannels.length > 0) {
+    const hiburanJson = JSON.stringify(hiburanChannels, null, 2);
+    fs.writeFileSync(path.join(DATA_DIR, 'tv-hiburan.json'), hiburanJson, 'utf-8');
+    fs.writeFileSync(path.join(SRC_DATA_DIR, 'tv-hiburan.json'), hiburanJson, 'utf-8');
+  }
+
   // Simpan token baru
   const tokenToSave = remoteToken || String(Date.now());
   fs.writeFileSync(TOKEN_FILE_DATA, tokenToSave, 'utf-8');

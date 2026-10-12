@@ -1,0 +1,2368 @@
+[
+  {
+    "id_iptv": "2830",
+    "nama_channel": "ANTV HD",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "10",
+    "nama_channel": "GTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1053",
+    "nama_channel": "Indosiar",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/indosiar/indosiar-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2831",
+    "nama_channel": "MD.tv",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "9",
+    "nama_channel": "MNCTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "950",
+    "nama_channel": "mOji",
+    "tagline": "Indonesia",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h207/index.m3u8",
+    "url_license": "052861ebedab473089d0e7480d0c5b63:4d51aa0304af98c449fdec1548a199f9",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "6",
+    "nama_channel": "RCTI",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1106",
+    "nama_channel": "SCTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "11",
+    "nama_channel": "Trans7",
+    "tagline": "Indonesia",
+    "url_iptv": "https://video.detik.com/trans7-sec/smil:trans7.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603871648&wowzatokenhash=9mTM8_TkKcUD9L7m4YXEfSqNPFXcGdu0jWN6Jx5_D4g%3D",
+    "url_license": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "13",
+    "nama_channel": "TransTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://video.detik.com/transtv-sec/smil:transtv.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603947733&wowzatokenhash=QCkmM-TeVM2eAsdCHoRX2nU0qlygmalvFzJoxWBvbYk%3D",
+    "url_license": "334950781f60a66f5e58324b70ac675d:73caca97be8999ce9cfeb3babad8669d",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "293",
+    "nama_channel": "Food Travel",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2904",
+    "nama_channel": "Vision Prime HD",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Entertainment",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "724",
+    "nama_channel": "Music TV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Music",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "390",
+    "nama_channel": "Animax HD",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "280",
+    "nama_channel": "AXN",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "284",
+    "nama_channel": "Celestial Classic",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "795",
+    "nama_channel": "Celestial Movies",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1020",
+    "nama_channel": "Cineedge",
+    "tagline": "Indonesia",
+    "url_iptv": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/47c895ca72544fcfa4221c499b555a10/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiM2JtWFZlQyt2WmpKTEg2cmwwdnhZUSIsImtpZCI6Ing3T0ZMWnlFUVkrVUtTUGtIREhtTXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "292",
+    "nama_channel": "Galaxy Premium",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "291",
+    "nama_channel": "Galaxy TV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "956",
+    "nama_channel": "HBO",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjkt913.transvision.co.id:1000/live/master/3/4028c6856b6088c3016b87d64b970b53/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "957",
+    "nama_channel": "HBO Cinemax",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q2luZW1heA/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "955",
+    "nama_channel": "HBO Family",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLUZhbWlseS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "179",
+    "nama_channel": "HBO Hits",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPIEhpdHM/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "958",
+    "nama_channel": "HBO Signature",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLVNpZ25hdHVyZS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "289",
+    "nama_channel": "HITS Movies",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "463",
+    "nama_channel": "IMC Premium",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3214",
+    "nama_channel": "Premium Movies",
+    "tagline": "Indonesia",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "95",
+    "nama_channel": "Rock Action",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "75",
+    "nama_channel": "Rock Entertainment",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "376",
+    "nama_channel": "Thrill.TV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "287",
+    "nama_channel": "tVN Movies",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "286",
+    "nama_channel": "tVN Premium",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3836",
+    "nama_channel": "Uniquest (V+)",
+    "tagline": "Indonesia",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "797",
+    "nama_channel": "Zee Bioskop",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Movie",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "986",
+    "nama_channel": "Sindo News",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5106",
+    "nama_channel": "iNews",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "18",
+    "nama_channel": "KompasTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "14",
+    "nama_channel": "MetroTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8",
+    "url_license": "c64493155d8b443c834a13d4970cf834:509294911ac3c2d779ae2225a23460b4",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "12",
+    "nama_channel": "tvOne",
+    "tagline": "Indonesia",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h40/01.m3u8",
+    "url_license": "eab667a8f7f14ff7bf00d790314a10f0:1d6693bc942f036053fc1c3c3b3b5032",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "17",
+    "nama_channel": "TVRI Nasional",
+    "tagline": "Indonesia",
+    "url_iptv": "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://klik.tvri.go.id/",
+      "Origin": "https://klik.tvri.go.id/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "27",
+    "nama_channel": "CNBC",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q05CQy1JbmRvbmVzaWE/manifest.mpd?signature=YTk1ZmIwOGZiNzJmY2MwOTVhMTg1ZDdmNmJmYWY2YjE=\\u0026time=77777777777\\u0026device_id=5LLYcjaiHzf4ZrVqPeZIxlhLX_Y46fBHO562BIliada-K1S-33nh",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "26",
+    "nama_channel": "CNN",
+    "tagline": "Indonesia",
+    "url_iptv": "https://video.detik.com/livecnn/smil:cnntv/chunklist_w268557525_b384000_sleng.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cnnindonesia.com/",
+      "Origin": "https://www.cnnindonesia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "28",
+    "nama_channel": "BTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "30",
+    "nama_channel": "Nusantara TV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "News/Berita",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2667",
+    "nama_channel": "Animal Planet",
+    "tagline": "Indonesia",
+    "url_iptv": "https://s2129134.cdn.mytvnet.vn/pkg20/live_dzones/ap.smil/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSFZPSTRIZ1VGZXZPeVpGUFd0ZFlkUSIsImtpZCI6IjdHOEhMSEVsTjNxYndLNWhXWUNWOUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Knowledge",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1157",
+    "nama_channel": "Discovery Channel",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/disco/master.mpd",
+    "url_license": "192b1115da041585c77200128549efa1:634e10efe4abbb14be400a3ccbac0258",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Knowledge",
+    "logo": "",
+    "headers": {
+      "Referer": "https://maxstream.tv/",
+      "Origin": "https://maxstream.tv",
+      "User-Agent": "IndiHomeTV/8.7.12 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1082",
+    "nama_channel": "Love Nature V+",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Knowledge",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "53",
+    "nama_channel": "Citra Muslim",
+    "tagline": "Indonesia",
+    "url_iptv": "https://atemecdnbalancer-voe.sysln.id/live/eds/CitraMuslimHD/mediampd/CitraMuslimHD.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibjNWVlJBK3pFRFFkMndETnZHT002ZyIsImtpZCI6IjhMMzk3dzlXU0JtaXRETkZzeWo1aVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Moslem",
+    "logo": "",
+    "headers": {
+      "Referer": "https://firstmedia-tv.id/",
+      "Origin": "https://firstmedia-tv.id",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "110",
+    "nama_channel": "Rodja.tv",
+    "tagline": "Indonesia",
+    "url_iptv": "https://rodjatv.com/rodjatv/live.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Moslem",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "155",
+    "nama_channel": "TV9 Nusantara",
+    "tagline": "Indonesia",
+    "url_iptv": "http://5bf7b725107e5.streamlock.net/tv9/tv9/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Moslem",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "65",
+    "nama_channel": "Garuda TV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://hgmtv.com:19360/garudatvlivestreaming/720p.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "TV Nusantara",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "21",
+    "nama_channel": "RTV",
+    "tagline": "Indonesia",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "TV Nusantara",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "84",
+    "nama_channel": "UG.tv",
+    "tagline": "Indonesia",
+    "url_iptv": "https://cdn.gunadarma.ac.id/streams/ugtv/ingestugtv.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "TV Nusantara",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "986",
+    "nama_channel": "Sindo News",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2830",
+    "nama_channel": "ANTV HD",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "10",
+    "nama_channel": "GTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1053",
+    "nama_channel": "Indosiar",
+    "tagline": "Entertainment",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/indosiar/indosiar-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "5106",
+    "nama_channel": "iNews",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "18",
+    "nama_channel": "KompasTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2831",
+    "nama_channel": "MD.tv",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "14",
+    "nama_channel": "MetroTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8",
+    "url_license": "c64493155d8b443c834a13d4970cf834:509294911ac3c2d779ae2225a23460b4",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "9",
+    "nama_channel": "MNCTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "950",
+    "nama_channel": "mOji",
+    "tagline": "Entertainment",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h207/index.m3u8",
+    "url_license": "052861ebedab473089d0e7480d0c5b63:4d51aa0304af98c449fdec1548a199f9",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "6",
+    "nama_channel": "RCTI",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1106",
+    "nama_channel": "SCTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd",
+    "url_license": "69a5aa835a061ce64a630d1046727e40:d02feac8a999bd06bf4059bf33411749",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "11",
+    "nama_channel": "Trans7",
+    "tagline": "Entertainment",
+    "url_iptv": "https://video.detik.com/trans7-sec/smil:trans7.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603871648&wowzatokenhash=9mTM8_TkKcUD9L7m4YXEfSqNPFXcGdu0jWN6Jx5_D4g%3D",
+    "url_license": "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "13",
+    "nama_channel": "TransTV",
+    "tagline": "Entertainment",
+    "url_iptv": "https://video.detik.com/transtv-sec/smil:transtv.smil/playlist.m3u8?wowzatokenstarttime=0&wowzatokenendtime=1786603947733&wowzatokenhash=QCkmM-TeVM2eAsdCHoRX2nU0qlygmalvFzJoxWBvbYk%3D",
+    "url_license": "334950781f60a66f5e58324b70ac675d:73caca97be8999ce9cfeb3babad8669d",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://20.detik.com/",
+      "Origin": "https://20.detik.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0",
+      "Cookie": "dtklucx=gen_33bc1464-62d8-1ab5-55ad-2ef807616998; __dtma=146380193.249217803.1786518838.1786518838.1786518838.1; cshx=3bcdb206; __dtmc=146380193"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "12",
+    "nama_channel": "tvOne",
+    "tagline": "News/Berita",
+    "url_iptv": "https://op-flashcon-digdayahd-1.dens.tv/h/h40/01.m3u8",
+    "url_license": "eab667a8f7f14ff7bf00d790314a10f0:1d6693bc942f036053fc1c3c3b3b5032",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "17",
+    "nama_channel": "TVRI Nasional",
+    "tagline": "News/Berita",
+    "url_iptv": "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://klik.tvri.go.id/",
+      "Origin": "https://klik.tvri.go.id/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2667",
+    "nama_channel": "Animal Planet",
+    "tagline": "Knowledge",
+    "url_iptv": "https://s2129134.cdn.mytvnet.vn/pkg20/live_dzones/ap.smil/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSFZPSTRIZ1VGZXZPeVpGUFd0ZFlkUSIsImtpZCI6IjdHOEhMSEVsTjNxYndLNWhXWUNWOUEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "390",
+    "nama_channel": "Animax HD",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "280",
+    "nama_channel": "AXN",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "284",
+    "nama_channel": "Celestial Classic",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "795",
+    "nama_channel": "Celestial Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1020",
+    "nama_channel": "Cineedge",
+    "tagline": "Movie",
+    "url_iptv": "https://d2xz2v5wuvgur6.cloudfront.net/out/v1/47c895ca72544fcfa4221c499b555a10/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiM2JtWFZlQyt2WmpKTEg2cmwwdnhZUSIsImtpZCI6Ing3T0ZMWnlFUVkrVUtTUGtIREhtTXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "27",
+    "nama_channel": "CNBC",
+    "tagline": "News/Berita",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q05CQy1JbmRvbmVzaWE/manifest.mpd?signature=YTk1ZmIwOGZiNzJmY2MwOTVhMTg1ZDdmNmJmYWY2YjE=\\u0026time=77777777777\\u0026device_id=5LLYcjaiHzf4ZrVqPeZIxlhLX_Y46fBHO562BIliada-K1S-33nh",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "26",
+    "nama_channel": "CNN",
+    "tagline": "News/Berita",
+    "url_iptv": "https://video.detik.com/livecnn/smil:cnntv/chunklist_w268557525_b384000_sleng.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cnnindonesia.com/",
+      "Origin": "https://www.cnnindonesia.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1157",
+    "nama_channel": "Discovery Channel",
+    "tagline": "Knowledge",
+    "url_iptv": "https://cdnbal1.indihometv.com/atm/DASH/disco/master.mpd",
+    "url_license": "192b1115da041585c77200128549efa1:634e10efe4abbb14be400a3ccbac0258",
+    "jenis": "dash",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://maxstream.tv/",
+      "Origin": "https://maxstream.tv",
+      "User-Agent": "IndiHomeTV/8.7.12 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "293",
+    "nama_channel": "Food Travel",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "292",
+    "nama_channel": "Galaxy Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "291",
+    "nama_channel": "Galaxy TV",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "956",
+    "nama_channel": "HBO",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjkt913.transvision.co.id:1000/live/master/3/4028c6856b6088c3016b87d64b970b53/manifest.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "957",
+    "nama_channel": "HBO Cinemax",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/Q2luZW1heA/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "955",
+    "nama_channel": "HBO Family",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLUZhbWlseS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "179",
+    "nama_channel": "HBO Hits",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPIEhpdHM/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "958",
+    "nama_channel": "HBO Signature",
+    "tagline": "Movie",
+    "url_iptv": "https://cdnjktcyber05.transvision.co.id/riutx01-2c1fa8682342c878f128b4149a675281/dash/SEJPLVNpZ25hdHVyZS1teQ/manifest.mpd?=\\u0026time=77777777777",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiU3I4ZjBtNk1SYVcydXVZTTl2L0N1USIsImtpZCI6ImIvdWNVNjhvVDlXUUlYN2VIcnAyWGcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.cubmu.com/",
+      "Origin": "https://www.cubmu.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    },
+    "license_headers": {
+      "x-data": "none",
+      "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "289",
+    "nama_channel": "HITS Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "463",
+    "nama_channel": "IMC Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "1082",
+    "nama_channel": "Love Nature V+",
+    "tagline": "Knowledge",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "724",
+    "nama_channel": "Music TV",
+    "tagline": "Music",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3214",
+    "nama_channel": "Premium Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "95",
+    "nama_channel": "Rock Action",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "75",
+    "nama_channel": "Rock Entertainment",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "376",
+    "nama_channel": "Thrill.TV",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "287",
+    "nama_channel": "tVN Movies",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "286",
+    "nama_channel": "tVN Premium",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "3836",
+    "nama_channel": "Uniquest (V+)",
+    "tagline": "Movie",
+    "url_iptv": "https://d3b0v7fggu5zwm.cloudfront.net/out/v1/bde0a6d8d3fd4d77ae5093ad2e6699dc/index.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiME1kaU44WHVPT2VrSU9uSU15TUNQZyIsImtpZCI6IldtWm84NlhXUXppODRUTUg1Y1Z3dmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": null,
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "2904",
+    "nama_channel": "Vision Prime HD",
+    "tagline": "Entertainment",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "797",
+    "nama_channel": "Zee Bioskop",
+    "tagline": "Movie",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "28",
+    "nama_channel": "BTV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "53",
+    "nama_channel": "Citra Muslim",
+    "tagline": "Moslem",
+    "url_iptv": "https://atemecdnbalancer-voe.sysln.id/live/eds/CitraMuslimHD/mediampd/CitraMuslimHD.mpd",
+    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoibjNWVlJBK3pFRFFkMndETnZHT002ZyIsImtpZCI6IjhMMzk3dzlXU0JtaXRETkZzeWo1aVEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
+    "jenis": "dash-clearkey",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://firstmedia-tv.id/",
+      "Origin": "https://firstmedia-tv.id",
+      "User-Agent": "ExoPlayerDemo/2.15.1 (Linux; Android 13) ExoPlayerLib/2.15.1"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "65",
+    "nama_channel": "Garuda TV",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://hgmtv.com:19360/garudatvlivestreaming/720p.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "VLC/3.0.9 LibVLC/3.0.9 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "30",
+    "nama_channel": "Nusantara TV",
+    "tagline": "News/Berita",
+    "url_iptv": "https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "110",
+    "nama_channel": "Rodja.tv",
+    "tagline": "Moslem",
+    "url_iptv": "https://rodjatv.com/rodjatv/live.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "21",
+    "nama_channel": "RTV",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/index.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "apikey": "k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2aWQiOjAsInRva2VuIjoiZjlhYjEyMjg1NmQ3NGYwZiIsInBsIjoid2ViIiwiZGV2aWNlX2lkIjoiMjllNWZkOGEtMDg2YS0xMWVmLTliYTAtMDAxNjNlMDQxOGVjIn0.T0iVov0r2Ai-bhP3NsSoOZhP2WansABSNhrWzvB29-c",
+      "Referer": "https://www.rctiplus.com",
+      "Origin": "https://www.rctiplus.com",
+      "drm": "widevine"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "155",
+    "nama_channel": "TV9 Nusantara",
+    "tagline": "Moslem",
+    "url_iptv": "http://5bf7b725107e5.streamlock.net/tv9/tv9/playlist.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  },
+  {
+    "id_iptv": "84",
+    "nama_channel": "UG.tv",
+    "tagline": "TV Nusantara",
+    "url_iptv": "https://cdn.gunadarma.ac.id/streams/ugtv/ingestugtv.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "ID",
+    "country_name": "Indonesia",
+    "logo": "",
+    "headers": {
+      "Referer": "none",
+      "Origin": "none",
+      "User-Agent": "none"
+    },
+    "license_headers": {
+      "x-data": "none"
+    },
+    "updated_token": 1791800520
+  }
+]
