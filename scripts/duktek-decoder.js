@@ -94,7 +94,7 @@ function pulihkan(payloadStr) {
  */
 function normalizeLogo(logoPath) {
   if (!logoPath) return '';
-  if (logoPath.startsWith('http')) return logoPath;
+  if (logoPath.startsWith('data:image') || logoPath.startsWith('http')) return logoPath;
   const cleanName = logoPath.replace(/^\/?(uploads\/)?/, '');
   return `${UPLOADS_BASE}/${cleanName}`;
 }
@@ -217,6 +217,9 @@ async function run() {
         if (item.header_license) parsedLicenseHeader = JSON.parse(item.header_license);
       } catch (e) {}
 
+      const rawLogo = item.image || item.logo || item.gbr_channel || '';
+      const finalLogo = normalizeLogo(rawLogo);
+
       allChannels.push({
         id_iptv: String(item.id || item.id_iptv || ''),
         nama_channel: item.name || item.nama_channel || '',
@@ -226,7 +229,8 @@ async function run() {
         jenis: item.jenis || 'hls',
         country_code: item.alpha_2_code || data.country || code,
         country_name: item.country_name || countryName,
-        logo: normalizeLogo(item.logo || item.gbr_channel || ''),
+        logo: finalLogo,
+        gbr_base64: finalLogo.startsWith('data:image') ? finalLogo : '',
         headers: parsedHeader,
         license_headers: parsedLicenseHeader,
         updated_token: data.token || remoteToken
@@ -236,16 +240,66 @@ async function run() {
 
   report.sort((a, b) => a.country_name.localeCompare(b.country_name));
 
+  // FITUR HEALTH CHECK STREAM (HIDUP VS MATI)
+  const isCheckStream = args.includes('--check') || args.includes('-c') || args.includes('--filter-live');
+  let aliveChannels = allChannels;
+
+  if (isCheckStream) {
+    console.log('\n' + '='.repeat(65));
+    console.log(` 🩺 [STREAM HEALTH CHECK] Memeriksa status hidup/mati stream...`);
+    console.log(`    Total stream yang akan diperiksa: ${allChannels.length}`);
+    console.log('='.repeat(65));
+
+    let testedCount = 0;
+    let liveCount = 0;
+
+    await mapConcurrent(allChannels, 20, async (ch) => {
+      const checkResult = await testStreamUrl(ch.url_iptv, ch.headers, 3000);
+      testedCount++;
+      ch.is_alive = checkResult.ok;
+      ch.status = checkResult.ok ? 'live' : 'offline';
+      ch.http_status = checkResult.status;
+
+      if (checkResult.ok) {
+        liveCount++;
+      }
+
+      if (testedCount % 50 === 0 || testedCount === allChannels.length) {
+        process.stdout.write(`\r [STATUS] Diperiksa: ${testedCount}/${allChannels.length} | Hidup: ${liveCount} | Mati: ${testedCount - liveCount}`);
+      }
+    });
+
+    console.log('\n' + '='.repeat(65));
+    console.log(` ✅ Pemeriksaan Selesai!`);
+    console.log(`    Stream Hidup (Live) : ${liveCount}`);
+    console.log(`    Stream Mati         : ${allChannels.length - liveCount}`);
+    console.log('='.repeat(65) + '\n');
+
+    aliveChannels = allChannels.filter(c => c.is_alive);
+  } else {
+    // Default: tandai status live jika belum dicek
+    allChannels.forEach(c => {
+      c.is_alive = true;
+      c.status = 'live';
+    });
+  }
+
   const outPath1 = path.join(DATA_DIR, 'duktek-channels.json');
   const outPath2 = path.join(SRC_DATA_DIR, 'duktek-channels.json');
+  const outAlive1 = path.join(DATA_DIR, 'duktek-channels-alive.json');
+  const outAlive2 = path.join(SRC_DATA_DIR, 'duktek-channels-alive.json');
 
   const payloadJson = JSON.stringify(allChannels, null, 2);
   fs.writeFileSync(outPath1, payloadJson, 'utf-8');
   fs.writeFileSync(outPath2, payloadJson, 'utf-8');
 
+  const payloadAliveJson = JSON.stringify(aliveChannels, null, 2);
+  fs.writeFileSync(outAlive1, payloadAliveJson, 'utf-8');
+  fs.writeFileSync(outAlive2, payloadAliveJson, 'utf-8');
+
   // Ekspor feed khusus APK Android (tv-sports.json & tv-hiburan.json)
-  const sportsChannels = allChannels.filter(c => c.country_code === 'SP');
-  const hiburanChannels = allChannels.filter(c => c.country_code === 'ID');
+  const sportsChannels = (isCheckStream ? aliveChannels : allChannels).filter(c => c.country_code === 'SP');
+  const hiburanChannels = (isCheckStream ? aliveChannels : allChannels).filter(c => c.country_code === 'ID');
 
   if (sportsChannels.length > 0) {
     const sportsJson = JSON.stringify(sportsChannels, null, 2);
@@ -271,12 +325,41 @@ async function run() {
   console.log('='.repeat(65));
   console.log(` Total Kategori Berhasil : ${report.length} dari ${targetCodes.length}`);
   console.log(` Total Channel Tersimpan : ${allChannels.length} channel`);
+  if (isCheckStream) {
+    console.log(` Total Channel HIDUP     : ${aliveChannels.length} channel`);
+  }
   console.log(` Token Tersimpan         : ${tokenToSave}`);
   console.log(` Waktu Eksekusi          : ${totalTime} detik`);
   console.log(` File Output             :`);
-  console.log(`  -> ${path.relative(process.cwd(), outPath1)}`);
-  console.log(`  -> ${path.relative(process.cwd(), outPath2)}`);
+  console.log(`  -> ${path.relative(process.cwd(), outPath1)} (semua channel + status)`);
+  console.log(`  -> ${path.relative(process.cwd(), outAlive1)} (hanya stream aktif)`);
+  console.log(`  -> data/tv-sports.json & data/tv-hiburan.json`);
   console.log('='.repeat(65) + '\n');
+}
+
+/**
+ * Health check HTTP stream URL
+ */
+async function testStreamUrl(url, headers, timeoutMs = 3000) {
+  if (!url || !url.startsWith('http')) return { ok: false, status: 0, reason: 'Invalid URL' };
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Range': 'bytes=0-1024',
+        ...(headers || {})
+      },
+      signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    return { ok: res.ok, status: res.status };
+  } catch (err) {
+    clearTimeout(timer);
+    return { ok: false, status: 0, reason: err.name === 'AbortError' ? 'TIMEOUT' : err.message };
+  }
 }
 
 run();
