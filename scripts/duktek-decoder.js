@@ -147,7 +147,10 @@ async function fetchDatSources() {
           gbr_base64: logo.startsWith('data:image') ? logo : '',
           headers: streamHeaders,
           license_headers: null,
-          source_type: 'assets_dat'
+          source_type: 'assets_dat',
+          is_alive: true,
+          status: 'live',
+          http_status: 200
         });
       }
       console.log(` 📦 [ASSETS DAT] Membaca tv-hiburan.dat: ${arrH.length} channel dimuat`);
@@ -198,7 +201,10 @@ async function fetchDatSources() {
           gbr_base64: logo.startsWith('data:image') ? logo : '',
           headers: streamHeaders,
           license_headers: null,
-          source_type: 'assets_dat'
+          source_type: 'assets_dat',
+          is_alive: true,
+          status: 'live',
+          http_status: 200
         });
       }
       console.log(` 📦 [ASSETS DAT] Membaca tv-sports.dat: ${arrS.length} channel dimuat`);
@@ -475,6 +481,16 @@ async function run() {
     let liveCount = 0;
 
     await mapConcurrent(allChannels, 20, async (ch) => {
+      // Khusus channel dari tv-hiburan.dat & tv-sports.dat (assets_dat), TIDAK USAH dicek alive/mati (selalu live)
+      if (ch.source_type === 'assets_dat') {
+        ch.is_alive = true;
+        ch.status = 'live';
+        ch.http_status = 200;
+        liveCount++;
+        testedCount++;
+        return;
+      }
+
       const checkResult = await testStreamUrl(ch.url_iptv, ch.headers, 3000);
       testedCount++;
       ch.is_alive = checkResult.ok;
