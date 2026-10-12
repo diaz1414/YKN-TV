@@ -1005,13 +1005,49 @@ export const getLiveSportsData = async (): Promise<{
     console.warn('[streamService] Failed to inject Esportex events:', xErr);
   }
 
-  // Process Sports TV
+  const normalizeChannelKey = (name: string): string => {
+    if (!name) return '';
+    return name
+      .toLowerCase()
+      .replace(/\[ch\d+\]/gi, '')
+      .replace(/\b(hd|fhd|sd|4k|uhd|live|24 jam|server \d+|v\+|a\+)\b/gi, '')
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+  };
+
+  // Process Sports TV (Anti-Double Channel & Anti-Fake Loop)
   const seenSports = new Set<string>();
   const mappedSports: PlayableStream[] = [];
   for (const item of sportsData) {
-    const key = item.id_iptv || item.nama_channel;
-    if (seenSports.has(key)) continue;
+    if (!item.nama_channel || !item.url_iptv) continue;
+
+    let streamUrl = item.url_iptv;
+    const nameLower = item.nama_channel.toLowerCase();
+
+    // Buang video pengumuman palsu upstream, kecuali Kompas TV yang dialihkan ke DensTV
+    if (streamUrl.includes('video_with_qr') || streamUrl.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8')) {
+      if (nameLower.includes('kompas')) {
+        streamUrl = 'https://op-flashcon-digdayahd-1.dens.tv/h/h234/index.m3u8';
+      } else {
+        continue;
+      }
+    }
+
+    const normKey = normalizeChannelKey(item.nama_channel);
+    const key = normKey || item.id_iptv;
+    if (seenSports.has(key)) {
+      // Jika channel sudah ada tapi yang ini memiliki logo base64, update logonya
+      if (item.gbr_base64) {
+        const existing = mappedSports.find(s => normalizeChannelKey(s.name) === normKey);
+        if (existing && !existing.isBase64Logo) {
+          existing.logo = item.gbr_base64;
+          existing.isBase64Logo = true;
+        }
+      }
+      continue;
+    }
     seenSports.add(key);
+    if (item.id_iptv) seenSports.add(item.id_iptv);
 
     let name = item.nama_channel;
     if (name.toLowerCase() === "init duktek") {
@@ -1025,7 +1061,7 @@ export const getLiveSportsData = async (): Promise<{
       logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
       servers: buildServers(
-        item.url_iptv,
+        streamUrl,
         item.url_license,
         item.jenis,
         item.forceProxy === true || item.force_proxy === true || item.force_proxy === 'true'
@@ -1034,20 +1070,47 @@ export const getLiveSportsData = async (): Promise<{
     });
   }
 
-  // Process Live TV
+  // Process Live TV (Anti-Double Channel & Anti-Fake Loop)
   const seenLive = new Set<string>();
   const mappedLive: PlayableStream[] = [];
   for (const item of liveData) {
-    const key = item.id_iptv || item.nama_channel;
-    if (seenLive.has(key)) continue;
+    if (!item.nama_channel || !item.url_iptv) continue;
+
+    let streamUrl = item.url_iptv;
+    const nameLower = item.nama_channel.toLowerCase();
+
+    // Buang video pengumuman palsu upstream, kecuali Kompas TV yang dialihkan ke DensTV
+    if (streamUrl.includes('video_with_qr') || streamUrl.includes('movietrailersxxi-pixel/web/main/ts/index.m3u8')) {
+      if (nameLower.includes('kompas')) {
+        streamUrl = 'https://op-flashcon-digdayahd-1.dens.tv/h/h234/index.m3u8';
+      } else {
+        continue;
+      }
+    }
+
+    const normKey = normalizeChannelKey(item.nama_channel);
+    const key = normKey || item.id_iptv;
+    if (seenLive.has(key)) {
+      // Jika channel sudah ada tapi yang ini memiliki logo base64, update logonya
+      if (item.gbr_base64) {
+        const existing = mappedLive.find(s => normalizeChannelKey(s.name) === normKey);
+        if (existing && !existing.isBase64Logo) {
+          existing.logo = item.gbr_base64;
+          existing.isBase64Logo = true;
+        }
+      }
+      continue;
+    }
     seenLive.add(key);
+    if (item.id_iptv) seenLive.add(item.id_iptv);
+
     mappedLive.push({
       id: item.id_iptv,
       name: item.nama_channel,
       subName: item.tagline || 'Saluran Hiburan & Lokal',
       logo: item.gbr_base64 || item.logo || '',
       isBase64Logo: !!item.gbr_base64,
-      servers: buildServers(item.url_iptv, item.url_license, item.jenis),
+      servers: buildServers(streamUrl, item.url_license, item.jenis),
       isChannel: true
     });
   }
