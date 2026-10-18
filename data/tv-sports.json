@@ -22,8 +22,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -50,8 +50,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -78,8 +78,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -107,8 +107,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -135,8 +135,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -163,36 +163,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
-    "is_alive": true,
-    "status": "live"
-  },
-  {
-    "id_iptv": "5050",
-    "nama_channel": "Claro Sport",
-    "tagline": "Colombia",
-    "jadwal_event": "",
-    "jadwal_stop": "",
-    "t_stamp": null,
-    "s_stamp": null,
-    "url_iptv": "https://dish-arg.akamaized.net/Content/DASH/Live/channel(clarosports)/variant.mpd",
-    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiSU9GY0dUcG9wbU1iWFEwZmJseGlCQSIsImtpZCI6IklhZFlEZnpzZ1dCMGt0V2kyMEJ5ZmcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
-    "jenis": "dash-clearkey",
-    "country_code": "CO",
-    "country_name": "Sports",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": {
-      "Referer": "none",
-      "Origin": "none",
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
-    },
-    "license_headers": {
-      "x-data": "none"
-    },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -220,8 +192,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -248,8 +220,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -276,8 +248,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -304,8 +276,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -332,8 +304,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -361,8 +333,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -389,8 +361,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -417,8 +389,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -445,8 +417,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -473,8 +445,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -501,8 +473,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -529,8 +501,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -557,8 +529,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -585,8 +557,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -614,8 +586,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -642,8 +614,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -671,8 +643,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -699,8 +671,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -728,8 +700,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -757,8 +729,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -786,8 +758,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -815,8 +787,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -844,8 +816,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -873,8 +845,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -901,8 +873,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -929,8 +901,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -958,8 +930,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -987,8 +959,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1015,8 +987,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1043,8 +1015,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1071,8 +1043,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1099,8 +1071,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1127,8 +1099,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1156,8 +1128,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1184,8 +1156,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1212,8 +1184,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1240,8 +1212,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1268,8 +1240,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1296,8 +1268,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1324,8 +1296,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1352,8 +1324,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1380,8 +1352,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1408,8 +1380,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1437,8 +1409,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1465,8 +1437,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1493,8 +1465,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1521,8 +1493,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1550,8 +1522,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://a122aivottlinear-a.akamaihd.net/OTTB/syd-nitro/live/clients/dash/enc/8mxwjnh2te/out/v1/356704796c0c4bed81f67cd3518d0c8a/cenc.mpd"
@@ -1579,8 +1551,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1607,8 +1579,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1635,8 +1607,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1663,8 +1635,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1691,8 +1663,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1719,8 +1691,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1747,8 +1719,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1776,8 +1748,8 @@
       "x-data": "none",
       "widevine": "https://mrpw.ptmnc01.verspective.net/?deviceId=ZjdiMDljNTItMmYzZC0zNDcyLTllYmItY2QxNDdiYzlhZWY0"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1805,8 +1777,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1834,8 +1806,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1862,8 +1834,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1890,8 +1862,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1919,8 +1891,8 @@
       "x-data": "none",
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1948,8 +1920,8 @@
       "x-data": "none",
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -1977,8 +1949,8 @@
       "x-data": "none",
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2005,8 +1977,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2033,8 +2005,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2061,8 +2033,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2089,8 +2061,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2117,8 +2089,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2145,8 +2117,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2173,8 +2145,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2201,8 +2173,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2229,8 +2201,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2257,8 +2229,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2285,8 +2257,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2313,8 +2285,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2341,8 +2313,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2369,8 +2341,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2397,8 +2369,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2425,8 +2397,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2453,8 +2425,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2482,8 +2454,8 @@
       "widevine": "https://mrpw.ptmnc01.verspective.net/?deviceId=NDIzMDJhZmUtYWRjMi0zNGJkLTkyN2EtYmE1ZDFlZWIwODEz",
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6 RTSP-Dogkiller)"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2510,8 +2482,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2538,8 +2510,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2566,8 +2538,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2594,8 +2566,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.180Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2622,8 +2594,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2650,8 +2622,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2678,8 +2650,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2706,8 +2678,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2734,8 +2706,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2762,8 +2734,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2790,8 +2762,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2818,36 +2790,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
-    "is_alive": true,
-    "status": "live"
-  },
-  {
-    "id_iptv": "167",
-    "nama_channel": "TMC",
-    "tagline": "France",
-    "jadwal_event": "",
-    "jadwal_stop": "",
-    "t_stamp": null,
-    "s_stamp": null,
-    "url_iptv": "https://api-proxad.dc2.oqee.net/playlist/v1/live/497/1/live.mpd",
-    "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiL1JhaXdjV3R5bnpaRmYzN0Jsc0dHdyIsImtpZCI6IkNMNG55cHVFMElqT1NjNVBXMDN6ZFEifSx7Imt0eSI6Im9jdCIsImsiOiJmTzdyZUg1OWF1bW44Q1Ewb3lTQ3J3Iiwia2lkIjoiV1A4OHExcngwcFFTeStWS0FCaW5VUSJ9LHsia3R5Ijoib2N0IiwiayI6InRGeEE2UHFkNDhCVzJMam5lb3krNHciLCJraWQiOiJYU3ZXeGRNQmVraTJvNjdFZUc0K1V3In0seyJrdHkiOiJvY3QiLCJrIjoiWHR1VVQ0R3hzcTUrSHN3QWZMc3hnUSIsImtpZCI6Iitab0VjRUpYUU9kRDUvUVF0b1J6TkEifSx7Imt0eSI6Im9jdCIsImsiOiJ0QTlhVVRrUFZJcWpkS2thZ1hBY0RRIiwia2lkIjoiaGVZYmh6dnArenBzTzRpYm9XSzF1USJ9XX0=",
-    "jenis": "dash-clearkey",
-    "country_code": "FR",
-    "country_name": "Sports",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABaCAYAAABzAJLvAAAHF0lEQVR4Xu2bT0gXWxTHr/9LTdSIdCei2UZwobjRTdCyVdFCIVwYgrnI1MWjt3xvUbiK1ookRlFua9+qaFsgQlQa7xmEppWlme/3ub/OdH+/5vfTpHxx5lwY5jdz596Zcz73e+6ZO1qw8nf9trOi1gMFBlgtW2+YAdbN1wAr52uADbB2Dyi3z+ZgA6zcA8rNMwUbYOUeUG6eKdgAK/eAcvNMwQZYuQeUm2cKNsDKPaDcPFOwAVbuAeXmmYINsHIPKDfPFGyAlXtAuXmmYAOs3APKzTMFG2DlHlBuninYACv3gHLzTMEGWLkHlJtnCjbAyj2g3DxTsAFW7gHl5u27gqsv/+NdWlBQ4EpLS11ZWZkrKSlxxcXFfs8xv9mH9UVFBb6ejfPSpqioyB+zl3P0zba5uem+fPniN35//vw52nNua2srtW1H9TxX+lx6+3bNlm8b1tGfHFPHtr29ndFuY2PDH7PneahP/cP9vg6p/wUwxh44cCCCEkITqFyTCbMwgi+AQ8hyPYNDAON0IAmc7OMQsFwj1wvccC8gaUeRawW2HHMdBbAywAR0IgAXFhZGahS1hioGYLaii4vTgAU69bLRX7aCOSdABUCowlDBOJ9rRMEh7FC1uX7LfaSevlBrOKAE/vJfdfoVHAdYnELd4cOHozDMMWAPHjzoN44rKiqiAYATGRCp00GITw+QDx8+pJy84eHh/N0A5pqPHz/6NgwmCdVh20+fPnllEilWV1f9vagvLy937969822pC0M0wGmTOMAMZxz54sULd+jQoT2N7tevX7vLl//woK9du5ZSc4l35sDAQGqfHgBheM0Mw2mlnTp1yvX390cqPnnyZMacC2j6efXqlXv27JkHmF3ot7m52S0vL7uVlZVYWxIHGFX29PS48fFxr4S9FBQ1MjLsjh8/7i5cuJByflGkvNHRS15J+QCjvKmpKR8dpHR3d/vjMCw/ePDAHxNRmBLiyvr6unv69Knr6OgwwDLvEtLevHnjHbeXQvgbHBx0LS0t7uLFixldAH9sbCwVdtdTkNOZtCiYdpubW+7u3bt+zhTA1EuyJp3Rz48MwOfPn7vGxsbvzEmMgnFWmA0Tntvb270TUZTM04RcCYeo48qVK34gSP3bt2992GSwxAHGw8yTIyOXPGAUCExUvba25u7cmfX3C4sA5hzPQ0g+cuRIxgDkmpmZGffw4UN3/vx519TUlNEP9+GZsktiAYfAJYsGJA4My+nTp1PAt/3gCLPokpKynIBpPz8/78MmsAGM80mI6CduLhW1EopRr6ibttPT0+7cuXPfzcPv37/3r38MyCdPnrjW1lYDLIsXvxowih0dHXXXr1/3sIDLuaqqqryA79+/706cOBGFZ6JIdXV1lCWHjcUW+icTl/fh8JpEK1jmZFQg78f5FMz1hEqU/vLloqupqXG3bt3y/gQeapN5HTD85hWMLDcsgAjn1zBEkx9IQkWf3EMWLfaSL6gHXPPnv94v4YKFZKW7AXzmzJkI3r1797ySZF49e/ZsBBhIfX19bnJyMmfGy3Og5NnZWdfb2xtdlw0YRcpSY67sebewDXAqqUHBAvvRo0cZc50oTRYaUCmFfRzg27dv+3mX/uLeXSUZYi/1IWDULUuf3IdFFlno2C3URIXo3SoYICjn8ePHGWBQkEANHZcL8I0bN1xlZaWHHAIGKOqtra2NPhLEASZDP3r0aPROPDQ05CYmJqKlzR+FnCgFS2IlIZo96uUdMlzAD534o4DJeCl1dXVuYWHBh2FZtgS8fDjIpWBej5aWljI48pyyhCkVDLC2tjb/SoXCma/jSuIASzhGYWSe2YVw+TMAc5+uri5HVsx96uvr/XuwlFyAiSIkaJI3yPUsnpCRA5NBw2vRsWPHPHimFTJv6rJLYgCjXnnHzBfmfhZgFMb96A/YQMsO2XEhWr43MxjCuVieiwHAb+lfPioQgbIXULAzMYBxRFzS86sUvNNcmUvBtANiQ0ODm5uby5uRc618JmQBJc6+xADeyeFS/7MUvNP98gGWtqh5cXHRK5P5OxsgnyeJDiy7SlhPbIjeyeGiHEKjLFYAO25pUZTDa9LNmzd91wBjOVEWPvLdjy9a4XxMeA0TsLi2w8PD7urVq1HY7uzs9Bn/TsUUHHhIFhVExYQ/YORSR6go2hBa416p4iCE1/KKlisLlrbyKZE9+YT8RYgB/rqStZMjtNabgrWS/WqXesDK+f125u37n83+dh5Q/kAG2AAr94By80zBBli5B5SbZwo2wMo9oNw8U7ABVu4B5eaZgg2wcg8oN88UbICVe0C5eaZgA6zcA8rNMwUbYOUeUG6eKdgAK/eAcvNMwQZYuQeUm2cKNsDKPaDcPFOwAVbuAeXmmYINsHIPKDfPFGyAlXtAuXmmYAOs3APKzTMFKwf8HzrO8Dho5spzAAAAAElFTkSuQmCC",
-    "headers": {
-      "Referer": "none",
-      "Origin": "none",
-      "User-Agent": "none"
-    },
-    "license_headers": {
-      "x-data": "none"
-    },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2874,8 +2818,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2903,8 +2847,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2932,8 +2876,8 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/ywydwsbcrd/out/v1/6a5582b3fd4e42b097a2394c5f65ccd4/cenc.mpd"
@@ -2961,8 +2905,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -2989,8 +2933,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -3017,8 +2961,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   },
@@ -3045,8 +2989,8 @@
     "license_headers": {
       "x-data": "none"
     },
-    "updated_token": 1792341240,
-    "last_updated": "2026-10-18T16:44:49.659Z",
+    "updated_token": 1792347660,
+    "last_updated": "2026-10-18T19:20:00.181Z",
     "is_alive": true,
     "status": "live"
   }
