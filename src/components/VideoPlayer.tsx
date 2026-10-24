@@ -6,7 +6,6 @@ import {
   RefreshCcw, Volume2, VolumeX, Maximize2, Minimize2, Settings, PictureInPicture2
 } from 'lucide-react';
 import { getCdnBackupUrl, getProxiedUrl, type StreamServer } from '../services/streamService';
-import { isVipActive } from '../services/vipService';
 import GlobalAnnouncement from './GlobalAnnouncement';
 
 interface VideoPlayerProps {
