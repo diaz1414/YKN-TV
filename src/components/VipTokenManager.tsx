@@ -479,7 +479,7 @@ Selamat menonton siaran bola lancar tanpa gangguan iklan redirect! ⚽🔥`;
                     const used = item.registered_devices ? item.registered_devices.length : 0;
                     const max = item.max_devices || 1;
                     const isFull = used >= max;
-                    const isPerm = item.duration_days === 0 || item.expired_at === 'permanent';
+                    const isPerm = Number(item.duration_days || 0) === 0;
 
                     return (
                       <div
