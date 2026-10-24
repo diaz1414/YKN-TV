@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import { ChevronLeft, ChevronRight, Key, ShieldAlert, RefreshCw, LogOut, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X, ChevronDown, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Key, ShieldAlert, RefreshCw, LogOut, Tv, Activity, CheckCircle, Users, Radio, Search, Info, AlertTriangle, X, ChevronDown, Check, Crown } from 'lucide-react';
 import axios from 'axios';
+import VipTokenManager from '../components/VipTokenManager';
 import { getLiveSportsData, slugify, type PlayableStream } from '../services/streamService';
 import { XOILAC_SPORTS, type XoilacSport } from '../services/xoilacService';
 import yknLogo from '../assets/ykn-tv-logo.png';
@@ -442,7 +443,7 @@ const AdminDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [monitorTab, setMonitorTab] = useState<
-    'all' | 'channels' | 'matches' | 'users' | 'announcement' | 'servers' | 'schedule'
+    'all' | 'channels' | 'matches' | 'users' | 'announcement' | 'servers' | 'schedule' | 'vip'
   >('all');
   const [matchCategoryTab, setMatchCategoryTab] = useState<MatchCategoryTab>('all');
 
@@ -1532,7 +1533,25 @@ const AdminDashboard = () => {
 
               {/* Action Buttons */}
               <div className="glass-card rounded-[2rem] p-6 border border-white/5 space-y-4">
-                <h3 className="text-[9.5px] font-black uppercase tracking-widest text-zinc-400">Kontrol Bot & Scraper</h3>
+                <h3 className="text-[9.5px] font-black uppercase tracking-widest text-zinc-400">Kontrol Bot & VIP</h3>
+
+                {/* VIP Manager Shortcut */}
+                <button
+                  onClick={() => setMonitorTab('vip')}
+                  className={`w-full p-3.5 bg-zinc-950/60 hover:bg-zinc-900/50 border rounded-xl flex items-center justify-between transition-all group cursor-pointer ${
+                    (monitorTab as string) === 'vip' ? 'border-[#D4AF37]/50 bg-[#D4AF37]/10' : 'border-white/5 hover:border-[#D4AF37]/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center text-[#D4AF37] group-hover:scale-105 transition-all">
+                      <Crown size={14} />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-black text-white">Kelola VIP No-Ads</p>
+                      <p className="text-[8px] text-[#D4AF37] font-bold uppercase tracking-wider mt-0.5">Token 15k & 35k / Giveaway</p>
+                    </div>
+                  </div>
+                </button>
 
                 {/* Trigger Scraper */}
                 <button
@@ -2935,6 +2954,19 @@ const AdminDashboard = () => {
                     </div>
                   );
                 })()
+                ) : (monitorTab as string) === 'vip' ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={() => setMonitorTab('all')}
+                        className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-all group py-2 px-3.5 bg-zinc-900/50 hover:bg-zinc-800/60 rounded-xl border border-white/5 text-[9px] font-black uppercase tracking-widest cursor-pointer select-none"
+                      >
+                        <ChevronLeft size={12} className="group-hover:-translate-x-0.5 transition-transform text-zinc-400 group-hover:text-white" />
+                        <span>KEMBALI KE MONITOR</span>
+                      </button>
+                    </div>
+                    <VipTokenManager />
+                  </div>
                 ) : (
                   /* Default Monitoring Grid: Channels + Chat */
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
@@ -3016,6 +3048,15 @@ const AdminDashboard = () => {
                             }`}
                         >
                           Buat Jadwal
+                        </button>
+                        <button
+                          onClick={() => setMonitorTab('vip')}
+                          className={`flex-shrink-0 px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer ${(monitorTab as string) === 'vip'
+                            ? 'bg-[#D4AF37] text-black font-black shadow-lg shadow-[#D4AF37]/20'
+                            : 'text-[#D4AF37] hover:text-white hover:bg-[#D4AF37]/10 border border-[#D4AF37]/20'
+                            }`}
+                        >
+                          👑 VIP Token
                         </button>
                         {adminRole === 'developer' && (
                           <button

@@ -544,7 +544,7 @@
         } catch(e) {}
         try {
           var path = window.location.pathname;
-          if (path.indexOf('/ykn-c0ntr0l-hq') === 0) return true;
+          if (path.indexOf('/ykn-c0ntr0l-hq') === 0 || path.indexOf('/aktivasi') === 0) return true;
 
           var host = window.location.hostname;
           if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.')) return true;
@@ -553,6 +553,22 @@
           var isAdminLogged = localStorage.getItem('ykn_admin_logged_in') === 'true' || sessionStorage.getItem('ykn_admin_logged_in') === 'true';
 
           if (role === 'developer' || role === 'admin' || isAdminLogged) return true;
+
+          // Deteksi VIP No-Ads Token
+          var isVip = localStorage.getItem('ykn_vip_active') === 'true';
+          var vipToken = localStorage.getItem('ykn_vip_token');
+          var vipExp = localStorage.getItem('ykn_vip_expired_at');
+
+          if (isVip && vipToken) {
+            if (vipExp && vipExp !== 'permanent') {
+              var expTime = new Date(vipExp).getTime();
+              if (!isNaN(expTime) && Date.now() > expTime) {
+                localStorage.removeItem('ykn_vip_active');
+                return false; // Masa aktif trial habis
+              }
+            }
+            return true; // Bypass iklan redirect total untuk VIP!
+          }
         } catch (e) { }
         return false;
       }

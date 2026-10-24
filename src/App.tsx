@@ -5,6 +5,7 @@ import ChannelDetail from './pages/ChannelDetail';
 import StatusPage from './pages/StatusPage';
 import NotFound from './pages/NotFound';
 import About from './pages/About';
+import AktivasiVIP from './pages/AktivasiVIP';
 
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
@@ -32,8 +33,9 @@ function AdsController() {
     const isWatchPage = path.startsWith('/watch/');
     const isAdminPage = path.startsWith('/ykn-c0ntr0l-hq');
 
-    // Deteksi sesi developer atau admin
+    // Deteksi sesi developer atau admin atau VIP
     const isAdmin = isPrivilegedAdminSession();
+    const isVip = localStorage.getItem('ykn_vip_active') === 'true';
 
     // Deteksi keberadaan script Monetag di DOM saat ini (Vignette, Popunder, atau Push Notification)
     const hasMonetag = !!(
@@ -42,11 +44,11 @@ function AdsController() {
       document.querySelector('script[src*="5gvci.com"]')
     );
 
-    if (isAdmin) {
-      // Jika terdeteksi admin/developer dan iklan masih ada di DOM (karena baru login/berpindah),
+    if (isAdmin || isVip) {
+      // Jika terdeteksi admin/developer/VIP dan iklan masih ada di DOM (karena baru aktivasi/berpindah),
       // lakukan reload sekali untuk membersihkannya secara bersih dari memori.
       if (hasMonetag) {
-        console.log('[AdsController] Admin/Developer session active with Monetag loaded. Purging ads...');
+        console.log('[AdsController] VIP/Admin session active with Monetag loaded. Purging ads...');
         window.location.reload();
       }
       return;
@@ -173,6 +175,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/status" element={<StatusPage />} />
+          <Route path="/aktivasi" element={<AktivasiVIP />} />
           <Route path="/watch/:id" element={<ChannelDetail />} />
           <Route path="/ykn-c0ntr0l-hq" element={adminDashboard} />
           <Route path="/ykn-c0ntr0l-hq/dashboard" element={adminDashboard} />
