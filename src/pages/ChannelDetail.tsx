@@ -866,10 +866,10 @@ const ChannelDetail = () => {
                       {stream.name}
                     </h3>
                     <p className="text-[10px] sm:text-xs text-zinc-400 font-bold uppercase tracking-wider">
-                      Kickoff: {stream.jadwal_event ? formatMatchTime(parseJadwal(stream.jadwal_event)) : ''}
+                      Jam Mulai: {stream.jadwal_event ? `${formatMatchTime(parseJadwal(stream.jadwal_event))} WIB` : ''}
                     </p>
                     <p className="text-[9px] sm:text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
-                      Siaran Live Dibuka 30 Menit Sebelum Kickoff
+                      Siaran Live Dibuka 30 Menit Sebelum Pertandingan Mulai
                     </p>
                   </div>
 
@@ -920,7 +920,7 @@ const ChannelDetail = () => {
                     <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span>
                   </span>
                   <span className="bg-amber-500 text-black px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-md shadow-amber-500/20 shrink-0">
-                    INFO KICKOFF
+                    JAM MULAI PERTANDINGAN
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-300 font-bold flex-wrap">

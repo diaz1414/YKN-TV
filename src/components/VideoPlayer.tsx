@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import shaka from 'shaka-player';
 import Hls from 'hls.js';
 import {
@@ -2214,30 +2214,57 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ servers }) => {
       </div>
 
       {servers.length > 1 && (
-        <div className="mx-4 flex flex-col md:flex-row md:items-center gap-4 p-4 bg-[#080808]/40 border border-white/5 rounded-2xl sm:mx-0">
-          <div className="flex items-center gap-2 pr-4 md:border-r border-white/5 select-none shrink-0">
-            <Server size={16} className="text-primary" />
-            <span className="text-xs font-black uppercase tracking-wider">Pilih Server</span>
+        <div className="mx-4 flex flex-col gap-3 p-4 bg-[#08080a]/90 backdrop-blur-md border border-white/[0.08] rounded-2xl shadow-lg sm:mx-0 select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 pr-4 sm:border-r border-white/10 shrink-0">
+              <Server size={15} className="text-primary" />
+              <span className="text-xs font-black uppercase tracking-wider text-white">Jalur Siaran:</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2 flex-1">
+              {servers.map((server, index) => {
+                const isSelected = currentServer.url === server.url && currentServer.forceProxy === server.forceProxy && currentServer.cdnBackup === server.cdnBackup;
+                return (
+                  <button
+                    key={`${server.url}-${index}`}
+                    onClick={() => selectServer(server)}
+                    className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable transform-gpu active:scale-95 ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-primary to-yellow-500 text-black shadow-[0_0_14px_rgba(212,175,55,0.4)] font-black'
+                        : 'bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 hover:text-white border border-white/[0.08]'
+                    }`}
+                    tabIndex={0}
+                  >
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-black' : 'bg-emerald-400'}`} />
+                      <span>{index === 0 ? 'Server 1 (Utama)' : `Server ${index + 1} (Cadangan)`}</span>
+                    </span>
+
+                    {(server.forceProxy || server.cdnBackup || server.keyId || server.keys || server.url.includes('|')) && (
+                      <Shield size={9} className="absolute top-1 right-1 opacity-40 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => {
+                const s = currentServer;
+                selectServer(s);
+              }}
+              title="Segarkan Siaran"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold text-zinc-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-all cursor-pointer tv-focusable shrink-0"
+              tabIndex={0}
+            >
+              <RefreshCcw size={11} />
+              <span>Muat Ulang</span>
+            </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 flex-1">
-            {servers.map((server, index) => (
-              <button
-                key={`${server.url}-${index}`}
-                onClick={() => selectServer(server)}
-                className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all relative overflow-hidden group cursor-pointer tv-focusable ${currentServer.url === server.url && currentServer.forceProxy === server.forceProxy && currentServer.cdnBackup === server.cdnBackup
-                  ? 'bg-primary text-dark shadow-md'
-                  : 'bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5'
-                  }`}
-                tabIndex={0}
-              >
-                <span className="relative z-10">Server {index + 1}</span>
-
-                {(server.forceProxy || server.cdnBackup || server.keyId || server.keys || server.url.includes('|')) && (
-                  <Shield size={9} className="absolute top-0.5 right-0.5 opacity-40 shrink-0" />
-                )}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 pt-2 border-t border-white/[0.05] text-[10px] text-zinc-400 font-medium">
+            <span className="text-amber-400 font-black">💡 Tips:</span>
+            <span>Jika siaran mengalami buffering atau macet, klik Server Cadangan lain di atas.</span>
           </div>
         </div>
       )}

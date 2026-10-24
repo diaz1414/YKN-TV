@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import { startTransition, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, RadioTower, Flame, Radio } from 'lucide-react';
+import { RadioTower, Flame, Radio } from 'lucide-react';
 import {
   FaFutbol,
   FaBasketball,
@@ -138,12 +138,23 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
     return () => clearTimeout(t);
   }, [activeTab]);
 
-  const displayedMatches: Match[] = (() => {
+  type StatusFilter = 'all' | 'live' | 'upcoming' | 'finished';
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
+  const baseMatches: Match[] = (() => {
     if (activeTab === 'main') return mainMatches;
 
     const sport = activeTab as XoilacSport;
     return xoilacMatches.filter((match) => matchBelongsToSport(match, sport));
   })();
+
+  const displayedMatches: Match[] = baseMatches.filter((match) => {
+    if (statusFilter === 'all') return true;
+    if (statusFilter === 'live') return match.status === 'live';
+    if (statusFilter === 'upcoming') return match.status === 'upcoming';
+    if (statusFilter === 'finished') return match.status === 'finished';
+    return true;
+  });
 
   const handleMatchClick = (match: Match) => {
     const slugName = `${match.homeTeam.name} vs ${match.awayTeam.name}`;
@@ -164,6 +175,9 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
   }, {} as Record<SportTab, number>);
 
   const totalLiveAll = Object.values(liveCounts).reduce((a, b) => a + b, 0);
+  const currentTabLiveCount = baseMatches.filter((m) => m.status === 'live').length;
+  const currentTabUpcomingCount = baseMatches.filter((m) => m.status === 'upcoming').length;
+  const currentTabFinishedCount = baseMatches.filter((m) => m.status === 'finished').length;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -201,7 +215,7 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
               )}
             </div>
             <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1.5">
-              Multi-Sport Live Broadcast Schedule
+              Siaran Olahraga Langsung & Terjadwal
             </p>
           </div>
         </div>
@@ -224,7 +238,10 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setStatusFilter('all');
+              }}
               className={`group relative flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 outline-none tv-focusable cursor-pointer transform-gpu ${
                 isActive
                   ? 'text-black shadow-[0_0_24px_rgba(212,175,55,0.4)]'
@@ -283,16 +300,96 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
         })}
       </div>
 
+      {/* Quick Status Filter (Semua, Sedang Tayang, Akan Datang, Selesai) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide select-none">
+        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mr-1 shrink-0">
+          Filter:
+        </span>
+        <button
+          onClick={() => setStatusFilter('all')}
+          className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable shrink-0 ${
+            statusFilter === 'all'
+              ? 'bg-white/15 text-white border border-white/20 shadow-sm'
+              : 'bg-white/[0.03] text-zinc-400 hover:text-white border border-white/[0.05]'
+          }`}
+          tabIndex={0}
+        >
+          Semua ({baseMatches.length})
+        </button>
+
+        <button
+          onClick={() => setStatusFilter('live')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable shrink-0 ${
+            statusFilter === 'live'
+              ? 'bg-red-500 text-white shadow-[0_0_14px_rgba(239,68,68,0.4)]'
+              : currentTabLiveCount > 0
+                ? 'bg-red-500/10 text-red-400 border border-red-500/25 hover:bg-red-500/20'
+                : 'bg-white/[0.03] text-zinc-500 border border-white/[0.05]'
+          }`}
+          tabIndex={0}
+        >
+          <span className={`h-1.5 w-1.5 rounded-full ${statusFilter === 'live' ? 'bg-white animate-ping' : 'bg-red-500'}`} />
+          LIVE ({currentTabLiveCount})
+        </button>
+
+        <button
+          onClick={() => setStatusFilter('upcoming')}
+          className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable shrink-0 ${
+            statusFilter === 'upcoming'
+              ? 'bg-amber-500 text-black shadow-[0_0_14px_rgba(245,158,11,0.35)]'
+              : 'bg-white/[0.03] text-zinc-400 hover:text-white border border-white/[0.05]'
+          }`}
+          tabIndex={0}
+        >
+          Akan Datang ({currentTabUpcomingCount})
+        </button>
+
+        <button
+          onClick={() => setStatusFilter('finished')}
+          className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer tv-focusable shrink-0 ${
+            statusFilter === 'finished'
+              ? 'bg-zinc-700 text-white border border-zinc-600'
+              : 'bg-white/[0.03] text-zinc-400 hover:text-white border border-white/[0.05]'
+          }`}
+          tabIndex={0}
+        >
+          Selesai ({currentTabFinishedCount})
+        </button>
+      </div>
+
+      {/* Content Rendering: Stadium Skeleton Loader vs Cards */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4 glass-specular rounded-[2rem]">
-          <Loader2 className="text-primary animate-spin" size={36} />
-          <p className="text-zinc-400 font-black uppercase tracking-[0.15em] text-[10px]">
-            Sinkronisasi Jadwal Siaran...
-          </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((idx) => (
+            <div
+              key={`match-skeleton-${idx}`}
+              className="glass-specular rounded-[1.75rem] p-5 md:p-6 border border-white/[0.06] animate-pulse space-y-5"
+            >
+              <div className="flex justify-between items-center">
+                <div className="h-3 w-28 bg-white/10 rounded-full" />
+                <div className="h-4 w-16 bg-white/10 rounded-full" />
+              </div>
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/5" />
+                  <div className="h-2.5 w-16 bg-white/10 rounded-full" />
+                </div>
+                <div className="h-8 w-14 bg-white/[0.05] rounded-xl border border-white/5" />
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/5" />
+                  <div className="h-2.5 w-16 bg-white/10 rounded-full" />
+                </div>
+              </div>
+              <div className="pt-3 border-t border-white/[0.05] flex justify-between items-center">
+                <div className="h-3 w-24 bg-white/10 rounded-full" />
+                <div className="w-8 h-8 rounded-full bg-white/10" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : displayedMatches.length > 0 ? (
         <motion.div
-          key={activeTab}
+          key={`${activeTab}-${statusFilter}`}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -309,16 +406,25 @@ const MatchSchedule = ({ viewerCounts = {} }: { viewerCounts?: Record<string, nu
           ))}
         </motion.div>
       ) : (
-        <div className="py-20 text-center glass-specular rounded-[2rem] border border-white/[0.06]">
-          <p className="text-zinc-400 font-black uppercase tracking-wider text-xs">
-            Tidak ada siaran aktif untuk kategori ini saat ini.
+        <div className="py-20 text-center glass-specular rounded-[2rem] border border-white/[0.06] p-6 space-y-3">
+          <p className="text-zinc-300 font-display font-black uppercase italic tracking-wider text-base">
+            Tidak ada pertandingan {statusFilter === 'live' ? 'yang sedang tayang' : statusFilter === 'upcoming' ? 'akan datang' : statusFilter === 'finished' ? 'yang selesai' : ''} saat ini.
           </p>
-          <button
-            onClick={() => setActiveTab('main')}
-            className="mt-3 text-primary text-[10px] font-black uppercase tracking-wider hover:underline"
-          >
-            Lihat Jadwal Utama
-          </button>
+          <p className="text-zinc-500 text-xs font-semibold">
+            Silakan pilih filter "Semua" atau ganti cabang olahraga di tab atas.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => {
+                setStatusFilter('all');
+                setActiveTab('main');
+              }}
+              className="px-4 py-2 rounded-xl bg-primary/15 text-primary border border-primary/30 text-xs font-black uppercase tracking-wider hover:bg-primary/25 transition-all tv-focusable cursor-pointer"
+              tabIndex={0}
+            >
+              Tampilkan Semua Jadwal
+            </button>
+          </div>
         </div>
       )}
     </section>

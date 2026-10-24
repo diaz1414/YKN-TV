@@ -8,7 +8,6 @@ import {
   Activity,
   Clock3,
   Film,
-  Loader2,
   MonitorPlay,
   Radio,
   Search,
@@ -17,6 +16,7 @@ import {
   Sparkles,
   Trophy,
   Tv,
+  X,
   Zap,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -453,15 +453,39 @@ const Home = () => {
                   placeholder={activeSubTab === 'sports' ? "Cari Saluran Olahraga..." : "Cari Saluran Hiburan..."}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full glass-specular rounded-2xl py-3.5 pl-11 pr-4 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all placeholder:text-zinc-500 text-white"
+                  className="w-full glass-specular rounded-2xl py-3.5 pl-11 pr-10 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all placeholder:text-zinc-500 text-white"
                 />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white p-1 cursor-pointer transition-colors"
+                    title="Hapus pencarian"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
 
               {/* Channels Grid */}
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-4">
-                  <Loader2 className="text-primary animate-spin" size={36} />
-                  <p className="text-zinc-400 font-black uppercase tracking-[0.15em] text-[10px]">Memuat Saluran TV...</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
+                    <div
+                      key={`channel-skel-${idx}`}
+                      className="glass-specular rounded-[1.75rem] p-5 md:p-6 border border-white/[0.06] animate-pulse space-y-4"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="h-14 w-20 bg-white/10 rounded-2xl" />
+                        <div className="h-4 w-12 bg-white/10 rounded-full" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 w-28 bg-white/10 rounded-full" />
+                        <div className="h-3 w-20 bg-white/5 rounded-full" />
+                      </div>
+                      <div className="h-10 w-full bg-white/5 rounded-xl border border-white/5" />
+                    </div>
+                  ))}
                 </div>
               ) : filteredChannels.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
