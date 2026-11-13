@@ -23,9 +23,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:43.585Z",
+    "last_updated": "2026-11-13T14:50:43.333Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5422",
@@ -52,9 +53,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5435",
@@ -81,9 +83,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "216",
@@ -109,9 +112,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "217",
@@ -137,9 +141,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2972",
@@ -165,9 +170,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2939",
@@ -193,9 +199,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2940",
@@ -221,9 +228,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "92",
@@ -249,7 +257,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://bein-xtra-bein.amagi.tv/playlist.m3u8"
@@ -279,9 +287,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5000",
@@ -308,9 +317,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3535",
@@ -336,9 +346,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4395",
@@ -364,7 +375,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live"
   },
@@ -392,9 +403,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5396",
@@ -420,9 +432,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5395",
@@ -448,9 +461,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5371",
@@ -477,7 +491,7 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/duqbirmk0d/out/v1/40f53c7cbc95498db3afd081c377d776/cenc.mpd"
@@ -506,9 +520,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3524",
@@ -534,9 +549,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "548",
@@ -562,7 +578,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8"
@@ -591,9 +607,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4518",
@@ -619,9 +636,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5434",
@@ -647,9 +665,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "185",
@@ -675,9 +694,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "460",
@@ -703,9 +723,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "476",
@@ -731,9 +752,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1258",
@@ -759,9 +781,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3393",
@@ -787,10 +810,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
-    "backup_url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/4zomejgnew/out/v1/aaaab12c95924d80a77f87f7c745782a/cenc.mpd?"
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2777",
@@ -817,9 +840,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4191",
@@ -845,9 +869,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5188",
@@ -874,9 +899,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5391",
@@ -903,9 +929,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5394",
@@ -931,9 +958,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4396",
@@ -959,9 +987,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5204",
@@ -988,9 +1017,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5202",
@@ -1017,9 +1047,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5203",
@@ -1046,9 +1077,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5205",
@@ -1075,9 +1107,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5206",
@@ -1104,9 +1137,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5370",
@@ -1133,9 +1167,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2859",
@@ -1161,9 +1196,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2860",
@@ -1189,9 +1225,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3831",
@@ -1218,9 +1255,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5199",
@@ -1247,9 +1285,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5420",
@@ -1276,9 +1315,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "461",
@@ -1304,9 +1344,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "462",
@@ -1332,9 +1373,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5200",
@@ -1360,9 +1402,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5201",
@@ -1388,9 +1431,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3392",
@@ -1416,9 +1460,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "712",
@@ -1445,10 +1490,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
-    "backup_url": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/qdbhkwig26/out/v1/c3a69dfec0434abea00756cd73e749ff/cenc.mpd?"
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "239",
@@ -1474,9 +1519,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5388",
@@ -1502,9 +1548,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5193",
@@ -1530,9 +1577,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2878",
@@ -1558,9 +1606,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2879",
@@ -1586,7 +1635,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/dash/enc/dsa3hwuhd1/out/v1/631b48c8d9ea437e8309d1a4b55acef5/cenc.mpd"
@@ -1615,7 +1664,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/6otiglnptp/out/v1/add7499679b0422cb6791f7701f95ecc/cenc.mpd"
@@ -1644,9 +1693,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3513",
@@ -1672,9 +1722,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5426",
@@ -1700,9 +1751,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3288",
@@ -1728,9 +1780,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3488",
@@ -1756,9 +1809,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "209",
@@ -1785,9 +1839,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "210",
@@ -1813,9 +1868,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "211",
@@ -1841,9 +1897,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "212",
@@ -1869,9 +1926,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5321",
@@ -1898,10 +1956,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
-    "backup_url": "https://a122aivottlinear-a.akamaihd.net/OTTB/syd-nitro/live/clients/dash/enc/8mxwjnh2te/out/v1/356704796c0c4bed81f67cd3518d0c8a/cenc.mpd"
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5421",
@@ -1928,9 +1986,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5427",
@@ -1956,9 +2015,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4394",
@@ -1984,9 +2044,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4643",
@@ -2012,9 +2073,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3589",
@@ -2041,9 +2103,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1129",
@@ -2069,9 +2132,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1130",
@@ -2097,9 +2161,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5429",
@@ -2125,9 +2190,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5187",
@@ -2153,9 +2219,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3704",
@@ -2182,9 +2249,10 @@
       "widevine": "https://mrpw.ptmnc01.verspective.net/?deviceId=ZjdiMDljNTItMmYzZC0zNDcyLTllYmItY2QxNDdiYzlhZWY0"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "910",
@@ -2211,7 +2279,7 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
     "backup_url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/tmpzbbdj9y/out/v1/962736723a534ba294e7592fef49827b/cenc.mpd"
@@ -2241,9 +2309,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5066",
@@ -2269,9 +2338,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5112",
@@ -2297,9 +2367,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4241",
@@ -2326,9 +2397,10 @@
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4240",
@@ -2355,9 +2427,10 @@
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "4239",
@@ -2384,9 +2457,10 @@
       "old_url": "https://live-ctv.video.9c9media.com/f/TSN/TSN3/manifest.mpd"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1133",
@@ -2412,9 +2486,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3446",
@@ -2440,9 +2515,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3447",
@@ -2468,10 +2544,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
     "status": "live",
-    "backup_url": "https://ls-mp02stg.eo-edgefunctions7.com/out/v1/3170252e3fb0453085f2f4b0f8401a6b/manifest.mpd"
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3179",
@@ -2497,9 +2573,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1412",
@@ -2525,9 +2602,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5209",
@@ -2553,9 +2631,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5210",
@@ -2581,9 +2660,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5211",
@@ -2609,9 +2689,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1188",
@@ -2637,9 +2718,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1189",
@@ -2665,9 +2747,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "1190",
@@ -2693,9 +2776,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5212",
@@ -2721,9 +2805,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5213",
@@ -2749,9 +2834,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5214",
@@ -2777,9 +2863,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3289",
@@ -2805,9 +2892,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5215",
@@ -2833,9 +2921,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5197",
@@ -2861,9 +2950,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "250",
@@ -2890,9 +2980,10 @@
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6 RTSP-Dogkiller)"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2845",
@@ -2919,9 +3010,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "653",
@@ -2947,9 +3039,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5456",
@@ -2975,9 +3068,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2870",
@@ -3003,9 +3097,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2871",
@@ -3031,9 +3126,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2872",
@@ -3059,9 +3155,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2873",
@@ -3087,9 +3184,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2874",
@@ -3115,9 +3213,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "39",
@@ -3143,9 +3242,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "3212",
@@ -3171,9 +3271,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2803",
@@ -3199,9 +3300,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "2801",
@@ -3227,9 +3329,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5207",
@@ -3255,9 +3358,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5397",
@@ -3283,9 +3387,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "652",
@@ -3311,9 +3416,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "167",
@@ -3339,9 +3445,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "584",
@@ -3367,9 +3474,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "775",
@@ -3396,9 +3504,10 @@
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "5400",
@@ -3424,9 +3533,10 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
     "id_iptv": "59",
@@ -3452,21 +3562,145 @@
       "x-data": "none"
     },
     "updated_token": 1794069120,
-    "last_updated": "2026-11-13T06:26:44.107Z",
+    "last_updated": "2026-11-13T14:50:43.835Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8"
   },
   {
-    "id_iptv": "5463",
-    "nama_channel": "fubo SPORTS 5",
-    "tagline": "Sports",
+    "id_iptv": "1139",
+    "nama_channel": "beIN Sports ID 1 V+",
+    "tagline": "Klik logo BitTV untuk update",
     "jadwal_event": "",
     "jadwal_stop": "",
     "t_stamp": null,
     "s_stamp": null,
-    "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/mibl1kagx8/out/v1/38d1a6a0ee4e4ff2aa8b760d07cabb9e/cenc.mpd",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "data:image/png;base64,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",
+    "gbr_base64": "data:image/png;base64,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",
+    "headers": {
+      "Referer": "https://www.visionplus.id/",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "Cookie": "cf_clearance=akdCTJVS8Dm3dgcXlGovJXBZRA6IATb_hQXr06bq5Nk-1778593292-1.2.1.1-JdZfQegQb9nVKTiEX4dSBanDYFevZWvDOHsTuYWyswXaMj65dTtQnD1FEWQA6ZjVgqUNWusia7TWWAjGj4GIrpXjnP_SEIPL3WpoQiXOfILVOX2MiLcNzpiQ68WFKViDz1TlQylCptxuW96AT7Il43PbVkU77OQxlmZXHA59FwqIKw8Sw7lHyaWXvX8qJI.GA3AyULoqjRJ0bb_m5k6gAfhtwJndlBLnrT1O_BNwxV0oClJ9Fq3KoXC3CNU2FL7KB6Ei92jsGcssVudSisS7LI1P3Rlvyocs4Vp6Zzdw44.Xbsgw6qM43ca2fMfsIpt0jPAFvWfHdJb1pWEQ8Ck.Eg; __eventn_id=0948b637-be80-43b7-a9c5-2d65950613dc; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiI0YWY2YjFiYy1hOTVkLTQwYjEtYTI1OC0wYmE5MTc5MDgxYmMiLCJjayI6Ik1OQzozNzczNzQzOCJ9; _tt_enable_cookie=1; _ttp=01M31D7ZQ9XVSGFNYG7W67EAAT_.tt.1.1789975068393; ttcsid_C8U3UAD9481U83L7QBU0=1789975068395::menO4oSTVJLI9126_7R_.1.1789975078794.1; ttcsid=1789975068395::zkZX2W0kJuZzmZ5qRUfn.1.1789975078767.0::0.-8023.0::0.0.0.0::0.0.0; unbxd.netcoreId=IjQ4OTY2YmRhMDc3MTMzNjM4OTUwZWUzZWZhNjNiY2ZmM2NiOGE3YjY0N2ZmMjYyYTg1YmI1ODBkMjU0MGM3NmEi",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQ1OTM3OTUsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.rUlIigAgQ7bG7bu2tnGFtAjrBJa9KpIE_tjrHYoYRkk",
+      "Referer": "https://www.visionplus.id/webclient/live",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "IRIS-DEVICE-CLASS": "PC",
+      "IRIS-HW-DEVICE-ID": "f4a84e97-378e-4f15-80ed-f4351d10ecca",
+      "IRIS-DEVICE-TYPE": "WINDOWS/FIREFOX",
+      "IRIS-DEVICE-REGION": "Indonesia",
+      "IRIS-PROFILE-ID": "29544606",
+      "IRIS-APP-MODE": "Normal",
+      "IRIS-APP-VERSION": "11.4.13(0)_prd",
+      "IRIS-ENDPOINTS-VERSION": "VklSVFVBTF9DSEFOTkVMUz0xNjk1NjIyNzE1NTI2LFVTRVJfU0VUVElOR1M9MTc5NDIxMDk0MDY0NyxTVUJTQ1JJQkVSX1NFVFRJTkdTPTE3OTQyMTA5NDA2NDcsUFVSQ0hBU0VfTElTVD0xNzk0MjEwOTQwNjIzLFVJX0RBVEE9MTc4OTY2MDI5MzIwNyxVU0VSX0RBVEE9MTc5NDIxMDk0MDY0NyxSRUNPUkRJTkdfTElTVD0xNzg5NjYwMjkzMjA3LFVTRVJfUFJPRklMRT0xNzg5NjYwMzA2OTc3LFNFR01FTlRBVElPTj0xNzg5NjYwMzA3MDU2LFBFUlNPTkFMX0FDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIzLE9UVF9ERVZJQ0VTPTE3ODk3MzYyMTE4MDAsREVWSUNFX1NFVFRJTkdTPTE3ODk3MzYyMTE3ODEsRkFWX0NIQU5ORUxfTElTVD0xNjk2NDQyMDEwMDQyLEFDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIz"
+    },
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
+    "is_alive": true,
+    "status": "live",
+    "backup_url": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2F3b0660e05eed4d769521eb0275aab3ab%2FHLS%2Fd1fcba91940f4e3d90c125aeb35dd080%2F00000000000000000122&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0"
+  },
+  {
+    "id_iptv": "91",
+    "nama_channel": "beIN Sports ID 2 V+",
+    "tagline": "Klik logo BitTV untuk update",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "data:image/png;base64,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",
+    "gbr_base64": "data:image/png;base64,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",
+    "headers": {
+      "Referer": "https://www.visionplus.id/",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "Cookie": "cf_clearance=akdCTJVS8Dm3dgcXlGovJXBZRA6IATb_hQXr06bq5Nk-1778593292-1.2.1.1-JdZfQegQb9nVKTiEX4dSBanDYFevZWvDOHsTuYWyswXaMj65dTtQnD1FEWQA6ZjVgqUNWusia7TWWAjGj4GIrpXjnP_SEIPL3WpoQiXOfILVOX2MiLcNzpiQ68WFKViDz1TlQylCptxuW96AT7Il43PbVkU77OQxlmZXHA59FwqIKw8Sw7lHyaWXvX8qJI.GA3AyULoqjRJ0bb_m5k6gAfhtwJndlBLnrT1O_BNwxV0oClJ9Fq3KoXC3CNU2FL7KB6Ei92jsGcssVudSisS7LI1P3Rlvyocs4Vp6Zzdw44.Xbsgw6qM43ca2fMfsIpt0jPAFvWfHdJb1pWEQ8Ck.Eg; __eventn_id=0948b637-be80-43b7-a9c5-2d65950613dc; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiI0YWY2YjFiYy1hOTVkLTQwYjEtYTI1OC0wYmE5MTc5MDgxYmMiLCJjayI6Ik1OQzozNzczNzQzOCJ9; _tt_enable_cookie=1; _ttp=01M31D7ZQ9XVSGFNYG7W67EAAT_.tt.1.1789975068393; ttcsid_C8U3UAD9481U83L7QBU0=1789975068395::menO4oSTVJLI9126_7R_.1.1789975078794.1; ttcsid=1789975068395::zkZX2W0kJuZzmZ5qRUfn.1.1789975078767.0::0.-8023.0::0.0.0.0::0.0.0; unbxd.netcoreId=IjQ4OTY2YmRhMDc3MTMzNjM4OTUwZWUzZWZhNjNiY2ZmM2NiOGE3YjY0N2ZmMjYyYTg1YmI1ODBkMjU0MGM3NmEi",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQ1OTM3OTUsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.rUlIigAgQ7bG7bu2tnGFtAjrBJa9KpIE_tjrHYoYRkk",
+      "Referer": "https://www.visionplus.id/webclient/live",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "IRIS-DEVICE-CLASS": "PC",
+      "IRIS-HW-DEVICE-ID": "f4a84e97-378e-4f15-80ed-f4351d10ecca",
+      "IRIS-DEVICE-TYPE": "WINDOWS/FIREFOX",
+      "IRIS-DEVICE-REGION": "Indonesia",
+      "IRIS-PROFILE-ID": "29544606",
+      "IRIS-APP-MODE": "Normal",
+      "IRIS-APP-VERSION": "11.4.13(0)_prd",
+      "IRIS-ENDPOINTS-VERSION": "VklSVFVBTF9DSEFOTkVMUz0xNjk1NjIyNzE1NTI2LFVTRVJfU0VUVElOR1M9MTc5NDIxMDk0MDY0NyxTVUJTQ1JJQkVSX1NFVFRJTkdTPTE3OTQyMTA5NDA2NDcsUFVSQ0hBU0VfTElTVD0xNzk0MjEwOTQwNjIzLFVJX0RBVEE9MTc4OTY2MDI5MzIwNyxVU0VSX0RBVEE9MTc5NDIxMDk0MDY0NyxSRUNPUkRJTkdfTElTVD0xNzg5NjYwMjkzMjA3LFVTRVJfUFJPRklMRT0xNzg5NjYwMzA2OTc3LFNFR01FTlRBVElPTj0xNzg5NjYwMzA3MDU2LFBFUlNPTkFMX0FDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIzLE9UVF9ERVZJQ0VTPTE3ODk3MzYyMTE4MDAsREVWSUNFX1NFVFRJTkdTPTE3ODk3MzYyMTE3ODEsRkFWX0NIQU5ORUxfTElTVD0xNjk2NDQyMDEwMDQyLEFDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIz"
+    },
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
+    "is_alive": true,
+    "status": "live",
+    "backup_url": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2Fcfca527d0f16403396a71b2d3d54c32f%2FHLS%2F6d91f1c44fde4b938444e7d7588d118b%2F00000000000000000123&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0"
+  },
+  {
+    "id_iptv": "52",
+    "nama_channel": "beIN Sports ID 3 V+",
+    "tagline": "Klik logo BitTV untuk update",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
+    "url_license": "",
+    "jenis": "hls",
+    "country_code": "SP",
+    "country_name": "Sports TV",
+    "logo": "data:image/png;base64,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",
+    "gbr_base64": "data:image/png;base64,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",
+    "headers": {
+      "Referer": "https://www.visionplus.id/",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "Cookie": "cf_clearance=akdCTJVS8Dm3dgcXlGovJXBZRA6IATb_hQXr06bq5Nk-1778593292-1.2.1.1-JdZfQegQb9nVKTiEX4dSBanDYFevZWvDOHsTuYWyswXaMj65dTtQnD1FEWQA6ZjVgqUNWusia7TWWAjGj4GIrpXjnP_SEIPL3WpoQiXOfILVOX2MiLcNzpiQ68WFKViDz1TlQylCptxuW96AT7Il43PbVkU77OQxlmZXHA59FwqIKw8Sw7lHyaWXvX8qJI.GA3AyULoqjRJ0bb_m5k6gAfhtwJndlBLnrT1O_BNwxV0oClJ9Fq3KoXC3CNU2FL7KB6Ei92jsGcssVudSisS7LI1P3Rlvyocs4Vp6Zzdw44.Xbsgw6qM43ca2fMfsIpt0jPAFvWfHdJb1pWEQ8Ck.Eg; __eventn_id=0948b637-be80-43b7-a9c5-2d65950613dc; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiI0YWY2YjFiYy1hOTVkLTQwYjEtYTI1OC0wYmE5MTc5MDgxYmMiLCJjayI6Ik1OQzozNzczNzQzOCJ9; _tt_enable_cookie=1; _ttp=01M31D7ZQ9XVSGFNYG7W67EAAT_.tt.1.1789975068393; ttcsid_C8U3UAD9481U83L7QBU0=1789975068395::menO4oSTVJLI9126_7R_.1.1789975078794.1; ttcsid=1789975068395::zkZX2W0kJuZzmZ5qRUfn.1.1789975078767.0::0.-8023.0::0.0.0.0::0.0.0; unbxd.netcoreId=IjQ4OTY2YmRhMDc3MTMzNjM4OTUwZWUzZWZhNjNiY2ZmM2NiOGE3YjY0N2ZmMjYyYTg1YmI1ODBkMjU0MGM3NmEi",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQ1OTM3OTUsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.rUlIigAgQ7bG7bu2tnGFtAjrBJa9KpIE_tjrHYoYRkk",
+      "Referer": "https://www.visionplus.id/webclient/live",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "IRIS-DEVICE-CLASS": "PC",
+      "IRIS-HW-DEVICE-ID": "f4a84e97-378e-4f15-80ed-f4351d10ecca",
+      "IRIS-DEVICE-TYPE": "WINDOWS/FIREFOX",
+      "IRIS-DEVICE-REGION": "Indonesia",
+      "IRIS-PROFILE-ID": "29544606",
+      "IRIS-APP-MODE": "Normal",
+      "IRIS-APP-VERSION": "11.4.13(0)_prd",
+      "IRIS-ENDPOINTS-VERSION": "VklSVFVBTF9DSEFOTkVMUz0xNjk1NjIyNzE1NTI2LFVTRVJfU0VUVElOR1M9MTc5NDIxMDk0MDY0NyxTVUJTQ1JJQkVSX1NFVFRJTkdTPTE3OTQyMTA5NDA2NDcsUFVSQ0hBU0VfTElTVD0xNzk0MjEwOTQwNjIzLFVJX0RBVEE9MTc4OTY2MDI5MzIwNyxVU0VSX0RBVEE9MTc5NDIxMDk0MDY0NyxSRUNPUkRJTkdfTElTVD0xNzg5NjYwMjkzMjA3LFVTRVJfUFJPRklMRT0xNzg5NjYwMzA2OTc3LFNFR01FTlRBVElPTj0xNzg5NjYwMzA3MDU2LFBFUlNPTkFMX0FDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIzLE9UVF9ERVZJQ0VTPTE3ODk3MzYyMTE4MDAsREVWSUNFX1NFVFRJTkdTPTE3ODk3MzYyMTE3ODEsRkFWX0NIQU5ORUxfTElTVD0xNjk2NDQyMDEwMDQyLEFDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIz"
+    },
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
+    "is_alive": true,
+    "status": "live",
+    "backup_url": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2Fa265695db5cb461095cbfefc02ad793b%2FHLS%2F550e4d9edae14255827a419b00f1c89e%2F00000000000000000124&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0"
+  },
+  {
+    "id_iptv": "5463",
+    "nama_channel": "fubo SPORTS 5",
+    "tagline": "Klik logo BitTV untuk update",
+    "jadwal_event": "",
+    "jadwal_stop": "",
+    "t_stamp": null,
+    "s_stamp": null,
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoiZmFVUm80QlQwK0ZRMDQ5SHJIMkNtQSIsImtpZCI6IjRKb0pBQkFPV3NkOVN0dEZwZ0tvYXcifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
-    "jenis": "dash-clearkey",
+    "jenis": "hls",
     "country_code": "SP",
     "country_name": "Sports TV",
     "logo": "data:image/png;base64,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",
@@ -3480,22 +3714,23 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1794545100,
-    "last_updated": "2026-11-13T06:26:45.927Z",
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
     "is_alive": true,
-    "status": "live"
+    "status": "live",
+    "backup_url": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/mibl1kagx8/out/v1/38d1a6a0ee4e4ff2aa8b760d07cabb9e/cenc.mpd"
   },
   {
     "id_iptv": "247",
     "nama_channel": "Sky Sports Mix",
-    "tagline": "Sports",
+    "tagline": "Klik logo BitTV untuk update",
     "jadwal_event": "",
     "jadwal_stop": "",
     "t_stamp": null,
     "s_stamp": null,
-    "url_iptv": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/ttguqv2dus/out/v1/10e708fa029549e8807c7a35f4740adf/cenc.mpd?",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
     "url_license": "eyJrZXlzIjpbeyJrdHkiOiJvY3QiLCJrIjoicUlNamZ2TUpNcmN4OXhxbG1nZ0Z3QSIsImtpZCI6IitpT253Tm5JTHd4N0VUVUc0Z0t2akEifV0sInR5cGUiOiJ0ZW1wb3JhcnkifQ==",
-    "jenis": "dash-clearkey",
+    "jenis": "hls",
     "country_code": "SP",
     "country_name": "Sports TV",
     "logo": "data:image/png;base64,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",
@@ -3509,119 +3744,92 @@
       "x-data": "none",
       "old_key": "5deb190b1dac28e46c0bdada7668b7de:ddd2b372702e42b0d2708a70b91dec8d"
     },
-    "updated_token": 1794545100,
-    "last_updated": "2026-11-13T06:26:45.927Z",
-    "is_alive": true,
-    "status": "live"
-  },
-  {
-    "id_iptv": "1139",
-    "nama_channel": "beIN Sports ID 1 V+",
-    "tagline": "Online",
-    "jadwal_event": "",
-    "jadwal_stop": "",
-    "t_stamp": null,
-    "s_stamp": null,
-    "url_iptv": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2F3b0660e05eed4d769521eb0275aab3ab%2FHLS%2Fd1fcba91940f4e3d90c125aeb35dd080%2F00000000000000000122&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0",
-    "url_license": "",
-    "jenis": "drm_vision_plus",
-    "country_code": "SP",
-    "country_name": "Sports TV",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": null,
-    "license_headers": null,
-    "source_type": "assets_dat",
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
     "is_alive": true,
     "status": "live",
-    "http_status": 200
-  },
-  {
-    "id_iptv": "91",
-    "nama_channel": "beIN Sports ID 2 V+",
-    "tagline": "Online",
-    "jadwal_event": "",
-    "jadwal_stop": "",
-    "t_stamp": null,
-    "s_stamp": null,
-    "url_iptv": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2Fcfca527d0f16403396a71b2d3d54c32f%2FHLS%2F6d91f1c44fde4b938444e7d7588d118b%2F00000000000000000123&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0",
-    "url_license": "",
-    "jenis": "drm_vision_plus",
-    "country_code": "SP",
-    "country_name": "Sports TV",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": null,
-    "license_headers": null,
-    "source_type": "assets_dat",
-    "is_alive": true,
-    "status": "live",
-    "http_status": 200
-  },
-  {
-    "id_iptv": "52",
-    "nama_channel": "beIN Sports ID 3 V+",
-    "tagline": "Online",
-    "jadwal_event": "",
-    "jadwal_stop": "",
-    "t_stamp": null,
-    "s_stamp": null,
-    "url_iptv": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d6m3sfa7e58z5%2FDASH%2Fa265695db5cb461095cbfefc02ad793b%2FHLS%2F550e4d9edae14255827a419b00f1c89e%2F00000000000000000124&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0",
-    "url_license": "",
-    "jenis": "drm_vision_plus",
-    "country_code": "SP",
-    "country_name": "Sports TV",
-    "logo": "data:image/png;base64,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",
-    "gbr_base64": "data:image/png;base64,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",
-    "headers": null,
-    "license_headers": null,
-    "source_type": "assets_dat",
-    "is_alive": true,
-    "status": "live",
-    "http_status": 200
+    "backup_url": "https://otte.cache.aiv-cdn.net/iad-nitro/live/clients/dash/enc/ttguqv2dus/out/v1/10e708fa029549e8807c7a35f4740adf/cenc.mpd?"
   },
   {
     "id_iptv": "186",
     "nama_channel": "SPOTV ID1",
-    "tagline": "Indonesia",
+    "tagline": "Klik logo BitTV untuk update",
     "jadwal_event": "",
     "jadwal_stop": "",
     "t_stamp": null,
     "s_stamp": null,
-    "url_iptv": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d3b0v7fggu5zwm%2FDASH%2Fb4814ae93ca84dd3bb5b0aff76ca263f%2FHLS%2F85430fecde0940e392b51acee385c25f%2F00000000000000000119&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjM2MjIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.XpxF02owmExuskMD2PW0dw-Uro6WDjM268IXr6b8Gak",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
     "url_license": "",
-    "jenis": "drm_vision_plus",
+    "jenis": "hls",
     "country_code": "SP",
     "country_name": "Sports TV",
     "logo": "data:image/png;base64,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",
     "gbr_base64": "data:image/png;base64,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",
-    "headers": null,
-    "license_headers": null,
-    "source_type": "assets_dat",
+    "headers": {
+      "Referer": "https://www.visionplus.id/",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "Cookie": "cf_clearance=akdCTJVS8Dm3dgcXlGovJXBZRA6IATb_hQXr06bq5Nk-1778593292-1.2.1.1-JdZfQegQb9nVKTiEX4dSBanDYFevZWvDOHsTuYWyswXaMj65dTtQnD1FEWQA6ZjVgqUNWusia7TWWAjGj4GIrpXjnP_SEIPL3WpoQiXOfILVOX2MiLcNzpiQ68WFKViDz1TlQylCptxuW96AT7Il43PbVkU77OQxlmZXHA59FwqIKw8Sw7lHyaWXvX8qJI.GA3AyULoqjRJ0bb_m5k6gAfhtwJndlBLnrT1O_BNwxV0oClJ9Fq3KoXC3CNU2FL7KB6Ei92jsGcssVudSisS7LI1P3Rlvyocs4Vp6Zzdw44.Xbsgw6qM43ca2fMfsIpt0jPAFvWfHdJb1pWEQ8Ck.Eg; __eventn_id=0948b637-be80-43b7-a9c5-2d65950613dc; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiI0YWY2YjFiYy1hOTVkLTQwYjEtYTI1OC0wYmE5MTc5MDgxYmMiLCJjayI6Ik1OQzozNzczNzQzOCJ9; _tt_enable_cookie=1; _ttp=01M31D7ZQ9XVSGFNYG7W67EAAT_.tt.1.1789975068393; ttcsid_C8U3UAD9481U83L7QBU0=1789975068395::menO4oSTVJLI9126_7R_.1.1789975078794.1; ttcsid=1789975068395::zkZX2W0kJuZzmZ5qRUfn.1.1789975078767.0::0.-8023.0::0.0.0.0::0.0.0; unbxd.netcoreId=IjQ4OTY2YmRhMDc3MTMzNjM4OTUwZWUzZWZhNjNiY2ZmM2NiOGE3YjY0N2ZmMjYyYTg1YmI1ODBkMjU0MGM3NmEi",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQ1OTM3OTUsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.rUlIigAgQ7bG7bu2tnGFtAjrBJa9KpIE_tjrHYoYRkk",
+      "Referer": "https://www.visionplus.id/webclient/live",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "IRIS-DEVICE-CLASS": "PC",
+      "IRIS-HW-DEVICE-ID": "f4a84e97-378e-4f15-80ed-f4351d10ecca",
+      "IRIS-DEVICE-TYPE": "WINDOWS/FIREFOX",
+      "IRIS-DEVICE-REGION": "Indonesia",
+      "IRIS-PROFILE-ID": "29544606",
+      "IRIS-APP-MODE": "Normal",
+      "IRIS-APP-VERSION": "11.4.13(0)_prd",
+      "IRIS-ENDPOINTS-VERSION": "VklSVFVBTF9DSEFOTkVMUz0xNjk1NjIyNzE1NTI2LFVTRVJfU0VUVElOR1M9MTc5NDIxMDk0MDY0NyxTVUJTQ1JJQkVSX1NFVFRJTkdTPTE3OTQyMTA5NDA2NDcsUFVSQ0hBU0VfTElTVD0xNzk0MjEwOTQwNjIzLFVJX0RBVEE9MTc4OTY2MDI5MzIwNyxVU0VSX0RBVEE9MTc5NDIxMDk0MDY0NyxSRUNPUkRJTkdfTElTVD0xNzg5NjYwMjkzMjA3LFVTRVJfUFJPRklMRT0xNzg5NjYwMzA2OTc3LFNFR01FTlRBVElPTj0xNzg5NjYwMzA3MDU2LFBFUlNPTkFMX0FDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIzLE9UVF9ERVZJQ0VTPTE3ODk3MzYyMTE4MDAsREVWSUNFX1NFVFRJTkdTPTE3ODk3MzYyMTE3ODEsRkFWX0NIQU5ORUxfTElTVD0xNjk2NDQyMDEwMDQyLEFDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIz"
+    },
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
     "is_alive": true,
     "status": "live",
-    "http_status": 200
+    "backup_url": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d3b0v7fggu5zwm%2FDASH%2Fb4814ae93ca84dd3bb5b0aff76ca263f%2FHLS%2F85430fecde0940e392b51acee385c25f%2F00000000000000000119&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjM2MjIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.XpxF02owmExuskMD2PW0dw-Uro6WDjM268IXr6b8Gak"
   },
   {
     "id_iptv": "1251",
     "nama_channel": "SPOTV ID2",
-    "tagline": "Indonesia",
+    "tagline": "Klik logo BitTV untuk update",
     "jadwal_event": "",
     "jadwal_stop": "",
     "t_stamp": null,
     "s_stamp": null,
-    "url_iptv": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d2tjypxxy769fn%2FDASH%2F46d9cf39b9a84183b8d5022ac8f4bc41%2FHLS%2Fc9fa5b263fce42668499ab0376d1ff45%2F00000000000000000120&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0",
+    "url_iptv": "https://raw.githubusercontent.com/movietrailersxxi-pixel/web/main/ts/v218.m3u8",
     "url_license": "",
-    "jenis": "drm_vision_plus",
+    "jenis": "hls",
     "country_code": "SP",
     "country_name": "Sports TV",
     "logo": "data:image/png;base64,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",
     "gbr_base64": "data:image/png;base64,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",
-    "headers": null,
-    "license_headers": null,
-    "source_type": "assets_dat",
+    "headers": {
+      "Referer": "https://www.visionplus.id/",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0"
+    },
+    "license_headers": {
+      "Cookie": "cf_clearance=akdCTJVS8Dm3dgcXlGovJXBZRA6IATb_hQXr06bq5Nk-1778593292-1.2.1.1-JdZfQegQb9nVKTiEX4dSBanDYFevZWvDOHsTuYWyswXaMj65dTtQnD1FEWQA6ZjVgqUNWusia7TWWAjGj4GIrpXjnP_SEIPL3WpoQiXOfILVOX2MiLcNzpiQ68WFKViDz1TlQylCptxuW96AT7Il43PbVkU77OQxlmZXHA59FwqIKw8Sw7lHyaWXvX8qJI.GA3AyULoqjRJ0bb_m5k6gAfhtwJndlBLnrT1O_BNwxV0oClJ9Fq3KoXC3CNU2FL7KB6Ei92jsGcssVudSisS7LI1P3Rlvyocs4Vp6Zzdw44.Xbsgw6qM43ca2fMfsIpt0jPAFvWfHdJb1pWEQ8Ck.Eg; __eventn_id=0948b637-be80-43b7-a9c5-2d65950613dc; __stp=eyJ2aXNpdCI6Im5ldyIsInV1aWQiOiI0YWY2YjFiYy1hOTVkLTQwYjEtYTI1OC0wYmE5MTc5MDgxYmMiLCJjayI6Ik1OQzozNzczNzQzOCJ9; _tt_enable_cookie=1; _ttp=01M31D7ZQ9XVSGFNYG7W67EAAT_.tt.1.1789975068393; ttcsid_C8U3UAD9481U83L7QBU0=1789975068395::menO4oSTVJLI9126_7R_.1.1789975078794.1; ttcsid=1789975068395::zkZX2W0kJuZzmZ5qRUfn.1.1789975078767.0::0.-8023.0::0.0.0.0::0.0.0; unbxd.netcoreId=IjQ4OTY2YmRhMDc3MTMzNjM4OTUwZWUzZWZhNjNiY2ZmM2NiOGE3YjY0N2ZmMjYyYTg1YmI1ODBkMjU0MGM3NmEi",
+      "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQ1OTM3OTUsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.rUlIigAgQ7bG7bu2tnGFtAjrBJa9KpIE_tjrHYoYRkk",
+      "Referer": "https://www.visionplus.id/webclient/live",
+      "Origin": "https://www.visionplus.id",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "IRIS-DEVICE-CLASS": "PC",
+      "IRIS-HW-DEVICE-ID": "f4a84e97-378e-4f15-80ed-f4351d10ecca",
+      "IRIS-DEVICE-TYPE": "WINDOWS/FIREFOX",
+      "IRIS-DEVICE-REGION": "Indonesia",
+      "IRIS-PROFILE-ID": "29544606",
+      "IRIS-APP-MODE": "Normal",
+      "IRIS-APP-VERSION": "11.4.13(0)_prd",
+      "IRIS-ENDPOINTS-VERSION": "VklSVFVBTF9DSEFOTkVMUz0xNjk1NjIyNzE1NTI2LFVTRVJfU0VUVElOR1M9MTc5NDIxMDk0MDY0NyxTVUJTQ1JJQkVSX1NFVFRJTkdTPTE3OTQyMTA5NDA2NDcsUFVSQ0hBU0VfTElTVD0xNzk0MjEwOTQwNjIzLFVJX0RBVEE9MTc4OTY2MDI5MzIwNyxVU0VSX0RBVEE9MTc5NDIxMDk0MDY0NyxSRUNPUkRJTkdfTElTVD0xNzg5NjYwMjkzMjA3LFVTRVJfUFJPRklMRT0xNzg5NjYwMzA2OTc3LFNFR01FTlRBVElPTj0xNzg5NjYwMzA3MDU2LFBFUlNPTkFMX0FDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIzLE9UVF9ERVZJQ0VTPTE3ODk3MzYyMTE4MDAsREVWSUNFX1NFVFRJTkdTPTE3ODk3MzYyMTE3ODEsRkFWX0NIQU5ORUxfTElTVD0xNjk2NDQyMDEwMDQyLEFDVElWRV9DSEFOTkVMUz0xNzk0MjEwOTQwNjIz"
+    },
+    "updated_token": 1794578640,
+    "last_updated": "2026-11-13T14:50:44.850Z",
     "is_alive": true,
     "status": "live",
-    "http_status": 200
+    "backup_url": "https://www.visionplus.id/streamlocators/multirights/getPlayableUrlAndLicense?adsProfile=premium_ultimate&drm=WV&packaging=DASH&provisioningData=eyJwcm92aXNpb25pbmciOlt7InN5c3RlbSI6InZlcmltYXRyaXgiLCJkYXRhIjpbeyJuYW1lIjoidnVpZCIsInZhbHVlIjoiZjRhODRlOTctMzc4ZS00ZjE1LTgwZWQtZjQzNTFkMTBlY2NhIn1dfV19&url=multirights%3Amediapackage%2Flive%2F%2FEG_d2tjypxxy769fn%2FDASH%2F46d9cf39b9a84183b8d5022ac8f4bc41%2FHLS%2Fc9fa5b263fce42668499ab0376d1ff45%2F00000000000000000120&userSessionToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjQ4NDE0MzMwLCJ0eSI6IlVTRVIiLCJwY2kiOiIzNzczNzQzOCIsImh3SWQiOiJmNGE4NGU5Ny0zNzhlLTRmMTUtODBlZC1mNDM1MWQxMGVjY2EiLCJleHAiOjE3OTQyMjYzMDIsInBuIjoiTU5DIiwiY2lkIjoyMTYxNzE3Njh9.BwGDGDcFMSpwq7FcaCvm1B_NqDcWdMbtLwVX_Ehvje0"
   }
 ]
