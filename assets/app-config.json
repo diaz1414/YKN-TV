@@ -13,7 +13,7 @@
     "1785088500"
   ],
   "playerDebug": true,
-  "rawEventsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/duktek2/main/assets/tv-events.dat",
+  "rawEventsUrl": "https://raw.githubusercontent.com/movietrailersxxi-pixel/newalpha/main/assets/tv-events.dat",
   "rawTvSportsUrl": "https://raw.githubusercontent.com/diaz1414/YKN-TV/main/data/tv-sports.json",
   "rawTvHiburanUrl": "https://raw.githubusercontent.com/diaz1414/YKN-TV/main/data/tv-hiburan.json",
   "botEventsUrl": "https://api.ykn.my.id/api/sports/events",
